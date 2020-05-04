@@ -4,5 +4,5 @@ trait Command[F[_]] {
 
   val name: String
 
-  def run: F[Unit]
+  def run(args: List[String]): F[Unit]
 }

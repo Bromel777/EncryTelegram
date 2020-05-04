@@ -13,6 +13,7 @@ import cats.implicits._
 import org.drinkless.tdlib.Client123.ResultHandler
 import org.encryfoundation.common.utils.Algos
 import org.encryfoundation.tg.RunApp.onlyForReg
+import org.encryfoundation.tg.commands.{CreatePrivateGroup, PrintChats, ReadChat, WriteSecure}
 import org.encryfoundation.tg.crypto.AESEncryption
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,6 +27,7 @@ import scalafx.scene.layout.HBox
 import scalafx.scene.paint.Color._
 import scalafx.scene.paint.{LinearGradient, Stops}
 import scalafx.scene.text.Text
+import scalafx.stage.PopupWindow.AnchorLocation.WindowBottomRight
 
 import scala.io.StdIn
 
@@ -72,46 +74,19 @@ object RunApp extends IOApp {
         println(s"Your command: ${command}.")
         command
       }
-      _ <- if (command == "list") getChats(client, userStateRef)
-           else if (command.split(" ").head == "write") {
-            for {
-              state <- userStateRef.get
-              recepient <- Sync[F].delay(command.split(" ").tail.dropRight(1).mkString(" "))
-              _ <- Sync[F].delay(println(s"Recepient: ${recepient}. Users: ${state.users}"))
-              _ <- Sync[F].delay(println(s"Recepient exists: " +
-                s"${state.chatIds.exists(_._2.title == recepient)}")
-              )
-              _ <- sendMessage(
-                state.chatIds.find(_._2.title == recepient).get._2.id,
-                command.split(" ").last,
-                client
-              )
-            } yield ()
-          } else if (command.split(" ").head == "createPrivateGroup") {
-            for {
-              _ <- Sync[F].delay("Creating private group!")
-              _ <- createGroup(
-                userStateRef,
-                client,
-                command.split(" ").tail.head,
-                command.split(" ").drop(2).head,
-                command.split(" ").drop(3).toList
-              )
-            } yield ()
+      _ <- if (command == "list")
+              PrintChats[F](client, userStateRef).run(command.split(" ").tail.toList)
+           else if (command.split(" ").head == "write")
+              WriteSecure[F](client, userStateRef).run(command.split(" ").tail.toList)
+           else if (command.split(" ").head == "createPrivateGroup") {
+            Sync[F].delay(println("xyi")) >> {
+              val handler = CreatePrivateGroup[F](client, userStateRef)
+              handler.run(command.split(" ").tail.toList)
+            }
           } else if (command.split(" ").head == "read") {
-            for {
-              _ <- getChatMessages(command.split(" ").last.toLong, client, userStateRef)
-            } yield ()
+              ReadChat[F](client, userStateRef).run(command.split(" ").tail.toList)
           } else if (command.split(" ").head == "writeSecure") {
-            for {
-              state <- userStateRef.get
-              secureMsg <- Sync[F].delay{
-                val pass = state.privateGroups.find(_._1 == command.split(" ").tail.head.toLong).get._2._2
-                val aes = AESEncryption(pass.getBytes())
-                Algos.encode(aes.encrypt(command.split(" ").last.getBytes()))
-              }
-              _ <- sendMessage(command.split(" ").drop(1).head.toLong, secureMsg, client)
-            } yield ()
+              WriteSecure[F](client, userStateRef).run(command.split(" ").tail.toList)
           } else (Sync[F].delay(println(s"Receive unkown command: ${command}")))
         _ <- onlyForReg(client, userStateRef)
     } yield ()
@@ -134,18 +109,6 @@ object RunApp extends IOApp {
         new TdApi.GetChatHistory(chatId, 0, 0, 20, false),
         MessagesHandler[F](state.privateGroups.find(_._1 == chatId).map(_._2._2))
       )
-    } yield ()
-  }
-
-  def createGroup[F[_]: Concurrent](stateRef: Ref[F, UserState[F]],
-                                    client: Client[F],
-                                    groupname: String,
-                                    password: String,
-                                    users: List[String]): F[Unit] = {
-    for {
-      state <- stateRef.get
-      userIds <- Concurrent[F].delay(users.flatMap(username => state.users.find(_._2.username == username)))
-      _ <- client.send(new TdApi.CreateNewBasicGroupChat(userIds.map(_._1).toArray, groupname), ChatCreationHandler[F](stateRef, password))
     } yield ()
   }
 

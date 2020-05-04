@@ -90,7 +90,7 @@ case class Client[F[_]: Concurrent: Timer] private(readLock: Semaphore[F],
   @native
   private def destroyNativeClient(nativeClientId: Long): Unit
 
-  def run(): Stream[F, Unit] = Stream.eval(Sync[F].delay(println("Run here"))) >> receiveQueries(300)
+  def run(): Stream[F, Unit] = receiveQueries(300)
 }
 
 object Client {

@@ -4,6 +4,7 @@ import cats.effect.Sync
 import cats.effect.concurrent.Ref
 import org.drinkless.tdlib.Client123.ResultHandler
 import org.encryfoundation.tg.userState.UserState
+import cats.implicits._
 
 case class DummyHandler[F[_]: Sync](client: Client[F],
                                     ref: Ref[F, UserState[F]],
@@ -18,9 +19,10 @@ case class DummyHandler[F[_]: Sync](client: Client[F],
       Sync[F].delay(println("Err occured"))
     case TdApi.Chats.CONSTRUCTOR =>
       val chatIds = obj.asInstanceOf[TdApi.Chats].chatIds
-      if (chatIds.isEmpty) {
-        Sync[F].delay(println("All!"))
-      } else getChats(client, ref)
+      ().pure[F]
+//      if (chatIds.isEmpty) {
+//        Sync[F].delay(println("All!"))
+//      } else Sync[F].delay(println(s"Receive ${obj}")) >> getChats(client, ref)
     case _ =>
       Sync[F].delay(println("Exit"))
   }

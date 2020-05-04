@@ -1,6 +1,7 @@
 package org.encryfoundation.tg
 
 import cats.effect.Sync
+import cats.implicits._
 import org.drinkless.tdlib.{Client123, ResultHandler, TdApi}
 
 case class AuthRequestHandler[F[_]: Sync]() extends ResultHandler[F] {
@@ -13,7 +14,7 @@ case class AuthRequestHandler[F[_]: Sync]() extends ResultHandler[F] {
     case TdApi.Error.CONSTRUCTOR =>
       Sync[F].delay(println(s"Err occured. $obj"))
     case TdApi.Ok.CONSTRUCTOR =>
-      Sync[F].delay(println("All ok"))
+      ().pure[F]
     case _ =>
       Sync[F].delay(println("Any"))
   }

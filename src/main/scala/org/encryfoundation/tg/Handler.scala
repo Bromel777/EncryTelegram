@@ -3,6 +3,7 @@ package org.encryfoundation.tg
 import cats.effect.concurrent.Ref
 import cats.effect.{ConcurrentEffect, Sync}
 import cats.implicits._
+import org.drinkless.tdlib.TdApi.MessageText
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.userState.UserState
 
@@ -17,11 +18,8 @@ case class Handler[F[_]: ConcurrentEffect](userStateRef: Ref[F, UserState[F]]) e
    */
 
   override def onResult(obj: TdApi.Object): F[Unit] = {
-    //println(s"Obj: ${obj}")
     obj.getConstructor match {
       case TdApi.UpdateAuthorizationState.CONSTRUCTOR =>
-        println("Auth state")
-        println("Send")
         for {
           state <- userStateRef.get
           _ <- authHandler(obj.asInstanceOf[TdApi.UpdateAuthorizationState], state.client)
@@ -32,36 +30,81 @@ case class Handler[F[_]: ConcurrentEffect](userStateRef: Ref[F, UserState[F]]) e
         val order = chat.order
         chat.order = 0
         for {
-            state <- userStateRef.get
-            _ <- Sync[F].delay(println(s"Chat order: ${chat.order}. ${obj}"))
-            _ <- userStateRef.update(_.copy(chatIds = state.chatIds + (chat.id -> chat)))
-            _ <- setChatOrder(chat, order)
+          state <- userStateRef.get
+          _ <- userStateRef.update(_.copy(chatIds = state.chatIds + (chat.id -> chat)))
+          _ <- setChatOrder(chat, order)
         } yield ()
-        //println("Get updating chat!").pure[F]
+      case TdApi.UpdateUser.CONSTRUCTOR =>
+        val updateUser = obj.asInstanceOf[TdApi.UpdateUser]
+        for {
+          state <- userStateRef.get
+          _ <- userStateRef.update(_.copy(users = state.users + (updateUser.user.id -> updateUser.user)))
+        } yield ()
+      case TdApi.UpdateChatOrder.CONSTRUCTOR =>
+        val updateChatOrder = obj.asInstanceOf[TdApi.UpdateChatOrder]
+        for {
+          state <- userStateRef.get
+          _ <- state.chatIds.find(_._1 == updateChatOrder.chatId).traverse { case (_, chat) =>
+            setChatOrder(chat, updateChatOrder.order)
+          }
+        } yield ()
+      case TdApi.UpdateChatLastMessage.CONSTRUCTOR =>
+        val updateChat = obj.asInstanceOf[TdApi.UpdateChatLastMessage]
+        for {
+          state <- userStateRef.get
+          _ <- state.chatIds.find(_._1 == updateChat.chatId).traverse { case (_, chat) =>
+            setChatOrder(chat, updateChat.order)
+          }
+        } yield ()
+      case TdApi.UpdateBasicGroup.CONSTRUCTOR =>
+        val basicGroup = obj.asInstanceOf[TdApi.UpdateBasicGroup]
+        for {
+          state <- userStateRef.get
+          _ <- userStateRef.update(
+            _.copy(basicGroups = state.basicGroups + (basicGroup.basicGroup.id -> basicGroup.basicGroup))
+          )
+        } yield ()
+      case TdApi.UpdateSupergroup.CONSTRUCTOR =>
+        val superGroup = obj.asInstanceOf[TdApi.UpdateSupergroup]
+        for {
+          state <- userStateRef.get
+          _ <- userStateRef.update(
+            _.copy(superGroups = state.superGroups + (superGroup.supergroup.id -> superGroup.supergroup))
+          )
+        } yield ()
+      case TdApi.UpdateSecretChat.CONSTRUCTOR =>
+        val secretChat = obj.asInstanceOf[TdApi.UpdateSecretChat]
+        for {
+          state <- userStateRef.get
+          _ <- userStateRef.update(
+            _.copy(secretChats = state.secretChats + (secretChat.secretChat.id -> secretChat.secretChat))
+          )
+        } yield ()
       case any => ().pure[F]
-        //println(s"Get unknown command in main handler: ${obj}").pure[F]
     }
   }
 
   def setChatOrder(chat: TdApi.Chat, order: Long): F[Unit] = {
     for {
       state <- userStateRef.get
-      _ <- Sync[F].delay(println(s"Get chat order: ${order}"))
+      //_ <- Sync[F].delay(println(s"Get chat order: ${order}"))
       _ <- if (chat.order != 0)
             userStateRef.update(_.copy(mainChatList = state.mainChatList.filter(_.order == chat.order)))
           else (()).pure[F]
       _ <- Sync[F].delay(chat.order = order)
       _ <- if (order != 0)
-            userStateRef.update(_.copy(mainChatList = chat :: state.mainChatList))
+            userStateRef.update(
+              _.copy(
+                mainChatList = (chat :: state.mainChatList).sortBy(_.order).takeRight(20).reverse
+              )
+            )
           else (()).pure[F]
     } yield ()
   }
 
   def authHandler(authEvent: TdApi.UpdateAuthorizationState, client: Client[F]): F[Unit] = {
-    println(s"kkk. Onj ${authEvent}. ${TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR}")
     authEvent.authorizationState match {
       case a: TdApi.AuthorizationStateWaitTdlibParameters =>
-        println("trrr")
         val parameters = new TdApi.TdlibParameters
         parameters.databaseDirectory = "tdlib"
         parameters.useMessageDatabase = true
@@ -73,10 +116,8 @@ case class Handler[F[_]: ConcurrentEffect](userStateRef: Ref[F, UserState[F]]) e
         parameters.systemVersion = "Unknown"
         parameters.applicationVersion = "0.1"
         parameters.enableStorageOptimizer = true
-        println("Here!")
         client.send(new TdApi.SetTdlibParameters(parameters), AuthRequestHandler[F]())
       case a: TdApi.AuthorizationStateWaitEncryptionKey =>
-        println("abc")
         client.send(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F]())
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>
         println("Enter phone number:")
@@ -91,7 +132,6 @@ case class Handler[F[_]: ConcurrentEffect](userStateRef: Ref[F, UserState[F]]) e
         val pass = StdIn.readLine()
         client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
       case a: TdApi.AuthorizationStateReady =>
-        println("Update state")
         userStateRef.update(_.copy(isAuth = true)).map(_ => ())
       case _ =>
         println(s"Got unknown event in auth. ${authEvent}").pure[F]

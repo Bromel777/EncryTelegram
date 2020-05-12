@@ -9,6 +9,8 @@ import org.encryfoundation.common.utils.Algos
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.userState.UserState
 
+import scala.util.Try
+
 case class EmptyHandlerWithQueue[F[_]: Concurrent](queue: Ref[F, List[TdApi.Object]]) extends ResultHandler[F] {
   /**
    * Callback called on result of query to TDLib or incoming update from TDLib.
@@ -65,7 +67,8 @@ case class MessagesHandler[F[_]: Concurrent](password: Option[String]) extends R
         messages.messages.map {
           _.content match {
             case txtMsg: MessageText =>
-              aes.decrypt(Algos.decode(txtMsg.text.text).get).map(_.toChar).mkString
+              Try(aes.decrypt(Algos.decode(txtMsg.text.text).get).map(_.toChar).mkString)
+                .getOrElse(txtMsg.text.text)
             case _ => "Unknown msg!"
           }
         }

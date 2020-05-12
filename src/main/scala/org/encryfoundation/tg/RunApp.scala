@@ -3,35 +3,19 @@ package org.encryfoundation.tg
 import java.io.File
 
 import cats.effect.concurrent.Ref
-import cats.effect.{Concurrent, ContextShift, ExitCode, IO, Resource, Sync, Timer}
+import cats.effect.{Concurrent, ExitCode, IO, IOApp, Resource, Sync, Timer}
 import cats.implicits._
 import fs2.Stream
 import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
-import org.encryfoundation.tg.commands.{CreatePrivateGroup, PrintChats, ReadChat, WriteSecure}
+import org.encryfoundation.tg.commands.{Command, CreatePrivateGroupChat, PrintChats, ReadChat, WriteSecure}
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.userState.UserState
-import scalafx.Includes._
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.application.{JFXApp, Platform}
-import scalafx.geometry.Insets
-import scalafx.scene.Scene
-import scalafx.scene.control.ButtonBar.ButtonData
-import scalafx.scene.control.{ButtonType, Dialog, _}
-import scalafx.scene.effect.DropShadow
-import scalafx.scene.layout.{GridPane, HBox}
-import scalafx.scene.paint.Color._
-import scalafx.scene.paint.{LinearGradient, Stops}
-import scalafx.scene.text.Text
 
-import scala.concurrent.ExecutionContext
 import scala.io.StdIn
 
-object RunApp extends JFXApp {
+object RunApp extends IOApp {
 
   System.loadLibrary("tdjni")
-
-  implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-  implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
 
   val program = for {
     queueRef <- Ref.of[IO, List[TdApi.Object]](List.empty)
@@ -62,8 +46,8 @@ object RunApp extends JFXApp {
     ) else Sync[F].delay(println("State auth - false"))
     _ <- Sync[F].delay(println(s"Chats: ${
       state.mainChatList.take(20).map(chat =>
-        if (state.privateGroups.contains(chat.id)) chat.title ++ s" [Private group] (${chat.id})"
-        else chat.title ++ s" (${chat.id})"
+        if (state.privateGroups.contains(chat.id)) chat.title ++ s" [Private group chat]"
+        else chat.title
       ).mkString("\n ")}."))
   } yield ()
 
@@ -84,20 +68,9 @@ object RunApp extends JFXApp {
         println(s"Your command: ${command}.")
         command
       }
-      _ <- if (command == "list")
-              PrintChats[F](client, userStateRef, db).run(command.split(" ").tail.toList)
-           else if (command.split(" ").head == "write")
-              WriteSecure[F](client, userStateRef, db).run(command.split(" ").tail.toList)
-           else if (command.split(" ").head == "createPrivateGroup") {
-            Sync[F].delay(CreatePrivateGroup[F](client, userStateRef, db)).flatMap{ handler =>
-              handler.run(command.split(" ").tail.toList)
-            }
-          } else if (command.split(" ").head == "read") {
-              ReadChat[F](client, userStateRef, db).run(command.split(" ").tail.toList)
-          } else if (command.split(" ").head == "writeSecure") {
-              WriteSecure[F](client, userStateRef, db).run(command.split(" ").tail.toList)
-          } else (Sync[F].delay(println(s"Receive unkown command: ${command}")))
-        _ <- onlyForReg(client, userStateRef, db)
+      _ <- Command.getCommands(client, userStateRef, db).find(_.name == command.split(" ").head)
+        .traverse(_.run(command.split(" ").tail.toList))
+      _ <- onlyForReg(client, userStateRef, db)
     } yield ()
 
   def sendMessage[F[_]: Concurrent](chatId: Long, msg: String, client: Client[F]): F[Unit] = {
@@ -121,5 +94,6 @@ object RunApp extends JFXApp {
     } yield ()
   }
 
-  anotherProg.compile.drain.as(ExitCode.Success).unsafeRunAsyncAndForget()
+  override def run(args: List[String]): IO[ExitCode] =
+    anotherProg.compile.drain.as(ExitCode.Success)
 }

@@ -52,6 +52,7 @@ libraryDependencies ++= Seq(
   "org.bouncycastle" % "bcprov-jdk15on" % "1.65",
   "org.encry" %% "encry-common" % "0.9.3",
   "org.iq80.leveldb" % "leveldb" % "0.9",
+  "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
 )
 
 val tg = (project in file(".")).settings(settings: _*)

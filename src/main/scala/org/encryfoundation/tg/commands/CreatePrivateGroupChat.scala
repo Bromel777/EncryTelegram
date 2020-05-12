@@ -8,11 +8,11 @@ import cats.implicits._
 import org.encryfoundation.tg.ChatCreationHandler
 import org.encryfoundation.tg.leveldb.Database
 
-case class CreatePrivateGroup[F[_]: Concurrent: Timer](client: Client[F],
-                                                       userStateRef: Ref[F, UserState[F]],
-                                                       db: Database[F]) extends Command[F] {
+case class CreatePrivateGroupChat[F[_]: Concurrent: Timer](client: Client[F],
+                                                           userStateRef: Ref[F, UserState[F]],
+                                                           db: Database[F]) extends Command[F] {
 
-  override val name: String = "createPrivateGroup"
+  override val name: String = "createPrivateGroupChat"
 
   override def run(args: List[String]): F[Unit] = for {
     _ <- createGroup(

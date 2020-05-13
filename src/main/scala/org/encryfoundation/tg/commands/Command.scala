@@ -22,6 +22,6 @@ object Command {
     ReadChat[F](client, userStateRef, db),
     SendTo[F](client, userStateRef),
     WriteSecure[F](client, userStateRef, db),
-    //CreatePrivateConference[F](client, userStateRef, db)
+    CreatePrivateConference[F](client, userStateRef, db)
   )
 }

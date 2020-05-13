@@ -48,9 +48,8 @@ libraryDependencies ++= Seq(
   "co.fs2" %% "fs2-core" % "2.1.0",
   "co.fs2" %% "fs2-io" % "2.1.0",
   "org.scalafx" %% "scalafx" % "12.0.2-R18",
-  "org.bouncycastle" % "bcprov-jdk15on" % "1.65",
   "org.encry" %% "encry-common" % "0.9.3",
-  //"org.encry" %% "cryptoAccumulator" % "0.1",
+  "org.encry" %% "cryptoAccumulator" % "0.0.4",
   "org.iq80.leveldb" % "leveldb" % "0.9",
   "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
 )

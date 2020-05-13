@@ -7,6 +7,7 @@ import cats.effect.{Resource, Sync}
 import cats.implicits._
 import org.encryfoundation.common.utils.Algos
 import org.iq80.leveldb.{DB, Options}
+import scorex.crypto.hash.Blake2b256
 
 trait Database[F[_]] {
   def put(key: Array[Byte], value: Array[Byte]): F[Unit]
@@ -15,7 +16,7 @@ trait Database[F[_]] {
 
 object Database {
 
-  val privateGroupChatsKey = Algos.hash("privateGroupChatsKey")
+  val privateGroupChatsKey = Blake2b256.hash("privateGroupChatsKey")
 
   final private case class Live[F[_]: Applicative](db: DB) extends Database[F] {
 

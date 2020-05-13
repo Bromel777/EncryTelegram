@@ -29,7 +29,6 @@ case class CreatePrivateConference[F[_]: Sync](client: Client[F],
   override def run(args: List[String]): F[Unit] = for {
     groupInfo <- Sync[F].delay(sevenSection.genElems(1))
     _ <- db.put(s"conf".getBytes(), args.head.getBytes())
-    _ <- Sync[F].delay(println(s"Group ${args.head} created!"))
     _ <- db.put(s"conf${args.head}MySecreteKsi".getBytes(), groupInfo._1.head.userKsi.toBytes)
     _ <- db.put(s"conf${args.head}MySecreteT".getBytes(), groupInfo._1.head.userKsi.toBytes)
   } yield ()

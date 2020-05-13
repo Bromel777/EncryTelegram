@@ -7,7 +7,7 @@ import cats.effect.{Concurrent, ExitCode, IO, IOApp, Resource, Sync, Timer}
 import cats.implicits._
 import fs2.Stream
 import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
-import org.encryfoundation.tg.commands.{Command, CreatePrivateGroupChat, PrintChats, ReadChat, WriteSecure}
+import org.encryfoundation.tg.commands.Command
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.userState.UserState
 

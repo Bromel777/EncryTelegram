@@ -47,11 +47,15 @@ val opts = Seq(
 libraryDependencies ++= Seq(
   "co.fs2" %% "fs2-core" % "2.1.0",
   "co.fs2" %% "fs2-io" % "2.1.0",
+  "eu.timepit" %% "refined"  % "0.9.14",
+  "org.typelevel" %% "simulacrum" % "1.0.0",
   "org.scalafx" %% "scalafx" % "12.0.2-R18",
   "org.encry" %% "encry-common" % "0.9.3",
   "org.encry" %% "cryptoAccumulator" % "0.0.4",
   "org.iq80.leveldb" % "leveldb" % "0.9",
   "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
 )
+
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 val tg = (project in file(".")).settings(settings: _*)

@@ -5,12 +5,13 @@ import cats.effect.concurrent.Ref
 import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
+import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.ChatCreationHandler
 import org.encryfoundation.tg.leveldb.Database
 
-case class CreatePrivateGroupChat[F[_]: Concurrent: Timer](client: Client[F],
-                                                           userStateRef: Ref[F, UserState[F]],
-                                                           db: Database[F]) extends Command[F] {
+case class CreatePrivateGroupChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
+                                                                   userStateRef: Ref[F, UserState[F]],
+                                                                   db: Database[F]) extends Command[F] {
 
   override val name: String = "createPrivateGroupChat"
 
@@ -32,6 +33,7 @@ case class CreatePrivateGroupChat[F[_]: Concurrent: Timer](client: Client[F],
     for {
       state <- stateRef.get
       userIds <- Concurrent[F].delay(users.flatMap(username => state.users.find(_._2.username == username)))
+      _ <- Logger[F].info(s"Create private chat with next group: ${groupname}")
       _ <- client.send(
         new TdApi.CreateNewBasicGroupChat(userIds.map(_._1).toArray, groupname),
         ChatCreationHandler[F](stateRef, password)

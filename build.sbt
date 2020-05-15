@@ -40,5 +40,6 @@ libraryDependencies ++= Seq(
 fork in run := true
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
 val tg = (project in file(".")).settings(settings: _*)

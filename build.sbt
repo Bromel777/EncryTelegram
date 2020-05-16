@@ -5,7 +5,7 @@ val settings: Seq[Def.Setting[String]] = Seq(
   name := "telegramDragon",
   version := "0.0.1",
   organization := "org.encryfoundation",
-  scalaVersion := "2.12.6",
+  scalaVersion := "2.12.8"
 )
 
 assemblyJarName in assembly := "telegramDragon.jar"
@@ -51,9 +51,10 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "simulacrum" % "1.0.0",
   "org.scalafx" %% "scalafx" % "12.0.2-R18",
   "org.encry" %% "encry-common" % "0.9.3",
-  "org.encry" %% "cryptoAccumulator" % "0.0.4",
+  "org.encry" %% "cryptoaccumulator" % "0.0.4",
   "org.iq80.leveldb" % "leveldb" % "0.9",
-  "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
+  "io.chrisdavenport" %% "log4cats-slf4j" % "1.1.1",
+  "ch.qos.logback" % "logback-core" % "1.2.3",
 )
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)

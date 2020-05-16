@@ -1,9 +1,7 @@
-package javaFX.controller;
+package org.javaFX.controller;
 
-import javaFX.EncryWindow;
+import org.javaFX.EncryWindow;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.stage.Stage;
 
 public class ActionHandler {
     private EncryWindow encryWindow ;

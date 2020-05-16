@@ -1,4 +1,4 @@
-package javaFX.model;
+package org.javaFX.model;
 
 import org.drinkless.tdlib.TdApi;
 

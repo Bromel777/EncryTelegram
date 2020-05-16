@@ -1,13 +1,12 @@
-package javaFX;
+package org.javaFX;
 
-import javaFX.controller.ActionHandler;
+import org.javaFX.controller.ActionHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import scalafx.scene.input.KeyCode;
 
 import java.io.IOException;
 

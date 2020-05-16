@@ -45,7 +45,6 @@ val opts = Seq(
 //javaOptions in compile ++= opts
 
 libraryDependencies ++= Seq(
-  "co.fs2" %% "fs2-core" % "2.1.0",
   "co.fs2" %% "fs2-io" % "2.1.0",
   "eu.timepit" %% "refined"  % "0.9.14",
   "org.typelevel" %% "simulacrum" % "1.0.0",

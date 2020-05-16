@@ -6,6 +6,8 @@ import cats.effect.concurrent.Ref
 import cats.effect.{Concurrent, ExitCode, IO, IOApp, Resource, Sync, Timer}
 import cats.implicits._
 import fs2.Stream
+import io.chrisdavenport.log4cats.Logger
+import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
 import org.encryfoundation.tg.commands.Command
 import org.encryfoundation.tg.leveldb.Database
@@ -19,12 +21,13 @@ object RunApp extends IOApp {
 
   val program = for {
     queueRef <- Ref.of[IO, List[TdApi.Object]](List.empty)
+    implicit0(logger: Logger[IO]) <- Slf4jLogger.create[IO]
     client <- Client[IO](EmptyHandlerWithQueue(queueRef))
     _ <- client.execute(new TdApi.SetLogVerbosityLevel(0))
     ref <- Ref.of[IO, UserState[IO]](UserState[IO](client = client))
     handler <- Handler(ref, queueRef)
     _ <- client.setUpdatesHandler(handler)
-  } yield (queueRef, client, ref)
+  } yield (queueRef, client, ref, logger)
 
   val database = for {
 //    file <- Resource.make[IO, File](IO.delay(new File("db")))(_ => IO.delay(println("File closed!")))
@@ -32,8 +35,9 @@ object RunApp extends IOApp {
     db <- Database[IO](new File("db"))
   } yield db
 
-  val anotherProg = Stream.eval(program).flatMap { case (queue, client, ref) =>
+  val anotherProg = Stream.eval(program).flatMap { case (queue, client, ref, logger) =>
     Stream.resource(database).flatMap { db =>
+      implicit val loggerForIo = logger
       client.run() concurrently Stream.eval(regComm(client, ref, db))
     }
   }
@@ -51,16 +55,16 @@ object RunApp extends IOApp {
       ).mkString("\n ")}."))
   } yield ()
 
-  def regComm[F[_]: Concurrent: Timer](client: Client[F],
-                                       userStateRef: Ref[F, UserState[F]],
-                                       db: Database[F]): F[Unit] = for {
+  def regComm[F[_]: Concurrent: Timer: Logger](client: Client[F],
+                                               userStateRef: Ref[F, UserState[F]],
+                                               db: Database[F]): F[Unit] = for {
     state <- userStateRef.get
     _ <- if (state.isAuth) onlyForReg(client, userStateRef, db) else regComm(client, userStateRef, db)
   } yield ()
 
-  def onlyForReg[F[_]: Concurrent: Timer](client: Client[F],
-                                          userStateRef: Ref[F, UserState[F]],
-                                          db: Database[F]): F[Unit] =
+  def onlyForReg[F[_]: Concurrent: Timer: Logger](client: Client[F],
+                                                  userStateRef: Ref[F, UserState[F]],
+                                                  db: Database[F]): F[Unit] =
     for {
       command <- Sync[F].delay {
         println("Write command. ('list')")

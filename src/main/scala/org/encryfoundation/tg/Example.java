@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-package org.drinkless.tdlib.example;
+package org.encryfoundation.tg;
 
 import org.drinkless.tdlib.Client123;
 import org.drinkless.tdlib.TdApi;
@@ -110,7 +110,6 @@ public final class Example {
                 parameters.systemVersion = "Unknown";
                 parameters.applicationVersion = "1.0";
                 parameters.enableStorageOptimizer = true;
-
                 client123.send(new TdApi.SetTdlibParameters(parameters), new AuthorizationRequestHandler());
                 break;
             case TdApi.AuthorizationStateWaitEncryptionKey.CONSTRUCTOR:

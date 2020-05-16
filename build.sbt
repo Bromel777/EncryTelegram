@@ -53,7 +53,7 @@ libraryDependencies ++= Seq(
   "org.encry" %% "encry-common" % "0.9.3",
   "org.encry" %% "cryptoAccumulator" % "0.0.4",
   "org.iq80.leveldb" % "leveldb" % "0.9",
-  "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
+  "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1"
 )
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)

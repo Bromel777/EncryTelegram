@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.javaFX.EncryWindow;
 
 public class InputDataHandler {
 
@@ -19,7 +20,6 @@ public class InputDataHandler {
     private Button confirmVCButton;
     @FXML
     private Button signInButton;
-
 
     public InputDataHandler() {
     }

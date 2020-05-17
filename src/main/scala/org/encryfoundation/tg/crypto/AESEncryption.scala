@@ -9,7 +9,8 @@ import java.security.NoSuchAlgorithmException
 import java.security.NoSuchProviderException
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.encryfoundation.common.utils.Algos
+import scorex.crypto.encode.Base16
+import scorex.crypto.hash.Blake2b256
 
 case class AESEncryption(keyBytes: Array[Byte]) {
 
@@ -18,7 +19,7 @@ case class AESEncryption(keyBytes: Array[Byte]) {
   Security.addProvider(new BouncyCastleProvider)
 
   val cipher = Cipher.getInstance("AES/CBC/PKCS7PADDING", "BC")
-  var key: SecretKeySpec = new SecretKeySpec(Algos.hash(keyBytes), "AES")
+  var key: SecretKeySpec = new SecretKeySpec(Blake2b256.hash(keyBytes), "AES")
 
   import javax.crypto.spec.IvParameterSpec
   import java.security.spec.AlgorithmParameterSpec
@@ -28,12 +29,12 @@ case class AESEncryption(keyBytes: Array[Byte]) {
   def encrypt(plainText: Array[Byte]): Array[Byte] = {
     cipher.init(Cipher.ENCRYPT_MODE, key, IVspec)
     val cipherText = cipher.doFinal(plainText)
-    println(s"Cipher text: ${Algos.encode(cipherText)}")
+    println(s"Cipher text: ${Base16.encode(cipherText)}")
     cipherText
   }
 
   def decrypt(cipherText: Array[Byte]): Array[Byte] = {
-    println(s"Receive: ${Algos.encode(cipherText)}")
+    println(s"Receive: ${Base16.encode(cipherText)}")
     cipher.init(Cipher.DECRYPT_MODE, key, IVspec)
     cipher.doFinal(cipherText)
   }

@@ -6,7 +6,7 @@ import org.drinkless.tdlib.Client
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
-import org.encryfoundation.common.utils.Algos
+import scorex.crypto.encode.Base16
 
 case class ShowPrivateConferences[F[_]: Sync](client: Client[F],
                                               userStateRef: Ref[F, UserState[F]],
@@ -19,8 +19,8 @@ case class ShowPrivateConferences[F[_]: Sync](client: Client[F],
     _ <- if (confPosName.isEmpty) Sync[F].delay(println("There is no private confs"))
          else for {
             confName <- Sync[F].delay(confPosName.get.map(_.toChar).mkString)
-            userKsi <- db.get(s"conf${confName}MySecreteKsi".getBytes()).map(result => Algos.encode(result.get))
-            userT <- db.get(s"conf${confName}MySecreteT".getBytes()).map(result => Algos.encode(result.get))
+            userKsi <- db.get(s"conf${confName}MySecreteKsi".getBytes()).map(result => Base16.encode(result.get))
+            userT <- db.get(s"conf${confName}MySecreteT".getBytes()).map(result => Base16.encode(result.get))
             _ <- Sync[F].delay(println(s"ConfName: ${confName}. My Ksi: ${userKsi}. My T: ${userT}"))
          }  yield ()
   } yield ()

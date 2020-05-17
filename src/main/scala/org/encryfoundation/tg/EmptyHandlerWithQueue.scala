@@ -5,9 +5,9 @@ import cats.implicits._
 import cats.effect.concurrent.Ref
 import org.drinkless.tdlib.TdApi.{MessageText, Messages}
 import org.drinkless.tdlib.{Client123, ResultHandler, TdApi}
-import org.encryfoundation.common.utils.Algos
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.userState.UserState
+import scorex.crypto.encode.Base16
 
 import scala.util.Try
 
@@ -67,7 +67,7 @@ case class MessagesHandler[F[_]: Concurrent](password: Option[String]) extends R
         messages.messages.map {
           _.content match {
             case txtMsg: MessageText =>
-              Try(aes.decrypt(Algos.decode(txtMsg.text.text).get).map(_.toChar).mkString)
+              Try(aes.decrypt(Base16.decode(txtMsg.text.text).get).map(_.toChar).mkString)
                 .getOrElse(txtMsg.text.text)
             case _ => "Unknown msg!"
           }

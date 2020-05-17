@@ -1,7 +1,6 @@
 package org.encryfoundation.tg.leveldb
 
 import cats.effect.Sync
-import org.encryfoundation.common.utils.Algos
 import org.iq80.leveldb.DBFactory
 
 import scala.util.Try

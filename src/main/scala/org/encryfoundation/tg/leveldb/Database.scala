@@ -5,7 +5,6 @@ import java.io.File
 import cats.Applicative
 import cats.effect.{Resource, Sync}
 import cats.implicits._
-import org.encryfoundation.common.utils.Algos
 import org.iq80.leveldb.{DB, Options}
 import scorex.crypto.hash.Blake2b256
 

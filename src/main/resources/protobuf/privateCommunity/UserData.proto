@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+message UserData {
+    bytes userKsi = 1;
+    bytes userT = 2;
+    bytes publicKey1 = 3;
+    bytes publicKey2 = 4;
+    bytes commonPublicKey = 5;
+}

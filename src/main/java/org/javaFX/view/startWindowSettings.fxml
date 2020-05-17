@@ -7,19 +7,19 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="403.0" prefWidth="623.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="403.0" prefWidth="623.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.view.InputDataHandler">
     <children>
         <Label layoutX="23.0" layoutY="16.0" prefHeight="30.0" prefWidth="387.0" text="Welcome to Encry Telegram Client">
             <font>
                 <Font name="Centaur" size="24.0" />
             </font>
         </Label>
-        <Button id="cancelButton2" cancelButton="true" layoutX="320.0" layoutY="337.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="270.0" text="Cancel">
+        <Button id="cancelButton2" fx:id="cancelButton" cancelButton="true" layoutX="320.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleCancelAction" prefHeight="46.0" prefWidth="270.0" text="Cancel">
             <font>
                 <Font name="Centaur" size="24.0" />
             </font>
         </Button>
-        <Button id="signInButton" defaultButton="true" disable="true" layoutX="23.0" layoutY="337.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="270.0" text="Sign in">
+        <Button id="signInButton" fx:id="signInButton" defaultButton="true" disable="true" layoutX="23.0" layoutY="337.0" mnemonicParsing="false" onAction="#singInAction" prefHeight="46.0" prefWidth="270.0" text="Sign in">
             <font>
                 <Font name="Centaur" size="24.0" />
             </font>
@@ -41,27 +41,27 @@
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </Label>
-                <TextField id="phoneNumber2" GridPane.columnIndex="1">
+                <TextField fx:id="phoneNumber" GridPane.columnIndex="1">
                     <font>
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </TextField>
-                <TextField id="verificationCode2" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <TextField fx:id="verificationCode" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <font>
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </TextField>
-                <PasswordField id="password2" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <PasswordField fx:id="password" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <font>
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </PasswordField>
-            <Button alignment="CENTER" mnemonicParsing="false" text="Confirm" GridPane.columnIndex="2">
+            <Button fx:id="confirmNumberButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleConfirmNumberAction" text="Confirm" GridPane.columnIndex="2">
                <font>
                   <Font name="Centaur" size="24.0" />
                </font>
             </Button>
-            <Button disable="true" mnemonicParsing="false" text="Confirm" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <Button fx:id="confirmVCButton" disable="true" mnemonicParsing="false" onAction="#handleConfirmVCAction" text="Confirm" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <font>
                   <Font name="Centaur" size="24.0" />
                </font>

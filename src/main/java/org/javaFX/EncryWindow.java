@@ -1,12 +1,12 @@
 package org.javaFX;
 
-import org.javaFX.controller.ActionHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.javaFX.view.InputDataHandler;
 
 import java.io.IOException;
 
@@ -14,7 +14,6 @@ public class EncryWindow extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    private ActionHandler controller;
 
     public static void main(String[] args) {
         launch(args);
@@ -26,7 +25,6 @@ public class EncryWindow extends Application {
         initRootLayout();
         showStartSettingsWindow();
         primaryStage.show();
-        //initActionHandler();
     }
 
     private void initBasicFields(Stage primaryStage){
@@ -47,9 +45,10 @@ public class EncryWindow extends Application {
         }
     }
 
-   /* private void initActionHandler(){
-        controller = new ActionHandler(this);
-    }*/
+    public void initBasicHandler(FXMLLoader loader){
+        InputDataHandler controller = loader.getController();
+        controller.setStage(primaryStage);
+    }
 
     public void showStartSettingsWindow() {
         try {
@@ -57,10 +56,13 @@ public class EncryWindow extends Application {
             loader.setLocation(EncryWindow.class.getResource("view/startWindowSettings.fxml"));
             AnchorPane personOverview = (AnchorPane) loader.load();
             rootLayout.setCenter(personOverview);
-
+            initBasicHandler(loader);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
 }

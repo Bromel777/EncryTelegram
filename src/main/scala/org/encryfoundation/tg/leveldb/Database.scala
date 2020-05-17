@@ -15,7 +15,7 @@ trait Database[F[_]] {
 
 object Database {
 
-  val privateGroupChatsKey = Algos.hash("privateGroupChatsKey")
+  val privateGroupChatsKey = Blake2b256.hash("privateGroupChatsKey")
 
   final private case class Live[F[_]: Applicative](db: DB) extends Database[F] {
 

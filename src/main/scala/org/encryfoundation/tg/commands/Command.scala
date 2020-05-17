@@ -2,6 +2,7 @@ package org.encryfoundation.tg.commands
 
 import cats.effect.{Concurrent, Timer}
 import cats.effect.concurrent.Ref
+import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.Client
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.userState.UserState
@@ -14,9 +15,9 @@ trait Command[F[_]] {
 }
 
 object Command {
-  def getCommands[F[_]: Concurrent: Timer](client: Client[F],
-                                           userStateRef: Ref[F, UserState[F]],
-                                           db: Database[F]): List[Command[F]] = List(
+  def getCommands[F[_]: Concurrent: Timer: Logger](client: Client[F],
+                                                   userStateRef: Ref[F, UserState[F]],
+                                                   db: Database[F]): List[Command[F]] = List(
     CreatePrivateGroupChat[F](client, userStateRef, db),
     PrintChats[F](client, userStateRef, db),
     ReadChat[F](client, userStateRef, db),

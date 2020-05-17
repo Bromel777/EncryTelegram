@@ -3,13 +3,14 @@ package org.encryfoundation.tg
 import cats.effect.concurrent.Ref
 import cats.effect.{ConcurrentEffect, Sync}
 import cats.implicits._
+import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.TdApi.MessageText
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.userState.UserState
 
 import scala.io.StdIn
 
-case class Handler[F[_]: ConcurrentEffect](userStateRef: Ref[F, UserState[F]]) extends ResultHandler[F] {
+case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserState[F]]) extends ResultHandler[F] {
 
   /**
    * Callback called on result of query to TDLib or incoming update from TDLib.
@@ -116,7 +117,9 @@ case class Handler[F[_]: ConcurrentEffect](userStateRef: Ref[F, UserState[F]]) e
         parameters.systemVersion = "Unknown"
         parameters.applicationVersion = "0.1"
         parameters.enableStorageOptimizer = true
-        client.send(new TdApi.SetTdlibParameters(parameters), AuthRequestHandler[F]())
+        Logger[F].info("Setting td-lib settings") >> client.send(
+          new TdApi.SetTdlibParameters(parameters), AuthRequestHandler[F]()
+        )
       case a: TdApi.AuthorizationStateWaitEncryptionKey =>
         client.send(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F]())
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>
@@ -140,8 +143,8 @@ case class Handler[F[_]: ConcurrentEffect](userStateRef: Ref[F, UserState[F]]) e
 }
 
 object Handler {
-  def apply[F[_]: ConcurrentEffect](stateRef: Ref[F, UserState[F]],
-                                    queueRef: Ref[F, List[TdApi.Object]]): F[Handler[F]] = {
+  def apply[F[_]: ConcurrentEffect: Logger](stateRef: Ref[F, UserState[F]],
+                                            queueRef: Ref[F, List[TdApi.Object]]): F[Handler[F]] = {
     val handler = new Handler(stateRef)
     for {
       list <- queueRef.get

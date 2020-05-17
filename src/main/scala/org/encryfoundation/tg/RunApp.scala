@@ -30,8 +30,6 @@ object RunApp extends IOApp {
   } yield (queueRef, client, ref, logger)
 
   val database = for {
-//    file <- Resource.make[IO, File](IO.delay(new File("db")))(_ => IO.delay(println("File closed!")))
-//    _ <- Resource.pure[IO, Boolean](file.mkdir())
     db <- Database[IO](new File("db"))
   } yield db
 

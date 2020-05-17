@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-import "UserData.proto";
-
-message CommunityUser {
-    string userTelegramLogin = 1;
-    UserData data = 2;
-}

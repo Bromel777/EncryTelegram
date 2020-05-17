@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-import "CommunityUser.proto";
-
-message PrivateCommunity {
-    string name = 1;
-    repeated CommunityUser users = 2;
-}

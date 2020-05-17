@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+import "CommunityUserProto.proto";
+
+message PrivateCommunityProtoMessage {
+    string name = 1;
+    repeated CommunityUserProtoMessage users = 2;
+}

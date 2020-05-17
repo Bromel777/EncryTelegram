@@ -14,6 +14,8 @@ unmanagedResourceDirectories in Compile ++= Seq(
   baseDirectory.value / "tdlib"
 )
 
+unmanagedResourceDirectories in Compile += { baseDirectory.value / "src/main/resources" }
+
 resolvers ++= Seq(
   "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/",
   "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/",
@@ -35,7 +37,7 @@ libraryDependencies ++= Seq(
   "org.iq80.leveldb" % "leveldb" % "0.9",
   "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
   "org.slf4j" % "slf4j-simple" % "1.7.26",
-  "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
+  "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "src/protobuf",
 )
 
 fork in run := true
@@ -46,5 +48,5 @@ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 val tg = (project in file(".")).settings(settings: _*)
 
 PB.targets in Compile := Seq(
-  scalapb.gen() -> (sourceManaged in Compile).value / "protobuf"
+  scalapb.gen() -> (sourceManaged in Compile).value / "src/protobuf"
 )

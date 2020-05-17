@@ -1,6 +1,7 @@
 syntax = "proto3";
 
-message UserData {
+message UserDataProtoMessage {
+
     bytes userKsi = 1;
     bytes userT = 2;
     bytes publicKey1 = 3;

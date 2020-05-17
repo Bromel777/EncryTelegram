@@ -33,12 +33,13 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "simulacrum" % "1.0.0",
   "org.encry" %% "cryptoaccumulator" % "0.0.6",
   "org.iq80.leveldb" % "leveldb" % "0.9",
-  //"io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
-  //"org.slf4j" % "slf4j-simple" % "1.7.26",
+  "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
+  "org.slf4j" % "slf4j-simple" % "1.7.26",
 )
 
 fork in run := true
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
 val tg = (project in file(".")).settings(settings: _*)

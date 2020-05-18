@@ -11,6 +11,7 @@ import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
 import org.encryfoundation.tg.commands.Command
 import org.encryfoundation.tg.leveldb.Database
+import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
 
 import scala.io.StdIn
@@ -70,7 +71,8 @@ object RunApp extends IOApp {
         println(s"Your command: ${command}.")
         command
       }
-      _ <- Command.getCommands(client, userStateRef, db).find(_.name == command.split(" ").head)
+      confService <- PrivateConferenceService(db)
+      _ <- Command.getCommands(client, userStateRef, db)(confService).find(_.name == command.split(" ").head)
         .traverse(_.run(command.split(" ").tail.toList))
       _ <- onlyForReg(client, userStateRef, db)
     } yield ()

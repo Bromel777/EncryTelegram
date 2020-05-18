@@ -12,10 +12,13 @@ import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
 import org.encryfoundation.sectionSeven.SectionSeven
 import org.encryfoundation.tg.community.{CommunityUser, PrivateCommunity}
 import org.encryfoundation.tg.community.CommunityOps.ops._
+import org.encryfoundation.tg.services.PrivateConferenceService
 
 case class CreatePrivateConference[F[_]: Sync: Logger](client: Client[F],
                                                        userStateRef: Ref[F, UserState[F]],
-                                                       db: Database[F]) extends Command[F]{
+                                                       db: Database[F])(
+                                                       privateConfService: PrivateConferenceService[F]
+                                                       ) extends Command[F]{
 
   val pairing: Pairing = PairingFactory.getPairing("src/main/resources/properties/a.properties")
 
@@ -30,13 +33,6 @@ case class CreatePrivateConference[F[_]: Sync: Logger](client: Client[F],
   override val name: String = "createConference"
 
   override def run(args: List[String]): F[Unit] = for {
-    groupInfo <- Sync[F].delay(sevenSection.genElems(1))
-    user <- Sync[F].delay(CommunityUser("MyLogin", groupInfo._1.head))
-    community <- Sync[F].delay(PrivateCommunity(args.head, List.empty))
-    _ <- Logger[F].info(s"Private local conference with name ${args.head} created!")
-    newCommunity <- Sync[F].delay(community |+| user)
-    _ <- db.put(s"conf".getBytes(), args.head.getBytes())
-    _ <- db.put(s"conf${args.head}MySecreteKsi".getBytes(), groupInfo._1.head.userKsi.toBytes)
-    _ <- db.put(s"conf${args.head}MySecreteT".getBytes(), groupInfo._1.head.userKsi.toBytes)
+    _ <- privateConfService.createConference(args.head, args.tail)
   } yield ()
 }

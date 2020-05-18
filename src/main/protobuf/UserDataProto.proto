@@ -3,8 +3,11 @@ syntax = "proto3";
 message UserDataProtoMessage {
 
     bytes userKsi = 1;
-    bytes userT = 2;
-    bytes publicKey1 = 3;
-    bytes publicKey2 = 4;
-    bytes commonPublicKey = 5;
+    bytes g1Gen = 2;
+    bytes g2Gen = 3;
+    bytes ZrGen = 4;
+    bytes userT = 5;
+    bytes publicKey1 = 6;
+    bytes publicKey2 = 7;
+    bytes commonPublicKey = 8;
 }

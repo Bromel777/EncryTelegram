@@ -32,6 +32,8 @@ libraryDependencies ++= Seq(
 //  "co.fs2" %% "fs2-core" % "2.1.0",
   "co.fs2" %% "fs2-io" % "2.1.0",
   "eu.timepit" %% "refined"  % "0.9.14",
+  "com.github.pureconfig" %% "pureconfig" % "0.12.3",
+  "com.github.pureconfig" %% "pureconfig-cats-effect" % "0.12.2",
   "org.typelevel" %% "simulacrum" % "1.0.0",
   "org.encry" %% "cryptoaccumulator" % "0.0.6",
   "org.iq80.leveldb" % "leveldb" % "0.9",

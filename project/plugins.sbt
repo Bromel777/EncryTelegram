@@ -1,0 +1,1 @@
+resolvers += Resolver.bintrayRepo("kamon-io", "sbt-plugins")

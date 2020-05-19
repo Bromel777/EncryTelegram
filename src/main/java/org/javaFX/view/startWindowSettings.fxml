@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
@@ -24,7 +25,7 @@
                 <Font name="Centaur" size="24.0" />
             </font>
         </Button>
-        <GridPane alignment="CENTER" focusTraversable="true" layoutX="-2.0" layoutY="46.0" prefHeight="301.0" prefWidth="663.0" vgap="10.0">
+        <GridPane alignment="CENTER" focusTraversable="true" layoutX="-2.0" layoutY="48.0" prefHeight="299.0" prefWidth="623.0" vgap="10.0">
             <children>
                 <Label prefHeight="30.0" prefWidth="212.0" text="Phone number:">
                     <font>
@@ -56,21 +57,37 @@
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </PasswordField>
-            <Button fx:id="confirmNumberButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleConfirmNumberAction" text="Confirm" GridPane.columnIndex="2">
+            <Button fx:id="confirmNumberButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleConfirmNumberAction" text="Confirm" GridPane.columnIndex="3">
                <font>
                   <Font name="Centaur" size="24.0" />
                </font>
             </Button>
-            <Button fx:id="confirmVCButton" disable="true" mnemonicParsing="false" onAction="#handleConfirmVCAction" text="Confirm" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <Button fx:id="confirmVCButton" disable="true" mnemonicParsing="false" onAction="#handleConfirmVCAction" text="Confirm" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <font>
                   <Font name="Centaur" size="24.0" />
                </font>
             </Button>
+            <Label prefHeight="39.0" prefWidth="24.0" GridPane.columnIndex="2">
+               <graphic>
+                  <ImageView fx:id="resetPhoneNumberImage" fitHeight="45.0" fitWidth="37.0" onMouseClicked="#resetPhoneNumberInputAction" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </Label>
+            <Label prefHeight="46.0" prefWidth="26.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <graphic>
+                  <ImageView fx:id="resetVCImage" disable="true" fitHeight="46.0" fitWidth="38.0" onMouseClicked="#resetVCAction" pickOnBounds="true" preserveRatio="true" visible="false" />
+               </graphic>
+            </Label>
+            <Label prefHeight="46.0" prefWidth="29.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <graphic>
+                  <ImageView fx:id="resetPasswordImage" disable="true" fitHeight="46.0" fitWidth="39.0" onMouseClicked="#resetPasswordAction" pickOnBounds="true" preserveRatio="true" visible="false" />
+               </graphic>
+            </Label>
             </children>
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="197.0" minWidth="10.0" prefWidth="175.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="252.0" minWidth="10.0" prefWidth="228.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="206.0" minWidth="10.0" prefWidth="39.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="159.0" minWidth="10.0" prefWidth="136.0" />
             </columnConstraints>
             <padding>
                 <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />

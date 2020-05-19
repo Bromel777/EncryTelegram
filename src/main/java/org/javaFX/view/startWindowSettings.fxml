@@ -8,7 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="403.0" prefWidth="623.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.view.InputDataHandler">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="403.0" prefWidth="623.0" stylesheets="@defaultSheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.view.InputDataHandler">
     <children>
         <Label layoutX="23.0" layoutY="16.0" prefHeight="30.0" prefWidth="387.0" text="Welcome to Encry Telegram Client">
             <font>
@@ -67,21 +67,21 @@
                   <Font name="Centaur" size="24.0" />
                </font>
             </Button>
-            <Label prefHeight="39.0" prefWidth="24.0" GridPane.columnIndex="2">
-               <graphic>
-                  <ImageView fx:id="resetPhoneNumberImage" fitHeight="45.0" fitWidth="37.0" onMouseClicked="#resetPhoneNumberInputAction" pickOnBounds="true" preserveRatio="true" />
-               </graphic>
-            </Label>
-            <Label prefHeight="46.0" prefWidth="26.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
-               <graphic>
-                  <ImageView fx:id="resetVCImage" disable="true" fitHeight="46.0" fitWidth="38.0" onMouseClicked="#resetVCAction" pickOnBounds="true" preserveRatio="true" visible="false" />
-               </graphic>
-            </Label>
-            <Label prefHeight="46.0" prefWidth="29.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
-               <graphic>
-                  <ImageView fx:id="resetPasswordImage" disable="true" fitHeight="46.0" fitWidth="39.0" onMouseClicked="#resetPasswordAction" pickOnBounds="true" preserveRatio="true" visible="false" />
-               </graphic>
-            </Label>
+            <ImageView id="resetPNImage" fx:id="resetPhoneNumberImageView" fitHeight="45.0" fitWidth="37.0" onMouseClicked="#resetPhoneNumberInputAction" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                <image>
+                    <Image url="@../../../../resources/images/reset.png" />
+                </image>
+            </ImageView>
+            <ImageView fx:id="resetVCImageView" disable="true" fitHeight="46.0" fitWidth="38.0" onMouseClicked="#resetVCAction" pickOnBounds="true" preserveRatio="true" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <image>
+                  <Image url="@../../../../resources/images/reset.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="resetPasswordImage" disable="true" fitHeight="46.0" fitWidth="39.0" onMouseClicked="#resetPasswordAction" pickOnBounds="true" preserveRatio="true" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <image>
+                  <Image url="@../../../../resources/images/reset.png" />
+               </image>
+            </ImageView>
             </children>
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="197.0" minWidth="10.0" prefWidth="175.0" />

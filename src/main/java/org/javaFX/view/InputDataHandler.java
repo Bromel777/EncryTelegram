@@ -6,7 +6,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import org.javaFX.EncryWindow;
 
 public class InputDataHandler {
 
@@ -15,7 +14,7 @@ public class InputDataHandler {
     @FXML
     private TextField phoneNumber;
     @FXML
-    private ImageView resetPhoneNumberImage;
+    private ImageView resetPhoneNumberImageView;
     @FXML
     private TextField verificationCode;
     @FXML
@@ -23,24 +22,13 @@ public class InputDataHandler {
     @FXML
     private Button confirmVCButton;
     @FXML
-    private ImageView resetVCImage;
+    private ImageView resetVCImageView;
     @FXML
     private ImageView resetPasswordImage;
     @FXML
     private Button signInButton;
 
-    private final String imageCrossPath = "file:src/main/resources/images/simpleCross.png";
-
-
     public InputDataHandler() {
-        initImageViews();
-    }
-
-    private void initImageViews(){
-        Image crossImage = new Image(getClass().getResourceAsStream(imageCrossPath));
-        resetPhoneNumberImage = new ImageView(crossImage);
-        resetVCImage = new ImageView(crossImage);
-        resetPasswordImage = new ImageView(crossImage);
     }
 
     public void setStage(Stage stage) {
@@ -82,8 +70,8 @@ public class InputDataHandler {
     public void resetPhoneNumberInputAction(){
         System.out.println("hello from reset number");
         phoneNumber.setText("");
-        resetVCImage.setVisible(true);
-        resetVCImage.setDisable(false);
+        resetVCImageView.setVisible(true);
+        resetVCImageView.setDisable(false);
     }
 
     @FXML

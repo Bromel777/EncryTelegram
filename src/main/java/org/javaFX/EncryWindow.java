@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -41,6 +42,7 @@ public class EncryWindow extends Application {
             rootLayout = (BorderPane) loader.load();
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -49,6 +51,7 @@ public class EncryWindow extends Application {
 
     public void initBasicHandler(FXMLLoader loader){
         InputDataHandler controller = loader.getController();
+        controller.setEncryWindow(this);
         controller.setStage(primaryStage);
     }
 
@@ -64,20 +67,31 @@ public class EncryWindow extends Application {
         }
     }
 
-/*
+
     public void launchMainWindow() {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(EncryWindow.class.getResource("view/mainWindowSettings.fxml"));
             AnchorPane mainOverView = (AnchorPane) loader.load();
             rootLayout.setCenter(mainOverView);
+            initMainDataHandler(loader);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
-        public Stage getPrimaryStage () {
+    private void initMainDataHandler(FXMLLoader loader){
+        InputDataHandler controller = loader.getController();
+        controller.setStage(primaryStage);
+    }
+
+
+    public Stage getPrimaryStage () {
             return primaryStage;
         }
+
+    public BorderPane getRootLayout() {
+        return rootLayout;
+    }
 }
 

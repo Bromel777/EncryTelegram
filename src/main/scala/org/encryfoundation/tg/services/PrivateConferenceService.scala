@@ -18,6 +18,7 @@ trait PrivateConferenceService[F[_]] {
 }
 
 object PrivateConferenceService {
+
   private class Live[F[_]: Sync: Logger](db: Database[F]) extends PrivateConferenceService[F] {
 
     private val conferencesKey = Blake2b256("Conferences")

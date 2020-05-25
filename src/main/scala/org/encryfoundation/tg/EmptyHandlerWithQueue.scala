@@ -39,6 +39,22 @@ case class EmptyHandler[F[_]: Concurrent]() extends ResultHandler[F] {
   }
 }
 
+case class SecretChatHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]]) extends ResultHandler[F]{
+  override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
+    case TdApi.Chat.CONSTRUCTOR =>
+      for {
+        state <- stateRef.get
+        _ <- Sync[F].delay(println(s"Receive: ${obj}"))
+        _ <- stateRef.update(
+          _.copy(
+            mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
+          )
+        )
+      } yield ()
+    case _ => ().pure[F]
+  }
+}
+
 case class ChatCreationHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]], password: String) extends ResultHandler[F] {
   override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
     case TdApi.Chat.CONSTRUCTOR =>

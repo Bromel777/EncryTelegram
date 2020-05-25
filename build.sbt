@@ -23,13 +23,8 @@ resolvers ++= Seq(
   "Typesafe maven releases" at "https://repo.typesafe.com/typesafe/maven-releases/"
 )
 
-//javaOptions in run ++= opts
-//javaOptions in compile ++= opts
 
 libraryDependencies ++= Seq(
-//  "org.typelevel" %% "cats-core" % "2.0.0",
-//  "org.typelevel" %% "cats-effect" % "2.1.3",
-//  "co.fs2" %% "fs2-core" % "2.1.0",
   "co.fs2" %% "fs2-io" % "2.1.0",
   "eu.timepit" %% "refined"  % "0.9.14",
   "com.github.pureconfig" %% "pureconfig" % "0.12.3",

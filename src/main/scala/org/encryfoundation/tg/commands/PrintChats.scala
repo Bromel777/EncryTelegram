@@ -6,6 +6,7 @@ import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
 import org.encryfoundation.tg.RunApp.getChats
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
+import org.drinkless.tdlib.TdApi.ChatTypeSecret
 import org.encryfoundation.tg.leveldb.Database
 
 case class PrintChats[F[_]: Concurrent: Timer](client: Client[F],
@@ -26,6 +27,7 @@ case class PrintChats[F[_]: Concurrent: Timer](client: Client[F],
         state.mainChatList.take(20).map(chat =>
           if (state.privateGroups.contains(chat.id) ||
             dbChats.exists(_.map(_.toChar).mkString == chat.title)) chat.title ++ s" [Private group]"
+          else if(chat.`type`.isInstanceOf[ChatTypeSecret]) chat.title ++ s" [Secret chat]"
           else chat.title
         ).mkString("\n ")}."))
     } yield ()

@@ -24,9 +24,11 @@ object Command {
     CreatePrivateGroupChat[F](client, userStateRef, db),
     PrintChats[F](client, userStateRef, db),
     ReadChat[F](client, userStateRef, db),
-    SendTo[F](client, userStateRef),
+    SendToChat[F](client, userStateRef),
     WriteSecure[F](client, userStateRef, db),
     CreatePrivateConference[F](client, userStateRef, db)(confService),
-    ShowPrivateConferences[F](client, userStateRef, db)(confService)
+    ShowPrivateConferences[F](client, userStateRef, db)(confService),
+    CreatePrivateChat[F](client, userStateRef),
+    SendToSecretChat[F](client, userStateRef, db)
   )
 }

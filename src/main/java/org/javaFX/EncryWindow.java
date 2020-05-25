@@ -8,14 +8,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.javaFX.model.JUserState;
 import org.javaFX.view.InputDataHandler;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class EncryWindow extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
+    public static AtomicReference<JUserState> state = new AtomicReference<JUserState>(new JUserState());
 
     public static void main(String[] args) {
         launch(args);
@@ -53,6 +56,14 @@ public class EncryWindow extends Application {
         InputDataHandler controller = loader.getController();
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
+        controller.setState(this.state);
+    }
+
+    public void updateControllerState(FXMLLoader loader){
+        InputDataHandler controller = loader.getController();
+        controller.setEncryWindow(this);
+        controller.setStage(primaryStage);
+        controller.setState(this.state);
     }
 
     public void launchStartWindow() {

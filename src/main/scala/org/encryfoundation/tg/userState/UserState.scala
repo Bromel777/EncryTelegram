@@ -3,6 +3,10 @@ package org.encryfoundation.tg.userState
 import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.pipelines.Pipeline
 import scala.collection.SortedMap
+import java.util.concurrent.atomic.AtomicReference
+
+import org.drinkless.tdlib.{Client, Client123, TdApi}
+import org.javaFX.model.JUserState
 
 case class UserState[F[_]](chatList: List[TdApi.Chat] = List.empty,
                            mainChatList: SortedMap[Long, TdApi.Chat] = SortedMap.empty[Long, TdApi.Chat],
@@ -15,4 +19,5 @@ case class UserState[F[_]](chatList: List[TdApi.Chat] = List.empty,
                            superGroups: Map[Int, TdApi.Supergroup] = Map.empty,
                            secretChats: Map[Int, TdApi.SecretChat] = Map.empty,
                            isAuth: Boolean = false,
-                           client: Client[F])
+                           client: Client[F],
+                           javaState: AtomicReference[JUserState])

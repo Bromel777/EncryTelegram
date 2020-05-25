@@ -10,8 +10,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
+import org.javaFX.model.JUserState;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class InputDataHandler {
 
@@ -36,6 +38,8 @@ public class InputDataHandler {
 
     private EncryWindow encryWindow;
 
+    public AtomicReference<JUserState> state;
+
     public InputDataHandler () {}
 
     public void setEncryWindow(EncryWindow encryWindow) {
@@ -44,6 +48,10 @@ public class InputDataHandler {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public void setState(AtomicReference<JUserState> state) {
+        this.state = state;
     }
 
     @FXML
@@ -57,6 +65,8 @@ public class InputDataHandler {
         System.out.println("hello from confirm tel number");
         String phoneNumberStr = phoneNumber.getCharacters().toString();
         System.out.println(phoneNumberStr);
+        this.state.get().setPhoneNumber(phoneNumberStr);
+        System.out.println(this.state.hashCode());
         confirmVCButton.setDisable(false);
         verificationCode.setDisable(false);
     }
@@ -65,6 +75,7 @@ public class InputDataHandler {
     public void handleConfirmVCAction(){
         System.out.println("hello from confirm VC");
         String verificationCodeStr = verificationCode.getCharacters().toString();
+        this.state.get().setCode(verificationCodeStr);
         System.out.println(verificationCodeStr);
         password.setDisable(false);
         signInButton.setDisable(false);
@@ -74,6 +85,8 @@ public class InputDataHandler {
     public void singInAction(){
         System.out.println("hello from sing in");
         String pass = password.getCharacters().toString();
+        this.state.get().setPass(pass);
+        do {} while (!state.get().isAuth());
         encryWindow.launchMainWindow();
         System.out.println(pass);
     }

@@ -2,8 +2,11 @@ package org.encryfoundation.tg
 
 import java.io.File
 import java.security.Security
+import java.util.concurrent.atomic.AtomicReference
 
 import cats.effect.concurrent.Ref
+import cats.effect.{Concurrent, ContextShift, ExitCode, IO, IOApp, Resource, Sync, Timer}
+import cats.implicits._
 import cats.effect.{Concurrent, ExitCode, IO, IOApp, Resource, Sync, Timer}
 import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
@@ -18,15 +21,21 @@ import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.programs.ConsoleProgram
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
+import org.javaFX.EncryWindow
+import org.javaFX.model.JUserState
 import scorex.crypto.encode.Base64
 import tofu.Raise
 import tofu._
 import tofu.syntax.monadic._
 import tofu.syntax.raise._
 
+import scala.concurrent.ExecutionContext
 import scala.io.StdIn
 
-object RunApp extends IOApp {
+object RunApp extends App {
+
+  implicit val shift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
+  implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
 
   System.loadLibrary("tdjni")
 
@@ -75,6 +84,7 @@ object RunApp extends IOApp {
     )
   }
 
-  override def run(args: List[String]): IO[ExitCode] =
-    anotherProg.compile.drain.as(ExitCode.Success)
+  anotherProg(EncryWindow.state).compile.drain.unsafeRunAsyncAndForget()
+  EncryWindow.main(Array.empty)
+
 }

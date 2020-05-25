@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public class JUserState {
     private List<TdApi.Chat> chatList = new ArrayList<>();
     private Map<Long, TdApi.Chat> chatIds = new HashMap<>();
     private Map<Long, JGroupChat> privateGroups = new HashMap<>();
     private Map<Integer, TdApi.User> users =  new HashMap<>();
-
+    public AtomicReferenceArray<String> userInfo = new AtomicReferenceArray(3);
     private Map<Integer, TdApi.BasicGroup> basicGroups =  new HashMap<>();
     private Map<Integer, TdApi.Supergroup> superGroups =  new HashMap<>();
     private Map<Integer, TdApi.SecretChat> secretChats =  new HashMap<>();
@@ -33,6 +34,12 @@ public class JUserState {
     public void setChatList(List<TdApi.Chat> chatList) {
         this.chatList = chatList;
     }
+
+    public void setPhoneNumber(String number) { this.userInfo.set(0, number); }
+
+    public void setCode(String code) { this.userInfo.set(1, code); }
+
+    public void setPass(String pass) { this.userInfo.set(2, pass); }
 
     public Map<Long, TdApi.Chat> getChatIds() {
         return chatIds;

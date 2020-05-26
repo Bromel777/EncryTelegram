@@ -35,7 +35,7 @@ public class InputDataHandler extends DataHandler{
     @FXML
     public void handleConfirmNumberAction(){
         String phoneNumberStr = phoneNumber.getCharacters().toString();
-        getUserStateRef().get().setPhoneNumber(phoneNumberStr);
+        //getUserStateRef().get().setPhoneNumber(phoneNumberStr);
         //System.out.println(this.state.hashCode());
         confirmVCButton.setDisable(false);
         verificationCode.setDisable(false);
@@ -45,7 +45,7 @@ public class InputDataHandler extends DataHandler{
     @FXML
     public void handleConfirmVCAction(){
         String verificationCodeStr = verificationCode.getCharacters().toString();
-        getUserStateRef().get().setCode(verificationCodeStr);
+        //getUserStateRef().get().setCode(verificationCodeStr);
         password.setDisable(false);
         signInButton.setDisable(false);
         verificationCode.setDisable(true);
@@ -54,10 +54,9 @@ public class InputDataHandler extends DataHandler{
     @FXML
     public void singInAction(){
         String pass = password.getCharacters().toString();
-        getUserStateRef().get().setPass(pass);
-        do {} while (! getUserStateRef().get().isAuth());
+        /*getUserStateRef().get().setPass(pass);
+        do {} while (! getUserStateRef().get().isAuth());*/
         getEncryWindow().launchMainWindow();
-        System.out.println(pass);
     }
 
     @FXML

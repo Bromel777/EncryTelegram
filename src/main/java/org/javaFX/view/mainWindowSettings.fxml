@@ -8,36 +8,31 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.view.InputDataHandler">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.InputDataHandler">
    <children>
       <SplitPane dividerPositions="0.29797979797979796" prefHeight="400.0" prefWidth="603.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="96.0">
                <children>
-                  <VBox layoutX="-2.0" layoutY="-1.0" prefHeight="400.0" prefWidth="175.0">
-                     <children>
-                        <MenuButton mnemonicParsing="false" prefHeight="31.0" prefWidth="180.0" text="MenuButton">
-                          <items>
-                            <MenuItem mnemonicParsing="false" text="Action 1" />
-                            <MenuItem mnemonicParsing="false" text="Action 2" />
-                          </items>
-                        </MenuButton>
-                        <VBox prefHeight="607.0" prefWidth="178.0">
-                           <children>
-                              <ScrollBar orientation="VERTICAL" prefHeight="380.0" prefWidth="18.0">
-                                 <VBox.margin>
-                                    <Insets left="160.0" />
-                                 </VBox.margin>
-                              </ScrollBar>
-                           </children>
-                        </VBox>
-                     </children>
-                  </VBox>
+                  <TableView layoutY="54.0" prefHeight="346.0" prefWidth="178.0">
+                    <columns>
+                      <TableColumn fx:id="chatsList" prefWidth="175.0" text="Chats" />
+                    </columns>
+                  </TableView>
+                  <MenuButton fx:id="profileSettings" alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" layoutY="1.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="162.0" text="Profile" textAlignment="CENTER">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                      <MenuItem mnemonicParsing="false" text="Action 2" />
+                    </items>
+                     <font>
+                        <Font name="Centaur" size="24.0" />
+                     </font>
+                  </MenuButton>
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="446.0">
                <children>
-                  <TextField layoutX="6.0" layoutY="14.0" prefHeight="34.0" prefWidth="400.0" promptText="Search">
+                  <TextField fx:id="searchMessageField" layoutX="6.0" layoutY="14.0" prefHeight="34.0" prefWidth="400.0" promptText="Search">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
@@ -45,9 +40,9 @@
                         <Font name="Centaur" size="18.0" />
                      </font>
                   </TextField>
-                  <VBox layoutX="6.0" layoutY="48.0" prefHeight="346.0" prefWidth="400.0">
+                  <VBox layoutX="5.0" layoutY="48.0" prefHeight="346.0" prefWidth="400.0">
                      <children>
-                        <ScrollBar orientation="VERTICAL" prefHeight="346.0" prefWidth="0.0">
+                        <ScrollBar orientation="VERTICAL" prefHeight="344.0" prefWidth="18.0">
                            <VBox.margin>
                               <Insets left="380.0" />
                            </VBox.margin>

@@ -13,6 +13,7 @@ import org.javaFX.controller.DataHandler;
 import org.javaFX.controller.MainWindowDataHandler;
 import org.javaFX.model.JUserState;
 import org.javaFX.controller.InputDataHandler;
+import org.javaFX.util.Observer;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -103,7 +104,23 @@ public class EncryWindow extends Application {
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
         controller.setUserStateRef(this.state);
+        //chatListObserve(controller);
+
     }
+//every 5 seconds observe chat list
+   /* private void chatListObserve(MainWindowDataHandler controller){
+        Thread localObserver = new Observer(controller, this);
+        while (true){
+            localObserver.start();
+            try {
+                localObserver.sleep(5_000);
+            }
+            catch (InterruptedException ex){
+                System.err.println("OBSERVER FATAL ERROR");
+                ex.printStackTrace();
+            }
+        }
+    }*/
 
 
     public Stage getPrimaryStage () {
@@ -116,18 +133,6 @@ public class EncryWindow extends Application {
 
 
 
-    public ObservableList<String> getObservableChatListTest(){
-        ObservableList<String> observableChatList = FXCollections.observableArrayList();
-        String chat1 = "chat1";
-        String chat2 = "chat2";
-        String chat3 = "chat3";
-        observableChatList.add(chat1);
-        observableChatList.add(chat2);
-        observableChatList.add(chat3);
-        for(String s : observableChatList){
-            System.out.println(s);
-        }
-        return observableChatList;
-    }
+
 }
 

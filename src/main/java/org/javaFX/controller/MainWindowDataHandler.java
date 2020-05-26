@@ -1,5 +1,6 @@
 package org.javaFX.controller;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,31 +8,33 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import org.drinkless.tdlib.TdApi;
 import org.javaFX.EncryWindow;
-
-import javax.swing.*;
-
+import org.javaFX.model.JChat;
 
 public class MainWindowDataHandler extends DataHandler {
-
- /*   @FXML
-    private TableView<TdApi.Chat> chatsList;*/
+/*
+    @FXML
+    private TableView<JChat> chatsTable;
 
     @FXML
-    private TableView<String> chatsList;
+    private TableColumn<JChat, String> chatsColumn;
+*/
+
+    //local test data
 
     @FXML
-    private TableColumn<String, String> chatsColumn;
+    private TableView<JChat> chatsTable;
+
+    @FXML
+    private TableColumn<JChat, String> chatsColumn;
 
     @FXML
     private MenuButton profileSettings;
 
     @FXML
     private TextField searchMessageField;
-
-    @FXML
-    private JSplitPane splitPane;
 
 
     public MainWindowDataHandler() {
@@ -40,19 +43,45 @@ public class MainWindowDataHandler extends DataHandler {
     @Override
     public void setEncryWindow(EncryWindow encryWindow) {
         super.setEncryWindow(encryWindow);
-        chatsList.setItems(encryWindow.getObservableChatListTest());
-        initializeChats();
+        /*chatsTable.setItems(getObservableChatListTest());
+        initializeTestChats();*/
+
+        chatsTable.setItems(getObservableChatListTest());
+        initializeChatsTest();
     }
 
-    @FXML
-    private void initializeChats(){
-        //chatsColumn.setCellValueFactory(cellData -> cellData.getValue().g);
+   /* @FXML
+    private ObservableList<JChat> getObservableChatList(){
+        ObservableList<JChat> observableChatList = FXCollections.observableArrayList();
+        getUserStateRef().get().getChatList().forEach(
+                chat -> observableChatList.add(new JChat(chat.title, chat.lastMessage.content.toString() ) )
+        );
+        return observableChatList;
     }
 
+
     @FXML
-    private ObservableList<TdApi.Chat> getObservableChatList(){
-        ObservableList<TdApi.Chat> observableChatList = FXCollections.observableArrayList();
-        observableChatList.addAll(getUserStateRef().get().getChatList());
+    private void initializeChats() {
+        chatsColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
+    }*/
+
+
+    @FXML
+    private void initializeChatsTest() {
+        chatsColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
+    }
+
+    private ObservableList<JChat> getObservableChatListTest(){
+        ObservableList<JChat> observableChatList = FXCollections.observableArrayList();
+        JChat chat1 = new JChat(new SimpleStringProperty("chat1"), new SimpleStringProperty("last message1"));
+        JChat chat2 = new JChat(new SimpleStringProperty("chat2"), new SimpleStringProperty("last message2"));
+        JChat chat3 = new JChat(new SimpleStringProperty("chat3"), new SimpleStringProperty("last message3"));
+        observableChatList.add(chat1);
+        observableChatList.add(chat2);
+        observableChatList.add(chat3);
+        for(JChat s : observableChatList){
+            System.out.println(s);
+        }
         return observableChatList;
     }
 

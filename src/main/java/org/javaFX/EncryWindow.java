@@ -129,4 +129,3 @@ public class EncryWindow extends Application {
     }
 
 }
-

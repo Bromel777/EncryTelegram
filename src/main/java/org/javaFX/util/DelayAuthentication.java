@@ -24,7 +24,7 @@ public class DelayAuthentication extends Thread{
             }
         };
         AtomicInteger atomicInteger = new AtomicInteger(0);
-        while (atomicInteger.get() < delayMilliseconds / 1000 ) {
+        while (atomicInteger.get() <= delayMilliseconds / 1000 ) {
             try {
                 Thread.sleep(1000);
                 atomicInteger.incrementAndGet();

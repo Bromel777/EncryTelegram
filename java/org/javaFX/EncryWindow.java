@@ -54,7 +54,7 @@ public class EncryWindow extends Application {
     public void showStartSettingsWindow() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(EncryWindow.class.getResource("view/startWindowSettings.fxml"));
+            loader.setLocation(EncryWindow.class.getResource("view/authenticationWindow.fxml"));
             AnchorPane personOverview = (AnchorPane) loader.load();
             rootLayout.setCenter(personOverview);
 

@@ -5,7 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 
-public class InputDataHandler extends DataHandler {
+public class TestInputDataHandler extends DataHandler{
 
     @FXML
     private TextField phoneNumber;
@@ -24,7 +24,8 @@ public class InputDataHandler extends DataHandler {
     @FXML
     private Button signInButton;
 
-    public InputDataHandler () {}
+
+    public TestInputDataHandler () {}
 
     @FXML
     public void handleCancelAction(){
@@ -34,7 +35,7 @@ public class InputDataHandler extends DataHandler {
     @FXML
     public void handleConfirmNumberAction(){
         String phoneNumberStr = phoneNumber.getCharacters().toString();
-        getUserStateRef().get().setPhoneNumber(phoneNumberStr);
+        System.out.println("Hello from Phone number: "+phoneNumberStr);
         confirmVCButton.setDisable(false);
         verificationCode.setDisable(false);
         phoneNumber.setDisable(true);
@@ -43,7 +44,7 @@ public class InputDataHandler extends DataHandler {
     @FXML
     public void handleConfirmVCAction(){
         String verificationCodeStr = verificationCode.getCharacters().toString();
-        getUserStateRef().get().setCode(verificationCodeStr);
+        System.out.println("Hello from VC "+verificationCodeStr);
         password.setDisable(false);
         signInButton.setDisable(false);
         verificationCode.setDisable(true);
@@ -52,15 +53,13 @@ public class InputDataHandler extends DataHandler {
     @FXML
     public void singInAction(){
         String pass = password.getCharacters().toString();
-        getUserStateRef().get().setPass(pass);
-        do {} while (! getUserStateRef().get().isAuth());
+        System.out.println("Hello from Password "+pass);
         getEncryWindow().launchMainWindow();
     }
 
     @FXML
     public void resetPhoneNumberInputAction(){
         System.out.println("hello from reset number");
-        if (getUserStateRef().get().isAuth()) getEncryWindow().launchMainWindow();
         if(!phoneNumber.isDisable()) {
             phoneNumber.setText("");
             resetVCImageView.setVisible(true);

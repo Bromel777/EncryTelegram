@@ -8,13 +8,8 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
-import org.drinkless.tdlib.TdApi;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
-import org.javaFX.model.JUserState;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class MainWindowDataHandler extends DataHandler {
 

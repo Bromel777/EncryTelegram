@@ -20,8 +20,6 @@ public class EncryWindow extends Application {
     private Stage primaryStage;
     private BorderPane rootLayout;
 
-    private ImageView loadingGif;
-
     public static AtomicReference<JUserState> state = new AtomicReference<>(new JUserState());
 
     public static void main(String[] args) {
@@ -72,7 +70,7 @@ public class EncryWindow extends Application {
 
     private void initStartWindow(FXMLLoader loader){
         DataHandler controller = loader.getController();
-        loadingGif = new ImageView(
+        ImageView loadingGif = new ImageView(
                 new Image(
                         this.getClass().getResource("/images/loading.gif").toExternalForm()
                 )
@@ -81,10 +79,6 @@ public class EncryWindow extends Application {
         ((StartWindowHandler) controller).setLoadingGif(loadingGif);
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
-    }
-
-    private void delayAuthentication(int mi){
-
     }
 
     public void launchAuthenticationWindow() {
@@ -101,8 +95,7 @@ public class EncryWindow extends Application {
 
     private void initAuthenticationHandler(FXMLLoader loader){
         DataHandler controller = loader.getController();
-        //InputDataHandler controller = loader.getController();
-        controller.setUserStateRef(this.state);
+        controller.setUserStateRef(state);
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
     }
@@ -111,7 +104,7 @@ public class EncryWindow extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(EncryWindow.class.getResource("view/mainWindow.fxml"));
-            AnchorPane mainOverView = (AnchorPane) loader.load();
+            AnchorPane mainOverView = loader.load();
             rootLayout.setCenter(mainOverView);
             initMainDataHandler(loader);
         } catch (IOException e) {
@@ -121,37 +114,19 @@ public class EncryWindow extends Application {
 
     private void initMainDataHandler(FXMLLoader loader){
         DataHandler controller = loader.getController();
-        controller.setUserStateRef(this.state);
+        controller.setUserStateRef(state);
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
 
         //chatListObserve(controller);
     }
 
-
-
     public void updateControllerState(FXMLLoader loader){
         InputDataHandler controller = loader.getController();
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
-        controller.setUserStateRef(this.state);
+        controller.setUserStateRef(state);
     }
-
-
-//every 5 seconds observe chat list
-   /* private void chatListObserve(MainWindowDataHandler controller){
-        Thread localObserver = new Observer(controller, this);
-        while (true){
-            localObserver.start();
-            try {
-                localObserver.sleep(5_000);
-            }
-            catch (InterruptedException ex){
-                System.err.println("OBSERVER FATAL ERROR");
-                ex.printStackTrace();
-            }
-        }
-    }*/
 
 }
 

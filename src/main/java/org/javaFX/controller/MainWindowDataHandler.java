@@ -1,6 +1,6 @@
 package org.javaFX.controller;
 
-import javafx.beans.property.SimpleStringProperty;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,17 +12,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.drinkless.tdlib.TdApi;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
+import org.javaFX.model.JUserState;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MainWindowDataHandler extends DataHandler {
-/*
-    @FXML
-    private TableView<JChat> chatsTable;
-
-    @FXML
-    private TableColumn<JChat, String> chatsColumn;
-*/
-
-    //local test data
 
     @FXML
     private TableView<JChat> chatsTable;
@@ -43,17 +38,20 @@ public class MainWindowDataHandler extends DataHandler {
     @Override
     public void setEncryWindow(EncryWindow encryWindow) {
         super.setEncryWindow(encryWindow);
-        /*chatsTable.setItems(getObservableChatListTest());
-        initializeTestChats();*/
+        chatsTable.setItems(getObservableChatList());
+        initializeChats();
 
-        chatsTable.setItems(getObservableChatListTest());
-        initializeChatsTest();
+        /*chatsTable.setItems(getObservableChatListTest());
+        initializeChatsTest();*/
     }
 
-   /* @FXML
+    @FXML
     private ObservableList<JChat> getObservableChatList(){
         ObservableList<JChat> observableChatList = FXCollections.observableArrayList();
-        getUserStateRef().get().getChatList().forEach(
+        AtomicReference<JUserState> atomicReference = getUserStateRef();
+        JUserState userState = atomicReference.get();
+        List<TdApi.Chat> chatList = userState.getChatList();
+        chatList.forEach(
                 chat -> observableChatList.add(new JChat(chat.title, chat.lastMessage.content.toString() ) )
         );
         return observableChatList;
@@ -63,10 +61,10 @@ public class MainWindowDataHandler extends DataHandler {
     @FXML
     private void initializeChats() {
         chatsColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
-    }*/
+    }
 
 
-    @FXML
+  /*  @FXML
     private void initializeChatsTest() {
         chatsColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
     }
@@ -84,5 +82,5 @@ public class MainWindowDataHandler extends DataHandler {
         }
         return observableChatList;
     }
-
+*/
 }

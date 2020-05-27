@@ -1,23 +1,17 @@
 package org.javaFX;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.javaFX.controller.DataHandler;
 import org.javaFX.controller.MainWindowDataHandler;
 import org.javaFX.model.JUserState;
 import org.javaFX.controller.InputDataHandler;
-import org.javaFX.util.Observer;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class EncryWindow extends Application {
@@ -84,6 +78,9 @@ public class EncryWindow extends Application {
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
         controller.setUserStateRef(this.state);
+        System.out.println("from basic handler");
+        System.out.println("Atomic reference = " + controller.getUserStateRef());
+        System.out.println("state object = " + controller.getUserStateRef().get());
     }
 
     public void launchMainWindow() {
@@ -99,11 +96,13 @@ public class EncryWindow extends Application {
     }
 
     private void initMainDataHandler(FXMLLoader loader){
-        System.out.println(loader.getController().getClass());
         MainWindowDataHandler controller = loader.getController();
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
         controller.setUserStateRef(this.state);
+        System.out.println("from main handler");
+        System.out.println("Atomic reference = " + controller.getUserStateRef());
+        System.out.println("state object = " + controller.getUserStateRef().get());
         //chatListObserve(controller);
 
     }

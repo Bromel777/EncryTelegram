@@ -36,7 +36,6 @@ public class InputDataHandler extends DataHandler{
     public void handleConfirmNumberAction(){
         String phoneNumberStr = phoneNumber.getCharacters().toString();
         getUserStateRef().get().setPhoneNumber(phoneNumberStr);
-        System.out.println(getUserStateRef().hashCode());
         confirmVCButton.setDisable(false);
         verificationCode.setDisable(false);
         phoneNumber.setDisable(true);

@@ -6,12 +6,12 @@ import org.javaFX.EncryWindow;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DelayAuthentication extends Thread{
-    private long delayMilliseconds ;
-    private EncryWindow encryWindow;
+    private final long delayMilliseconds ;
+    private final EncryWindow encryWindow;
 
     public DelayAuthentication(EncryWindow encryWindow, long delayMilliseconds) {
         this.encryWindow = encryWindow;
-        this.delayMilliseconds = delayMilliseconds;
+        this.delayMilliseconds = delayMilliseconds>=0 ? delayMilliseconds: delayMilliseconds*(-1) ;
     }
 
     @Override

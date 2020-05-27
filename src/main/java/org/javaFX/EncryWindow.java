@@ -1,6 +1,8 @@
 package org.javaFX;
 
 import javafx.application.Application;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -8,9 +10,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.javaFX.controller.*;
+import org.javaFX.controller.handlers.InputDataHandler;
+import org.javaFX.controller.handlers.StartWindowHandler;
 import org.javaFX.model.JUserState;
 import org.javaFX.util.DelayAuthentication;
+import org.javaFX.util.JChatTimerService;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -117,8 +123,7 @@ public class EncryWindow extends Application {
         controller.setUserStateRef(state);
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
-
-        //chatListObserve(controller);
+        chatListObserve(controller);
     }
 
     public void updateControllerState(FXMLLoader loader){
@@ -126,6 +131,12 @@ public class EncryWindow extends Application {
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
         controller.setUserStateRef(state);
+    }
+
+    private void chatListObserve(DataHandler controller){
+        ScheduledService<Object> service = new JChatTimerService(controller);
+        service.setPeriod(Duration.seconds(3));
+        service.start();
     }
 
 }

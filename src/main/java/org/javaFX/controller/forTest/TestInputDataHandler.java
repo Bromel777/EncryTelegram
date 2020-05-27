@@ -1,11 +1,12 @@
-package org.javaFX.controller;
+package org.javaFX.controller.forTest;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import org.javaFX.controller.DataHandler;
 
-public class TestInputDataHandler extends DataHandler{
+public class TestInputDataHandler extends DataHandler {
 
     @FXML
     private TextField phoneNumber;
@@ -44,7 +45,7 @@ public class TestInputDataHandler extends DataHandler{
     @FXML
     public void handleConfirmVCAction(){
         String verificationCodeStr = verificationCode.getCharacters().toString();
-        System.out.println("Hello from VC "+verificationCodeStr);
+        System.out.println("Hello from VC: "+verificationCodeStr);
         password.setDisable(false);
         signInButton.setDisable(false);
         verificationCode.setDisable(true);
@@ -53,7 +54,7 @@ public class TestInputDataHandler extends DataHandler{
     @FXML
     public void singInAction(){
         String pass = password.getCharacters().toString();
-        System.out.println("Hello from Password "+pass);
+        System.out.println("Hello from Password: "+pass);
         getEncryWindow().launchMainWindow();
     }
 

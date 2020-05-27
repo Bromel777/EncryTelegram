@@ -37,4 +37,9 @@ public abstract class DataHandler {
     public void setUserStateRef(AtomicReference<JUserState> userStateRef) {
         this.userStateRef = userStateRef;
     }
+
+    public void updateEncryWindow(EncryWindow encryWindow){
+        this.setEncryWindow(encryWindow);
+    }
+
 }

@@ -1,9 +1,10 @@
-package org.javaFX.controller;
+package org.javaFX.controller.handlers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import org.javaFX.controller.DataHandler;
 
 public class InputDataHandler extends DataHandler {
 

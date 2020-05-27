@@ -8,7 +8,6 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import org.drinkless.tdlib.TdApi;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
@@ -48,6 +47,11 @@ public class MainWindowDataHandler extends DataHandler {
     @FXML
     private ObservableList<JChat> getObservableChatList(){
         ObservableList<JChat> observableChatList = FXCollections.observableArrayList();
+        /*
+       getUserStateRef().get().getChatList().forEach(
+                chat -> observableChatList.add(new JChat(chat.title, chat.lastMessage.content.toString() ) )
+        );
+       */
         AtomicReference<JUserState> atomicReference = getUserStateRef();
         JUserState userState = atomicReference.get();
         List<TdApi.Chat> chatList = userState.getChatList();

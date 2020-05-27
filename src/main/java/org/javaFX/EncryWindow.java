@@ -44,7 +44,8 @@ public class EncryWindow extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(EncryWindow.class.getResource("view/rootLayout.fxml"));
-            rootLayout = (BorderPane) loader.load();
+            //rootLayout = (BorderPane) loader.load();
+            rootLayout = loader.load();
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
@@ -65,7 +66,7 @@ public class EncryWindow extends Application {
         try{
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(EncryWindow.class.getResource("view/startWindowSettings.fxml"));
-            AnchorPane startOverview = (AnchorPane) loader.load();
+            AnchorPane startOverview = loader.load();
             rootLayout.setCenter(startOverview);
             initBasicHandler(loader);
         } catch (IOException e) {
@@ -75,12 +76,9 @@ public class EncryWindow extends Application {
 
     public void initBasicHandler(FXMLLoader loader){
         InputDataHandler controller = loader.getController();
+        controller.setUserStateRef(this.state);
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
-        controller.setUserStateRef(this.state);
-        System.out.println("from basic handler");
-        System.out.println("Atomic reference = " + controller.getUserStateRef());
-        System.out.println("state object = " + controller.getUserStateRef().get());
     }
 
     public void launchMainWindow() {
@@ -97,15 +95,14 @@ public class EncryWindow extends Application {
 
     private void initMainDataHandler(FXMLLoader loader){
         MainWindowDataHandler controller = loader.getController();
+        controller.setUserStateRef(this.state);
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
-        controller.setUserStateRef(this.state);
-        System.out.println("from main handler");
-        System.out.println("Atomic reference = " + controller.getUserStateRef());
-        System.out.println("state object = " + controller.getUserStateRef().get());
-        //chatListObserve(controller);
 
+        //chatListObserve(controller);
     }
+
+
 //every 5 seconds observe chat list
    /* private void chatListObserve(MainWindowDataHandler controller){
         Thread localObserver = new Observer(controller, this);
@@ -120,18 +117,6 @@ public class EncryWindow extends Application {
             }
         }
     }*/
-
-
-    public Stage getPrimaryStage () {
-            return primaryStage;
-        }
-
-    public BorderPane getRootLayout() {
-        return rootLayout;
-    }
-
-
-
 
 }
 

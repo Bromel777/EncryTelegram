@@ -65,6 +65,7 @@ public class InputDataHandler extends DataHandler{
             phoneNumber.setText("");
             resetVCImageView.setVisible(true);
             resetVCImageView.setDisable(false);
+            resetPhoneNumberImageView.setDisable(true);
         }
     }
 
@@ -75,6 +76,7 @@ public class InputDataHandler extends DataHandler{
             verificationCode.setText("");
             resetPasswordImageView.setVisible(true);
             resetPasswordImageView.setDisable(false);
+            resetVCImageView.setDisable(true);
         }
     }
 

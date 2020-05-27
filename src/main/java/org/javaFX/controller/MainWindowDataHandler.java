@@ -47,16 +47,8 @@ public class MainWindowDataHandler extends DataHandler {
     @FXML
     private ObservableList<JChat> getObservableChatList(){
         ObservableList<JChat> observableChatList = FXCollections.observableArrayList();
-        /*
-       getUserStateRef().get().getChatList().forEach(
-                chat -> observableChatList.add(new JChat(chat.title, chat.lastMessage.content.toString() ) )
-        );
-       */
-        AtomicReference<JUserState> atomicReference = getUserStateRef();
-        JUserState userState = atomicReference.get();
-        List<TdApi.Chat> chatList = userState.getChatList();
-        chatList.forEach(
-                chat -> observableChatList.add(new JChat(chat.title, chat.lastMessage.content.toString() ) )
+        getUserStateRef().get().getChatList().forEach(
+                chat -> observableChatList.add(new JChat(chat.title, "last msg" ) )
         );
         return observableChatList;
     }

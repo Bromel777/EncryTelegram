@@ -5,7 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 
-public class InputDataHandler extends DataHandler{
+public class InputDataHandler extends DataHandler {
 
     @FXML
     private TextField phoneNumber;
@@ -61,6 +61,7 @@ public class InputDataHandler extends DataHandler{
     @FXML
     public void resetPhoneNumberInputAction(){
         System.out.println("hello from reset number");
+        if (getUserStateRef().get().isAuth()) getEncryWindow().launchMainWindow();
         if(!phoneNumber.isDisable()) {
             phoneNumber.setText("");
             resetVCImageView.setVisible(true);

@@ -1,18 +1,15 @@
 package org.javaFX;
 
 import javafx.application.Application;
-import javafx.concurrent.ScheduledService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.javaFX.controller.*;
 import org.javaFX.model.JUserState;
 import org.javaFX.util.DelayAuthentication;
-import org.javaFX.util.JChatTimerService;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;

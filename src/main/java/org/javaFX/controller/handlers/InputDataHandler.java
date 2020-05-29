@@ -11,8 +11,7 @@ public class InputDataHandler extends DataHandler {
 
     @FXML
     private TextField phoneNumber;
-    @FXML
-    private ImageView resetPhoneNumberImageView;
+
     @FXML
     private TextField verificationCode;
     @FXML
@@ -20,11 +19,13 @@ public class InputDataHandler extends DataHandler {
     @FXML
     private Button confirmVCButton;
     @FXML
+    private Button signInButton;
+    @FXML
+    private ImageView resetPhoneNumberImageView;
+    @FXML
     private ImageView resetVCImageView;
     @FXML
     private ImageView resetPasswordImageView;
-    @FXML
-    private Button signInButton;
 
     public InputDataHandler () {}
 

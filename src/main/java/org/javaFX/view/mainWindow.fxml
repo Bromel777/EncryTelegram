@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
@@ -14,7 +15,7 @@
         <items>
           <AnchorPane fx:id="leftPane" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="200.0">
                <children>
-                  <TableView fx:id="chatsTable" editable="true" layoutX="-1.0" layoutY="45.0" minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="178.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0">
+                  <TableView fx:id="chatsTable" editable="true" layoutX="-1.0" layoutY="41.0" minHeight="0.0" minWidth="0.0" prefHeight="357.0" prefWidth="178.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="41.0">
                     <columns>
                       <TableColumn fx:id="chatsColumn" prefWidth="178.0" text="Chats" />
                     </columns>
@@ -22,7 +23,7 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
-                  <MenuButton fx:id="profileSettings" alignment="CENTER" contentDisplay="CENTER" layoutX="-2.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="178.0" text="Settings" textAlignment="CENTER" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <MenuButton fx:id="profileSettings" alignment="CENTER" contentDisplay="CENTER" layoutX="-2.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="178.0" text="Settings" textAlignment="CENTER" AnchorPane.bottomAnchor="355.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
                       <MenuItem mnemonicParsing="false" text="Action 1" />
                       <MenuItem mnemonicParsing="false" text="Action 2" />
@@ -35,20 +36,24 @@
             </AnchorPane>
           <AnchorPane fx:id="rightPane" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="400.0">
                <children>
-                  <TextField fx:id="searchMessageField" layoutX="-3.0" prefHeight="45.0" prefWidth="412.0" promptText="Search" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <Button fx:id="sendMessageButton" defaultButton="true" layoutX="342.0" layoutY="362.0" minHeight="31.0" minWidth="69.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="38.0" prefWidth="69.0" text="Send" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="355.0">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
                      <font>
-                        <Font name="Centaur" size="18.0" />
-                     </font>
-                  </TextField>
-                  <TextField fx:id="messageField" layoutY="362.0" prefHeight="31.0" prefWidth="342.0" promptText="Write a message..." AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="355.0">
+                        <Font name="Centaur" size="21.0" />
+                     </font></Button>
+                  <TextArea fx:id="textArea" editable="false" layoutY="44.0" wrapText="true" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0" />
+                  <TextArea fx:id="searchMessageArea" layoutY="1.0" prefHeight="43.0" prefWidth="412.0" promptText="Search" wrapText="true" AnchorPane.bottomAnchor="354.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <font>
-                        <Font name="Centaur" size="18.0" />
-                     </font></TextField>
-                  <Button fx:id="sendMessageButton" layoutX="342.0" layoutY="362.0" minHeight="31.0" minWidth="69.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="38.0" prefWidth="69.0" text="Send" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="355.0" />
-                  <TextArea fx:id="textArea" editable="false" layoutY="44.0" prefHeight="317.0" prefWidth="412.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0" />
+                        <Font size="20.0" />
+                     </font>
+                  </TextArea>
+                  <TextArea fx:id="sendMessageArea" layoutY="359.0" promptText="Write a message..." wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="355.0">
+                     <font>
+                        <Font name="Centaur" size="20.0" />
+                     </font>
+                  </TextArea>
                </children>
             </AnchorPane>
         </items>

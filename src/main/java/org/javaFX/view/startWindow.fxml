@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.geometry.*?>
@@ -36,4 +37,7 @@
          </image>
       </ImageView>
     </children>
+   <cursor>
+      <Cursor fx:constant="WAIT" />
+   </cursor>
 </AnchorPane>

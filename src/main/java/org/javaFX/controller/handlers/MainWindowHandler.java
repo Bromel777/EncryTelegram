@@ -1,19 +1,18 @@
 package org.javaFX.controller.handlers;
 
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.ScheduledService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Duration;
-import org.drinkless.tdlib.TdApi;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.model.JChat;
-import org.javaFX.util.Clock;
-import org.javaFX.util.JChatTimerService;
+import org.javaFX.model.JDialog;
+import org.javaFX.util.BasicObserver;
+import org.javaFX.util.observers.JChatObserver;
 
 public class MainWindowHandler extends DataHandler {
 
@@ -27,17 +26,26 @@ public class MainWindowHandler extends DataHandler {
     private MenuButton profileSettings;
 
     @FXML
-    private TextField searchMessageField;
+    private TextArea searchMessageArea;
+
+    @FXML
+    private TextArea sendMessageArea;
+
+    @FXML
+    private TextArea textArea;
 
     @FXML
     private Button sendMessageButton;
 
+    private JDialog jDialog;
+
     public MainWindowHandler() {
         chatListObserve(this);
+        updateDialog();
     }
 
     private void chatListObserve(DataHandler controller){
-        ScheduledService<Object> service = new JChatTimerService(controller);
+        BasicObserver service = new JChatObserver(controller);
         service.setPeriod(Duration.seconds(3));
         service.start();
     }
@@ -64,7 +72,20 @@ public class MainWindowHandler extends DataHandler {
         chatsColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
     }
 
-    @FXML private void sendMessage(){
+    @FXML
+    private void sendMessage(){
+        String messageStr = sendMessageArea.getText();
+        if(!messageStr.isEmpty()) {
+            String preparedStr = "You:\t" + messageStr;
+            StringBuilder localDialogHistory = jDialog.getContent();
+            localDialogHistory.append(preparedStr + "\n");
+            textArea.setText(localDialogHistory.toString());
+            sendMessageArea.setText("");
+            jDialog.setContent(localDialogHistory);
+        }
+    }
 
+    private void updateDialog(){
+        jDialog = new JDialog("title stub");
     }
 }

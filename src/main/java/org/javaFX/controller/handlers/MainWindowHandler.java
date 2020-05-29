@@ -5,10 +5,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.model.JChat;
@@ -26,6 +23,9 @@ public class MainWindowHandler extends DataHandler {
 
     @FXML
     private TextField searchMessageField;
+
+    @FXML
+    private Button sendMessageButton;
 
     public MainWindowHandler() {
     }
@@ -45,6 +45,10 @@ public class MainWindowHandler extends DataHandler {
                 chat -> observableChatList.add(new JChat(chat.title, chat.lastMessage.content.toString() ) )
         );
         return observableChatList;
+    }
+
+    @FXML private void sendMessage(){
+
     }
 
 

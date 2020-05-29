@@ -5,6 +5,8 @@ import org.javaFX.EncryWindow;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.javaFX.EncryWindow.pathToAuthenticationWindowFXML;
+
 public class DelayAuthentication extends Thread{
     private final long delayMilliseconds ;
     private final EncryWindow encryWindow;
@@ -18,9 +20,9 @@ public class DelayAuthentication extends Thread{
     public void run() {
         Runnable updater = () -> {
             if (EncryWindow.state.get().isAuth()) {
-                encryWindow.launchMainWindow();
+                encryWindow.launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
             } else {
-                encryWindow.launchAuthenticationWindow();
+                encryWindow.launchWindowByPathToFXML(EncryWindow.pathToAuthenticationWindowFXML);
             }
         };
         AtomicInteger atomicInteger = new AtomicInteger(0);

@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 
 public class TestInputDataHandler extends DataHandler {
@@ -55,7 +56,7 @@ public class TestInputDataHandler extends DataHandler {
     public void singInAction(){
         String pass = password.getCharacters().toString();
         System.out.println("Hello from Password: "+pass);
-        getEncryWindow().launchMainWindow();
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
     }
 
     @FXML

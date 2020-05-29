@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 
 public class InputDataHandler extends DataHandler {
@@ -55,13 +56,11 @@ public class InputDataHandler extends DataHandler {
         String pass = password.getCharacters().toString();
         getUserStateRef().get().setPass(pass);
         do {} while (! getUserStateRef().get().isAuth());
-        getEncryWindow().launchMainWindow();
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
     }
 
     @FXML
     public void resetPhoneNumberInputAction(){
-        System.out.println("hello from reset number");
-        if (getUserStateRef().get().isAuth()) getEncryWindow().launchMainWindow();
         if(!phoneNumber.isDisable()) {
             phoneNumber.setText("");
             resetVCImageView.setVisible(true);
@@ -72,7 +71,6 @@ public class InputDataHandler extends DataHandler {
 
     @FXML
     public void resetVCAction(){
-        System.out.println("hello from reset vc");
         if(!verificationCode.isDisable()) {
             verificationCode.setText("");
             resetPasswordImageView.setVisible(true);
@@ -83,7 +81,6 @@ public class InputDataHandler extends DataHandler {
 
     @FXML
     public void resetPasswordAction(){
-        System.out.println("hello from reset password");
         if(!password.isDisable()) {
             password.setText("");
         }

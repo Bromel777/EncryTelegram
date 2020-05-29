@@ -24,5 +24,6 @@ public class StartWindowHandler extends DataHandler {
 
     @FXML
     public void singInAction(){
+        System.out.println("the button is disabled");
     }
 }

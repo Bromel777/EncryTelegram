@@ -34,6 +34,6 @@ public class JChat {
 
     @Override
     public String toString() {
-        return "title='" + title.toString() + ", lastMessage='" + lastMessage.toString() ;
+        return "title = " + title.toString() + ", lastMessage = " + lastMessage.toString() ;
     }
 }

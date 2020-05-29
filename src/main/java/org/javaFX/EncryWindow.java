@@ -65,8 +65,7 @@ public class EncryWindow extends Application {
 
     public void launchStartWindow(){
         launchWindowByPathToFXML(pathToStartWindowFXML);
-        DelayAuthentication delayAuthentication = new DelayAuthentication(this, 5000);
-        delayAuthentication.start();
+        new DelayAuthentication(this, 5000).start();
     }
 
     private void updateController(FXMLLoader loader){
@@ -88,10 +87,6 @@ public class EncryWindow extends Application {
         }
     }
 
-    private void chatListObserve(DataHandler controller){
-        ScheduledService<Object> service = new JChatTimerService(controller);
-        service.setPeriod(Duration.seconds(3));
-        service.start();
-    }
+
 
 }

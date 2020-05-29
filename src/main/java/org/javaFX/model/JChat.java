@@ -12,6 +12,16 @@ public class JChat {
         this.lastMessage = lastMessage;
     }
 
+    public JChat(String titleStr) {
+        this.title = new SimpleStringProperty(titleStr);
+        this.lastMessage = new SimpleStringProperty("test");
+    }
+
+    public JChat(StringProperty title) {
+        this.title = title;
+        this.lastMessage = new SimpleStringProperty("test");
+    }
+
     public JChat(String titleStr, String lastMessageStr) {
         this(new SimpleStringProperty(titleStr), new SimpleStringProperty(lastMessageStr));
     }

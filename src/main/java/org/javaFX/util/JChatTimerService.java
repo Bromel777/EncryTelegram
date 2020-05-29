@@ -20,7 +20,6 @@ public class JChatTimerService extends ScheduledService<Object > {
         return new Task<Object>() {
             protected Object call() {
                 controller.updateEncryWindow(controller.getEncryWindow());
-                //Clock.printTime();
                 return null;
             }
         };

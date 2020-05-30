@@ -1,4 +1,4 @@
-package org.javaFX.controller;
+package org.javaFX.controller.handlers;
 
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class DataHandler {
     @FXML
     private Stage stage;
-
     private EncryWindow encryWindow;
     private AtomicReference<JUserState> userStateRef;
 

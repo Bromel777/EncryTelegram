@@ -8,10 +8,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Duration;
 import org.javaFX.EncryWindow;
-import org.javaFX.controller.DataHandler;
 import org.javaFX.model.JChat;
 import org.javaFX.model.JDialog;
-import org.javaFX.util.BasicObserver;
+import org.javaFX.util.observers.BasicObserver;
 import org.javaFX.util.KeyboardHandler;
 import org.javaFX.util.observers.JChatObserver;
 
@@ -124,7 +123,7 @@ public class MainWindowHandler extends DataHandler {
             String [] messagesArray = localDialogHistory.toString().split("\n");
             StringBuffer results = new StringBuffer();
             Arrays.stream(messagesArray)
-                    .filter(str -> str.contains(searchingStr))
+                    .filter(str -> str.toLowerCase().contains(searchingStr.toLowerCase()))
                     .forEach(str -> results.append(str+"\n"));
             dialogArea.setText(results.toString());
         }

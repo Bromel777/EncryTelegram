@@ -5,13 +5,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import org.javaFX.EncryWindow;
-import org.javaFX.controller.DataHandler;
 
 public class InputDataHandler extends DataHandler {
 
     @FXML
     private TextField phoneNumber;
-
     @FXML
     private TextField verificationCode;
     @FXML
@@ -41,6 +39,9 @@ public class InputDataHandler extends DataHandler {
         confirmVCButton.setDisable(false);
         verificationCode.setDisable(false);
         phoneNumber.setDisable(true);
+        resetVCImageView.setVisible(true);
+        resetVCImageView.setDisable(false);
+        resetPhoneNumberImageView.setDisable(true);
     }
 
     @FXML
@@ -50,6 +51,9 @@ public class InputDataHandler extends DataHandler {
         password.setDisable(false);
         signInButton.setDisable(false);
         verificationCode.setDisable(true);
+        resetPasswordImageView.setVisible(true);
+        resetPasswordImageView.setDisable(false);
+        resetVCImageView.setDisable(true);
     }
 
     @FXML
@@ -64,9 +68,6 @@ public class InputDataHandler extends DataHandler {
     public void resetPhoneNumberInputAction(){
         if(!phoneNumber.isDisable()) {
             phoneNumber.setText("");
-            resetVCImageView.setVisible(true);
-            resetVCImageView.setDisable(false);
-            resetPhoneNumberImageView.setDisable(true);
         }
     }
 
@@ -74,9 +75,6 @@ public class InputDataHandler extends DataHandler {
     public void resetVCAction(){
         if(!verificationCode.isDisable()) {
             verificationCode.setText("");
-            resetPasswordImageView.setVisible(true);
-            resetPasswordImageView.setDisable(false);
-            resetVCImageView.setDisable(true);
         }
     }
 

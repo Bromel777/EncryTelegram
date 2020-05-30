@@ -4,16 +4,16 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.javaFX.controller.*;
+import org.javaFX.controller.handlers.DataHandler;
+import org.javaFX.controller.handlers.StartWindowHandler;
 import org.javaFX.model.JUserState;
 import org.javaFX.util.DelayAuthentication;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class EncryWindow extends Application {
@@ -23,6 +23,9 @@ public class EncryWindow extends Application {
 
     private final String windowTitle = "ETC";
     private final String pathToLogoImage = "file:src/main/resources/images/logo.png";
+    private final String pathToResetImage = "file:src/main/resources/images/reset.png";
+    private final String pathToLoadingGIF = "file:src/main/resources/images/loading.gif";
+
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
     public final static String pathToMainWindowFXML = "view/mainWindow.fxml";
     public final static String pathToAuthenticationWindowFXML = "view/authenticationWindow.fxml";
@@ -85,7 +88,5 @@ public class EncryWindow extends Application {
             e.printStackTrace();
         }
     }
-
-
 
 }

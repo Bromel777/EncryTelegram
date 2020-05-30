@@ -1,7 +1,7 @@
-package org.javaFX.util;
+package org.javaFX.util.observers;
 
 import javafx.concurrent.ScheduledService;
-import org.javaFX.controller.DataHandler;
+import org.javaFX.controller.handlers.DataHandler;
 
 public abstract class BasicObserver extends ScheduledService<Object> {
 

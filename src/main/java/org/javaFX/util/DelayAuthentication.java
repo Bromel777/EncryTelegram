@@ -5,8 +5,6 @@ import org.javaFX.EncryWindow;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.javaFX.EncryWindow.pathToAuthenticationWindowFXML;
-
 public class DelayAuthentication extends Thread{
     private final long delayMilliseconds ;
     private final EncryWindow encryWindow;

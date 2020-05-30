@@ -1,8 +1,7 @@
 package org.javaFX.util.observers;
 
 import javafx.concurrent.Task;
-import org.javaFX.controller.DataHandler;
-import org.javaFX.util.BasicObserver;
+import org.javaFX.controller.handlers.DataHandler;
 
 public class JDialogObserver extends BasicObserver {
     public JDialogObserver(DataHandler controller) {

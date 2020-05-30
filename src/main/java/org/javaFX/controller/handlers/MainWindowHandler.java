@@ -1,9 +1,9 @@
 package org.javaFX.controller.handlers;
 
 
+import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.ScheduledService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Duration;
@@ -12,7 +12,11 @@ import org.javaFX.controller.DataHandler;
 import org.javaFX.model.JChat;
 import org.javaFX.model.JDialog;
 import org.javaFX.util.BasicObserver;
+import org.javaFX.util.KeyboardHandler;
 import org.javaFX.util.observers.JChatObserver;
+
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainWindowHandler extends DataHandler {
 
@@ -32,7 +36,7 @@ public class MainWindowHandler extends DataHandler {
     private TextArea sendMessageArea;
 
     @FXML
-    private TextArea textArea;
+    private TextArea dialogArea;
 
     @FXML
     private Button sendMessageButton;
@@ -41,7 +45,7 @@ public class MainWindowHandler extends DataHandler {
 
     public MainWindowHandler() {
         chatListObserve(this);
-        updateDialog();
+        createDialog();
     }
 
     private void chatListObserve(DataHandler controller){
@@ -56,6 +60,7 @@ public class MainWindowHandler extends DataHandler {
         super.setEncryWindow(encryWindow);
         chatsTable.setItems(getObservableChatList());
         initializeChats();
+        //updateDialog();
     }
 
     @FXML
@@ -74,18 +79,66 @@ public class MainWindowHandler extends DataHandler {
 
     @FXML
     private void sendMessage(){
-        String messageStr = sendMessageArea.getText();
+        String messageStr = sendMessageArea.getText().trim();
         if(!messageStr.isEmpty()) {
             String preparedStr = "You:\t" + messageStr;
-            StringBuilder localDialogHistory = jDialog.getContent();
+            StringBuffer localDialogHistory = jDialog.getContent();
             localDialogHistory.append(preparedStr + "\n");
-            textArea.setText(localDialogHistory.toString());
+            dialogArea.setText(localDialogHistory.toString());
             sendMessageArea.setText("");
             jDialog.setContent(localDialogHistory);
         }
     }
 
-    private void updateDialog(){
+    @FXML
+    private void sendMessageByKeyboard(){
+        AtomicBoolean[] keysPressed = KeyboardHandler.handleShiftEnterPressed(sendMessageArea);
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (keysPressed[0].get() && keysPressed[1].get()) {
+                    sendMessage();
+                }
+            }
+        }.start();
+    }
+
+    @FXML
+    private void findMessageByKeyboard(){
+        AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(searchMessageArea);
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if ( keysPressed.get() ) {
+                    findMessage();
+                }
+            }
+        }.start();
+    }
+
+    private void findMessage(){
+        final String searchingStr = searchMessageArea.getText().trim();
+        searchMessageArea.setText(searchingStr);
+        if(!searchingStr.isEmpty()) {
+            StringBuffer localDialogHistory = jDialog.getContent();
+            String [] messagesArray = localDialogHistory.toString().split("\n");
+            StringBuffer results = new StringBuffer();
+            Arrays.stream(messagesArray)
+                    .filter(str -> str.contains(searchingStr))
+                    .forEach(str -> results.append(str+"\n"));
+            dialogArea.setText(results.toString());
+        }
+    }
+
+
+    private void createDialog(){
         jDialog = new JDialog("title stub");
+    }
+
+    private void updateDialog(){
+        /*jDialog = new JDialog("title stub");
+        StringBuffer localDialogHistory = jDialog.getContent();
+        dialogArea.setText(localDialogHistory.toString());
+        jDialog.setContent(localDialogHistory);*/
     }
 }

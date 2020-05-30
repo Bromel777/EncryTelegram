@@ -43,13 +43,16 @@
                      <font>
                         <Font name="Centaur" size="21.0" />
                      </font></Button>
-                  <TextArea fx:id="textArea" editable="false" layoutY="44.0" wrapText="true" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0" />
-                  <TextArea fx:id="searchMessageArea" layoutY="1.0" prefHeight="43.0" prefWidth="412.0" promptText="Search" wrapText="true" AnchorPane.bottomAnchor="354.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TextArea fx:id="dialogArea" editable="false" layoutY="44.0" wrapText="true" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0">
+                     <font>
+                        <Font name="Centaur" size="20.0" />
+                     </font></TextArea>
+                  <TextArea fx:id="searchMessageArea" layoutY="1.0" onKeyPressed="#findMessageByKeyboard" prefHeight="43.0" prefWidth="412.0" promptText="Search" wrapText="true" AnchorPane.bottomAnchor="354.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </TextArea>
-                  <TextArea fx:id="sendMessageArea" layoutY="359.0" promptText="Write a message..." wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="355.0">
+                  <TextArea fx:id="sendMessageArea" layoutY="359.0" onKeyPressed="#sendMessageByKeyboard" promptText="Write a message..." wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="355.0">
                      <font>
                         <Font name="Centaur" size="20.0" />
                      </font>

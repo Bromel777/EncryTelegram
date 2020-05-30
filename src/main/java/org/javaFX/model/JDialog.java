@@ -7,15 +7,15 @@ import java.util.Objects;
 public class JDialog {
     private List<JUser> userList;
     private String title;
-    private StringBuilder content;
+    private StringBuffer content;
 
     public JDialog(String title) {
         this.title = title;
         userList = new ArrayList<>();
-        content = new StringBuilder();
+        content = new StringBuffer();
     }
 
-    public JDialog(List<JUser> userList, String title, StringBuilder content) {
+    public JDialog(List<JUser> userList, String title, StringBuffer content) {
         this.userList = userList;
         this.title = title;
         this.content = content;
@@ -37,11 +37,11 @@ public class JDialog {
         this.title = title;
     }
 
-    public StringBuilder getContent() {
+    public StringBuffer getContent() {
         return content;
     }
 
-    public void setContent(StringBuilder content) {
+    public void setContent(StringBuffer content) {
         this.content = content;
     }
 

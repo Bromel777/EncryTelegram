@@ -31,7 +31,7 @@
             <Font name="Centaur" size="36.0" />
          </font>
       </Label>
-      <ImageView fx:id="loadingGif" fitHeight="200.0" fitWidth="201.0" layoutX="208.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="loadingGif" fitHeight="200.0" fitWidth="201.0" layoutX="220.0" layoutY="102.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="101.0" AnchorPane.leftAnchor="220.0" AnchorPane.rightAnchor="203.0" AnchorPane.topAnchor="102.0">
          <image>
             <Image url="@../../../../resources/images/loading.gif" />
          </image>

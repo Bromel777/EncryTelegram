@@ -11,7 +11,9 @@ import org.javaFX.controller.*;
 import org.javaFX.model.JUserState;
 import org.javaFX.util.DelayAuthentication;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class EncryWindow extends Application {

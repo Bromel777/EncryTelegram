@@ -12,7 +12,7 @@ public class JDialogObserver extends BasicObserver {
     protected Task<Object> createTask() {
         return new Task<Object>() {
             protected Object call() {
-                //getController().updateEncryWindow(getController().getEncryWindow());
+                getController().updateEncryWindow(getController().getEncryWindow());
                 return null;
             }
         };

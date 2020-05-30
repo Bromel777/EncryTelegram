@@ -4,13 +4,19 @@ import cats.effect.concurrent.Ref
 import cats.effect.{ConcurrentEffect, Sync}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
+import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
 import org.drinkless.tdlib.TdApi.MessageText
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
+import org.encryfoundation.mitmImun.Prover
+import org.encryfoundation.tg.RunApp.sendMessage
+import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
 
 import scala.io.StdIn
 
-case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserState[F]]) extends ResultHandler[F] {
+case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserState[F]],
+                                                   privateConferenceService: PrivateConferenceService[F],
+                                                   client: Client[F]) extends ResultHandler[F] {
 
   /**
    * Callback called on result of query to TDLib or incoming update from TDLib.
@@ -80,6 +86,37 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
           _ <- userStateRef.update(
             _.copy(secretChats = state.secretChats + (secretChat.secretChat.id -> secretChat.secretChat))
           )
+          _ <- if (
+            secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStateReady] &&
+              state.pendingSecretChatsForInvite.contains(secretChat.secretChat.id)
+          ) for {
+              _ <- Logger[F].info("Secret chat for key sharing accepted. Start first step!")
+              chatInfo <- state.pendingSecretChatsForInvite(secretChat.secretChat.id).pure[F]
+              groupInfo <- privateConferenceService.findConf(chatInfo._2)
+              pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
+              firstStep <- Prover(
+                groupInfo.G1Gen,
+                groupInfo.G2Gen,
+                groupInfo.users.head.userData.userKsi,
+                groupInfo.users.head.userData.userT,
+                groupInfo.users.head.userData.publicKey1,
+                groupInfo.users.head.userData.publicKey2,
+                groupInfo.ZrGen,
+                pairing
+              ).firstStep().toString.pure[F]
+              _ <- sendMessage(
+                chatInfo._1.id,
+                firstStep,
+                client
+              )
+            } yield ()
+          else Sync[F].delay(
+            println(s"secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStateReady: ${secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStateReady]}" +
+              s"secretChat.secretChat.state: ${secretChat.secretChat.state}" +
+              s"state.pendingSecretChatsForInvite.contains(secretChat.secretChat.id): ${state.pendingSecretChatsForInvite.contains(secretChat.secretChat.id)}" +
+              s"state.pendingSecretChatsForInvite: ${state.pendingSecretChatsForInvite}" +
+              s"secretChat: ${secretChat.secretChat}")
+          )
         } yield ()
       case any => Logger[F].info(s"Receive unkown elem: ${obj}")
     }
@@ -144,8 +181,10 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
 
 object Handler {
   def apply[F[_]: ConcurrentEffect: Logger](stateRef: Ref[F, UserState[F]],
-                                            queueRef: Ref[F, List[TdApi.Object]]): F[Handler[F]] = {
-    val handler = new Handler(stateRef)
+                                            queueRef: Ref[F, List[TdApi.Object]],
+                                            privateConferenceService: PrivateConferenceService[F],
+                                            client: Client[F]): F[Handler[F]] = {
+    val handler = new Handler(stateRef, privateConferenceService, client)
     for {
       list <- queueRef.get
       _ <- Sync[F].delay(list)

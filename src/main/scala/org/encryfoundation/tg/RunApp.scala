@@ -20,24 +20,25 @@ object RunApp extends IOApp {
 
   System.loadLibrary("tdjni")
 
-  val program = for {
+  def program(db: Database[IO]) = for {
     queueRef <- Ref.of[IO, List[TdApi.Object]](List.empty)
     implicit0(logger: Logger[IO]) <- Slf4jLogger.create[IO]
     client <- Client[IO](EmptyHandlerWithQueue(queueRef))
     _ <- client.execute(new TdApi.SetLogVerbosityLevel(0))
     ref <- Ref.of[IO, UserState[IO]](UserState[IO](client = client))
-    handler <- Handler(ref, queueRef)
+    confService <- PrivateConferenceService[IO](db)
+    handler <- Handler[IO](ref, queueRef, confService, client)
     _ <- client.setUpdatesHandler(handler)
-  } yield (queueRef, client, ref, logger)
+  } yield (queueRef, client, ref, logger, confService)
 
   val database = for {
     db <- Database[IO](new File("db"))
   } yield db
 
-  val anotherProg = Stream.eval(program).flatMap { case (queue, client, ref, logger) =>
-    Stream.resource(database).flatMap { db =>
+  val anotherProg = Stream.resource(database).flatMap { db =>
+    Stream.eval(program(db)).flatMap { case (queue, client, ref, logger, confService) =>
       implicit val loggerForIo = logger
-      client.run() concurrently Stream.eval(regComm(client, ref, db))
+      client.run() concurrently Stream.eval(regComm(client, ref, confService, db))
     }
   }
 
@@ -56,13 +57,16 @@ object RunApp extends IOApp {
 
   def regComm[F[_]: Concurrent: Timer: Logger](client: Client[F],
                                                userStateRef: Ref[F, UserState[F]],
+                                               confService: PrivateConferenceService[F],
                                                db: Database[F]): F[Unit] = for {
     state <- userStateRef.get
-    _ <- if (state.isAuth) onlyForReg(client, userStateRef, db) else regComm(client, userStateRef, db)
+    _ <- if (state.isAuth) onlyForReg(client, userStateRef, confService, db)
+         else regComm(client, userStateRef, confService, db)
   } yield ()
 
   def onlyForReg[F[_]: Concurrent: Timer: Logger](client: Client[F],
                                                   userStateRef: Ref[F, UserState[F]],
+                                                  confService: PrivateConferenceService[F],
                                                   db: Database[F]): F[Unit] =
     for {
       command <- Sync[F].delay {
@@ -71,10 +75,9 @@ object RunApp extends IOApp {
         println(s"Your command: ${command}.")
         command
       }
-      confService <- PrivateConferenceService(db)
       _ <- Command.getCommands(client, userStateRef, db)(confService).find(_.name == command.split(" ").head)
         .traverse(_.run(command.split(" ").tail.toList))
-      _ <- onlyForReg(client, userStateRef, db)
+      _ <- onlyForReg(client, userStateRef, confService, db)
     } yield ()
 
   def sendMessage[F[_]: Concurrent](chatId: Long, msg: String, client: Client[F]): F[Unit] = {

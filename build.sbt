@@ -44,6 +44,22 @@ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
 val tg = (project in file(".")).settings(settings: _*)
 
+assemblyJarName in assembly := "TGDragon.jar"
+
+mainClass in assembly := Some("org.encryfoundation.tg.RunApp")
+
+test in assembly := {}
+
+assemblyMergeStrategy in assembly := {
+  case "logback.xml" => MergeStrategy.first
+  case "module-info.class" => MergeStrategy.discard
+  case "META-INF/MANIFEST.MF" => MergeStrategy.discard
+  case "META-INF/BC1024KE.SF" => MergeStrategy.discard
+  case "META-INF/BC2048KE.SF" => MergeStrategy.discard
+  case PathList("reference.conf") => MergeStrategy.concat
+  case _ => MergeStrategy.first
+}
+
 PB.targets in Compile := Seq(
   scalapb.gen() -> (sourceManaged in Compile).value / "src/protobuf"
 )

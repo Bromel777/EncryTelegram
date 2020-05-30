@@ -58,7 +58,7 @@ case class SecretChatHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]]) e
 }
 
 case class SecretGroupPrivateChatHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]],
-                                                           chatName: String) extends ResultHandler[F]{
+                                                           confname: String) extends ResultHandler[F]{
   override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
     case TdApi.Chat.CONSTRUCTOR =>
       for {
@@ -68,7 +68,7 @@ case class SecretGroupPrivateChatHandler[F[_]: Concurrent](stateRef: Ref[F, User
           _.copy(
             mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
             pendingSecretChatsForInvite = state.pendingSecretChatsForInvite + (
-              obj.asInstanceOf[TdApi.Chat].id -> (obj.asInstanceOf[TdApi.Chat], chatName)
+              obj.asInstanceOf[TdApi.Chat].`type`.asInstanceOf[TdApi.ChatTypeSecret].secretChatId.toLong -> (obj.asInstanceOf[TdApi.Chat], confname)
             )
           )
         )
@@ -97,7 +97,10 @@ case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Logger](stateRef: R
           )
         )
         _ <- userIds.traverse { userId =>
-          client.send(new TdApi.CreateNewSecretChat(userId.toInt), SecretChatHandler[F](stateRef))
+          client.send(
+            new TdApi.CreateNewSecretChat(userId.toInt),
+            SecretGroupPrivateChatHandler[F](stateRef, confInfo.name)
+          )
         }
       } yield ()
     case err => Logger[F].info(s"Err during chat creation: ${obj}")

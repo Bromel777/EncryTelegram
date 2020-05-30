@@ -81,7 +81,7 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
             _.copy(secretChats = state.secretChats + (secretChat.secretChat.id -> secretChat.secretChat))
           )
         } yield ()
-      case any => ().pure[F]
+      case any => Logger[F].info(s"Receive unkown elem: ${obj}")
     }
   }
 

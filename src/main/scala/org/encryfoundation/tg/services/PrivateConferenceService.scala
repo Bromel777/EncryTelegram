@@ -1,5 +1,6 @@
 package org.encryfoundation.tg.services
 
+import cats.FlatMap
 import cats.effect.Sync
 import it.unisa.dia.gas.jpbc.{Element, Pairing}
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
@@ -10,9 +11,14 @@ import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.community.{CommunityUser, PrivateCommunity}
 import scorex.crypto.hash.Blake2b256
 
+import scala.concurrent.Future
+
 trait PrivateConferenceService[F[_]] {
   def createConference(name: String, users: List[String]): F[Unit]
   def addUserToConf(conf: String, userName: String): F[Unit]
+  def sendInvite(conf: String, userName: String): F[Unit]
+  def findConf(conf: String): F[PrivateCommunity]
+  def saveMyConfCredentials(conf: String, userInfo: CommunityUser): F[Unit]
   def deleteUserFromConf(conf: String, userName: String): F[Unit]
   def getConfs: F[List[PrivateCommunity]]
 }
@@ -51,6 +57,14 @@ object PrivateConferenceService {
         .get(confInfo(activeConference.get.map(_.toChar).mkString))
         .map(confBytes => PrivateCommunity.parseBytes(confBytes.get))
     } yield List(conferenceInfo.get)
+
+    override def saveMyConfCredentials(conf: String,
+                                       userInfo: CommunityUser): F[Unit] = ???
+
+    override def sendInvite(conf: String, userName: String): F[Unit] = ???
+
+    override def findConf(conf: String): F[PrivateCommunity] =
+      getConfs.map(_.find(_.name == conf).get)
   }
 
   def apply[F[_]: Sync: Logger](db: Database[F]): F[PrivateConferenceService[F]] =

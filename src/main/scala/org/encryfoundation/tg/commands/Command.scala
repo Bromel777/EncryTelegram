@@ -21,7 +21,7 @@ object Command {
                                                    db: Database[F])(
                                                    confService: PrivateConferenceService[F]
                                                    ): List[Command[F]] = List(
-    CreatePrivateGroupChat[F](client, userStateRef, db),
+    CreatePrivateGroupChat[F](client, userStateRef, db)(confService),
     PrintChats[F](client, userStateRef, db),
     ReadChat[F](client, userStateRef, db),
     SendToChat[F](client, userStateRef),

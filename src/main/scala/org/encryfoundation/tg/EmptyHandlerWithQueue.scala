@@ -3,8 +3,10 @@ package org.encryfoundation.tg
 import cats.effect.{Concurrent, Sync}
 import cats.implicits._
 import cats.effect.concurrent.Ref
+import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.TdApi.{MessageText, Messages}
-import org.drinkless.tdlib.{Client123, ResultHandler, TdApi}
+import org.drinkless.tdlib.{Client, Client123, ResultHandler, TdApi}
+import org.encryfoundation.tg.community.{PrivateCommunity, PrivateCommunityStatus}
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base16
@@ -55,7 +57,32 @@ case class SecretChatHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]]) e
   }
 }
 
-case class ChatCreationHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]], password: String) extends ResultHandler[F] {
+case class SecretGroupPrivateChatHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]],
+                                                           chatName: String) extends ResultHandler[F]{
+  override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
+    case TdApi.Chat.CONSTRUCTOR =>
+      for {
+        state <- stateRef.get
+        _ <- Sync[F].delay(println(s"Receive private chat for pending: ${obj}"))
+        _ <- stateRef.update(
+          _.copy(
+            mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
+            pendingSecretChatsForInvite = state.pendingSecretChatsForInvite + (
+              obj.asInstanceOf[TdApi.Chat].id -> (obj.asInstanceOf[TdApi.Chat], chatName)
+            )
+          )
+        )
+      } yield ()
+    case _ => ().pure[F]
+  }
+}
+
+case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Logger](stateRef: Ref[F, UserState[F]],
+                                                                     client: Client[F],
+                                                                     confInfo: PrivateCommunity,
+                                                                     userIds: List[Long],
+                                                                     myLogin: String,
+                                                                     password: String) extends ResultHandler[F] {
   override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
     case TdApi.Chat.CONSTRUCTOR =>
       val newChat = obj.asInstanceOf[TdApi.Chat]
@@ -65,11 +92,15 @@ case class ChatCreationHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]],
         _ <- stateRef.update(
           _.copy(
             chatIds = state.chatIds + (newChat.id -> newChat),
-            privateGroups = state.privateGroups + (newChat.id -> (newChat, password))
+            privateGroups = state.privateGroups + (newChat.id ->
+              (newChat, password, PrivateCommunityStatus.getNewInfoForChat(myLogin, password, confInfo)))
           )
         )
+        _ <- userIds.traverse { userId =>
+          client.send(new TdApi.CreateNewSecretChat(userId.toInt), SecretChatHandler[F](stateRef))
+        }
       } yield ()
-    case _ => ().pure[F]
+    case err => Logger[F].info(s"Err during chat creation: ${obj}")
   }
 }
 

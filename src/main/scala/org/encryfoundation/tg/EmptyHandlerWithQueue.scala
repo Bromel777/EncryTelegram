@@ -36,17 +36,17 @@ case class EmptyHandler[F[_]: Concurrent]() extends ResultHandler[F] {
   override def onResult(obj: TdApi.Object): F[Unit] = {
     //().pure[F]
     for {
-      _ <- Concurrent[F].delay(println(s"Get smth EMPTY HANDLER: ${obj}"))
+      _ <- Concurrent[F].delay(())
     } yield ()
   }
 }
 
-case class SecretChatHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]]) extends ResultHandler[F]{
+case class SecretChatHandler[F[_]: Concurrent: Logger](stateRef: Ref[F, UserState[F]]) extends ResultHandler[F]{
   override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
     case TdApi.Chat.CONSTRUCTOR =>
       for {
         state <- stateRef.get
-        _ <- Sync[F].delay(println(s"Receive: ${obj}"))
+        _ <- Logger[F].info(s"Receive secret: ${obj}")
         _ <- stateRef.update(
           _.copy(
             mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
@@ -58,7 +58,8 @@ case class SecretChatHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]]) e
 }
 
 case class SecretGroupPrivateChatHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]],
-                                                           confname: String) extends ResultHandler[F]{
+                                                           confname: String,
+                                                           confChatId: Long) extends ResultHandler[F]{
   override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
     case TdApi.Chat.CONSTRUCTOR =>
       for {
@@ -68,7 +69,11 @@ case class SecretGroupPrivateChatHandler[F[_]: Concurrent](stateRef: Ref[F, User
           _.copy(
             mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
             pendingSecretChatsForInvite = state.pendingSecretChatsForInvite + (
-              obj.asInstanceOf[TdApi.Chat].`type`.asInstanceOf[TdApi.ChatTypeSecret].secretChatId.toLong -> (obj.asInstanceOf[TdApi.Chat], confname)
+              obj.asInstanceOf[TdApi.Chat].`type`.asInstanceOf[TdApi.ChatTypeSecret].secretChatId.toLong -> (
+                obj.asInstanceOf[TdApi.Chat],
+                confname,
+                confChatId
+              )
             )
           )
         )
@@ -99,7 +104,7 @@ case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Logger](stateRef: R
         _ <- userIds.traverse { userId =>
           client.send(
             new TdApi.CreateNewSecretChat(userId.toInt),
-            SecretGroupPrivateChatHandler[F](stateRef, confInfo.name)
+            SecretGroupPrivateChatHandler[F](stateRef, confInfo.name, newChat.id)
           )
         }
       } yield ()

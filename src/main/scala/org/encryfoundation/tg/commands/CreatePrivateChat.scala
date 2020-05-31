@@ -5,10 +5,11 @@ import cats.effect.concurrent.Ref
 import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
+import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.{EmptyHandler, SecretChatHandler}
 
-case class CreatePrivateChat[F[_]: Concurrent](client: Client[F],
-                                               userStateRef: Ref[F, UserState[F]]) extends Command[F] {
+case class CreatePrivateChat[F[_]: Concurrent: Logger](client: Client[F],
+                                                       userStateRef: Ref[F, UserState[F]]) extends Command[F] {
 
   override val name: String = "createPrivateChat"
 

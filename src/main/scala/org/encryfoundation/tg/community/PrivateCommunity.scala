@@ -13,7 +13,8 @@ case class PrivateCommunity(name: String,
                             users: List[CommunityUser],
                             G1Gen: Element,
                             G2Gen: Element,
-                            ZrGen: Element)
+                            ZrGen: Element,
+                            gTilda: Element)
 
 object PrivateCommunity {
 

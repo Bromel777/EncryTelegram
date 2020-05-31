@@ -41,7 +41,7 @@ object PrivateConferenceService {
         usersIds <- users.zip(usersInfo._1).map { case (userLogin, userInfo) =>
           CommunityUser(userLogin, userInfo)
         }.pure[F]
-        community <- PrivateCommunity(name, usersIds, generatorG1, generatorG2, generatorZr).pure[F]
+        community <- PrivateCommunity(name, usersIds, generatorG1, generatorG2, generatorZr, usersInfo._2).pure[F]
         _ <- Logger[F].info(s"Create private community with name: ${name}. And users: ${usersIds.map(_.userTelegramLogin)}")
         _ <- db.put(conferencesKey, name.getBytes())
         _ <- db.put(confInfo(name), PrivateCommunity.toBytes(community))

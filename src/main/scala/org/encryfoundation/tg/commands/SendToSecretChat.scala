@@ -20,11 +20,11 @@ case class SendToSecretChat[F[_]: Concurrent: Logger](client: Client[F],
   override def run(args: List[String]): F[Unit] = for {
     state <- userStateRef.get
     userLogin <- args.dropRight(1).pure[F]
-    _ <- Sync[F].delay(println(s"Chat login: ${userLogin.mkString(" ")}"))
+   // _ <- Sync[F].delay(println(s"Chat login: ${userLogin.mkString(" ")}"))
     chatId <- state.mainChatList.find {
       chat => chat.`type`.isInstanceOf[ChatTypeSecret] && chat.title == userLogin.mkString(" ")
     }.get.id.pure[F]
-    _ <- Sync[F].delay(println(s"Find secret chat id: ${chatId}"))
+   // _ <- Sync[F].delay(println(s"Find secret chat id: ${chatId}"))
     _ <- sendMessage(
       chatId,
       args.last,

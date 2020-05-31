@@ -25,6 +25,7 @@ object PrivateCommunity {
       .withG1Gen(ByteString.copyFrom(pc.G1Gen.toBytes))
       .withG2Gen(ByteString.copyFrom(pc.G2Gen.toBytes))
       .withZrGen(ByteString.copyFrom(pc.ZrGen.toBytes))
+      .withGTilda(ByteString.copyFrom(pc.gTilda.toBytes))
   }
 
   def fromProto(pc: PrivateCommunityProtoMessage): PrivateCommunity = {
@@ -34,7 +35,8 @@ object PrivateCommunity {
     val g1Gen = pairing.getG1.newElementFromBytes(pc.g1Gen.toByteArray)
     val g2Gen = pairing.getG1.newElementFromBytes(pc.g2Gen.toByteArray)
     val zRGen = pairing.getZr.newElementFromBytes(pc.zrGen.toByteArray)
-    PrivateCommunity(name, users, g1Gen, g2Gen, zRGen)
+    val gTilda = pairing.getGT.newElementFromBytes(pc.gTilda.toByteArray)
+    PrivateCommunity(name, users, g1Gen, g2Gen, zRGen, gTilda)
   }
 
   def toBytes(pc: PrivateCommunity): Array[Byte] = toProto(pc).toByteArray

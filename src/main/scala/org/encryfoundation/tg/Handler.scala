@@ -204,13 +204,16 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
                 status <- state.inviteChats(msg.message.chatId).asInstanceOf[CompleteFirstStep].pure[F]
                 _ <- Logger[F].info("Init verifier!")
                 pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
+                genG1 <- Sync[F].delay(pairing.getG1.newElementFromBytes(status.g1GenBytes).getImmutable)
+                genG2 <- Sync[F].delay(pairing.getG1.newElementFromBytes(status.g1GenBytes).getImmutable)
+                genGT <- Sync[F].delay(pairing.pairing(genG1, genG2))
                 verifier <- Verifier(
                   pairing.getG1.newElementFromBytes(status.g1GenBytes).getImmutable,
                   pairing.getG2.newElementFromBytes(status.g2GenBytes).getImmutable,
                   pairing.getZr.newElementFromBytes(status.zRGenBytes).getImmutable,
-                  pairing.getGT.newElementFromBytes(status.firstPublicKeyBytes).getImmutable,
-                  pairing.getGT.newElementFromBytes(status.secondPublicKeyBytes).getImmutable,
-                  pairing.getGT.newElementFromBytes(status.gTildaBytes).getImmutable,
+                  genGT.getField.newElementFromBytes(status.firstPublicKeyBytes).getImmutable,
+                  genGT.getField.newElementFromBytes(status.secondPublicKeyBytes).getImmutable,
+                  genGT.getField.newElementFromBytes(status.gTildaBytes).getImmutable,
                   pairing.getZr.newRandomElement().getImmutable,
                   pairing
                 ).pure[F]

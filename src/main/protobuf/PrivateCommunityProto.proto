@@ -8,4 +8,5 @@ message PrivateCommunityProtoMessage {
     bytes g1Gen = 3;
     bytes g2Gen = 4;
     bytes ZrGen = 5;
+    bytes gTilda = 6;
 }

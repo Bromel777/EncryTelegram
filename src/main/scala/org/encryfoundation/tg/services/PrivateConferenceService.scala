@@ -8,7 +8,9 @@ import org.encryfoundation.sectionSeven.SectionSeven
 import org.encryfoundation.tg.leveldb.Database
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
+import org.encryfoundation.mitmImun.{Prover, Verifier}
 import org.encryfoundation.tg.community.{CommunityUser, PrivateCommunity}
+import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
 
 import scala.concurrent.Future
@@ -42,6 +44,31 @@ object PrivateConferenceService {
           CommunityUser(userLogin, userInfo)
         }.pure[F]
         community <- PrivateCommunity(name, usersIds, generatorG1, generatorG2, generatorZr, usersInfo._2).pure[F]
+        _ <- Sync[F].delay {
+          val user = usersInfo._1.head
+          val key = pairing.getZr.newRandomElement()
+          val prover = Prover(generatorG1, generatorG2, user.userKsi, user.userT, user.publicKey1, user.publicKey2, generatorZr, pairing)
+          val verifier = Verifier(generatorG1, generatorG2, generatorZr, user.publicKey1, user.publicKey2, usersInfo._2, key, pairing)
+          val S1 = prover.firstStep()
+          val S2 = verifier.secondStep()
+          val c = prover.thirdStep(S2)
+          val res = verifier.forthStep(S1, S2, c)
+          println("Prover: \n " +
+            s"generatorG1: ${Base64.encode(generatorG1.toBytes)}\n " +
+            s"generatorG2: ${Base64.encode(generatorG2.toBytes)}\n " +
+            s"user.userKsi: ${Base64.encode(user.userKsi.toBytes)}\n " +
+            s"user.userT: ${Base64.encode(user.userT.toBytes)}\n " +
+            s"user.publicKey1: ${Base64.encode(user.publicKey1.toBytes)}\n " +
+            s"user.publicKey2: ${Base64.encode(user.publicKey2.toBytes)}\n " +
+            s"generatorZr: ${Base64.encode(generatorZr.toBytes)}\n ")
+          println("Verifier:\n  " +
+            s"generatorG1: ${Base64.encode(generatorG1.toBytes)}\n " +
+            s"generatorG2: ${Base64.encode(generatorG2.toBytes)}\n " +
+            s"generatorZr: ${Base64.encode(generatorZr.toBytes)}\n " +
+            s"user.publicKey1: ${Base64.encode(user.publicKey1.toBytes)}\n " +
+            s"user.publicKey2: ${Base64.encode(user.publicKey2.toBytes)}\n " +
+            s"usersInfo._2: ${Base64.encode(usersInfo._2.toBytes)}\n ")
+        }
         _ <- Logger[F].info(s"Create private community with name: ${name}. And users: ${usersIds.map(_.userTelegramLogin)}")
         _ <- db.put(conferencesKey, name.getBytes())
         _ <- db.put(confInfo(name), PrivateCommunity.toBytes(community))

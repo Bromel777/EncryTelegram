@@ -110,14 +110,6 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
                 groupInfo.ZrGen.getImmutable,
                 pairing
               ).pure[F]
-              _ <- Logger[F].info("Prover data: \n" +
-                s"groupInfo.G1Gen.getImmutable: ${groupInfo.G1Gen.getImmutable}\n " +
-                s"groupInfo.G2Gen.getImmutable: ${groupInfo.G2Gen.getImmutable}\n " +
-                s"groupInfo.users.head.userData.userKsi.getImmutable: ${groupInfo.users.head.userData.userKsi.getImmutable}\n " +
-                s"groupInfo.users.head.userData.userT.getImmutable: ${groupInfo.users.head.userData.userT.getImmutable}\n " +
-                s"groupInfo.users.head.userData.publicKey1.getImmutable: ${groupInfo.users.head.userData.publicKey1.getImmutable}\n " +
-                s"groupInfo.users.head.userData.publicKey2.getImmutable: ${groupInfo.users.head.userData.publicKey2.getImmutable}\n " +
-                s"groupInfo.ZrGen.getImmutable: ${groupInfo.ZrGen.getImmutable}")
               firstStep <- prover.firstStep().toBytes.pure[F]
               _ <- sendMessage(
                 chatInfo._1.id,
@@ -328,11 +320,6 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
                     pairing.getG1.newElementFromBytes(status.secondStepBytes).getImmutable,
                     status.thirdStepBytes
                 )}.\n ")
-                _ <- Logger[F].info(s"First step: ${Base64.encode(status.firstStepBytes)}")
-                _ <- Logger[F].info(s"Second step: ${Base64.encode(status.secondStepBytes)}")
-                _ <- Logger[F].info(s"pubKey1: ${Base64.encode(status.verifier.RoI1.toBytes)}")
-                _ <- Logger[F].info(s"pubKey2: ${Base64.encode(status.verifier.RoI2.toBytes)}")
-                _ <- Logger[F].info(s"my pubKey: ${Base64.encode(status.verifier.publicKey.toBytes)}")
                 commonKey <- Sync[F].delay(
                   status.verifier.produceCommonKey(
                     pairing.getG1.newElementFromBytes(status.firstStepBytes).getImmutable,

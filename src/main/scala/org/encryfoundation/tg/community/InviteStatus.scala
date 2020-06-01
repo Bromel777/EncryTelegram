@@ -1,7 +1,7 @@
 package org.encryfoundation.tg.community
 
 import it.unisa.dia.gas.jpbc.Element
-import org.encryfoundation.tg.mitm.{Prover, Verifier}
+import org.encryfoundation.mitmImun.{Prover, Verifier}
 
 trait InviteStatus {
   def setStepValue(input: Array[Byte]): InviteStatus
@@ -121,16 +121,28 @@ object InviteStatus {
     override def setStepValue(input: Array[Byte]): InviteStatus = this
   }
 
-  case class ProverThirdStep(prover: Prover, firstStep: Array[Byte], secondStepByte: Array[Byte]) extends InviteStatus {
+  case class ProverThirdStep(prover: Prover,
+                             firstStep: Array[Byte],
+                             secondStepByte: Array[Byte],
+                             verifierPubKey: Array[Byte]) extends InviteStatus {
     override def setStepValue(input: Array[Byte]): InviteStatus = this
   }
 
   case class ProverFirstStep(prover: Prover, firstStep: Array[Byte], canProcess: Boolean = false) extends InviteStatus {
     override def setStepValue(input: Array[Byte]): InviteStatus =
-      if (canProcess) ProverThirdStep(
+      if (canProcess) ProverAwaitVerifierPubKey(
         prover,
         firstStep,
         input
       ) else this
+  }
+
+  case class ProverAwaitVerifierPubKey(prover: Prover, firstStep: Array[Byte], secondStepByte: Array[Byte]) extends InviteStatus {
+    override def setStepValue(input: Array[Byte]): InviteStatus = ProverThirdStep(
+      prover,
+      firstStep,
+      secondStepByte,
+      input
+    )
   }
 }

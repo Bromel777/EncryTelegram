@@ -1,5 +1,7 @@
 package org.encryfoundation.tg.services
 
+import java.math.BigInteger
+
 import cats.FlatMap
 import cats.effect.Sync
 import it.unisa.dia.gas.jpbc.{Element, Pairing}
@@ -46,28 +48,34 @@ object PrivateConferenceService {
         community <- PrivateCommunity(name, usersIds, generatorG1, generatorG2, generatorZr, usersInfo._2).pure[F]
         _ <- Sync[F].delay {
           val user = usersInfo._1.head
-          val key = pairing.getZr.newRandomElement()
+          val key = pairing.getZr.newElement(new BigInteger("434468738970006145264306173286722283984358389443"))
           val prover = Prover(generatorG1, generatorG2, user.userKsi, user.userT, user.publicKey1, user.publicKey2, generatorZr, pairing)
+          println(s"Prover info:\n " +
+            s"generatorG1: ${generatorG1}\n " +
+            s"generatorG2: ${generatorG2}\n " +
+            s"user.userKsi: ${user.userKsi}\n " +
+            s"user.userT: ${user.userT}\n " +
+            s"user.publicKey1: ${user.publicKey1}\n " +
+            s"user.publicKey2: ${user.publicKey2}\n " +
+            s"generatorZr: ${generatorZr}")
           val verifier = Verifier(generatorG1, generatorG2, generatorZr, user.publicKey1, user.publicKey2, usersInfo._2, key, pairing)
           val S1 = prover.firstStep()
           val S2 = verifier.secondStep()
           val c = prover.thirdStep(S2)
           val res = verifier.forthStep(S1, S2, c)
-          println("Prover: \n " +
-            s"generatorG1: ${Base64.encode(generatorG1.toBytes)}\n " +
-            s"generatorG2: ${Base64.encode(generatorG2.toBytes)}\n " +
-            s"user.userKsi: ${Base64.encode(user.userKsi.toBytes)}\n " +
-            s"user.userT: ${Base64.encode(user.userT.toBytes)}\n " +
-            s"user.publicKey1: ${Base64.encode(user.publicKey1.toBytes)}\n " +
-            s"user.publicKey2: ${Base64.encode(user.publicKey2.toBytes)}\n " +
-            s"generatorZr: ${Base64.encode(generatorZr.toBytes)}\n ")
-          println("Verifier:\n  " +
-            s"generatorG1: ${Base64.encode(generatorG1.toBytes)}\n " +
-            s"generatorG2: ${Base64.encode(generatorG2.toBytes)}\n " +
-            s"generatorZr: ${Base64.encode(generatorZr.toBytes)}\n " +
-            s"user.publicKey1: ${Base64.encode(user.publicKey1.toBytes)}\n " +
-            s"user.publicKey2: ${Base64.encode(user.publicKey2.toBytes)}\n " +
-            s"usersInfo._2: ${Base64.encode(usersInfo._2.toBytes)}\n ")
+          println(s"Res: ${res}")
+          println(s"verifier.publicKey: ${Base64.encode(verifier.publicKey.toBytes)}")
+          println(s"verifier.publicKey: ${verifier.publicKey}")
+          println(s"s1: ${Base64.encode(S1.toBytes)}")
+          println(s"s1: ${S1}")
+          println(s"s2: ${Base64.encode(S2.toBytes)}")
+          println(s"s1: ${S2}")
+          println(s"prover.publicKey1: ${Base64.encode(user.publicKey1.toBytes)}")
+          println(s"prover.publicKey2: ${Base64.encode(user.publicKey2.toBytes)}")
+          val key1 = prover.produceCommonKey(verifier.publicKey, S1, S2)
+          val key2 = verifier.produceCommonKey(S1, S2, user.publicKey1, user.publicKey2)
+          println(s"key1: ${Base64.encode(key1)}")
+          println(s"Key2: ${Base64.encode(key2)}")
         }
         _ <- Logger[F].info(s"Create private community with name: ${name}. And users: ${usersIds.map(_.userTelegramLogin)}")
         _ <- db.put(conferencesKey, name.getBytes())

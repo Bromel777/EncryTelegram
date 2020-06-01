@@ -36,7 +36,7 @@ case class EmptyHandler[F[_]: Concurrent]() extends ResultHandler[F] {
   override def onResult(obj: TdApi.Object): F[Unit] = {
     //().pure[F]
     for {
-      _ <- Concurrent[F].delay(())
+      _ <- Concurrent[F].delay(println(s"Receive $obj on empty handler"))
     } yield ()
   }
 }
@@ -64,7 +64,6 @@ case class SecretGroupPrivateChatHandler[F[_]: Concurrent](stateRef: Ref[F, User
     case TdApi.Chat.CONSTRUCTOR =>
       for {
         state <- stateRef.get
-        _ <- Sync[F].delay(println(s"Receive private chat for pending: ${obj}"))
         _ <- stateRef.update(
           _.copy(
             mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,

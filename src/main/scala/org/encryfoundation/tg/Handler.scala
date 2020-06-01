@@ -1,5 +1,7 @@
 package org.encryfoundation.tg
 
+import java.math.BigInteger
+
 import cats.Applicative
 import cats.effect.concurrent.Ref
 import cats.effect.{ConcurrentEffect, Sync}
@@ -8,10 +10,10 @@ import io.chrisdavenport.log4cats.Logger
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
 import org.drinkless.tdlib.TdApi.MessageText
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
+import org.encryfoundation.mitmImun.{Prover, Verifier}
 import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.community.InviteStatus.{AwaitingFirstStep, CompleteFirstStep, ProverFirstStep, ProverSecondStep, ProverThirdStep, VerifierSecondStep, VerifierThirdStep}
 import org.encryfoundation.tg.community.PrivateCommunityStatus.UserCommunityStatus.AwaitingSecondPhaseFromUser
-import org.encryfoundation.tg.mitm.{Prover, Verifier}
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
@@ -108,16 +110,15 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
                 groupInfo.ZrGen.getImmutable,
                 pairing
               ).pure[F]
+              _ <- Logger[F].info("Prover data: \n" +
+                s"groupInfo.G1Gen.getImmutable: ${groupInfo.G1Gen.getImmutable}\n " +
+                s"groupInfo.G2Gen.getImmutable: ${groupInfo.G2Gen.getImmutable}\n " +
+                s"groupInfo.users.head.userData.userKsi.getImmutable: ${groupInfo.users.head.userData.userKsi.getImmutable}\n " +
+                s"groupInfo.users.head.userData.userT.getImmutable: ${groupInfo.users.head.userData.userT.getImmutable}\n " +
+                s"groupInfo.users.head.userData.publicKey1.getImmutable: ${groupInfo.users.head.userData.publicKey1.getImmutable}\n " +
+                s"groupInfo.users.head.userData.publicKey2.getImmutable: ${groupInfo.users.head.userData.publicKey2.getImmutable}\n " +
+                s"groupInfo.ZrGen.getImmutable: ${groupInfo.ZrGen.getImmutable}")
               firstStep <- prover.firstStep().toBytes.pure[F]
-              _ <- Logger[F].info("Init prover with next params: " +
-                s"g1Gen: ${Base64.encode(groupInfo.G1Gen.toBytes)}\n " +
-                s"g2Gen: ${Base64.encode(groupInfo.G2Gen.toBytes)}\n " +
-                s"groupInfo.users.head.userData.userKsi: ${Base64.encode(groupInfo.users.head.userData.userKsi.toBytes)}\n " +
-                s"groupInfo.users.head.userData.userT: ${Base64.encode(groupInfo.users.head.userData.userT.toBytes)}\n " +
-                s"groupInfo.users.head.userData.publicKey1: ${Base64.encode(groupInfo.users.head.userData.publicKey1.toBytes)}\n " +
-                s"groupInfo.users.head.userData.publicKey2: ${Base64.encode(groupInfo.users.head.userData.publicKey2.toBytes)}\n " +
-                s"groupInfo.ZrGen: ${Base64.encode(groupInfo.ZrGen.toBytes)}" +
-                s"firstStep: ${Base64.encode(firstStep)}")
               _ <- sendMessage(
                 chatInfo._1.id,
                 "=====First step=====",
@@ -182,6 +183,12 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
           else if (secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStatePending] && !secretChat.secretChat.isOutbound) {
             for {
               _ <- client.send(new TdApi.OpenChat(secretChat.secretChat.id), SecretChatHandler[F](userStateRef))
+              state <- userStateRef.get
+              _ <- userStateRef.update(
+                _.copy(
+                  secretChats = state.secretChats + (secretChat.secretChat.id -> secretChat.secretChat)
+                )
+              )
             } yield ()
           }
           else Sync[F].delay()
@@ -191,6 +198,7 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
         for {
           state <- userStateRef.get
           _ <- Logger[F].info(s"Receive: ${msg}")
+
           _ <- msg.message.content match {
             case a: MessageText if (a.text.text == "=====First step=====") && !msg.message.isOutgoing =>
               for {
@@ -207,6 +215,7 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
                 genG1 <- Sync[F].delay(pairing.getG1.newElementFromBytes(status.g1GenBytes).getImmutable)
                 genG2 <- Sync[F].delay(pairing.getG1.newElementFromBytes(status.g1GenBytes).getImmutable)
                 genGT <- Sync[F].delay(pairing.pairing(genG1, genG2))
+                genZr <- Sync[F].delay(pairing.getZr.newElementFromBytes(status.zRGenBytes).getImmutable)
                 verifier <- Verifier(
                   pairing.getG1.newElementFromBytes(status.g1GenBytes).getImmutable,
                   pairing.getG2.newElementFromBytes(status.g2GenBytes).getImmutable,
@@ -214,19 +223,10 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
                   genGT.getField.newElementFromBytes(status.firstPublicKeyBytes).getImmutable,
                   genGT.getField.newElementFromBytes(status.secondPublicKeyBytes).getImmutable,
                   genGT.getField.newElementFromBytes(status.gTildaBytes).getImmutable,
-                  pairing.getZr.newRandomElement().getImmutable,
+                  pairing.getZr.newRandomElement(),
                   pairing
                 ).pure[F]
                 secondStep <- verifier.secondStep().toBytes.pure[F]
-                _ <- Logger[F].info("Init verifier with next params: " +
-                  s"g1Gen: ${Base64.encode(status.g1GenBytes)}\n " +
-                  s"g2Gen: ${Base64.encode(status.g2GenBytes)}\n " +
-                  s"gTildaBytes: ${Base64.encode(status.gTildaBytes)}\n " +
-                  s"groupInfo.users.head.userData.publicKey1: ${Base64.encode(status.firstPublicKeyBytes)}\n " +
-                  s"groupInfo.users.head.userData.publicKey2: ${Base64.encode(status.secondPublicKeyBytes)}\n " +
-                  s"groupInfo.ZrGen: ${Base64.encode(status.zRGenBytes)}" +
-                  s"firstStep: ${Base64.encode(status.firstStepBytes)}," +
-                  s"secondStep: ${Base64.encode(secondStep)}")
                 _ <- userStateRef.update(_.copy(
                   inviteChats = state.inviteChats + (
                       msg.message.chatId -> VerifierSecondStep(verifier, status.firstStepBytes, secondStep)
@@ -240,6 +240,12 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
                 _ <- sendMessage(
                   msg.message.chatId,
                   Base64.encode(secondStep),
+                  client
+                )
+                _ <- Logger[F].info(s"My public key: ${Base64.encode(verifier.publicKey.toBytes)}")
+                _ <- sendMessage(
+                  msg.message.chatId,
+                  Base64.encode(verifier.publicKey.toBytes),
                   client
                 )
                 _ <- sendMessage(
@@ -264,11 +270,6 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
                 thirdStep <- status.prover.thirdStep(
                   pairing.getG1.newElementFromBytes(status.secondStepByte).getImmutable
                 ).pure[F]
-                _ <- Logger[F].info("Send third step." +
-                  s"FirstStep: ${Base64.encode(pairing.getG1.newElementFromBytes(status.firstStep).toBytes)}\n " +
-                  s"SecondStep: ${Base64.encode(pairing.getG1.newElementFromBytes(status.secondStepByte).toBytes)}\n " +
-                  s"third step: ${Base64.encode(thirdStep)}")
-                pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
                 _ <- sendMessage(
                   msg.message.chatId,
                   "=====Third step=====",
@@ -287,6 +288,27 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
                 _ <- userStateRef.update(_.copy(
                   inviteChats = state.inviteChats + (msg.message.chatId -> AwaitingFirstStep())
                 ))
+                _ <- Logger[F].info(s"Verifier pubKey: ${Base64.encode(status.verifierPubKey)}")
+                _ <- Logger[F].info(s"Ver pubkey (1): ${status.prover.generator3.getField.newElementFromBytes(status.verifierPubKey)}")
+                _ <- Logger[F].info(s"Ver pubkey (2): ${pairing.getGT.newElementFromBytes(status.verifierPubKey)}")
+                _ <- Logger[F].info(s"my pub key1: ${Base64.encode(status.prover.publicKey1.toBytes)}")
+                _ <- Logger[F].info(s"my pub key2: ${Base64.encode(status.prover.publicKey2.toBytes)}")
+                _ <- Logger[F].info(s"First step: ${Base64.encode(status.firstStep)}")
+                _ <- Logger[F].info(s"First step: ${pairing.getG1.newElementFromBytes(status.firstStep).getImmutable}")
+                _ <- Logger[F].info(s"Second step: ${Base64.encode(status.secondStepByte)}")
+                _ <- Logger[F].info(s"Second step: ${pairing.getG1.newElementFromBytes(status.secondStepByte).getImmutable}")
+                commonKey <- Sync[F].delay(
+                  status.prover.produceCommonKey(
+                    status.prover.generator3.getField.newElementFromBytes(status.verifierPubKey).getImmutable,
+                    pairing.getG1.newElementFromBytes(status.firstStep).getImmutable,
+                    pairing.getG1.newElementFromBytes(status.secondStepByte).getImmutable
+                  )
+                )
+                _ <- Logger[F].info(s"Common key: ${Base64.encode(commonKey)}")
+                _ <- client.send(
+                  new TdApi.CloseChat(msg.message.id),
+                  EmptyHandler[F]()
+                )
               } yield ()
             case a: MessageText if (a.text.text == "=====Third step=====") && !msg.message.isOutgoing =>
               for {
@@ -305,16 +327,25 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
                     pairing.getG1.newElementFromBytes(status.firstStepBytes).getImmutable,
                     pairing.getG1.newElementFromBytes(status.secondStepBytes).getImmutable,
                     status.thirdStepBytes
-                )}. \n " +
-                  s"firstStepBytes: ${Base64.encode(status.firstStepBytes)}\n " +
-                  s"secondStepBytes: ${Base64.encode(status.secondStepBytes)}\n " +
-                  s"status.thirdStepBytes: ${Base64.encode(status.thirdStepBytes)}\n " +
-                  s"pubKey1: ${Base64.encode(status.verifier.RoI1.toBytes)}\n " +
-                  s"pubKey2: ${Base64.encode(status.verifier.RoI2.toBytes)}\n " +
-                  s"gTilda: ${Base64.encode(status.verifier.gTilda.toBytes)}\n " +
-                  s"g1: ${Base64.encode(status.verifier.generator1.toBytes)}\n " +
-                  s"g2: ${Base64.encode(status.verifier.generator2.toBytes)}\n " +
-                  s"zR: ${Base64.encode(status.verifier.generatorZr.toBytes)}\n ")
+                )}.\n ")
+                _ <- Logger[F].info(s"First step: ${Base64.encode(status.firstStepBytes)}")
+                _ <- Logger[F].info(s"Second step: ${Base64.encode(status.secondStepBytes)}")
+                _ <- Logger[F].info(s"pubKey1: ${Base64.encode(status.verifier.RoI1.toBytes)}")
+                _ <- Logger[F].info(s"pubKey2: ${Base64.encode(status.verifier.RoI2.toBytes)}")
+                _ <- Logger[F].info(s"my pubKey: ${Base64.encode(status.verifier.publicKey.toBytes)}")
+                commonKey <- Sync[F].delay(
+                  status.verifier.produceCommonKey(
+                    pairing.getG1.newElementFromBytes(status.firstStepBytes).getImmutable,
+                    pairing.getG1.newElementFromBytes(status.secondStepBytes).getImmutable,
+                    status.verifier.RoI1.getImmutable,
+                    status.verifier.RoI2.getImmutable
+                  )
+                )
+                _ <- Logger[F].info(s"Common key: ${Base64.encode(commonKey)}")
+                _ <- client.send(
+                  new TdApi.CloseChat(msg.message.chatId),
+                  EmptyHandler[F]()
+                )
               } yield ()
             case a: MessageText if (a.text.text == "=====Second step=====") =>
               Applicative[F].pure(())

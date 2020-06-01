@@ -38,7 +38,7 @@ object CommunityUser {
     val g1Gen = pairing.getG1.newElementFromBytes(cu.g1Gen.toByteArray)
     val g2Gen = pairing.getG2.newElementFromBytes(cu.g2Gen.toByteArray)
     val zRGen = pairing.getZr.newElementFromBytes(cu.zrGen.toByteArray)
-    val userKsi = pairing.getG1.newElementFromBytes(cu.data.get.userKsi.toByteArray)
+    val userKsi = pairing.getZr.newElementFromBytes(cu.data.get.userKsi.toByteArray)
     val userT = pairing.getG1.newElementFromBytes(cu.data.get.userT.toByteArray)
     val userPublicKey1 = pairing.getGT.newElementFromBytes(cu.data.get.publicKey1.toByteArray)
     val userPublicKey2 = pairing.getGT.newElementFromBytes(cu.data.get.publicKey2.toByteArray)

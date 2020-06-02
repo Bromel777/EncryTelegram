@@ -3,7 +3,7 @@ package org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.g
 import VerifierSecondStepProto.VerifierSecondStepProtoMsg
 import com.google.protobuf.ByteString
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.VerifierSecondStepMsg
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.VerifierSecondStepMsg
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.{StepMsgSerializationError, StepMsgSerializer}
 
 object VerifierSecondMsgSerializer {

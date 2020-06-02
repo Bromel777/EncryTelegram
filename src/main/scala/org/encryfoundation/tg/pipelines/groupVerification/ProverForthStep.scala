@@ -7,6 +7,7 @@ import org.drinkless.tdlib.TdApi.SecretChat
 import org.encryfoundation.mitmImun.Prover
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.pipelines.Pipeline
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
 import org.encryfoundation.tg.userState.UserState
 
 case class ProverForthStep[F[_]](prover: Prover,
@@ -20,5 +21,5 @@ case class ProverForthStep[F[_]](prover: Prover,
                                  secondStep: Element,
                                  thirdStep: Element) extends Pipeline[F] {
 
-  override def processInput(input: Array[Byte]): F[Pipeline[F]] = ???
+  override def processInput(input: StepMsg): F[Pipeline[F]] = ???
 }

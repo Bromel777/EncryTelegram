@@ -14,7 +14,8 @@ import scorex.crypto.hash.Blake2b256
 import cats.implicits._
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndPipeline, ProverFirstStepMsg, StartPipeline}
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverFirstStepMsg
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndPipeline, StartPipeline}
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.EndPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.ProverFirstMsgSerializer._
@@ -35,7 +36,7 @@ case class ProverFirstStep[F[_]: Concurrent: Timer](prover: Prover,
       client
     )
 
-  override def processInput(input: Array[Byte]): F[Pipeline[F]] = for {
+  override def processInput(input: StepMsg): F[Pipeline[F]] = for {
     msg <- getFirstMsg.pure[F]
     _ <- send2Chat(StartPipeline(ProverFirstStep.pipelineName))
     _ <- send2Chat(msg)

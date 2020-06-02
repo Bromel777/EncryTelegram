@@ -9,6 +9,7 @@ import org.encryfoundation.mitmImun.Prover
 import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.pipelines.Pipeline
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
@@ -29,7 +30,7 @@ case class ProverThirdStep[F[_]: Concurrent: Timer](prover: Prover,
       client
     )
 
-  override def processInput(input: Array[Byte]): F[Pipeline[F]] = ???
+  override def processInput(input: StepMsg): F[Pipeline[F]] = ???
 }
 
 object ProverThirdStep {

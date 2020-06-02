@@ -2,7 +2,7 @@ package org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.g
 
 import ProverThirdStepProto.ProverThirdStepProtoMsg
 import com.google.protobuf.ByteString
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.ProverThirdStepMsg
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverThirdStepMsg
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.{StepMsgSerializationError, StepMsgSerializer}
 
 object ProverThirdMsgSerializer {

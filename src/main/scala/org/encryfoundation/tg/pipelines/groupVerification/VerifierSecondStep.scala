@@ -1,6 +1,7 @@
 package org.encryfoundation.tg.pipelines.groupVerification
 
 import cats.Applicative
+import cats.effect.concurrent.MVar
 import cats.effect.{Concurrent, Sync}
 import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.Client
@@ -12,45 +13,71 @@ import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
 import cats.implicits._
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
-import org.encryfoundation.tg.pipelines.groupVerification.VerifierSecondStep.ProverInfo
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.{ProverFirstStepMsg, VerifierSecondStepMsg}
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.VerifierSecondMsgSerializer._
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndPipeline, StartPipeline}
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.EndPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 
-case class VerifierSecondStep[F[_]: Concurrent: Logger](proverInfo: ProverInfo[F],
+case class VerifierSecondStep[F[_]: Concurrent: Logger](proverMsg: MVar[F, ProverFirstStepMsg],
+                                                        verifierVar: MVar[F, Verifier],
                                                         secretChat: SecretChat,
                                                         chatId: Long,
                                                         client: Client[F]) extends Pipeline[F] {
 
-  private def send2Chat(msg: Array[Byte]): F[Unit] =
+  private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] =
     sendMessage(
       chatId,
-      Base64.encode(msg),
+      Base64.encode(StepMsgSerializer.toBytes(msg)),
       client
     )
 
-  def processPreviousStepStart: F[Pipeline[F]] = ???
+  //todo: add logging
+  def processPreviousStepStart: F[Pipeline[F]] = Applicative[F].pure(this)
 
-  def processPreviousStepEnd: F[Pipeline[F]] = ???
+  def processPreviousStepEnd: F[Pipeline[F]] = for {
+    _ <- firstMsg2Verifier
+    verifier <- verifierVar.read
+    secondStep <- verifier.secondStep().pure[F]
+    _ <- send2Chat(StartPipeline(VerifierSecondStep.pipeLineName))
+    _ <- send2Chat(VerifierSecondStepMsg(verifier.publicKey, secondStep))
+    _ <- send2Chat(EndPipeline(VerifierSecondStep.pipeLineName))
+  } yield ()
 
-  def processStepInput(input: Array[Byte]): F[Pipeline[F]] = for {
-    newProverInfo <- proverInfo.setNextStep(input)
-  } yield this.copy(proverInfo = newProverInfo)
-
-  override def processInput(input: Array[Byte]): F[Pipeline[F]] = input match {
-    case prevStepStart if prevStepStart sameElements ProverFirstStep.pipeLineStart => processPreviousStepStart
-    case prevStepEnd if prevStepEnd sameElements ProverFirstStep.pipeLineEnd => processPreviousStepEnd
-    case stepInput => processStepInput(input)
+  //todo errors
+  def processStepInput(input: StepMsg): F[Pipeline[F]] = input match {
+    case msg: ProverFirstStepMsg => for {
+      _ <- proverMsg.put(msg)
+    } yield this
+    case _ => Applicative[F].pure(this)
   }
+
+  override def processInput(input: StepMsg): F[Pipeline[F]] = input match {
+    case StartPipeline(pipelineName) if pipelineName == ProverFirstStep.pipelineName  => processPreviousStepStart
+    case EndPipeline(pipelineName) if pipelineName == ProverFirstStep.pipelineName => processPreviousStepEnd
+    case _: ProverFirstStepMsg => processStepInput(input)
+  }
+
+  //todo: pairing from settings
+  private val firstMsg2Verifier: F[Unit] = for {
+    pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
+    msg <- proverMsg.read
+    verifier <- Verifier(
+      msg.g1Gen,
+      msg.g2Gen,
+      msg.zRGen,
+      msg.proverPublicKey1,
+      msg.proverPublicKey2,
+      msg.gTilda,
+      pairing.getZr.newRandomElement(),
+      pairing
+    ).pure[F]
+  } yield verifierVar.put(verifier)
 }
 
 object VerifierSecondStep {
 
-  //todo: Add errors
-  case class ProverInfo[F[_]: Sync](steps: List[Array[Byte]]) {
-    def setNextStep(input: Array[Byte]): F[ProverInfo[F]] =
-      if (steps.length < 7) this.copy[F](steps :+ input).pure[F]
-      else Applicative[F].pure(this)
-    def toVerifier: F[Verifier] = ???
-  }
-
-  val pipeLineStart = Blake2b256.hash("VerifierSecondStepStart")
-  val pipeLineEnd = Blake2b256.hash("VerifierSecondStepEnd")
+  val pipeLineName = "verifierSecondStep"
 }

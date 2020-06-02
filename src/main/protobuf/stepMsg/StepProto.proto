@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+import "stepMsg/groupVerification/GroupVerificationProto.proto";
+import "StartPipelineProto.proto";
+import "EndPipelineProto.proto";
+
+message StepMsgProto {
+    oneof stepMsg {
+        GroupVerificationProtoMsg verification = 1;
+        StartPipelineProtoMsg start = 2;
+        EndPipelineProtoMsg end = 3;
+    }
+}

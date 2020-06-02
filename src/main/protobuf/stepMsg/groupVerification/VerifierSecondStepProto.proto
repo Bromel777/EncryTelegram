@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message VerifierSecondStepProtoMsg {
+    bytes verifierPubKey = 1;
+    bytes secondStep = 2;
+}

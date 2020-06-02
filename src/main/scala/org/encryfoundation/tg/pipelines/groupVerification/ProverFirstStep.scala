@@ -14,6 +14,8 @@ import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
 import cats.implicits._
 import org.encryfoundation.tg.community.PrivateCommunity
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.ProverFirstStepMsg
 
 case class ProverFirstStep[F[_]: Concurrent: Timer](prover: Prover,
                                                     community: PrivateCommunity,
@@ -23,7 +25,7 @@ case class ProverFirstStep[F[_]: Concurrent: Timer](prover: Prover,
                                                     secretChat: SecretChat,
                                                     chatId: Long) extends Pipeline[F] {
 
-  private def send2Chat(msg: Array[Byte]): F[Unit] =
+  private def send2Chat(msg: StepMsg): F[Unit] =
     sendMessage(
       chatId,
       Base64.encode(msg),
@@ -36,7 +38,7 @@ case class ProverFirstStep[F[_]: Concurrent: Timer](prover: Prover,
     _ <- send2Chat(firstStep.toBytes)
     _ <- firstStepInfo(firstStep).traverse(send2Chat)
     _ <- send2Chat(ProverFirstStep.pipeLineEnd)
-  } yield ProverSecondStep(
+  } yield ProverThirdStep(
     prover,
     community,
     recipientLogin,
@@ -47,19 +49,18 @@ case class ProverFirstStep[F[_]: Concurrent: Timer](prover: Prover,
     firstStep
   )
 
-  private def firstStepInfo(firstStep: Element): List[Array[Byte]] =
-    List(
-      firstStep.toBytes,
-      community.gTilda.toBytes,
-      prover.publicKey1.toBytes,
-      prover.publicKey2.toBytes,
-      prover.generator1.toBytes,
-      prover.generator2.toBytes,
-      prover.zRGenerator.toBytes
+  private def getFirstMsg: ProverFirstStepMsg =
+    ProverFirstStepMsg(
+      prover.firstStep(),
+      community.gTilda,
+      prover.publicKey1,
+      prover.publicKey2,
+      prover.generator1,
+      prover.generator2,
+      prover.zRGenerator
     )
 }
 
 object ProverFirstStep {
-  val pipeLineStart = Blake2b256.hash("ProverFirstStepStart")
-  val pipeLineEnd = Blake2b256.hash("ProverFirstStepEnd")
+  val pipelineName = "proverFirstStep"
 }

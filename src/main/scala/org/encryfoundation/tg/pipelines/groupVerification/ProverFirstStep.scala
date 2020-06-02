@@ -8,14 +8,17 @@ import org.drinkless.tdlib.TdApi.SecretChat
 import org.encryfoundation.mitmImun.Prover
 import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.pipelines.Pipeline
-import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
 import cats.implicits._
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.ProverFirstStepMsg
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndPipeline, ProverFirstStepMsg, StartPipeline}
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.EndPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.ProverFirstMsgSerializer._
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 
 case class ProverFirstStep[F[_]: Concurrent: Timer](prover: Prover,
                                                     community: PrivateCommunity,
@@ -25,19 +28,18 @@ case class ProverFirstStep[F[_]: Concurrent: Timer](prover: Prover,
                                                     secretChat: SecretChat,
                                                     chatId: Long) extends Pipeline[F] {
 
-  private def send2Chat(msg: StepMsg): F[Unit] =
+  private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] =
     sendMessage(
       chatId,
-      Base64.encode(msg),
+      Base64.encode(StepMsgSerializer.toBytes(msg)),
       client
     )
 
   override def processInput(input: Array[Byte]): F[Pipeline[F]] = for {
-    _ <- send2Chat(ProverFirstStep.pipeLineStart)
-    firstStep <- Sync[F].delay(prover.firstStep())
-    _ <- send2Chat(firstStep.toBytes)
-    _ <- firstStepInfo(firstStep).traverse(send2Chat)
-    _ <- send2Chat(ProverFirstStep.pipeLineEnd)
+    msg <- getFirstMsg.pure[F]
+    _ <- send2Chat(StartPipeline(ProverFirstStep.pipelineName))
+    _ <- send2Chat(msg)
+    _ <- send2Chat(EndPipeline(ProverFirstStep.pipelineName))
   } yield ProverThirdStep(
     prover,
     community,
@@ -46,7 +48,7 @@ case class ProverFirstStep[F[_]: Concurrent: Timer](prover: Prover,
     client,
     secretChat,
     chatId,
-    firstStep
+    msg.firstStep
   )
 
   private def getFirstMsg: ProverFirstStepMsg =

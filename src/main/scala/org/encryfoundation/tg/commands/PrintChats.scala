@@ -27,8 +27,7 @@ case class PrintChats[F[_]: Concurrent: Timer](client: Client[F],
       _ <- Sync[F].delay(println(s"Chats: ${
         state.mainChatList.take(20).map(chat =>
           if (state.privateGroups.contains(chat.id) ||
-            dbChats.exists(_.map(_.toChar).mkString == chat.title)) chat.title ++ s" [Private group]." +
-            s" Status: ${state.privateGroups(chat.id)._3}"
+            dbChats.exists(_.map(_.toChar).mkString == chat.title)) chat.title ++ s" [Private group]."
           else if(chat.`type`.isInstanceOf[ChatTypeSecret]) chat.title ++ s" [Secret chat]"
           else chat.title
         ).mkString("\n ")}."))

@@ -2,4 +2,7 @@ syntax = "proto3";
 
 message ProverThirdStepProtoMsg {
     bytes thirdStep = 1;
+    uint64 chatId = 2;
+    string groupName = 3;
+    string pass = 4;
 }

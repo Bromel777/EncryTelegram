@@ -20,6 +20,9 @@ object StepMsg {
     case class VerifierSecondStepMsg(verifierPubKey1: Element,
                                      secondStep: Element) extends GroupVerificationStepMsg
 
-    case class ProverThirdStepMsg(thirdStep: Array[Byte]) extends GroupVerificationStepMsg
+    case class ProverThirdStepMsg(thirdStep: Array[Byte],
+                                  chatId: Long,
+                                  name: String,
+                                  pass: String) extends GroupVerificationStepMsg
   }
 }

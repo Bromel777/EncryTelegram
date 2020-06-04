@@ -1,6 +1,8 @@
 package org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification
 
+import GroupVerificationProto.GroupVerificationProtoMsg
 import ProverFistStepProto.ProverFirstStepProtoMsg
+import StepProto.StepMsgProto
 import com.google.protobuf.ByteString
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
 import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverFirstStepMsg
@@ -8,19 +10,24 @@ import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.{S
 
 object ProverFirstMsgSerializer {
 
-  implicit val serializer: StepMsgSerializer[ProverFirstStepMsg] = new StepMsgSerializer[ProverFirstStepMsg] {
-    private def toProto(msg: ProverFirstStepMsg): ProverFirstStepProtoMsg =
-      ProverFirstStepProtoMsg()
-        .withFirstStep(ByteString.copyFrom(msg.firstStep.toBytes))
-        .withG1Gen(ByteString.copyFrom(msg.g1Gen.toBytes))
-        .withG2Gen(ByteString.copyFrom(msg.g2Gen.toBytes))
-        .withGTilda(ByteString.copyFrom(msg.gTilda.toBytes))
-        .withProverPublicKey1(ByteString.copyFrom(msg.proverPublicKey1.toBytes))
-        .withProverPublicKey2(ByteString.copyFrom(msg.proverPublicKey2.toBytes))
-        .withZRGen(ByteString.copyFrom(msg.zRGen.toBytes))
+  implicit val serializerProverFirst: StepMsgSerializer[ProverFirstStepMsg] = new StepMsgSerializer[ProverFirstStepMsg] {
+    private def toProto(msg: ProverFirstStepMsg): StepMsgProto =
+      StepMsgProto()
+          .withVerification(
+            GroupVerificationProtoMsg()
+              .withProFir(ProverFirstStepProtoMsg()
+                .withFirstStep(ByteString.copyFrom(msg.firstStep.toBytes))
+                .withG1Gen(ByteString.copyFrom(msg.g1Gen.toBytes))
+                .withG2Gen(ByteString.copyFrom(msg.g2Gen.toBytes))
+                .withGTilda(ByteString.copyFrom(msg.gTilda.toBytes))
+                .withProverPublicKey1(ByteString.copyFrom(msg.proverPublicKey1.toBytes))
+                .withProverPublicKey2(ByteString.copyFrom(msg.proverPublicKey2.toBytes))
+                .withZRGen(ByteString.copyFrom(msg.zRGen.toBytes)))
+          )
 
     //todo: add exception check
-    private def fromProto(protoMsg: ProverFirstStepProtoMsg): Either[StepMsgSerializationError, ProverFirstStepMsg] = {
+    private def fromProto(msg: StepMsgProto): Either[StepMsgSerializationError, ProverFirstStepMsg] = {
+      val protoMsg = msg.getVerification.getProFir
       val pairing = PairingFactory.getPairing("src/main/resources/properties/a.properties")
       val firstStepBytes = pairing.getG1.newElementFromBytes(protoMsg.firstStep.toByteArray).getImmutable
       val g1Gen = pairing.getG1.newElementFromBytes(protoMsg.g1Gen.toByteArray).getImmutable
@@ -44,6 +51,6 @@ object ProverFirstMsgSerializer {
 
     def toBytes(msg: ProverFirstStepMsg): Array[Byte] = toProto(msg).toByteArray
     def parseBytes(bytes: Array[Byte]): Either[StepMsgSerializationError, ProverFirstStepMsg] =
-      fromProto(ProverFirstStepProtoMsg.parseFrom(bytes))
+      fromProto(StepMsgProto.parseFrom(bytes))
   }
 }

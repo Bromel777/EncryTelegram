@@ -3,8 +3,8 @@ package org.encryfoundation.tg
 import java.math.BigInteger
 
 import cats.Applicative
-import cats.effect.concurrent.Ref
-import cats.effect.{ConcurrentEffect, Sync}
+import cats.effect.concurrent.{MVar, Ref}
+import cats.effect.{ConcurrentEffect, Sync, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
@@ -12,17 +12,22 @@ import org.drinkless.tdlib.TdApi.MessageText
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.mitmImun.{Prover, Verifier}
 import org.encryfoundation.tg.RunApp.sendMessage
-import org.encryfoundation.tg.community.InviteStatus.{AwaitingFirstStep, CompleteFirstStep, ProverFirstStep, ProverSecondStep, ProverThirdStep, VerifierSecondStep, VerifierThirdStep}
+import org.encryfoundation.tg.community.InviteStatus.VerifierSecondStep
 import org.encryfoundation.tg.community.PrivateCommunityStatus.UserCommunityStatus.AwaitingSecondPhaseFromUser
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverFirstStepMsg
+import org.encryfoundation.tg.pipelines.groupVerification.{ProverFirstStep, VerifierSecondStep}
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.StartPipeline
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
 
 import scala.io.StdIn
+import scala.util.{Failure, Success}
 
-case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserState[F]],
-                                                   privateConferenceService: PrivateConferenceService[F],
-                                                   client: Client[F]) extends ResultHandler[F] {
+case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, UserState[F]],
+                                                          privateConferenceService: PrivateConferenceService[F],
+                                                          client: Client[F]) extends ResultHandler[F] {
 
   /**
    * Callback called on result of query to TDLib or incoming update from TDLib.
@@ -98,77 +103,14 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
           ) for {
               _ <- Logger[F].info("Secret chat for key sharing accepted. Start first step!")
               chatInfo <- state.pendingSecretChatsForInvite(secretChat.secretChat.id).pure[F]
-              groupInfo <- privateConferenceService.findConf(chatInfo._2)
-              pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
-              prover <- Prover(
-                groupInfo.G1Gen.getImmutable,
-                groupInfo.G2Gen.getImmutable,
-                groupInfo.users.head.userData.userKsi.getImmutable,
-                groupInfo.users.head.userData.userT.getImmutable,
-                groupInfo.users.head.userData.publicKey1.getImmutable,
-                groupInfo.users.head.userData.publicKey2.getImmutable,
-                groupInfo.ZrGen.getImmutable,
-                pairing
-              ).pure[F]
-              firstStep <- prover.firstStep().toBytes.pure[F]
-              _ <- sendMessage(
-                chatInfo._1.id,
-                "=====First step=====",
-                client
-              )
-              _ <- sendMessage(
-                chatInfo._1.id,
-                Base64.encode(firstStep),
-                client
-              )
-              _ <- sendMessage(
-                chatInfo._1.id,
-                Base64.encode(groupInfo.gTilda.toBytes),
-                client
-              )
-              _ <- sendMessage(
-                chatInfo._1.id,
-                Base64.encode(groupInfo.users.head.userData.publicKey1.toBytes),
-                client
-              )
-              _ <- sendMessage(
-                chatInfo._1.id,
-                Base64.encode(groupInfo.users.head.userData.publicKey2.toBytes),
-                client
-              )
-              _ <- sendMessage(
-                chatInfo._1.id,
-                Base64.encode(groupInfo.G1Gen.toBytes),
-                client
-              )
-              _ <- sendMessage(
-                chatInfo._1.id,
-                Base64.encode(groupInfo.G2Gen.toBytes),
-                client
-              )
-              _ <- sendMessage(
-                chatInfo._1.id,
-                Base64.encode(groupInfo.ZrGen.toBytes),
-                client
-              )
-              _ <- sendMessage(
-                chatInfo._1.id,
-                "=====First step End=====",
-                client
-              )
-              confUpdated <- Sync[F].delay {
-                val preConfInfo = state.privateGroups(chatInfo._3)
-                val previousCommunityStatus = preConfInfo._3
-                val communityStatus = previousCommunityStatus.copy(
-                  usersStatus = previousCommunityStatus.usersStatus + (chatInfo._2 -> AwaitingSecondPhaseFromUser)
-                )
-                preConfInfo.copy(_3 = communityStatus)
-              }
+              chatId <- state.pendingSecretChatsForInvite(secretChat.secretChat.id)._1.id.pure[F]
+              newPipeline <- state.pipelineSecretChats(chatId).processInput(Array.emptyByteArray)
               _ <- userStateRef.update(
                 _.copy(
                   pendingSecretChatsForInvite = state.pendingSecretChatsForInvite - secretChat.secretChat.id,
-                  privateGroups = state.privateGroups + (chatInfo._3 -> confUpdated),
-                  inviteChats = state.inviteChats + (chatInfo._1.id -> ProverFirstStep(prover, firstStep))
+                  privateGroups = state.privateGroups + (chatInfo._1.id -> (chatInfo._1 -> chatInfo._2)),
+                  pipelineSecretChats = state.pipelineSecretChats +
+                    (chatId -> newPipeline)
                 )
               )
             } yield ()
@@ -189,177 +131,54 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
         val msg = obj.asInstanceOf[TdApi.UpdateNewMessage]
         for {
           state <- userStateRef.get
-          _ <- Logger[F].info(s"Receive: ${msg}")
-
           _ <- msg.message.content match {
-            case a: MessageText if (a.text.text == "=====First step=====") && !msg.message.isOutgoing =>
-              for {
-                _ <- Logger[F].info("Someone trying to invite us to group!")
-                _ <- userStateRef.update(_.copy(
-                  inviteChats = state.inviteChats + (msg.message.chatId -> AwaitingFirstStep())
-                ))
-              } yield ()
-            case a: MessageText if (a.text.text == "=====First step End=====") && !msg.message.isOutgoing =>
-              for {
-                status <- state.inviteChats(msg.message.chatId).asInstanceOf[CompleteFirstStep].pure[F]
-                _ <- Logger[F].info("Init verifier!")
-                pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
-                genG1 <- Sync[F].delay(pairing.getG1.newElementFromBytes(status.g1GenBytes).getImmutable)
-                genG2 <- Sync[F].delay(pairing.getG1.newElementFromBytes(status.g1GenBytes).getImmutable)
-                genGT <- Sync[F].delay(pairing.pairing(genG1, genG2))
-                genZr <- Sync[F].delay(pairing.getZr.newElementFromBytes(status.zRGenBytes).getImmutable)
-                verifier <- Verifier(
-                  pairing.getG1.newElementFromBytes(status.g1GenBytes).getImmutable,
-                  pairing.getG2.newElementFromBytes(status.g2GenBytes).getImmutable,
-                  pairing.getZr.newElementFromBytes(status.zRGenBytes).getImmutable,
-                  genGT.getField.newElementFromBytes(status.firstPublicKeyBytes).getImmutable,
-                  genGT.getField.newElementFromBytes(status.secondPublicKeyBytes).getImmutable,
-                  genGT.getField.newElementFromBytes(status.gTildaBytes).getImmutable,
-                  pairing.getZr.newRandomElement(),
-                  pairing
-                ).pure[F]
-                secondStep <- verifier.secondStep().toBytes.pure[F]
-                _ <- userStateRef.update(_.copy(
-                  inviteChats = state.inviteChats + (
-                      msg.message.chatId -> VerifierSecondStep(verifier, status.firstStepBytes, secondStep)
-                    )
-                ))
-                _ <- sendMessage(
-                  msg.message.chatId,
-                  "=====Second step=====",
-                  client
-                )
-                _ <- sendMessage(
-                  msg.message.chatId,
-                  Base64.encode(secondStep),
-                  client
-                )
-                _ <- Logger[F].info(s"My public key: ${Base64.encode(verifier.publicKey.toBytes)}")
-                _ <- sendMessage(
-                  msg.message.chatId,
-                  Base64.encode(verifier.publicKey.toBytes),
-                  client
-                )
-                _ <- sendMessage(
-                  msg.message.chatId,
-                  "=====Second step End=====",
-                  client
-                )
-              } yield ()
-            case a: MessageText if (a.text.text == "=====Second step=====") && !msg.message.isOutgoing =>
-              for {
-                prevStatus <- state.inviteChats(msg.message.chatId).pure[F]
-                _ <- Logger[F].info("Wow! Recipient accept our invite.")
-                _ <- userStateRef.update(_.copy(
-                  inviteChats = state.inviteChats +
-                    (msg.message.chatId -> prevStatus.asInstanceOf[ProverFirstStep].copy(canProcess = true))
-                ))
-              } yield ()
-            case a: MessageText if (a.text.text == "=====Second step End=====") && !msg.message.isOutgoing =>
-              for {
-                status <- state.inviteChats(msg.message.chatId).asInstanceOf[ProverThirdStep].pure[F]
-                pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
-                thirdStep <- status.prover.thirdStep(
-                  pairing.getG1.newElementFromBytes(status.secondStepByte).getImmutable
-                ).pure[F]
-                _ <- sendMessage(
-                  msg.message.chatId,
-                  "=====Third step=====",
-                  client
-                )
-                _ <- sendMessage(
-                  msg.message.chatId,
-                  Base64.encode(thirdStep),
-                  client
-                )
-                _ <- sendMessage(
-                  msg.message.chatId,
-                  "=====Third step End=====",
-                  client
-                )
-                _ <- userStateRef.update(_.copy(
-                  inviteChats = state.inviteChats + (msg.message.chatId -> AwaitingFirstStep())
-                ))
-                _ <- Logger[F].info(s"Verifier pubKey: ${Base64.encode(status.verifierPubKey)}")
-                _ <- Logger[F].info(s"Ver pubkey (1): ${status.prover.generator3.getField.newElementFromBytes(status.verifierPubKey)}")
-                _ <- Logger[F].info(s"Ver pubkey (2): ${pairing.getGT.newElementFromBytes(status.verifierPubKey)}")
-                _ <- Logger[F].info(s"my pub key1: ${Base64.encode(status.prover.publicKey1.toBytes)}")
-                _ <- Logger[F].info(s"my pub key2: ${Base64.encode(status.prover.publicKey2.toBytes)}")
-                _ <- Logger[F].info(s"First step: ${Base64.encode(status.firstStep)}")
-                _ <- Logger[F].info(s"First step: ${pairing.getG1.newElementFromBytes(status.firstStep).getImmutable}")
-                _ <- Logger[F].info(s"Second step: ${Base64.encode(status.secondStepByte)}")
-                _ <- Logger[F].info(s"Second step: ${pairing.getG1.newElementFromBytes(status.secondStepByte).getImmutable}")
-                commonKey <- Sync[F].delay(
-                  status.prover.produceCommonKey(
-                    status.prover.generator3.getField.newElementFromBytes(status.verifierPubKey).getImmutable,
-                    pairing.getG1.newElementFromBytes(status.firstStep).getImmutable,
-                    pairing.getG1.newElementFromBytes(status.secondStepByte).getImmutable
-                  )
-                )
-                _ <- Logger[F].info(s"Common key: ${Base64.encode(commonKey)}")
-                _ <- client.send(
-                  new TdApi.CloseChat(msg.message.id),
-                  EmptyHandler[F]()
-                )
-              } yield ()
-            case a: MessageText if (a.text.text == "=====Third step=====") && !msg.message.isOutgoing =>
-              for {
-                prevStatus <- state.inviteChats(msg.message.chatId).pure[F]
-                _ <- Logger[F].info("Ok. Catch last elem.")
-                _ <- userStateRef.update(_.copy(
-                  inviteChats = state.inviteChats +
-                    (msg.message.chatId -> prevStatus.asInstanceOf[VerifierSecondStep].copy(canProcess = true))
-                ))
-              } yield ()
-            case a: MessageText if (a.text.text == "=====Third step End=====") && !msg.message.isOutgoing =>
-              for {
-                status <- state.inviteChats(msg.message.chatId).asInstanceOf[VerifierThirdStep].pure[F]
-                pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
-                _ <- Logger[F].info(s"Ok. Verify result is: ${status.verifier.forthStep(
-                    pairing.getG1.newElementFromBytes(status.firstStepBytes).getImmutable,
-                    pairing.getG1.newElementFromBytes(status.secondStepBytes).getImmutable,
-                    status.thirdStepBytes
-                )}.\n ")
-                commonKey <- Sync[F].delay(
-                  status.verifier.produceCommonKey(
-                    pairing.getG1.newElementFromBytes(status.firstStepBytes).getImmutable,
-                    pairing.getG1.newElementFromBytes(status.secondStepBytes).getImmutable,
-                    status.verifier.RoI1.getImmutable,
-                    status.verifier.RoI2.getImmutable
-                  )
-                )
-                _ <- Logger[F].info(s"Common key: ${Base64.encode(commonKey)}")
-                _ <- client.send(
-                  new TdApi.CloseChat(msg.message.chatId),
-                  EmptyHandler[F]()
-                )
-              } yield ()
-            case a: MessageText if (a.text.text == "=====Second step=====") =>
-              Applicative[F].pure(())
-            case a: MessageText if (a.text.text == "=====Second step End=====") =>
-              Applicative[F].pure(())
-            case a: MessageText if (a.text.text == "=====First step=====") =>
-              Applicative[F].pure(())
-            case a: MessageText if (a.text.text == "=====First step End=====") =>
-              Applicative[F].pure(())
-            case a: MessageText if (a.text.text == "=====Third step=====") =>
-              Applicative[F].pure(())
-            case a: MessageText if (a.text.text == "=====Third step End=====") =>
-              Applicative[F].pure(())
-            case a: MessageText if state.inviteChats.contains(msg.message.chatId) =>
-              for {
-                prevStatus <- state.inviteChats(msg.message.chatId).pure[F]
-                _ <- Logger[F].info(s"Update status for chat ${msg.message.chatId}. Prev status: ${prevStatus}")
-                _ <- userStateRef.update(_.copy(
-                  inviteChats = state.inviteChats + (
-                      msg.message.chatId -> prevStatus.setStepValue(Base64.decode(a.text.text).get)
-                    )
-                ))
-              } yield ()
-            case _ => (()).pure[F]
+            case a: MessageText =>
+              val decoded = Base64.decode(a.text.text)
+              decoded match {
+                case Success(value) =>
+                  msg.message.content match {
+                    case a: MessageText if StepMsgSerializer.parseBytes(Base64.decode(a.text.text).get).isRight && !msg.message.isOutgoing =>
+                      StepMsgSerializer.parseBytes(Base64.decode(a.text.text).get).right.get match {
+                        case pipelineStart: StartPipeline =>
+                          pipelineStart.pipelineName match {
+                            case ProverFirstStep.pipelineName =>
+                              for {
+                                _ <- Logger[F].info(s"Receive: ${pipelineStart}. Init VerifierSecondStep. msg: ${msg}")
+                                proverMsgEmpty <- MVar.empty[F, ProverFirstStepMsg]
+                                verifierEmpty <- MVar.empty[F, Verifier]
+                                pipeline <- VerifierSecondStep(
+                                  proverMsgEmpty,
+                                  verifierEmpty,
+                                  msg.message.chatId,
+                                  client
+                                ).pure[F]
+                                newPipeLine <- pipeline.processInput(Base64.decode(a.text.text).get)
+                                _ <- userStateRef.update(_.copy(
+                                  pipelineSecretChats = state.pipelineSecretChats + (msg.message.chatId -> newPipeLine)))
+                              } yield ()
+                            case _ => for {
+                              currentPipeline <- state.pipelineSecretChats(msg.message.chatId).pure[F]
+                              newPipeLine <- currentPipeline.processInput(Base64.decode(a.text.text).get)
+                              _ <- userStateRef.update(_.copy(
+                                pipelineSecretChats = state.pipelineSecretChats + (msg.message.chatId -> newPipeLine)))
+                            } yield ()
+                          }
+                        case anotherMsg if !msg.message.isOutgoing => for {
+                          currentPipeline <- state.pipelineSecretChats(msg.message.chatId).pure[F]
+                          newPipeLine <- currentPipeline.processInput(Base64.decode(a.text.text).get)
+                          _ <- userStateRef.update(_.copy(
+                            pipelineSecretChats = state.pipelineSecretChats + (msg.message.chatId -> newPipeLine)))
+                        } yield ()
+                        case _ => (()).pure[F]
+                      }
+                    case _ => (()).pure[F]
+                  }
+                case Failure(err) => Logger[F].info(s"Receive unkown elem1: ${obj}. Err: ${err.getMessage}")
+              }
+            case any => Logger[F].info(s"Receive unkown elem2: ${obj}")
           }
         } yield ()
-      case any => Logger[F].info(s"Receive unkown elem: ${obj}")
+      case any => Logger[F].info(s"Receive unkown elem3: ${obj}")
     }
   }
 
@@ -421,10 +240,10 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
 }
 
 object Handler {
-  def apply[F[_]: ConcurrentEffect: Logger](stateRef: Ref[F, UserState[F]],
-                                            queueRef: Ref[F, List[TdApi.Object]],
-                                            privateConferenceService: PrivateConferenceService[F],
-                                            client: Client[F]): F[Handler[F]] = {
+  def apply[F[_]: ConcurrentEffect: Timer: Logger](stateRef: Ref[F, UserState[F]],
+                                                   queueRef: Ref[F, List[TdApi.Object]],
+                                                   privateConferenceService: PrivateConferenceService[F],
+                                                   client: Client[F]): F[Handler[F]] = {
     val handler = new Handler(stateRef, privateConferenceService, client)
     for {
       list <- queueRef.get

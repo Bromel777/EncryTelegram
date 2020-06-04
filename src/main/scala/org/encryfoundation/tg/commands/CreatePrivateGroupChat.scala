@@ -49,10 +49,10 @@ case class CreatePrivateGroupChat[F[_]: Concurrent: Timer: Logger](client: Clien
           stateRef,
           client,
           confInfo,
-          userIds.map(_._1.toLong),
+          userIds.map(_._2),
           confInfo.users.head.userTelegramLogin,
           password
-        )
+        )(privateConferenceService)
       )
       _ <- db.put(Database.privateGroupChatsKey, groupname.getBytes())
       _ <- db.put(groupname.getBytes(), password.getBytes())

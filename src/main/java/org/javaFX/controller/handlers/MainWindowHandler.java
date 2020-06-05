@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Duration;
+import org.drinkless.tdlib.TdApi;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
 import org.javaFX.model.JDialog;
@@ -66,8 +67,12 @@ public class MainWindowHandler extends DataHandler {
     private ObservableList<JChat> getObservableChatList(){
         ObservableList<JChat> observableChatList = FXCollections.observableArrayList();
         getUserStateRef().get().getChatList().forEach(
-                chat -> observableChatList.add(new JChat(chat.title) )
+                chat -> observableChatList.add(new JChat(chat.title + "("+")") )
         );
+
+        /*getUserStateRef().get().getChatList().forEach(
+                chat -> observableChatList.add(new JChat(chat.title + "("+chat.unreadMentionCount +")") )
+        );*/
         return observableChatList;
     }
 
@@ -134,10 +139,31 @@ public class MainWindowHandler extends DataHandler {
         jDialog = new JDialog("title stub");
     }
 
-    private void updateDialog(){
-        /*jDialog = new JDialog("title stub");
+    private void updateDialog(int chatIndex){
+        /*TdApi.Chat chatBean = getUserStateRef().get().getChatList().get(chatIndex);
+        jDialog = new JDialog(chatBean.title);
         StringBuffer localDialogHistory = jDialog.getContent();
         dialogArea.setText(localDialogHistory.toString());
         jDialog.setContent(localDialogHistory);*/
+    }
+
+    @FXML
+    private void showMenu(){
+        System.out.println("show menu");
+    }
+
+    @FXML
+    private void showChats(){
+        System.out.println("show chats");
+    }
+
+    @FXML
+    private void showPrivateChats(){
+        System.out.println("show private chats");
+    }
+
+    @FXML
+    private void showOptions(){
+        System.out.println("show options");
     }
 }

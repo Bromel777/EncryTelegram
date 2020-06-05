@@ -34,10 +34,11 @@
             <Font name="Centaur" size="36.0" />
          </font>
       </Label>
-      <ImageView fx:id="loadingGif" fitHeight="220.0" fitWidth="220.0" layoutX="220.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="220.0" AnchorPane.rightAnchor="183.0" AnchorPane.topAnchor="100.0">
+      <ImageView fx:id="loadingGif" fitHeight="220.0" fitWidth="220.0" layoutX="203.0" layoutY="106.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="203.0" AnchorPane.rightAnchor="240.82473754882812" AnchorPane.topAnchor="106.0">
          <image>
             <Image url="file:src/main/resources/images/loading.gif" />
-         </image></ImageView>
+         </image>
+      </ImageView>
     </children>
    <cursor>
       <Cursor fx:constant="WAIT" />

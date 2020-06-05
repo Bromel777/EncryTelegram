@@ -14,6 +14,9 @@ import it.unisa.dia.gas.jpbc.Element
 import org.drinkless.tdlib.Client
 import org.drinkless.tdlib.TdApi.SecretChat
 import org.encryfoundation.mitmImun.Verifier
+import org.encryfoundation.tg.crypto.AESEncryption
+import scorex.crypto.encode.Base64
+import scorex.crypto.hash.Blake2b256
 
 case class VerifierForthStep[F[_]: Concurrent: Timer: Logger](verifier: Verifier,
                                                               firstStep: Element,
@@ -32,6 +35,16 @@ case class VerifierForthStep[F[_]: Concurrent: Timer: Logger](verifier: Verifier
       thirdStepMsg.thirdStep
     ).pure[F]
     _ <- Logger[F].info(s"Verification res: ${result}")
+    commonKey <- verifier.produceCommonKey(
+      firstStep,
+      secondStep,
+      verifier.RoI1,
+      verifier.RoI2
+    ).pure[F]
+    aes <- AESEncryption(Blake2b256.hash(commonKey)).pure[F]
+    _ <- Logger[F].info(s"common key: ${Base64.encode(commonKey)}")
+    _ <- Logger[F].info(s"Group name: ${aes.decrypt(Base64.decode(thirdStepMsg.name).get).map(_.toChar).mkString}." +
+      s" Pass: ${aes.decrypt(Base64.decode(thirdStepMsg.pass).get).map(_.toChar).mkString}")
   } yield this
 
   def processStepInput(input: StepMsg): F[Pipeline[F]] = input match {

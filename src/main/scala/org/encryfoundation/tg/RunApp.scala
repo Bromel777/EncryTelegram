@@ -1,6 +1,7 @@
 package org.encryfoundation.tg
 
 import java.io.File
+import java.security.Security
 
 import cats.effect.concurrent.Ref
 import cats.effect.{Concurrent, ExitCode, IO, IOApp, Resource, Sync, Timer}
@@ -8,6 +9,7 @@ import cats.implicits._
 import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
 import org.encryfoundation.tg.commands.Command
 import org.encryfoundation.tg.leveldb.Database

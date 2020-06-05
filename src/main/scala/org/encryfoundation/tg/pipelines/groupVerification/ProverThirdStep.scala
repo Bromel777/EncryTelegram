@@ -4,6 +4,7 @@ import cats.Applicative
 import cats.effect.concurrent.{MVar, Ref}
 import cats.effect.{Concurrent, Timer}
 import cats.implicits._
+import io.chrisdavenport.log4cats.Logger
 import it.unisa.dia.gas.jpbc.Element
 import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.mitmImun.Prover
@@ -20,8 +21,9 @@ import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.St
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.ProverThirdMsgSerializer._
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
+import scorex.crypto.hash.Blake2b256
 
-case class ProverThirdStep[F[_]: Concurrent: Timer](prover: Prover,
+case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
                                                     community: PrivateCommunity,
                                                     recipientLogin: String,
                                                     chatPass: String,
@@ -46,7 +48,12 @@ case class ProverThirdStep[F[_]: Concurrent: Timer](prover: Prover,
     secondStep <- verifierSecondStepMsg.read
     thirdStep <- prover.thirdStep(secondStep.secondStep).pure[F]
     commonKey <- prover.produceCommonKey(secondStep.verifierPubKey1, firstStep, secondStep.secondStep).pure[F]
-    aes <- AESEncryption(commonKey).pure[F]
+    aes <- AESEncryption(Blake2b256.hash(commonKey)).pure[F]
+    _ <- Logger[F].info(s"Common key: ${Base64.encode(commonKey)}" +
+      s"Community name: ${community.name}." +
+      s" CypherText: ${Base64.encode(aes.encrypt(community.name.getBytes))}. Decypher: ${
+        aes.decrypt(Base64.decode(Base64.encode(aes.encrypt(community.name.getBytes))).get).map(_.toChar).mkString
+      }")
     _ <- send2Chat(
       ProverThirdStepMsg(
         thirdStep,
@@ -61,6 +68,7 @@ case class ProverThirdStep[F[_]: Concurrent: Timer](prover: Prover,
   def processStepInput(input: StepMsg): F[Pipeline[F]] = input match {
     case msg: VerifierSecondStepMsg =>
       for {
+        _ <- Logger[F].info(s"Receive: ${msg}")
         _ <- verifierSecondStepMsg.put(msg)
       } yield this
     case _ => Applicative[F].pure(this)

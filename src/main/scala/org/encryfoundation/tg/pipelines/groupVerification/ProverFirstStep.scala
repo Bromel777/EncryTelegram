@@ -53,6 +53,7 @@ class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
     prover,
     community,
     recipientLogin,
+    chatPass,
     userState,
     client,
     chat,
@@ -78,12 +79,12 @@ class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
 object ProverFirstStep {
 
   def apply[F[_]: Concurrent: Timer: Logger](client: Client[F],
-                                     userState: Ref[F, UserState[F]],
-                                     confName: String,
-                                     recipientLogin: String,
-                                     chatPass: String,
-                                     chat: TdApi.Chat,
-                                     chatId: Long)(privConfService: PrivateConferenceService[F]): F[ProverFirstStep[F]] =
+                                             userState: Ref[F, UserState[F]],
+                                             confName: String,
+                                             recipientLogin: String,
+                                             chatPass: String,
+                                             chat: TdApi.Chat,
+                                             chatId: Long)(privConfService: PrivateConferenceService[F]): F[ProverFirstStep[F]] =
     for {
       pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
       groupInfo <- privConfService.findConf(confName)
@@ -101,6 +102,7 @@ object ProverFirstStep {
       prover,
       groupInfo,
       recipientLogin,
+      chatPass,
       userState,
       client,
       chat,

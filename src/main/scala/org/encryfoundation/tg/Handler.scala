@@ -12,7 +12,6 @@ import org.drinkless.tdlib.TdApi.MessageText
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.mitmImun.{Prover, Verifier}
 import org.encryfoundation.tg.RunApp.sendMessage
-import org.encryfoundation.tg.community.InviteStatus.VerifierSecondStep
 import org.encryfoundation.tg.community.PrivateCommunityStatus.UserCommunityStatus.AwaitingSecondPhaseFromUser
 import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverFirstStepMsg
 import org.encryfoundation.tg.pipelines.groupVerification.{ProverFirstStep, VerifierSecondStep}

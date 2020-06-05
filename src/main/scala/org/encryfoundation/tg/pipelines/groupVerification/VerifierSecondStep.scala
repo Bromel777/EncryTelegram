@@ -72,6 +72,7 @@ case class VerifierSecondStep[F[_]: Concurrent: Timer: Logger](proverMsg: MVar[F
   //todo errors
   def processStepInput(input: StepMsg): F[Pipeline[F]] = input match {
     case msg: ProverFirstStepMsg => for {
+      _ <- Logger[F].info(s"receive: ${msg}")
       _ <- proverMsg.put(msg)
     } yield this
     case _ => Applicative[F].pure(this)

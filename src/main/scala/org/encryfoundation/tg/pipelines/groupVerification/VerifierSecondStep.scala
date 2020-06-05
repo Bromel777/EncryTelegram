@@ -1,14 +1,14 @@
 package org.encryfoundation.tg.pipelines.groupVerification
 
 import cats.Applicative
-import cats.effect.concurrent.MVar
+import cats.effect.concurrent.{MVar, Ref}
 import cats.effect.{Concurrent, Sync, Timer}
 import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.Client
 import org.drinkless.tdlib.TdApi.SecretChat
 import org.encryfoundation.mitmImun.{Prover, Verifier}
 import org.encryfoundation.tg.RunApp.sendMessage
-import org.encryfoundation.tg.pipelines.{HeadPipeline, Pipeline}
+import org.encryfoundation.tg.pipelines.{HeadPipelineCompanion, Pipeline}
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
 import cats.implicits._
@@ -20,11 +20,13 @@ import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndP
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.EndPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
+import org.encryfoundation.tg.userState.UserState
 
 case class VerifierSecondStep[F[_]: Concurrent: Timer: Logger](proverMsg: MVar[F, ProverFirstStepMsg],
                                                                verifierVar: MVar[F, Verifier],
+                                                               state: Ref[F, UserState[F]],
                                                                chatId: Long,
-                                                               client: Client[F]) extends HeadPipeline[F] {
+                                                               client: Client[F]) extends Pipeline[F] {
 
   private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] = for {
     _ <- Logger[F].info(s"Send: ${msg}")
@@ -66,6 +68,7 @@ case class VerifierSecondStep[F[_]: Concurrent: Timer: Logger](proverMsg: MVar[F
     secondStep,
     emptyMVar,
     client,
+    state,
     chatId
   )
 
@@ -85,11 +88,28 @@ case class VerifierSecondStep[F[_]: Concurrent: Timer: Logger](proverMsg: MVar[F
       case EndPipeline(pipelineName) if pipelineName == ProverFirstStep.pipelineName => processPreviousStepEnd
       case msg: ProverFirstStepMsg => processStepInput(msg)
     }
-
-  override val pipelineName: String = VerifierSecondStep.pipeLineName
 }
 
 object VerifierSecondStep {
+
+  def companion[F[_]: Concurrent: Timer: Logger]: HeadPipelineCompanion[F, VerifierSecondStep[F]] =
+    (userStateRef: Ref[F, UserState[F]], chatId: Long, client: Client[F], msgBytes: Array[Byte]) =>
+      for {
+        state <- userStateRef.get
+        proverMsgEmpty <- MVar.empty[F, ProverFirstStepMsg]
+        verifierEmpty <- MVar.empty[F, Verifier]
+        pipeline <- VerifierSecondStep(
+          proverMsgEmpty,
+          verifierEmpty,
+          userStateRef,
+          chatId,
+          client
+        ).pure[F]
+        newPipeline <- pipeline.processInput(msgBytes)
+        _ <- userStateRef.update(_.copy(
+          pipelineSecretChats = state.pipelineSecretChats + (chatId -> newPipeline)
+        ))
+      } yield ()
 
   val pipeLineName = "verifierSecondStep"
 }

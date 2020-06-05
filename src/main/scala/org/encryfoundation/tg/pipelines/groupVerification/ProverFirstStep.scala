@@ -7,7 +7,7 @@ import org.drinkless.tdlib.{Client, TdApi}
 import org.drinkless.tdlib.TdApi.SecretChat
 import org.encryfoundation.mitmImun.{Prover, Verifier}
 import org.encryfoundation.tg.RunApp.sendMessage
-import org.encryfoundation.tg.pipelines.{HeadPipeline, Pipeline}
+import org.encryfoundation.tg.pipelines.Pipeline
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
@@ -31,7 +31,7 @@ class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
                                                                userState: Ref[F, UserState[F]],
                                                                client: Client[F],
                                                                chat: TdApi.Chat,
-                                                               chatId: Long) extends HeadPipeline[F] {
+                                                               chatId: Long) extends Pipeline[F] {
 
   private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] = for {
     _ <- Logger[F].info(s"Send : ${msg}")
@@ -72,8 +72,6 @@ class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
       prover.generator2,
       prover.zRGenerator
     )
-
-  override val pipelineName: String = ProverFirstStep.pipelineName
 }
 
 object ProverFirstStep {

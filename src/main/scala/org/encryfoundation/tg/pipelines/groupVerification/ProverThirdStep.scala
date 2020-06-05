@@ -24,15 +24,15 @@ import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
 
 case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
-                                                    community: PrivateCommunity,
-                                                    recipientLogin: String,
-                                                    chatPass: String,
-                                                    userState: Ref[F, UserState[F]],
-                                                    client: Client[F],
-                                                    secretChat: TdApi.Chat,
-                                                    chatId: Long,
-                                                    firstStep: Element,
-                                                    verifierSecondStepMsg: MVar[F, VerifierSecondStepMsg]) extends Pipeline[F] {
+                                                            community: PrivateCommunity,
+                                                            recipientLogin: String,
+                                                            chatPass: String,
+                                                            userState: Ref[F, UserState[F]],
+                                                            client: Client[F],
+                                                            secretChat: TdApi.Chat,
+                                                            chatId: Long,
+                                                            firstStep: Element,
+                                                            verifierSecondStepMsg: MVar[F, VerifierSecondStepMsg]) extends Pipeline[F] {
 
   private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] =
     sendMessage(
@@ -44,6 +44,7 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
   def processPreviousStepStart: F[Pipeline[F]] = Applicative[F].pure(this)
 
   def processPreviousStepEnd: F[Pipeline[F]] = for {
+    state <- userState.get
     _ <- send2Chat(StartPipeline(ProverThirdStep.pipelineName))
     secondStep <- verifierSecondStepMsg.read
     thirdStep <- prover.thirdStep(secondStep.secondStep).pure[F]
@@ -54,10 +55,11 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
       s" CypherText: ${Base64.encode(aes.encrypt(community.name.getBytes))}. Decypher: ${
         aes.decrypt(Base64.decode(Base64.encode(aes.encrypt(community.name.getBytes))).get).map(_.toChar).mkString
       }")
+    groupChatId <- state.privateGroups.find(_._2._2 == chatPass).get._1.pure[F]
     _ <- send2Chat(
       ProverThirdStepMsg(
         thirdStep,
-        chatId,
+        groupChatId,
         Base64.encode(aes.encrypt(community.name.getBytes)),
         Base64.encode(aes.encrypt(chatPass.getBytes))
       )

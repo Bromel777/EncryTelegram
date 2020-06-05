@@ -13,6 +13,7 @@ import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.mitmImun.{Prover, Verifier}
 import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.community.PrivateCommunityStatus.UserCommunityStatus.AwaitingSecondPhaseFromUser
+import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverFirstStepMsg
 import org.encryfoundation.tg.pipelines.groupVerification.{ProverFirstStep, VerifierSecondStep}
 import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.StartPipeline
@@ -132,59 +133,38 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           state <- userStateRef.get
           _ <- msg.message.content match {
             case a: MessageText =>
-              val decoded = Base64.decode(a.text.text)
-              decoded match {
+              Base64.decode(a.text.text) match {
                 case Success(value) =>
-                  msg.message.content match {
-                    case a: MessageText if StepMsgSerializer.parseBytes(Base64.decode(a.text.text).get).isRight && !msg.message.isOutgoing =>
-                      StepMsgSerializer.parseBytes(Base64.decode(a.text.text).get).right.get match {
-                        case pipelineStart: StartPipeline =>
-                          pipelineStart.pipelineName match {
-                            case ProverFirstStep.pipelineName =>
-                              for {
-                                _ <- Logger[F].info(s"Receive: ${pipelineStart}. Init VerifierSecondStep. msg: ${msg}")
-                                proverMsgEmpty <- MVar.empty[F, ProverFirstStepMsg]
-                                verifierEmpty <- MVar.empty[F, Verifier]
-                                pipeline <- VerifierSecondStep(
-                                  proverMsgEmpty,
-                                  verifierEmpty,
-                                  msg.message.chatId,
-                                  client
-                                ).pure[F]
-                                newPipeLine <- pipeline.processInput(Base64.decode(a.text.text).get)
-                                _ <- userStateRef.update(_.copy(
-                                  pipelineSecretChats = state.pipelineSecretChats + (msg.message.chatId -> newPipeLine)))
-                              } yield ()
-                            case _ => for {
-                              currentPipeline <- state.pipelineSecretChats(msg.message.chatId).pure[F]
-                              newPipeLine <- currentPipeline.processInput(Base64.decode(a.text.text).get)
-                              _ <- userStateRef.update(_.copy(
-                                pipelineSecretChats = state.pipelineSecretChats + (msg.message.chatId -> newPipeLine)))
-                            } yield ()
-                          }
-                        case anotherMsg if !msg.message.isOutgoing => for {
-                          currentPipeline <- state.pipelineSecretChats(msg.message.chatId).pure[F]
-                          newPipeLine <- currentPipeline.processInput(Base64.decode(a.text.text).get)
+                  StepMsgSerializer.parseBytes(value) match {
+                    case Right(stepMsg) if !msg.message.isOutgoing =>
+                      state.pipelineSecretChats.get(msg.message.chatId) match {
+                        case Some(pipeline) => for {
+                          newPipeLine <- pipeline.processInput(value)
                           _ <- userStateRef.update(_.copy(
                             pipelineSecretChats = state.pipelineSecretChats + (msg.message.chatId -> newPipeLine)))
                         } yield ()
-                        case _ => (()).pure[F]
+                        case None => Pipelines.findStart(
+                          userStateRef,
+                          msg.message.chatId,
+                          client,
+                          stepMsg
+                        )
                       }
-                    case _ => (()).pure[F]
+                    case Right(_) => (()).pure[F]
+                    case Left(_) => Logger[F].info(s"Receive msg: ${msg}")
                   }
                 case Failure(err) => Logger[F].info(s"Receive unkown elem1: ${obj}. Err: ${err.getMessage}")
               }
-            case any => Logger[F].info(s"Receive unkown elem2: ${obj}")
+            case _ => Logger[F].info(s"Receive unkown elem2: ${obj}")
           }
         } yield ()
-      case any => Logger[F].info(s"Receive unkown elem3: ${obj}")
+      case _ => Logger[F].info(s"Receive unkown elem3: ${obj}")
     }
   }
 
   def setChatOrder(chat: TdApi.Chat, order: Long): F[Unit] = {
     for {
       state <- userStateRef.get
-      //_ <- Sync[F].delay(println(s"Get chat order: ${order}"))
       _ <- if (chat.order != 0)
             userStateRef.update(_.copy(mainChatList = state.mainChatList.filter(_.order == chat.order)))
           else (()).pure[F]

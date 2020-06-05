@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+import "stepMsg/groupVerification/ProverFistStepProto.proto";
+import "stepMsg/groupVerification/ProverThirdStepProto.proto";
+import "stepMsg/groupVerification/VerifierSecondStepProto.proto";
+
+message GroupVerificationProtoMsg {
+    oneof groupVerificationMsg  {
+        ProverFirstStepProtoMsg proFir = 1;
+        VerifierSecondStepProtoMsg verSec = 2;
+        ProverThirdStepProtoMsg proThi = 3;
+    }
+}

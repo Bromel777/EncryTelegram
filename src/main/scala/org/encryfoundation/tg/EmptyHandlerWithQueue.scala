@@ -1,11 +1,15 @@
 package org.encryfoundation.tg
 
-import cats.effect.{Concurrent, Sync}
+import cats.effect.{Concurrent, Sync, Timer}
 import cats.implicits._
 import cats.effect.concurrent.Ref
+import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.TdApi.{MessageText, Messages}
-import org.drinkless.tdlib.{Client123, ResultHandler, TdApi}
+import org.drinkless.tdlib.{Client, Client123, ResultHandler, TdApi}
+import org.encryfoundation.tg.community.{PrivateCommunity, PrivateCommunityStatus}
 import org.encryfoundation.tg.crypto.AESEncryption
+import org.encryfoundation.tg.pipelines.groupVerification.ProverFirstStep
+import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base16
 
@@ -34,12 +38,69 @@ case class EmptyHandler[F[_]: Concurrent]() extends ResultHandler[F] {
   override def onResult(obj: TdApi.Object): F[Unit] = {
     //().pure[F]
     for {
-      _ <- Concurrent[F].delay(println(s"Get smth EMPTY HANDLER: ${obj}"))
+      _ <- Concurrent[F].delay(println(s"Receive $obj on empty handler"))
     } yield ()
   }
 }
 
-case class ChatCreationHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]], password: String) extends ResultHandler[F] {
+case class SecretChatHandler[F[_]: Concurrent: Logger](stateRef: Ref[F, UserState[F]]) extends ResultHandler[F]{
+  override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
+    case TdApi.Chat.CONSTRUCTOR =>
+      for {
+        state <- stateRef.get
+        _ <- Logger[F].info(s"Receive secret: ${obj}")
+        _ <- stateRef.update(
+          _.copy(
+            mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
+          )
+        )
+      } yield ()
+    case _ => ().pure[F]
+  }
+}
+
+case class SecretGroupPrivateChatHandler[F[_]: Concurrent: Timer: Logger](stateRef: Ref[F, UserState[F]],
+                                                                  confname: String,
+                                                                  pass: String,
+                                                                  recipient: TdApi.User,
+                                                                  confChatId: Long,
+                                                                  client: Client[F])(privConfServ: PrivateConferenceService[F]) extends ResultHandler[F]{
+  override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
+    case TdApi.Chat.CONSTRUCTOR =>
+      for {
+        state <- stateRef.get
+        pipeLineStep <- ProverFirstStep(
+          client,
+          stateRef,
+          confname,
+          recipient.phoneNumber,
+          pass,
+          obj.asInstanceOf[TdApi.Chat],
+          obj.asInstanceOf[TdApi.Chat].id
+        )(privConfServ)
+        _ <- stateRef.update(
+          _.copy(
+            mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
+            pendingSecretChatsForInvite = state.pendingSecretChatsForInvite + (
+              obj.asInstanceOf[TdApi.Chat].`type`.asInstanceOf[TdApi.ChatTypeSecret].secretChatId.toLong -> (
+                obj.asInstanceOf[TdApi.Chat],
+                confname,
+                recipient
+              )),
+            pipelineSecretChats = state.pipelineSecretChats + (obj.asInstanceOf[TdApi.Chat].id -> pipeLineStep)
+          )
+        )
+      } yield ()
+    case _ => ().pure[F]
+  }
+}
+
+case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Timer: Logger](stateRef: Ref[F, UserState[F]],
+                                                                            client: Client[F],
+                                                                            confInfo: PrivateCommunity,
+                                                                            users: List[TdApi.User],
+                                                                            myLogin: String,
+                                                                            password: String)(privConfServ: PrivateConferenceService[F]) extends ResultHandler[F] {
   override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
     case TdApi.Chat.CONSTRUCTOR =>
       val newChat = obj.asInstanceOf[TdApi.Chat]
@@ -52,8 +113,20 @@ case class ChatCreationHandler[F[_]: Concurrent](stateRef: Ref[F, UserState[F]],
             privateGroups = state.privateGroups + (newChat.id -> (newChat, password))
           )
         )
+        _ <- users.traverse { user =>
+          client.send(
+            new TdApi.CreateNewSecretChat(user.id),
+            SecretGroupPrivateChatHandler[F](
+              stateRef,
+              confInfo.name,
+              password,
+              user,
+              newChat.id,
+              client)(privConfServ)
+          )
+        }
       } yield ()
-    case _ => ().pure[F]
+    case err => Logger[F].info(s"Err during chat creation: ${obj}")
   }
 }
 

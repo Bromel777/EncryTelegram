@@ -1,16 +1,33 @@
 package org.encryfoundation.tg
 
-import cats.effect.concurrent.Ref
-import cats.effect.{ConcurrentEffect, Sync}
+import java.math.BigInteger
+
+import cats.Applicative
+import cats.effect.concurrent.{MVar, Ref}
+import cats.effect.{ConcurrentEffect, Sync, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
+import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
 import org.drinkless.tdlib.TdApi.MessageText
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
+import org.encryfoundation.mitmImun.{Prover, Verifier}
+import org.encryfoundation.tg.RunApp.sendMessage
+import org.encryfoundation.tg.community.PrivateCommunityStatus.UserCommunityStatus.AwaitingSecondPhaseFromUser
+import org.encryfoundation.tg.pipelines.Pipelines
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverFirstStepMsg
+import org.encryfoundation.tg.pipelines.groupVerification.{ProverFirstStep, VerifierSecondStep}
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.StartPipeline
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
+import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
+import scorex.crypto.encode.Base64
 
 import scala.io.StdIn
+import scala.util.{Failure, Success}
 
-case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserState[F]]) extends ResultHandler[F] {
+case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, UserState[F]],
+                                                          privateConferenceService: PrivateConferenceService[F],
+                                                          client: Client[F]) extends ResultHandler[F] {
 
   /**
    * Callback called on result of query to TDLib or incoming update from TDLib.
@@ -80,15 +97,74 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
           _ <- userStateRef.update(
             _.copy(secretChats = state.secretChats + (secretChat.secretChat.id -> secretChat.secretChat))
           )
+          _ <- if (
+            secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStateReady] &&
+              state.pendingSecretChatsForInvite.contains(secretChat.secretChat.id)
+          ) for {
+              _ <- Logger[F].info("Secret chat for key sharing accepted. Start first step!")
+              chatInfo <- state.pendingSecretChatsForInvite(secretChat.secretChat.id).pure[F]
+              chatId <- state.pendingSecretChatsForInvite(secretChat.secretChat.id)._1.id.pure[F]
+              newPipeline <- state.pipelineSecretChats(chatId).processInput(Array.emptyByteArray)
+              _ <- userStateRef.update(
+                _.copy(
+                  pendingSecretChatsForInvite = state.pendingSecretChatsForInvite - secretChat.secretChat.id,
+                  privateGroups = state.privateGroups + (chatInfo._1.id -> (chatInfo._1 -> chatInfo._2)),
+                  pipelineSecretChats = state.pipelineSecretChats +
+                    (chatId -> newPipeline)
+                )
+              )
+            } yield ()
+          else if (secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStatePending] && !secretChat.secretChat.isOutbound) {
+            for {
+              _ <- client.send(new TdApi.OpenChat(secretChat.secretChat.id), SecretChatHandler[F](userStateRef))
+              state <- userStateRef.get
+              _ <- userStateRef.update(
+                _.copy(
+                  secretChats = state.secretChats + (secretChat.secretChat.id -> secretChat.secretChat)
+                )
+              )
+            } yield ()
+          }
+          else Sync[F].delay()
         } yield ()
-      case any => ().pure[F]
+      case TdApi.UpdateNewMessage.CONSTRUCTOR =>
+        val msg = obj.asInstanceOf[TdApi.UpdateNewMessage]
+        for {
+          state <- userStateRef.get
+          _ <- msg.message.content match {
+            case a: MessageText =>
+              Base64.decode(a.text.text) match {
+                case Success(value) =>
+                  StepMsgSerializer.parseBytes(value) match {
+                    case Right(stepMsg) if !msg.message.isOutgoing =>
+                      state.pipelineSecretChats.get(msg.message.chatId) match {
+                        case Some(pipeline) => for {
+                          newPipeLine <- pipeline.processInput(value)
+                          _ <- userStateRef.update(_.copy(
+                            pipelineSecretChats = state.pipelineSecretChats + (msg.message.chatId -> newPipeLine)))
+                        } yield ()
+                        case None => Pipelines.findStart(
+                          userStateRef,
+                          msg.message.chatId,
+                          client,
+                          stepMsg
+                        )
+                      }
+                    case Right(_) => (()).pure[F]
+                    case Left(_) => Logger[F].info(s"Receive msg: ${msg}")
+                  }
+                case Failure(err) => Logger[F].info(s"Receive unkown elem1: ${obj}. Err: ${err.getMessage}")
+              }
+            case _ => Logger[F].info(s"Receive unkown elem2: ${obj}")
+          }
+        } yield ()
+      case _ => Logger[F].info(s"Receive unkown elem3: ${obj}")
     }
   }
 
   def setChatOrder(chat: TdApi.Chat, order: Long): F[Unit] = {
     for {
       state <- userStateRef.get
-      //_ <- Sync[F].delay(println(s"Get chat order: ${order}"))
       _ <- if (chat.order != 0)
             userStateRef.update(_.copy(mainChatList = state.mainChatList.filter(_.order == chat.order)))
           else (()).pure[F]
@@ -143,9 +219,11 @@ case class Handler[F[_]: ConcurrentEffect: Logger](userStateRef: Ref[F, UserStat
 }
 
 object Handler {
-  def apply[F[_]: ConcurrentEffect: Logger](stateRef: Ref[F, UserState[F]],
-                                            queueRef: Ref[F, List[TdApi.Object]]): F[Handler[F]] = {
-    val handler = new Handler(stateRef)
+  def apply[F[_]: ConcurrentEffect: Timer: Logger](stateRef: Ref[F, UserState[F]],
+                                                   queueRef: Ref[F, List[TdApi.Object]],
+                                                   privateConferenceService: PrivateConferenceService[F],
+                                                   client: Client[F]): F[Handler[F]] = {
+    val handler = new Handler(stateRef, privateConferenceService, client)
     for {
       list <- queueRef.get
       _ <- Sync[F].delay(list)

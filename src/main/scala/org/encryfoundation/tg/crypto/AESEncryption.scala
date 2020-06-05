@@ -9,14 +9,12 @@ import java.security.NoSuchAlgorithmException
 import java.security.NoSuchProviderException
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import scorex.crypto.encode.Base16
+import scorex.crypto.encode.{Base16, Base64}
 import scorex.crypto.hash.Blake2b256
 
 case class AESEncryption(keyBytes: Array[Byte]) {
 
   import java.security.Security
-
-  Security.addProvider(new BouncyCastleProvider)
 
   val cipher = Cipher.getInstance("AES/CBC/PKCS7PADDING", "BC")
   var key: SecretKeySpec = new SecretKeySpec(Blake2b256.hash(keyBytes), "AES")
@@ -29,12 +27,12 @@ case class AESEncryption(keyBytes: Array[Byte]) {
   def encrypt(plainText: Array[Byte]): Array[Byte] = {
     cipher.init(Cipher.ENCRYPT_MODE, key, IVspec)
     val cipherText = cipher.doFinal(plainText)
-    println(s"Cipher text: ${Base16.encode(cipherText)}")
+    println(s"Cipher text: ${Base64.encode(cipherText)}")
     cipherText
   }
 
   def decrypt(cipherText: Array[Byte]): Array[Byte] = {
-    println(s"Receive: ${Base16.encode(cipherText)}")
+    println(s"Receive: ${Base64.encode(cipherText)}")
     cipher.init(Cipher.DECRYPT_MODE, key, IVspec)
     cipher.doFinal(cipherText)
   }

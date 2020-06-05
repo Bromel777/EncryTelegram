@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message ProverFirstStepProtoMsg {
+    bytes firstStep = 1;
+    bytes gTilda = 2;
+    bytes proverPublicKey1 = 3;
+    bytes proverPublicKey2 = 4;
+    bytes g1Gen = 5;
+    bytes g2Gen = 6;
+    bytes zRGen = 7;
+}

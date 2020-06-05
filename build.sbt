@@ -23,13 +23,8 @@ resolvers ++= Seq(
   "Typesafe maven releases" at "https://repo.typesafe.com/typesafe/maven-releases/"
 )
 
-//javaOptions in run ++= opts
-//javaOptions in compile ++= opts
 
 libraryDependencies ++= Seq(
-//  "org.typelevel" %% "cats-core" % "2.0.0",
-//  "org.typelevel" %% "cats-effect" % "2.1.3",
-//  "co.fs2" %% "fs2-core" % "2.1.0",
   "co.fs2" %% "fs2-io" % "2.1.0",
   "eu.timepit" %% "refined"  % "0.9.14",
   "com.github.pureconfig" %% "pureconfig" % "0.12.3",
@@ -39,7 +34,7 @@ libraryDependencies ++= Seq(
   "org.iq80.leveldb" % "leveldb" % "0.9",
   "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
   "org.slf4j" % "slf4j-simple" % "1.7.26",
-  "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "src/protobuf",
+  "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 )
 
 fork in run := true
@@ -48,6 +43,22 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
 val tg = (project in file(".")).settings(settings: _*)
+
+assemblyJarName in assembly := "TGDragon.jar"
+
+mainClass in assembly := Some("org.encryfoundation.tg.RunApp")
+
+test in assembly := {}
+
+assemblyMergeStrategy in assembly := {
+  case "logback.xml" => MergeStrategy.first
+  case "module-info.class" => MergeStrategy.discard
+  case "META-INF/MANIFEST.MF" => MergeStrategy.discard
+  case "META-INF/BC1024KE.SF" => MergeStrategy.discard
+  case "META-INF/BC2048KE.SF" => MergeStrategy.discard
+  case PathList("reference.conf") => MergeStrategy.concat
+  case _ => MergeStrategy.first
+}
 
 PB.targets in Compile := Seq(
   scalapb.gen() -> (sourceManaged in Compile).value / "src/protobuf"

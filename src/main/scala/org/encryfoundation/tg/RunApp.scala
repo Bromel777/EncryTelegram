@@ -39,12 +39,13 @@ object RunApp extends App {
 
   System.loadLibrary("tdjni")
 
-  def program(db: Database[IO]) = for {
+  def program(db: Database[IO],
+              state: AtomicReference[JUserState]) = for {
     queueRef <- Ref.of[IO, List[TdApi.Object]](List.empty)
     implicit0(logger: Logger[IO]) <- Slf4jLogger.create[IO]
     client <- Client[IO](EmptyHandlerWithQueue(queueRef))
     _ <- client.execute(new TdApi.SetLogVerbosityLevel(0))
-    ref <- Ref.of[IO, UserState[IO]](UserState[IO](client = client))
+    ref <- Ref.of[IO, UserState[IO]](UserState[IO](client = client, javaState = state))
     confService <- PrivateConferenceService[IO](db)
     handler <- Handler[IO](ref, queueRef, confService, client)
     _ <- client.setUpdatesHandler(handler)
@@ -54,8 +55,8 @@ object RunApp extends App {
     db <- Database[IO](new File("db"))
   } yield db
 
-  val anotherProg = Stream.resource(database).flatMap { db =>
-    Stream.eval(program(db)).flatMap { case (queue, client, ref, logger, confService) =>
+  def anotherProg(state: AtomicReference[JUserState]) = Stream.resource(database).flatMap { db =>
+    Stream.eval(program(db, state)).flatMap { case (queue, client, ref, logger, confService) =>
       implicit val loggerForIo = logger
       Stream.eval(ConsoleProgram[IO](client, ref, confService, db)).flatMap { consoleProgram =>
         client.run() concurrently consoleProgram.run()

@@ -17,7 +17,7 @@ public class JUserState {
     private Map<Integer, TdApi.BasicGroup> basicGroups =  new HashMap<>();
     private Map<Integer, TdApi.Supergroup> superGroups =  new HashMap<>();
     private Map<Integer, TdApi.SecretChat> secretChats =  new HashMap<>();
-    private boolean  isAuth = false;
+    private boolean isAuth = false;
 
     /*
         TODO: implement the client

@@ -4,6 +4,8 @@ import cats.effect.concurrent.Ref
 import cats.effect.{ConcurrentEffect, Sync, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
+import collection.JavaConverters._
+import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
 import org.drinkless.tdlib.TdApi.MessageText
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
@@ -165,10 +167,15 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       )
       _ <- Sync[F].delay(chat.order = newOrder)
       _ <- userStateRef.update(prevState =>
-        if (newOrder != 0) prevState.copy(
-          chatList = (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20),
-          mainChatList = (prevState.mainChatList + (newOrder -> chat))
-        ) else prevState
+        if (newOrder != 0) {
+          prevState.javaState.get().setChatList(
+            (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20).reverse.asJava
+          )
+          prevState.copy(
+            chatList = (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20),
+            mainChatList = (prevState.mainChatList + (newOrder -> chat))
+          )
+        } else prevState
       )
     } yield ()
   }
@@ -205,7 +212,10 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         val pass = StdIn.readLine()
         client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
       case a: TdApi.AuthorizationStateReady =>
-        userStateRef.update(_.copy(isAuth = true)).map(_ => ()) >>
+        userStateRef.update{ prevState =>
+          prevState.javaState.get().setAuth(true)
+          prevState.copy(isAuth = true)
+        }.map(_ => ()) >>
           client.send(
             new TdApi.GetChats(new TdApi.ChatListMain(), Long.MaxValue, 0, 20),
             EmptyHandler[F]()

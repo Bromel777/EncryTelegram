@@ -16,7 +16,7 @@ case class ReadChat[F[_]: Concurrent: Timer](client: Client[F],
 
   override def run(args: List[String]): F[Unit] = for {
     state <- userStateRef.get
-    chat <- state.mainChatList.find(_.title == args.last).get.pure[F]
+    chat <- state.mainChatList.find(_._2.title == args.last).get._2.pure[F]
     dbPass <- db.get(args.last.getBytes())
     _ <- client.send(
       new TdApi.GetChatHistory(chat.id, 0, 0, 20, false),

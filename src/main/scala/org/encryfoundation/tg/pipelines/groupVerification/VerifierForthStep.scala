@@ -47,7 +47,7 @@ case class VerifierForthStep[F[_]: Concurrent: Timer: Logger](verifier: Verifier
     aes <- AESEncryption(Blake2b256.hash(commonKey)).pure[F]
     _ <- Logger[F].info(s"ChatId: ${thirdStepMsg.chatId}")
     _ <- Logger[F].info(s"Chats: ${state.mainChatList}")
-    chat <- state.mainChatList.find(_.id == thirdStepMsg.chatId).get.pure[F]
+    chat <- state.mainChatList.find(_._2.id == thirdStepMsg.chatId).get._2.pure[F]
     _ <- stateRef.update(_.copy(
       privateGroups = state.privateGroups +
         (chat.id -> (chat, aes.decrypt(Base64.decode(thirdStepMsg.pass).get).map(_.toChar).mkString)))

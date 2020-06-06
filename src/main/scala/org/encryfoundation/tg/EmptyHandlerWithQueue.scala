@@ -29,7 +29,7 @@ case class EmptyHandlerWithQueue[F[_]: Concurrent](queue: Ref[F, List[TdApi.Obje
   }
 }
 
-case class EmptyHandler[F[_]: Concurrent]() extends ResultHandler[F] {
+case class EmptyHandler[F[_]: Concurrent: Logger]() extends ResultHandler[F] {
   /**
    * Callback called on result of query to TDLib or incoming update from TDLib.
    *
@@ -38,7 +38,7 @@ case class EmptyHandler[F[_]: Concurrent]() extends ResultHandler[F] {
   override def onResult(obj: TdApi.Object): F[Unit] = {
     //().pure[F]
     for {
-      _ <- Concurrent[F].delay(println(s"Receive $obj on empty handler"))
+      _ <- Logger[F].info(s"Receive $obj on empty handler")
     } yield ()
   }
 }
@@ -51,7 +51,7 @@ case class SecretChatHandler[F[_]: Concurrent: Logger](stateRef: Ref[F, UserStat
         _ <- Logger[F].info(s"Receive secret: ${obj}")
         _ <- stateRef.update(
           _.copy(
-            mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
+            mainChatList = state.mainChatList + (obj.asInstanceOf[TdApi.Chat].id -> obj.asInstanceOf[TdApi.Chat]),
           )
         )
       } yield ()
@@ -80,7 +80,7 @@ case class SecretGroupPrivateChatHandler[F[_]: Concurrent: Timer: Logger](stateR
         )(privConfServ)
         _ <- stateRef.update(
           _.copy(
-            mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
+            mainChatList = state.mainChatList + (obj.asInstanceOf[TdApi.Chat].id -> obj.asInstanceOf[TdApi.Chat]),
             pendingSecretChatsForInvite = state.pendingSecretChatsForInvite + (
               obj.asInstanceOf[TdApi.Chat].`type`.asInstanceOf[TdApi.ChatTypeSecret].secretChatId.toLong -> (
                 obj.asInstanceOf[TdApi.Chat],

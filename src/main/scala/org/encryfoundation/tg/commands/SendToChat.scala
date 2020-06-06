@@ -6,9 +6,10 @@ import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
+import io.chrisdavenport.log4cats.Logger
 
-case class SendToChat[F[_]: Concurrent: Timer](client: Client[F],
-                                               userStateRef: Ref[F, UserState[F]]) extends Command[F]{
+case class SendToChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
+                                                       userStateRef: Ref[F, UserState[F]]) extends Command[F]{
 
   override val name: String = "sendToChat"
 
@@ -17,10 +18,10 @@ case class SendToChat[F[_]: Concurrent: Timer](client: Client[F],
     recepient <- Sync[F].delay(args.dropRight(1).mkString(" "))
     _ <- Sync[F].delay(println(s"Recepient: ${recepient}. Users: ${state.mainChatList}"))
     _ <- Sync[F].delay(println(s"Recepient exists: " +
-      s"${state.mainChatList.exists(_.title == recepient)}")
+      s"${state.mainChatList.exists(_._2.title == recepient)}")
     )
     _ <- sendMessage(
-      state.mainChatList.find(_.title == recepient).get.id,
+      state.mainChatList.find(_._2.title == recepient).get._2.id,
       args.last,
       client
     )

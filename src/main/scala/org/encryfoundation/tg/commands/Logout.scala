@@ -6,11 +6,12 @@ import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
+import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.EmptyHandler
 
-case class Logout[F[_]: Concurrent: Timer](client: Client[F],
-                                      userStateRef: Ref[F, UserState[F]],
-                                      db: Database[F]) extends Command[F] {
+case class Logout[F[_]: Concurrent: Timer: Logger](client: Client[F],
+                                                   userStateRef: Ref[F, UserState[F]],
+                                                   db: Database[F]) extends Command[F] {
 
   override val name: String = "logout"
 

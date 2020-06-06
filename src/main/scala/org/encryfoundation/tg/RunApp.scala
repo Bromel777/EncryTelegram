@@ -40,7 +40,9 @@ object RunApp extends IOApp {
   val anotherProg = Stream.resource(database).flatMap { db =>
     Stream.eval(program(db)).flatMap { case (queue, client, ref, logger, confService) =>
       implicit val loggerForIo = logger
-      client.run() concurrently Stream.eval(regComm(client, ref, confService, db))
+      client.run() concurrently Stream.eval(
+        regComm(client, ref, confService, db)
+      )
     }
   }
 
@@ -82,7 +84,7 @@ object RunApp extends IOApp {
       _ <- onlyForReg(client, userStateRef, confService, db)
     } yield ()
 
-  def sendMessage[F[_]: Concurrent](chatId: Long, msg: String, client: Client[F]): F[Unit] = {
+  def sendMessage[F[_]: Concurrent: Logger](chatId: Long, msg: String, client: Client[F]): F[Unit] = {
     val row: Array[TdApi.InlineKeyboardButton] = Array(
       new TdApi.InlineKeyboardButton("https://telegram.org?1", new TdApi.InlineKeyboardButtonTypeUrl()),
       new TdApi.InlineKeyboardButton("https://telegram.org?2", new TdApi.InlineKeyboardButtonTypeUrl()),

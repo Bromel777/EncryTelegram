@@ -6,9 +6,10 @@ import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
+import io.chrisdavenport.log4cats.Logger
 
-case class SendToChat[F[_]: Concurrent: Timer](client: Client[F],
-                                               userStateRef: Ref[F, UserState[F]]) extends Command[F]{
+case class SendToChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
+                                                       userStateRef: Ref[F, UserState[F]]) extends Command[F]{
 
   override val name: String = "sendToChat"
 

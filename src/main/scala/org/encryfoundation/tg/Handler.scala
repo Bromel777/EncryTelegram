@@ -4,7 +4,7 @@ import java.math.BigInteger
 
 import cats.Applicative
 import cats.effect.concurrent.{MVar, Ref}
-import cats.effect.{ConcurrentEffect, Sync, Timer}
+import cats.effect.{ConcurrentEffect, IO, Sync, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
@@ -73,6 +73,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         for {
           state <- userStateRef.get
           _ <- state.chatIds.find(_._1 == updateChat.chatId).traverse { case (_, chat) =>
+            chat.lastMessage = updateChat.lastMessage
             setChatOrder(chat, updateChat.order)
           }
         } yield ()
@@ -213,7 +214,11 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         val pass = StdIn.readLine()
         client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
       case a: TdApi.AuthorizationStateReady =>
-        userStateRef.update(_.copy(isAuth = true)).map(_ => ())
+        userStateRef.update(_.copy(isAuth = true)).map(_ => ()) >>
+          client.send(
+            new TdApi.GetChats(new TdApi.ChatListMain(), Long.MaxValue, 0, 20),
+            EmptyHandler[F]()
+          )
       case _ =>
         println(s"Got unknown event in auth. ${authEvent}").pure[F]
     }

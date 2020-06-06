@@ -15,6 +15,7 @@ import org.javaFX.util.observers.BasicObserver;
 import org.javaFX.util.KeyboardHandler;
 import org.javaFX.util.observers.JChatObserver;
 
+import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -67,7 +68,7 @@ public class MainWindowHandler extends DataHandler {
     private ObservableList<JChat> getObservableChatList(){
         ObservableList<JChat> observableChatList = FXCollections.observableArrayList();
         getUserStateRef().get().getChatList().forEach(
-                chat -> observableChatList.add(new JChat(chat.title + "("+")") )
+                chat -> observableChatList.add(new JChat(chat.title, "test", chat.id) )
         );
 
         /*getUserStateRef().get().getChatList().forEach(
@@ -92,6 +93,12 @@ public class MainWindowHandler extends DataHandler {
             sendMessageArea.setText("");
             jDialog.setContent(localDialogHistory);
         }
+    }
+
+    @FXML
+    private void clickItem()
+    {
+        System.out.println(chatsTable.getSelectionModel().getSelectedItem());
     }
 
     @FXML

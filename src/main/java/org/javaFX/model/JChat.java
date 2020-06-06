@@ -1,15 +1,19 @@
 package org.javaFX.model;
 
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class JChat {
     private StringProperty title;
     private StringProperty lastMessage;
+    private LongProperty chatId;
 
-    public JChat(StringProperty title, StringProperty lastMessage) {
+    public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId) {
         this.title = title;
         this.lastMessage = lastMessage;
+        this.chatId = chatId;
     }
 
     public JChat(String titleStr) {
@@ -22,8 +26,8 @@ public class JChat {
         this.lastMessage = new SimpleStringProperty("test");
     }
 
-    public JChat(String titleStr, String lastMessageStr) {
-        this(new SimpleStringProperty(titleStr), new SimpleStringProperty(lastMessageStr));
+    public JChat(String titleStr, String lastMessageStr, Long chatId) {
+        this(new SimpleStringProperty(titleStr), new SimpleStringProperty(lastMessageStr), new SimpleLongProperty(chatId));
     }
 
     public StringProperty getTitle() {
@@ -44,6 +48,6 @@ public class JChat {
 
     @Override
     public String toString() {
-        return "title = " + title.toString() + ", lastMessage = " + lastMessage.toString() ;
+        return "title = " + title.toString() + ", lastMessage = " + lastMessage.toString() + ", chatId = " + chatId.toString() ;
     }
 }

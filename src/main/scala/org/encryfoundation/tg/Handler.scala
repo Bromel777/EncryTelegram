@@ -49,8 +49,12 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case TdApi.UpdateUser.CONSTRUCTOR =>
         val updateUser = obj.asInstanceOf[TdApi.UpdateUser]
         for {
-          state <- userStateRef.get
-          _ <- userStateRef.update(_.copy(users = state.users + (updateUser.user.id -> updateUser.user)))
+          _ <- userStateRef.update { prevState =>
+            val newUsers = prevState.javaState.get().getUsers
+            newUsers.put(updateUser.user.id, updateUser.user)
+            prevState.javaState.get().setUsers(newUsers)
+            prevState.copy(users = prevState.users + (updateUser.user.id -> updateUser.user))
+          }
         } yield ()
       case TdApi.UpdateChatOrder.CONSTRUCTOR =>
         val updateChatOrder = obj.asInstanceOf[TdApi.UpdateChatOrder]
@@ -101,14 +105,14 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
               chatInfo <- state.pendingSecretChatsForInvite(secretChat.secretChat.id).pure[F]
               chatId <- state.pendingSecretChatsForInvite(secretChat.secretChat.id)._1.id.pure[F]
               newPipeline <- state.pipelineSecretChats(chatId).processInput(Array.emptyByteArray)
-              _ <- userStateRef.update(
-                _.copy(
+              _ <- userStateRef.update { prevState =>
+                prevState.copy(
                   pendingSecretChatsForInvite = state.pendingSecretChatsForInvite - secretChat.secretChat.id,
                   privateGroups = state.privateGroups + (chatInfo._1.id -> (chatInfo._1 -> chatInfo._2)),
                   pipelineSecretChats = state.pipelineSecretChats +
                     (chatId -> newPipeline)
                 )
-              )
+              }
             } yield ()
           else if (secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStatePending] && !secretChat.secretChat.isOutbound) {
             for {

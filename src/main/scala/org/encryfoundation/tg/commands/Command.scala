@@ -30,6 +30,8 @@ object Command {
     ShowPrivateConferences[F](client, userStateRef, db)(confService),
     CreatePrivateChat[F](client, userStateRef),
     SendToSecretChat[F](client, userStateRef, db),
-    Logout[F](client, userStateRef, db)
+    Logout[F](client, userStateRef, db),
+    CloseChat[F](client, userStateRef, db),
+    CloseSecretChat[F](client, userStateRef, db)
   )
 }

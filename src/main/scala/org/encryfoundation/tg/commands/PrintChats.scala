@@ -22,9 +22,10 @@ case class PrintChats[F[_]: Concurrent: Timer](client: Client[F],
     _ <- Sync[F].delay(println(s"Chats: ${
       state.chatList.take(20).reverse.map { case (chat) =>
         if (state.privateGroups.contains(chat.id) ||
-          dbChats.exists(_.map(_.toChar).mkString == chat.title)) chat.title ++ s" [Private group]."
-        else if (chat.`type`.isInstanceOf[ChatTypeSecret]) chat.title ++ s" [Secret chat]"
-        else chat.title ++ s". Last message: ${processLastMessage(chat.lastMessage).take(7) ++ "..."}"
+          dbChats.exists(_.map(_.toChar).mkString == chat.title)) chat.title ++ s". ChatId: ${chat.id} [Private group]."
+        else if (chat.`type`.isInstanceOf[ChatTypeSecret])
+          chat.title ++ s". ChatId: ${chat.id}. Secret chat id: ${chat.`type`.asInstanceOf[ChatTypeSecret].secretChatId} [Secret chat]"
+        else chat.title ++ s". ChatId: ${chat.id}"
       }.mkString("\n ")}."))
   } yield ()
 

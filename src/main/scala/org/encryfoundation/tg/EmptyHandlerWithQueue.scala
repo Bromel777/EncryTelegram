@@ -51,7 +51,7 @@ case class SecretChatHandler[F[_]: Concurrent: Logger](stateRef: Ref[F, UserStat
         _ <- Logger[F].info(s"Receive secret: ${obj}")
         _ <- stateRef.update(
           _.copy(
-            mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
+            mainChatList = state.mainChatList + (obj.asInstanceOf[TdApi.Chat].id -> obj.asInstanceOf[TdApi.Chat]),
           )
         )
       } yield ()
@@ -80,7 +80,7 @@ case class SecretGroupPrivateChatHandler[F[_]: Concurrent: Timer: Logger](stateR
         )(privConfServ)
         _ <- stateRef.update(
           _.copy(
-            mainChatList = obj.asInstanceOf[TdApi.Chat] +: state.mainChatList,
+            mainChatList = state.mainChatList + (obj.asInstanceOf[TdApi.Chat].id -> obj.asInstanceOf[TdApi.Chat]),
             pendingSecretChatsForInvite = state.pendingSecretChatsForInvite + (
               obj.asInstanceOf[TdApi.Chat].`type`.asInstanceOf[TdApi.ChatTypeSecret].secretChatId.toLong -> (
                 obj.asInstanceOf[TdApi.Chat],

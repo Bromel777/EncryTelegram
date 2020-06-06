@@ -51,10 +51,10 @@ object RunApp extends IOApp {
       DummyHandler[F](client, userStateRef, (cl, ref) => getChats(cl, ref))
     ) else Sync[F].delay(println("State auth - false"))
     _ <- Sync[F].delay(println(s"Chats: ${
-      state.mainChatList.take(20).map(chat =>
+      state.chatList.take(20).map { chat =>
         if (state.privateGroups.contains(chat.id)) chat.title ++ s" [Private group chat]"
         else chat.title
-      ).mkString("\n ")}."))
+      }.mkString("\n ")}."))
   } yield ()
 
   def regComm[F[_]: Concurrent: Timer: Logger](client: Client[F],

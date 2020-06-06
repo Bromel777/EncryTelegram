@@ -17,10 +17,10 @@ case class SendToChat[F[_]: Concurrent: Timer](client: Client[F],
     recepient <- Sync[F].delay(args.dropRight(1).mkString(" "))
     _ <- Sync[F].delay(println(s"Recepient: ${recepient}. Users: ${state.mainChatList}"))
     _ <- Sync[F].delay(println(s"Recepient exists: " +
-      s"${state.mainChatList.exists(_.title == recepient)}")
+      s"${state.mainChatList.exists(_._2.title == recepient)}")
     )
     _ <- sendMessage(
-      state.mainChatList.find(_.title == recepient).get.id,
+      state.mainChatList.find(_._2.title == recepient).get._2.id,
       args.last,
       client
     )

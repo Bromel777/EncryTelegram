@@ -22,8 +22,8 @@ case class SendToSecretChat[F[_]: Concurrent: Logger](client: Client[F],
     userLogin <- args.dropRight(1).pure[F]
    // _ <- Sync[F].delay(println(s"Chat login: ${userLogin.mkString(" ")}"))
     chatId <- state.mainChatList.find {
-      chat => chat.`type`.isInstanceOf[ChatTypeSecret] && chat.title == userLogin.mkString(" ")
-    }.get.id.pure[F]
+      case (_, chat) => chat.`type`.isInstanceOf[ChatTypeSecret] && chat.title == userLogin.mkString(" ")
+    }.get._2.id.pure[F]
    // _ <- Sync[F].delay(println(s"Find secret chat id: ${chatId}"))
     _ <- sendMessage(
       chatId,

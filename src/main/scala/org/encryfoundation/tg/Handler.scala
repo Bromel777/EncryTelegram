@@ -4,7 +4,7 @@ import java.math.BigInteger
 
 import cats.Applicative
 import cats.effect.concurrent.{MVar, Ref}
-import cats.effect.{ConcurrentEffect, Sync, Timer}
+import cats.effect.{ConcurrentEffect, IO, Sync, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
@@ -45,12 +45,13 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case TdApi.UpdateNewChat.CONSTRUCTOR =>
         val updateNewChat: TdApi.UpdateNewChat = obj.asInstanceOf[TdApi.UpdateNewChat]
         val chat: TdApi.Chat = updateNewChat.chat
-        val order = chat.order
+        val newOrder = chat.order
         chat.order = 0
         for {
           state <- userStateRef.get
+          _ <- Logger[F].info(s"Receive chat: ${obj}")
           _ <- userStateRef.update(_.copy(chatIds = state.chatIds + (chat.id -> chat)))
-          _ <- setChatOrder(chat, order)
+          _ <- setChatOrder(chat, newOrder)
         } yield ()
       case TdApi.UpdateUser.CONSTRUCTOR =>
         val updateUser = obj.asInstanceOf[TdApi.UpdateUser]
@@ -61,6 +62,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case TdApi.UpdateChatOrder.CONSTRUCTOR =>
         val updateChatOrder = obj.asInstanceOf[TdApi.UpdateChatOrder]
         for {
+          _ <- Logger[F].info(s"Receive UpdateChatOrder: ${updateChatOrder}")
           state <- userStateRef.get
           _ <- state.chatIds.find(_._1 == updateChatOrder.chatId).traverse { case (_, chat) =>
             setChatOrder(chat, updateChatOrder.order)
@@ -71,6 +73,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         for {
           state <- userStateRef.get
           _ <- state.chatIds.find(_._1 == updateChat.chatId).traverse { case (_, chat) =>
+            chat.lastMessage = updateChat.lastMessage
             setChatOrder(chat, updateChat.order)
           }
         } yield ()
@@ -162,20 +165,20 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
     }
   }
 
-  def setChatOrder(chat: TdApi.Chat, order: Long): F[Unit] = {
+  def setChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit] = {
     for {
-      state <- userStateRef.get
-      _ <- if (chat.order != 0)
-            userStateRef.update(_.copy(mainChatList = state.mainChatList.filter(_.order == chat.order)))
-          else (()).pure[F]
-      _ <- Sync[F].delay(chat.order = order)
-      _ <- if (order != 0)
-            userStateRef.update(
-              _.copy(
-                mainChatList = (chat :: state.mainChatList).sortBy(_.order).takeRight(20).reverse
-              )
-            )
-          else (()).pure[F]
+      _ <- userStateRef.update(prevState =>
+        if (prevState.chatList.length < 20) prevState.copy(
+          chatList = prevState.mainChatList.takeRight(20).values.toList
+        ) else prevState
+      )
+      _ <- Sync[F].delay(chat.order = newOrder)
+      _ <- userStateRef.update(prevState =>
+        if (newOrder != 0) prevState.copy(
+          chatList = (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20),
+          mainChatList = (prevState.mainChatList + (newOrder -> chat))
+        ) else prevState
+      )
     } yield ()
   }
 
@@ -211,7 +214,11 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         val pass = StdIn.readLine()
         client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
       case a: TdApi.AuthorizationStateReady =>
-        userStateRef.update(_.copy(isAuth = true)).map(_ => ())
+        userStateRef.update(_.copy(isAuth = true)).map(_ => ()) >>
+          client.send(
+            new TdApi.GetChats(new TdApi.ChatListMain(), Long.MaxValue, 0, 20),
+            EmptyHandler[F]()
+          )
       case _ =>
         println(s"Got unknown event in auth. ${authEvent}").pure[F]
     }

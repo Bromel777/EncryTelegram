@@ -7,12 +7,13 @@ import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
+import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.leveldb.Database
 import scorex.crypto.encode.Base16
 
-case class WriteSecure[F[_]: Concurrent: Timer](client: Client[F],
-                                                userStateRef: Ref[F, UserState[F]],
-                                                db: Database[F]) extends Command[F] {
+case class WriteSecure[F[_]: Concurrent: Timer: Logger](client: Client[F],
+                                                        userStateRef: Ref[F, UserState[F]],
+                                                        db: Database[F]) extends Command[F] {
 
   override val name: String = "writeSecure"
 

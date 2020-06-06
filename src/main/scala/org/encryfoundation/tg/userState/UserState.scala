@@ -1,10 +1,11 @@
 package org.encryfoundation.tg.userState
 
-import org.drinkless.tdlib.{Client, Client123, TdApi}
-import org.encryfoundation.tg.community.PrivateCommunityStatus
+import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.pipelines.Pipeline
+import scala.collection.SortedMap
 
-case class UserState[F[_]](mainChatList: List[TdApi.Chat] = List.empty,
+case class UserState[F[_]](chatList: List[TdApi.Chat] = List.empty,
+                           mainChatList: SortedMap[Long, TdApi.Chat] = SortedMap.empty[Long, TdApi.Chat],
                            chatIds: Map[Long, TdApi.Chat] = Map.empty,
                            privateGroups: Map[Long, (TdApi.Chat, String)] = Map.empty,
                            pipelineSecretChats: Map[Long, Pipeline[F]] = Map.empty[Long, Pipeline[F]],

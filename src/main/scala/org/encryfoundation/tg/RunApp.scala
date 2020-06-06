@@ -40,7 +40,9 @@ object RunApp extends IOApp {
   val anotherProg = Stream.resource(database).flatMap { db =>
     Stream.eval(program(db)).flatMap { case (queue, client, ref, logger, confService) =>
       implicit val loggerForIo = logger
-      client.run() concurrently Stream.eval(regComm(client, ref, confService, db))
+      client.run() concurrently Stream.eval(
+        regComm(client, ref, confService, db)
+      )
     }
   }
 
@@ -51,10 +53,10 @@ object RunApp extends IOApp {
       DummyHandler[F](client, userStateRef, (cl, ref) => getChats(cl, ref))
     ) else Sync[F].delay(println("State auth - false"))
     _ <- Sync[F].delay(println(s"Chats: ${
-      state.mainChatList.take(20).map(chat =>
+      state.chatList.take(20).map { chat =>
         if (state.privateGroups.contains(chat.id)) chat.title ++ s" [Private group chat]"
         else chat.title
-      ).mkString("\n ")}."))
+      }.mkString("\n ")}."))
   } yield ()
 
   def regComm[F[_]: Concurrent: Timer: Logger](client: Client[F],
@@ -82,7 +84,7 @@ object RunApp extends IOApp {
       _ <- onlyForReg(client, userStateRef, confService, db)
     } yield ()
 
-  def sendMessage[F[_]: Concurrent](chatId: Long, msg: String, client: Client[F]): F[Unit] = {
+  def sendMessage[F[_]: Concurrent: Logger](chatId: Long, msg: String, client: Client[F]): F[Unit] = {
     val row: Array[TdApi.InlineKeyboardButton] = Array(
       new TdApi.InlineKeyboardButton("https://telegram.org?1", new TdApi.InlineKeyboardButtonTypeUrl()),
       new TdApi.InlineKeyboardButton("https://telegram.org?2", new TdApi.InlineKeyboardButtonTypeUrl()),

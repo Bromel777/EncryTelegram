@@ -7,7 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Duration;
-import org.drinkless.tdlib.TdApi;
+
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
 import org.javaFX.model.JDialog;
@@ -15,7 +15,6 @@ import org.javaFX.util.observers.BasicObserver;
 import org.javaFX.util.KeyboardHandler;
 import org.javaFX.util.observers.JChatObserver;
 
-import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,6 +38,9 @@ public class MainWindowHandler extends DataHandler {
     @FXML
     private TextArea dialogArea;
 
+    /*@FXML
+    private MenuBar menuBar;*/
+
     @FXML
     private Button sendMessageButton;
 
@@ -47,6 +49,12 @@ public class MainWindowHandler extends DataHandler {
     public MainWindowHandler() {
         chatListObserve(this);
         createDialog();
+    }
+
+    private void enableMenuBar(){
+        if(getRootLayout().getTop().isDisable()) {
+            getRootLayout().getTop().setDisable(false);
+        }
     }
 
     private void chatListObserve(DataHandler controller){
@@ -61,6 +69,7 @@ public class MainWindowHandler extends DataHandler {
         super.setEncryWindow(encryWindow);
         chatsTable.setItems(getObservableChatList());
         initializeChats();
+        enableMenuBar();
         //updateDialog();
     }
 
@@ -70,7 +79,6 @@ public class MainWindowHandler extends DataHandler {
         getUserStateRef().get().getChatList().forEach(
                 chat -> observableChatList.add(new JChat(chat.title, "test", chat.id) )
         );
-
         /*getUserStateRef().get().getChatList().forEach(
                 chat -> observableChatList.add(new JChat(chat.title + "("+chat.unreadMentionCount +")") )
         );*/
@@ -96,8 +104,7 @@ public class MainWindowHandler extends DataHandler {
     }
 
     @FXML
-    private void clickItem()
-    {
+    private void clickItem() {
         System.out.println(chatsTable.getSelectionModel().getSelectedItem());
     }
 
@@ -173,4 +180,30 @@ public class MainWindowHandler extends DataHandler {
     private void showOptions(){
         System.out.println("show options");
     }
+/*
+    @FXML
+    private void closeWindow(){
+        System.out.println("close window");
+        getStage().close();
+    }
+
+
+    @FXML
+    private void createLocalCommunity(){
+        System.out.println("create local community");
+    }
+
+    @FXML
+    private void updateLocalCommunity(){
+        System.out.println("create local community");
+    }
+    @FXML
+    private void deleteLocalCommunity(){
+        System.out.println("create local community");
+    }
+    @FXML
+    private void showLocalCommunity(){
+        System.out.println("create local community");
+    }*/
+
 }

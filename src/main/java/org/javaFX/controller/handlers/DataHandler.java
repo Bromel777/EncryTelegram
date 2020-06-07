@@ -1,6 +1,7 @@
 package org.javaFX.controller.handlers;
 
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JUserState;
@@ -12,6 +13,16 @@ public abstract class DataHandler {
     private Stage stage;
     private EncryWindow encryWindow;
     private AtomicReference<JUserState> userStateRef;
+    private BorderPane rootLayout;
+
+
+    public BorderPane getRootLayout() {
+        return rootLayout;
+    }
+
+    public void setRootLayout(BorderPane rootLayout) {
+        this.rootLayout = rootLayout;
+    }
 
     public Stage getStage() {
         return stage;
@@ -41,4 +52,8 @@ public abstract class DataHandler {
         this.setEncryWindow(encryWindow);
     }
 
+    @Override
+    public String toString() {
+        return this.getClass().toString();
+    }
 }

@@ -4,12 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.javaFX.controller.handlers.DataHandler;
-import org.javaFX.controller.handlers.StartWindowHandler;
 import org.javaFX.model.JUserState;
 import org.javaFX.util.DelayAuthentication;
 
@@ -30,6 +28,8 @@ public class EncryWindow extends Application {
     public final static String pathToMainWindowFXML = "view/mainWindow.fxml";
     public final static String pathToAuthenticationWindowFXML = "view/authenticationWindow.fxml";
     private final static String pathToRootLayout = "view/rootLayout.fxml";
+
+    private DataHandler rootLayoutHandler;
 
     public static AtomicReference<JUserState> state = new AtomicReference<>(new JUserState());
 
@@ -56,10 +56,7 @@ public class EncryWindow extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(EncryWindow.class.getResource(pathToRootLayout));
             rootLayout = loader.load();
-            Scene scene = new Scene(rootLayout);
-            primaryStage.setScene(scene);
-            primaryStage.setResizable(false);
-            primaryStage.show();
+            initRootController(loader);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,6 +72,16 @@ public class EncryWindow extends Application {
         controller.setUserStateRef(state);
         controller.setEncryWindow(this);
         controller.setStage(primaryStage);
+        controller.setRootLayout(rootLayout);
+    }
+
+    private void initRootController(FXMLLoader loader){
+        rootLayoutHandler = loader.getController();
+        Scene scene = new Scene(rootLayout);
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        updateController(loader);
+        primaryStage.show();
     }
 
     public void launchWindowByPathToFXML(String pathToTemplate){

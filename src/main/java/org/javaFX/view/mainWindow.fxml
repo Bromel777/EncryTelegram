@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.handlers.MainWindowHandler">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.handlers.MainWindowHandler">
    <children>
-      <SplitPane dividerPositions="0.12207357859531773, 0.3963210702341137" focusTraversable="false" prefHeight="400.0" prefWidth="600.0">
+      <SplitPane dividerPositions="0.0903010033444816, 0.3963210702341137" focusTraversable="false" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-            <AnchorPane prefHeight="398.0" prefWidth="36.0">
+            <AnchorPane maxWidth="50.0" minWidth="50.0" prefHeight="400.0" prefWidth="67.0">
                <children>
-                  <VBox prefHeight="398.0" prefWidth="80.0">
+                  <VBox prefHeight="398.0" prefWidth="34.0">
                      <children>
-                        <ImageView fx:id="menuButton" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#showMenu" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="menuButton" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#showMenu" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="file:src/main/resources/images/menu.png" />
                             </image>
                         </ImageView>
-                        <ImageView fx:id="allChatsButton" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#showChats" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="allChatsButton" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#showChats" pickOnBounds="true" preserveRatio="true">
                              <image>
                                  <Image url="file:src/main/resources/images/chats.png" />
                              </image>
                         </ImageView>
-                        <ImageView fx:id="privateChatsButton" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#showPrivateChats" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="privateChatsButton" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#showPrivateChats" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="file:src/main/resources/images/lock.png" />
                             </image>
                         </ImageView>
-                        <ImageView fx:id="editButton" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#showOptions" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="editButton" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#showOptions" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="file:src/main/resources/images/edit.png" />
                             </image>
@@ -37,6 +39,9 @@
                      </children>
                   </VBox>
                </children>
+               <padding>
+                  <Insets left="550.0" />
+               </padding>
             </AnchorPane>
           <AnchorPane fx:id="leftPane" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="200.0">
                <children>
@@ -50,9 +55,9 @@
                   </TableView>
                </children>
             </AnchorPane>
-          <AnchorPane fx:id="rightPane" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="400.0">
+          <AnchorPane fx:id="rightPane" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="357.0">
                <children>
-                  <Button fx:id="sendMessageButton" defaultButton="true" layoutX="342.0" layoutY="362.0" minHeight="31.0" minWidth="69.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="38.0" prefWidth="69.0" text="Send" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="355.0">
+                  <Button fx:id="sendMessageButton" defaultButton="true" layoutX="288.0" layoutY="355.0" minHeight="31.0" minWidth="69.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="44.0" prefWidth="69.0" text="Send" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="355.0">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
@@ -68,9 +73,15 @@
                         <Font size="20.0" />
                      </font>
                   </TextArea>
+                  <TextArea fx:id="sendMessageArea" layoutY="355.0" onKeyPressed="#sendMessageByKeyboard" prefHeight="44.0" prefWidth="288.0" promptText="Write a message..." wrapText="true" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="355.0">
+                     <font>
+                        <Font name="Centaur" size="20.0" />
+                     </font>
+                  </TextArea>
                </children>
             </AnchorPane>
         </items>
       </SplitPane>
+
    </children>
 </AnchorPane>

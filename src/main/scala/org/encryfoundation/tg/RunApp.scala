@@ -12,9 +12,11 @@ import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
 import org.encryfoundation.tg.commands.Command
+import org.encryfoundation.tg.errors.TdError
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
+import tofu.Raise
 
 import scala.io.StdIn
 
@@ -59,19 +61,19 @@ object RunApp extends IOApp {
       }.mkString("\n ")}."))
   } yield ()
 
-  def regComm[F[_]: Concurrent: Timer: Logger](client: Client[F],
-                                               userStateRef: Ref[F, UserState[F]],
-                                               confService: PrivateConferenceService[F],
-                                               db: Database[F]): F[Unit] = for {
+  def regComm[F[_]: Concurrent: Timer: Logger: Raise[*[_], TdError]](client: Client[F],
+                                                                     userStateRef: Ref[F, UserState[F]],
+                                                                     confService: PrivateConferenceService[F],
+                                                                     db: Database[F]): F[Unit] = for {
     state <- userStateRef.get
     _ <- if (state.isAuth) onlyForReg(client, userStateRef, confService, db)
          else regComm(client, userStateRef, confService, db)
   } yield ()
 
-  def onlyForReg[F[_]: Concurrent: Timer: Logger](client: Client[F],
-                                                  userStateRef: Ref[F, UserState[F]],
-                                                  confService: PrivateConferenceService[F],
-                                                  db: Database[F]): F[Unit] =
+  def onlyForReg[F[_]: Concurrent: Timer: Logger: Raise[*[_], TdError]](client: Client[F],
+                                                                        userStateRef: Ref[F, UserState[F]],
+                                                                        confService: PrivateConferenceService[F],
+                                                                        db: Database[F]): F[Unit] =
     for {
       command <- Sync[F].delay {
         println("Write command. ('list')")

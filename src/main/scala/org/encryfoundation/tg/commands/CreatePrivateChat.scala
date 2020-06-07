@@ -6,10 +6,13 @@ import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
-import org.encryfoundation.tg.{EmptyHandler, SecretChatHandler}
+import org.encryfoundation.tg.errors.TdError.PrivateChatCreationError
+import org.encryfoundation.tg.handlers.SecretChatCreationHandler
+import tofu.Raise
 
-case class CreatePrivateChat[F[_]: Concurrent: Logger](client: Client[F],
-                                                       userStateRef: Ref[F, UserState[F]]) extends Command[F] {
+case class CreatePrivateChat[F[_]: Concurrent: Logger:
+                                   Raise[*[_], PrivateChatCreationError]](client: Client[F],
+                                                                          userStateRef: Ref[F, UserState[F]]) extends Command[F] {
 
   override val name: String = "createPrivateChat"
 
@@ -17,6 +20,6 @@ case class CreatePrivateChat[F[_]: Concurrent: Logger](client: Client[F],
     userLogin <- args.head.pure[F]
     state <- userStateRef.get
     userId <- state.users.find(info => info._2.username == userLogin || info._2.phoneNumber == args.mkString(" ")).get._2.id.pure[F]
-    _ <- client.send(new TdApi.CreateNewSecretChat(userId), SecretChatHandler[F](userStateRef))
+    _ <- client.send(new TdApi.CreateNewSecretChat(userId), SecretChatCreationHandler[F](userStateRef))
   } yield ()
 }

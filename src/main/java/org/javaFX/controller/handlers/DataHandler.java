@@ -5,10 +5,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JUserState;
+import org.javaFX.util.observers.BasicObserver;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class DataHandler {
+
+    private static BasicObserver observer;
     @FXML
     private Stage stage;
     private EncryWindow encryWindow;
@@ -50,6 +53,14 @@ public abstract class DataHandler {
 
     public void updateEncryWindow(EncryWindow encryWindow){
         this.setEncryWindow(encryWindow);
+    }
+
+    public BasicObserver getObserver() {
+        return observer;
+    }
+
+    public void setObserver(BasicObserver observer) {
+        this.observer = observer;
     }
 
     @Override

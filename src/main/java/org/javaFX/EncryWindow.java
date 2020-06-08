@@ -46,6 +46,11 @@ public class EncryWindow extends Application {
         primaryStage.show();
     }
 
+    public void launchStartWindow(){
+        launchWindowByPathToFXML(pathToStartWindowFXML);
+        new DelayAuthentication(this, 5000).start();
+    }
+
     private void initBasicFields(Stage primaryStage){
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle(windowTitle);
@@ -61,19 +66,6 @@ public class EncryWindow extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void launchStartWindow(){
-        launchWindowByPathToFXML(pathToStartWindowFXML);
-        new DelayAuthentication(this, 5000).start();
-    }
-
-    private void updateController(FXMLLoader loader){
-        DataHandler controller = loader.getController();
-        controller.setUserStateRef(state);
-        controller.setEncryWindow(this);
-        controller.setStage(primaryStage);
-        controller.setRootLayout(rootLayout);
     }
 
     private void initRootController(FXMLLoader loader){
@@ -95,6 +87,14 @@ public class EncryWindow extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateController(FXMLLoader loader){
+        DataHandler controller = loader.getController();
+        controller.setUserStateRef(state);
+        controller.setEncryWindow(this);
+        controller.setStage(primaryStage);
+        controller.setRootLayout(rootLayout);
     }
 
 }

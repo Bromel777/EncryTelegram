@@ -12,26 +12,26 @@
    <children>
       <SplitPane dividerPositions="0.0903010033444816, 0.3963210702341137" focusTraversable="false" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-            <AnchorPane maxWidth="50.0" minWidth="50.0" prefHeight="400.0" prefWidth="67.0">
+            <AnchorPane maxWidth="40.0" minWidth="40.0" prefHeight="400.0" prefWidth="67.0">
                <children>
                   <VBox prefHeight="398.0" prefWidth="34.0">
                      <children>
-                        <ImageView fx:id="menuButton" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#showMenu" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="menuButton" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#showMenu" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="file:src/main/resources/images/menu.png" />
                             </image>
                         </ImageView>
-                        <ImageView fx:id="allChatsButton" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#showChats" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="allChatsButton" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#showChats" pickOnBounds="true" preserveRatio="true">
                              <image>
                                  <Image url="file:src/main/resources/images/chats.png" />
                              </image>
                         </ImageView>
-                        <ImageView fx:id="privateChatsButton" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#showPrivateChats" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="privateChatsButton" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#showPrivateChats" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="file:src/main/resources/images/lock.png" />
                             </image>
                         </ImageView>
-                        <ImageView fx:id="editButton" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#showOptions" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="editButton" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#showOptions" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="file:src/main/resources/images/edit.png" />
                             </image>
@@ -40,7 +40,7 @@
                   </VBox>
                </children>
                <padding>
-                  <Insets left="550.0" />
+                  <Insets left="560.0" />
                </padding>
             </AnchorPane>
           <AnchorPane fx:id="leftPane" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="200.0">

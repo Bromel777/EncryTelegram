@@ -11,9 +11,8 @@ import javafx.util.Duration;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
 import org.javaFX.model.JDialog;
-import org.javaFX.util.observers.BasicObserver;
 import org.javaFX.util.KeyboardHandler;
-import org.javaFX.util.observers.JChatObserver;
+import org.javaFX.util.observers.JTableObserver;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -58,9 +57,9 @@ public class MainWindowHandler extends DataHandler {
     }
 
     private void chatListObserve(DataHandler controller){
-        BasicObserver service = new JChatObserver(controller);
-        service.setPeriod(Duration.seconds(3));
-        service.start();
+        setObserver(new JTableObserver(controller));
+        getObserver().setPeriod(Duration.seconds(3));
+        getObserver().start();
     }
 
 
@@ -79,9 +78,6 @@ public class MainWindowHandler extends DataHandler {
         getUserStateRef().get().getChatList().forEach(
                 chat -> observableChatList.add(new JChat(chat.title, "test", chat.id) )
         );
-        /*getUserStateRef().get().getChatList().forEach(
-                chat -> observableChatList.add(new JChat(chat.title + "("+chat.unreadMentionCount +")") )
-        );*/
         return observableChatList;
     }
 

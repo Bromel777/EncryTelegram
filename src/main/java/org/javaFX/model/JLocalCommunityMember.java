@@ -4,20 +4,23 @@ import javafx.beans.property.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class JChat {
+public class JLocalCommunityMember {
 
+    private static AtomicInteger totalNumber = new AtomicInteger(1);
 
+    private AtomicInteger tableNumber;
     private StringProperty title;
     private StringProperty lastMessage;
     private LongProperty chatId;
 
-    public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId) {
+    public JLocalCommunityMember(StringProperty title, StringProperty lastMessage, LongProperty chatId) {
         this.title = title;
         this.lastMessage = lastMessage;
         this.chatId = chatId;
+        tableNumber = new AtomicInteger( totalNumber.getAndIncrement() );
     }
 
-    public JChat(String titleStr, String lastMessageStr, Long chatId) {
+    public JLocalCommunityMember(String titleStr, String lastMessageStr, Long chatId) {
         this(new SimpleStringProperty(titleStr), new SimpleStringProperty(lastMessageStr), new SimpleLongProperty(chatId));
     }
 
@@ -39,6 +42,14 @@ public class JChat {
 
     public LongProperty chatIdProperty() {
         return chatId;
+    }
+
+    public AtomicInteger getThisNumber() {
+        return tableNumber;
+    }
+
+    public long getChatId() {
+        return chatId.get();
     }
 
     @Override

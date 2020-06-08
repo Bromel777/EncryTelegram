@@ -3,9 +3,9 @@ package org.javaFX.util.observers;
 import javafx.concurrent.Task;
 import org.javaFX.controller.handlers.DataHandler;
 
-public class JChatObserver extends BasicObserver {
+public class JTableObserver extends BasicObserver {
 
-    public JChatObserver(DataHandler controller) {
+    public JTableObserver(DataHandler controller) {
         super(controller);
     }
 
@@ -17,6 +17,5 @@ public class JChatObserver extends BasicObserver {
             }
         };
     }
-
 
 }

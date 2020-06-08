@@ -1,60 +1,69 @@
 package org.javaFX.controller.handlers;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Duration;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
+import org.javaFX.model.JLocalCommunity;
+import org.javaFX.model.JLocalCommunityMember;
 import org.javaFX.util.observers.BasicObserver;
-import org.javaFX.util.observers.JChatObserver;
+import org.javaFX.util.observers.JTableObserver;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 
 public class LocalCommunityHandler extends DataHandler{
 
     @FXML
-    private TableView<JChat> chatsTable;
+    private TableView<JLocalCommunityMember> chatsTable;
 
     @FXML
-    private TableColumn<JChat, Long> rowNumber;
+    private TableColumn<JLocalCommunityMember, Integer> rowNumberColumn;
 
     @FXML
-    private TableColumn<JChat, String> chatsNameColumn;
-
-
-    @FXML
-    private TableColumn<JChat, Long> chatsIDColumn;
+    private TableColumn<JLocalCommunityMember, String> chatsNameColumn;
 
     @FXML
-    private TableColumn<JChat, CheckBox> checkBoxesColumn;
+    private TableColumn<JLocalCommunityMember, Long> chatsIDColumn;
 
     @FXML
-    private Button createButton;
+    private TableColumn<JLocalCommunityMember, CheckBox> checkBoxesColumn;
 
+    private ScheduledExecutorService service;
 
     public LocalCommunityHandler() {
-        chatListTableObserve(this);
+        service = Executors.newSingleThreadScheduledExecutor();
+        service.schedule(new Runnable() {
+            @Override
+            public void run() {
+                updateEncryWindow(getEncryWindow());
+            }
+        }, 1, TimeUnit.SECONDS);
     }
-
-    private void chatListTableObserve(DataHandler controller){
-        BasicObserver service = new JChatObserver(controller);
-        service.setPeriod(Duration.seconds(1));
-        service.start();
-    }
-
 
     @Override
     public void updateEncryWindow(EncryWindow encryWindow) {
         super.setEncryWindow(encryWindow);
-        chatsTable.setItems(getObservableChatList());
+        chatsTable.setItems(getObservableJCommunityMemberList());
         initChatsTable();
+    }
+
+    private ObservableList<JLocalCommunityMember> getObservableJCommunityMemberList(){
+        ObservableList<JLocalCommunityMember> result = FXCollections.observableArrayList();
+        getObservableChatList().forEach(
+                chat -> result.add(new JLocalCommunityMember(chat.getTitle(), chat.getLastMessage(), chat.chatIdProperty()) )
+        );
+        return result;
     }
 
     private ObservableList<JChat> getObservableChatList(){
@@ -66,8 +75,22 @@ public class LocalCommunityHandler extends DataHandler{
     }
 
     private void initChatsTable(){
+        rowNumberColumn.setCellValueFactory(cellDate -> new SimpleIntegerProperty(cellDate.getValue().getThisNumber().get()).asObject() );
         chatsNameColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
         chatsIDColumn.setCellValueFactory(cellData -> cellData.getValue().chatIdProperty().asObject());
-        //checkBoxesColumn.setCellValueFactory(cellData -> new CheckBox().selectedProperty().asObject());
+        checkBoxesColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(new CheckBox()) );
+        service.shutdown();
     }
+
+    @FXML
+    private void createButtonAction(){
+        System.out.println("create local community");
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
+    }
+
+    @FXML
+    private void enableCheckBox() {
+        System.out.println(chatsTable.getSelectionModel().getSelectedItem());
+    }
+
 }

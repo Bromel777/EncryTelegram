@@ -5,40 +5,40 @@ import java.util.List;
 
 public class JLocalCommunity {
 
-    private List<JUser> communityMembers;
+    private List<JLocalCommunityMember> communityMembers;
 
     public JLocalCommunity() {
         communityMembers = new ArrayList<>();
     }
 
-    public JLocalCommunity(List<JUser> communityMembers) {
+    public JLocalCommunity(List<JLocalCommunityMember> communityMembers) {
         this.communityMembers = communityMembers;
     }
 
-    public List<JUser> getCommunityMembers() {
+    public List<JLocalCommunityMember> getCommunityMembers() {
         return communityMembers;
     }
 
-    public void setCommunityMembers(List<JUser> communityMembers) {
+    public void setCommunityMembers(List<JLocalCommunityMember> communityMembers) {
         this.communityMembers = communityMembers;
     }
 
-    public void addContactToCommunity(JUser contact){
+    public void addContactToCommunity(JLocalCommunityMember contact){
         if(!communityMembers.contains(contact)){
             communityMembers.add(contact);
         }
     }
 
-    private void removeContactFromCommunity(JUser contact){
+    private void removeContactFromCommunity(JLocalCommunityMember contact){
         if(!communityMembers.contains(contact)){
             communityMembers.remove(contact);
         }
     }
-    private JUser removeContactFromCommunityById(int chatId){
-        JUser contact = null;
-        for(JUser user: communityMembers){
-            if( user.getChatId() == chatId){
-                contact = user;
+    private JLocalCommunityMember removeContactFromCommunityById(int chatId){
+        JLocalCommunityMember contact = null;
+        for(JLocalCommunityMember member: communityMembers){
+            if( member.getChatId() == chatId){
+                contact = member;
                 break;
             }
         }

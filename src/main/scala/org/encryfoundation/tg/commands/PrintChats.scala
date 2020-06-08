@@ -3,7 +3,6 @@ package org.encryfoundation.tg.commands
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.effect.concurrent.{MVar, Ref}
 import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
-import org.encryfoundation.tg.RunApp.getChats
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import org.drinkless.tdlib.TdApi.{ChatTypeSecret, MessagePhoto, MessageText, MessageVideo}
@@ -22,9 +21,10 @@ case class PrintChats[F[_]: Concurrent: Timer](client: Client[F],
     _ <- Sync[F].delay(println(s"Chats: ${
       state.chatList.take(20).reverse.map { case (chat) =>
         if (state.privateGroups.contains(chat.id) ||
-          dbChats.exists(_.map(_.toChar).mkString == chat.title)) chat.title ++ s" [Private group]."
-        else if (chat.`type`.isInstanceOf[ChatTypeSecret]) chat.title ++ s" [Secret chat]"
-        else chat.title ++ s". Last message: ${processLastMessage(chat.lastMessage).take(7) ++ "..."}"
+          dbChats.exists(_.map(_.toChar).mkString == chat.title)) chat.title ++ s". ChatId: ${chat.id} [Private group]."
+        else if (chat.`type`.isInstanceOf[ChatTypeSecret])
+          chat.title ++ s". ChatId: ${chat.id}. Secret chat id: ${chat.`type`.asInstanceOf[ChatTypeSecret].secretChatId} [Secret chat]"
+        else chat.title ++ s". ChatId: ${chat.id}"
       }.mkString("\n ")}."))
   } yield ()
 

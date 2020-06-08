@@ -1,22 +1,13 @@
 package org.encryfoundation.tg
 
-import java.math.BigInteger
-
-import cats.Applicative
-import cats.effect.concurrent.{MVar, Ref}
-import cats.effect.{ConcurrentEffect, IO, Sync, Timer}
+import cats.effect.concurrent.Ref
+import cats.effect.{ConcurrentEffect, Sync, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
-import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
 import org.drinkless.tdlib.TdApi.MessageText
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
-import org.encryfoundation.mitmImun.{Prover, Verifier}
-import org.encryfoundation.tg.RunApp.sendMessage
-import org.encryfoundation.tg.community.PrivateCommunityStatus.UserCommunityStatus.AwaitingSecondPhaseFromUser
+import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
 import org.encryfoundation.tg.pipelines.Pipelines
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverFirstStepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.{ProverFirstStep, VerifierSecondStep}
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.StartPipeline
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
@@ -119,7 +110,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
             } yield ()
           else if (secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStatePending] && !secretChat.secretChat.isOutbound) {
             for {
-              _ <- client.send(new TdApi.OpenChat(secretChat.secretChat.id), SecretChatHandler[F](userStateRef))
+              _ <- client.send(new TdApi.OpenChat(secretChat.secretChat.id), SecretChatCreationHandler[F](userStateRef))
               state <- userStateRef.get
               _ <- userStateRef.update(
                 _.copy(

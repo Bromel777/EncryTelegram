@@ -34,6 +34,7 @@ libraryDependencies ++= Seq(
   "org.iq80.leveldb" % "leveldb" % "0.9",
   "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
   "org.slf4j" % "slf4j-simple" % "1.7.26",
+  "ru.tinkoff" %% "tofu" % "0.7.7",
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 )
 
@@ -41,6 +42,7 @@ fork in run := true
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
+addCompilerPlugin("org.typelevel"  % "kind-projector" % "0.11.0" cross CrossVersion.full)
 
 val tg = (project in file(".")).settings(settings: _*)
 
@@ -63,3 +65,4 @@ assemblyMergeStrategy in assembly := {
 PB.targets in Compile := Seq(
   scalapb.gen() -> (sourceManaged in Compile).value / "src/protobuf"
 )
+

@@ -6,7 +6,7 @@ import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
-import org.encryfoundation.tg.PrivateGroupChatCreationHandler
+import org.encryfoundation.tg.handlers.{PrivateGroupChatCreationHandler, SecretGroupPrivateChatCreationHandler}
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.PrivateConferenceService
 

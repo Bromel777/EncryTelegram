@@ -3,7 +3,6 @@ package org.encryfoundation.tg.commands
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.effect.concurrent.{MVar, Ref}
 import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
-import org.encryfoundation.tg.RunApp.getChats
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import org.drinkless.tdlib.TdApi.{ChatTypeSecret, MessagePhoto, MessageText, MessageVideo}

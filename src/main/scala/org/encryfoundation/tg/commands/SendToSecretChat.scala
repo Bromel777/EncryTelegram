@@ -8,7 +8,6 @@ import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import org.drinkless.tdlib.TdApi.ChatTypeSecret
-import org.encryfoundation.tg.EmptyHandler
 import org.encryfoundation.tg.RunApp.sendMessage
 
 case class SendToSecretChat[F[_]: Concurrent: Logger](client: Client[F],

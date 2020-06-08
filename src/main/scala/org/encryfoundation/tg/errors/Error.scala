@@ -1,6 +1,6 @@
 package org.encryfoundation.tg.errors
 
-sealed trait TdError
+sealed trait TdError extends Throwable
 object TdError {
 
   sealed trait PrivateChatCreationError extends TdError

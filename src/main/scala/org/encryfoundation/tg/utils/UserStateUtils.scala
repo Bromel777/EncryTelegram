@@ -10,7 +10,7 @@ import cats.implicits._
 object UserStateUtils {
 
   def findUserByIdentifier[F[_]: Monad](userIdentifier: String,
-                                        stateRef: Ref[F, UserState[F]]): F[Option[TdApi.User]] = for {
+                                        stateRef: Ref[F, UserState[F]]): OptionT[F, TdApi.User] = for {
     state <- OptionT.liftF(stateRef.get)
     possibleUser <- OptionT.fromOption[F](state.users.find { case (_, user) =>
       user.username == userIdentifier ||

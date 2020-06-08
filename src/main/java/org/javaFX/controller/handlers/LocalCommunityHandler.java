@@ -1,25 +1,24 @@
 package org.javaFX.controller.handlers;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.util.Duration;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JLocalCommunityMember;
-import org.javaFX.util.observers.BasicObserver;
-import org.javaFX.util.observers.JTableObserver;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class LocalCommunityHandler extends DataHandler{
@@ -38,6 +37,9 @@ public class LocalCommunityHandler extends DataHandler{
 
     @FXML
     private TableColumn<JLocalCommunityMember, CheckBox> checkBoxesColumn;
+
+    /*@FXML
+    private TableColumn<JLocalCommunityMember, Boolean> checkBoxesColumn;*/
 
     private ScheduledExecutorService service;
 
@@ -79,13 +81,42 @@ public class LocalCommunityHandler extends DataHandler{
         chatsNameColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
         chatsIDColumn.setCellValueFactory(cellData -> cellData.getValue().chatIdProperty().asObject());
         checkBoxesColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(new CheckBox()) );
+        /*checkBoxesColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<JLocalCommunityMember, Boolean>, ObservableValue<Boolean>>() {
+            @Override
+            public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<JLocalCommunityMember, Boolean> param) {
+                JLocalCommunityMember member = param.getValue();
+                SimpleBooleanProperty booleanProp = new SimpleBooleanProperty(member.isChosen());
+                booleanProp.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+                                        Boolean newValue) {
+                        member.setChosen(newValue);
+                    }
+                });
+                return booleanProp;
+            }
+        });*/
         service.shutdown();
+    }
+
+
+    @FXML
+    private void chooseMembers(){
+        for (JLocalCommunityMember jMember: getObservableJCommunityMemberList() ) {
+            if(checkBoxesColumn.getCellData(jMember).isSelected()){
+                jMember.setChosen(true);
+            }
+        }
     }
 
     @FXML
     private void createButtonAction(){
-        System.out.println("create local community");
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
+        JLocalCommunity localCommunity = new JLocalCommunity();
+        getObservableJCommunityMemberList().filtered(jLocalCommunityMember -> jLocalCommunityMember.isChosen()).
+               forEach(jLocalCommunityMember -> localCommunity.addContactToCommunity(jLocalCommunityMember));
+        localCommunity.getCommunityMembers().stream().forEach(mem -> System.out.println(mem));
+        JLocalCommunityMember.resetRowNumber();
     }
 
     @FXML

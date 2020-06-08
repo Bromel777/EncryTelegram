@@ -19,7 +19,7 @@
                       <TableColumn fx:id="rowNumberColumn" minWidth="0.0" prefWidth="60.0" resizable="false" sortable="false" text="№" />
                       <TableColumn fx:id="chatsNameColumn" prefWidth="240.0" resizable="false" sortable="false" text="Contact Name" />
                         <TableColumn fx:id="chatsIDColumn" prefWidth="223.0" resizable="false" sortable="false" text="chat ID" />
-                        <TableColumn fx:id="checkBoxesColumn" prefWidth="61.0" resizable="false" sortable="false" text="Choose" />
+                        <TableColumn fx:id="checkBoxesColumn" onEditStart="#chooseMembers" prefWidth="61.0" resizable="false" sortable="false" text="Choose" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

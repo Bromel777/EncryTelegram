@@ -20,23 +20,23 @@ public class RootLayoutHandler extends DataHandler {
 
     @FXML
     private void createLocalCommunity(){
-        System.out.println("create local community");
         terminateObserver();
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToCreateCommunityWindowFXML);
     }
 
-
-
     @FXML
     private void updateLocalCommunity(){
+        terminateObserver();
         System.out.println("update local community");
     }
     @FXML
     private void deleteLocalCommunity(){
+        terminateObserver();
         System.out.println("delete local community");
     }
     @FXML
     private void showLocalCommunity(){
+        terminateObserver();
         System.out.println("show local community");
     }
 

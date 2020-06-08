@@ -12,6 +12,7 @@ public class JLocalCommunityMember {
     private StringProperty title;
     private StringProperty lastMessage;
     private LongProperty chatId;
+    private boolean isChosen = false;
 
     public JLocalCommunityMember(StringProperty title, StringProperty lastMessage, LongProperty chatId) {
         this.title = title;
@@ -50,6 +51,18 @@ public class JLocalCommunityMember {
 
     public long getChatId() {
         return chatId.get();
+    }
+
+    public boolean isChosen() {
+        return isChosen;
+    }
+
+    public void setChosen(boolean chosen) {
+        isChosen = chosen;
+    }
+
+    public static void resetRowNumber(){
+        totalNumber.set(1);
     }
 
     @Override

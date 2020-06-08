@@ -69,7 +69,6 @@ public class MainWindowHandler extends DataHandler {
         chatsTable.setItems(getObservableChatList());
         initializeChats();
         enableMenuBar();
-        //updateDialog();
     }
 
     @FXML
@@ -147,14 +146,6 @@ public class MainWindowHandler extends DataHandler {
 
     private void createDialog(){
         jDialog = new JDialog("title stub");
-    }
-
-    private void updateDialog(int chatIndex){
-        /*TdApi.Chat chatBean = getUserStateRef().get().getChatList().get(chatIndex);
-        jDialog = new JDialog(chatBean.title);
-        StringBuffer localDialogHistory = jDialog.getContent();
-        dialogArea.setText(localDialogHistory.toString());
-        jDialog.setContent(localDialogHistory);*/
     }
 
     @FXML

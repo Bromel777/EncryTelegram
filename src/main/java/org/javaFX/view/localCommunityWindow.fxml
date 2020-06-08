@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.handlers.LocalCommunityHandler">
+   <children>
+      <SplitPane dividerPositions="0.8869346733668342" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <TableView fx:id="chatsTable" prefHeight="349.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-2.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="rowNumber" minWidth="0.0" prefWidth="25.0" text="№" />
+                      <TableColumn fx:id="chatsNameColumn" prefWidth="274.0" text="Contact Name" />
+                        <TableColumn fx:id="chatsIDColumn" prefWidth="176.0" text="chat ID" />
+                        <TableColumn fx:id="checkBoxesColumn" prefWidth="108.0" text="Choose" />
+                    </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <Button fx:id="createButton" layoutX="519.0" layoutY="1.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="79.0" text="Create">
+                     <font>
+                        <Font name="Centaur" size="18.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets top="41.0" />
+               </padding>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

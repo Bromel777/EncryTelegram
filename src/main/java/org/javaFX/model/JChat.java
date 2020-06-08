@@ -4,6 +4,7 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 
 public class JChat {
     private StringProperty title;
@@ -45,6 +46,11 @@ public class JChat {
     public void setLastMessage(StringProperty lastMessage) {
         this.lastMessage = lastMessage;
     }
+
+    public LongProperty chatIdProperty() {
+        return chatId;
+    }
+
 
     @Override
     public String toString() {

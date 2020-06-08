@@ -27,6 +27,7 @@ public class EncryWindow extends Application {
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
     public final static String pathToMainWindowFXML = "view/mainWindow.fxml";
     public final static String pathToAuthenticationWindowFXML = "view/authenticationWindow.fxml";
+    public final static String pathToCreateCommunityWindowFXML = "view/localCommunityWindow.fxml";
     private final static String pathToRootLayout = "view/rootLayout.fxml";
 
     private DataHandler rootLayoutHandler;

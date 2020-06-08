@@ -16,11 +16,6 @@ public class StartWindowHandler extends DataHandler {
 
     }
 
-    public void setLoadingGif(ImageView loadingGif) {
-        this.loadingGif = loadingGif;
-        System.out.println("width: "+ loadingGif.getImage().getWidth()+"\theight: "+ loadingGif.getImage().getHeight());
-    }
-
     @FXML
     public void handleCancelAction(){
         getStage().close();

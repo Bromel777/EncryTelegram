@@ -3,9 +3,9 @@ package org.encryfoundation.tg.commands
 import cats.effect.{Concurrent, Timer}
 import cats.effect.concurrent.Ref
 import org.drinkless.tdlib.{Client, TdApi}
-import org.encryfoundation.tg.MessagesHandler
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
+import org.encryfoundation.tg.handlers.MessagesHandler
 import org.encryfoundation.tg.leveldb.Database
 
 case class ReadChat[F[_]: Concurrent: Timer](client: Client[F],

@@ -27,12 +27,10 @@ case class AESEncryption(keyBytes: Array[Byte]) {
   def encrypt(plainText: Array[Byte]): Array[Byte] = {
     cipher.init(Cipher.ENCRYPT_MODE, key, IVspec)
     val cipherText = cipher.doFinal(plainText)
-    println(s"Cipher text: ${Base64.encode(cipherText)}")
     cipherText
   }
 
   def decrypt(cipherText: Array[Byte]): Array[Byte] = {
-    println(s"Receive: ${Base64.encode(cipherText)}")
     cipher.init(Cipher.DECRYPT_MODE, key, IVspec)
     cipher.doFinal(cipherText)
   }

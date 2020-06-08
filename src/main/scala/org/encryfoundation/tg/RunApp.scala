@@ -11,16 +11,19 @@ import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
 import org.encryfoundation.tg.commands.Command
+import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.errors.TdError
 import org.encryfoundation.tg.handlers.{EmptyHandler, EmptyHandlerWithQueue, MessagesHandler}
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.programs.ConsoleProgram
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
+import scorex.crypto.encode.Base64
 import tofu.Raise
 import tofu._
 import tofu.syntax.monadic._
 import tofu.syntax.raise._
+
 import scala.io.StdIn
 
 object RunApp extends IOApp {
@@ -60,6 +63,16 @@ object RunApp extends IOApp {
     val replyMarkup: TdApi.ReplyMarkup = new TdApi.ReplyMarkupInlineKeyboard(Array(row, row, row))
     val content: TdApi.InputMessageContent = new TdApi.InputMessageText(new TdApi.FormattedText(msg, null), false, true)
     client.send(new TdApi.SendMessage(chatId, 0, null, replyMarkup, content), EmptyHandler[F]())
+  }
+
+  def sendMsg[F[_]: Concurrent: Logger](chat: TdApi.Chat, msg: String, stateRef: Ref[F, UserState[F]]): F[Unit] = {
+
+    stateRef.get.flatMap(state =>
+      state.privateGroups.find(_._2._1.id == chat.id).map { case (_, (_, pass)) =>
+        val aes = AESEncryption(pass.getBytes())
+        sendMessage(chat.id, Base64.encode(aes.encrypt(msg.getBytes)), state.client)
+      }.getOrElse(sendMessage(chat.id, msg, state.client))
+    )
   }
 
   override def run(args: List[String]): IO[ExitCode] =

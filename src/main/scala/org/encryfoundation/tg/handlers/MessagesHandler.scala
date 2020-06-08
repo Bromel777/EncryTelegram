@@ -4,8 +4,9 @@ import cats.effect.{Concurrent, Sync}
 import org.drinkless.tdlib.{ResultHandler, TdApi}
 import org.drinkless.tdlib.TdApi.{MessageText, Messages}
 import org.encryfoundation.tg.crypto.AESEncryption
-import scorex.crypto.encode.Base16
+import scorex.crypto.encode.{Base16, Base64}
 import cats.syntax.applicative._
+
 import scala.util.Try
 
 case class MessagesHandler[F[_]: Concurrent](password: Option[String]) extends ResultHandler[F] {
@@ -18,8 +19,9 @@ case class MessagesHandler[F[_]: Concurrent](password: Option[String]) extends R
         messages.messages.map {
           _.content match {
             case txtMsg: MessageText =>
-              Try(aes.decrypt(Base16.decode(txtMsg.text.text).get).map(_.toChar).mkString)
-                .getOrElse(txtMsg.text.text)
+              val decodeRes = Try(aes.decrypt(Base64.decode(txtMsg.text.text).get).map(_.toChar).mkString)
+               println(decodeRes)
+              decodeRes.getOrElse(txtMsg.text.text)
             case _ => "Unknown msg!"
           }
         }

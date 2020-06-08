@@ -18,4 +18,12 @@ object UserStateUtils {
       s"${user.firstName} ${user.lastName}" == userIdentifier
     }.map(_._2))
   } yield possibleUser
+
+  def findChatByIdentifier[F[_]: Monad](chatIdentifier: String,
+                                        stateRef: Ref[F, UserState[F]]): OptionT[F, TdApi.Chat] = for {
+    state <- OptionT.liftF(stateRef.get)
+    possibleChat <- OptionT.fromOption[F](state.chatList.find { chat =>
+      chat.title == chatIdentifier
+    })
+  } yield possibleChat
 }

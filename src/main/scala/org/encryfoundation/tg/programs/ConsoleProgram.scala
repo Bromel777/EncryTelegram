@@ -13,7 +13,6 @@ import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
 import tofu.Raise
 import tofu.common.Console
-import org.encryfoundation.tg.utils.ConsoleUtils
 import cats.implicits._
 
 import scala.io.StdIn

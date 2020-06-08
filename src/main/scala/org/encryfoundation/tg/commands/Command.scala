@@ -27,11 +27,9 @@ object Command {
     PrintChats[F](client, userStateRef, db),
     ReadChat[F](client, userStateRef, db),
     SendToChat[F](client, userStateRef),
-    WriteSecure[F](client, userStateRef, db),
     CreatePrivateConference[F](client, userStateRef, db)(confService),
     ShowPrivateConferences[F](client, userStateRef, db)(confService),
     CreatePrivateChat[F](client, userStateRef),
-    SendToSecretChat[F](client, userStateRef, db),
     Logout[F](client, userStateRef, db),
     CloseChat[F](client, userStateRef, db),
     CloseSecretChat[F](client, userStateRef, db)

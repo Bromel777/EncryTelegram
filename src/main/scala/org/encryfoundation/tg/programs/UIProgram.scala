@@ -69,7 +69,7 @@ object UIProgram {
       case _@SendToChat(msg) =>
         userStateRef.get.flatMap( state => sendMsg(state.chatList.find(_.id == state.activeChat).get, msg, userStateRef))
       case _@CreateCommunityJava(name, usersJava) =>
-        privateConfService.createConference(name, usersJava.asScala.toList)
+        privateConfService.createConference(name, "me" :: usersJava.asScala.toList)
     }
 
     override def run: Stream[F, Unit] = (for {

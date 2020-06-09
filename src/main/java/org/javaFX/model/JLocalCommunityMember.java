@@ -9,49 +9,45 @@ public class JLocalCommunityMember {
     private static AtomicInteger totalNumber = new AtomicInteger(1);
 
     private AtomicInteger tableNumber;
-    private StringProperty title;
-    private StringProperty lastMessage;
-    private LongProperty chatId;
+
+
+    private StringProperty firstName;
+    private StringProperty lastName;
+    private StringProperty phoneNumber;
+    private LongProperty userId;
     private BooleanProperty isChosen;
 
-    public JLocalCommunityMember(StringProperty title, StringProperty lastMessage, LongProperty chatId) {
-        this.title = title;
-        this.lastMessage = lastMessage;
-        this.chatId = chatId;
+    public JLocalCommunityMember(StringProperty firstName, StringProperty lastName, StringProperty phoneNumber, LongProperty chatId) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.userId = chatId;
         this.tableNumber = new AtomicInteger( totalNumber.getAndIncrement() );
         this.isChosen = new SimpleBooleanProperty(false);
     }
 
-    public JLocalCommunityMember(String titleStr, String lastMessageStr, Long chatId) {
-        this(new SimpleStringProperty(titleStr), new SimpleStringProperty(lastMessageStr), new SimpleLongProperty(chatId));
+    public JLocalCommunityMember(String firstNameStr, String lastNameStr, String lastMessageStr, Long chatId) {
+        this(new SimpleStringProperty(firstNameStr), new SimpleStringProperty(lastNameStr), new SimpleStringProperty(lastMessageStr), new SimpleLongProperty(chatId));
     }
 
-    public StringProperty getTitle() {
-        return title;
+    public StringProperty getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setTitle(StringProperty title) {
-        this.title = title;
+    public void setPhoneNumber(StringProperty phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
-    public StringProperty getLastMessage() {
-        return lastMessage;
-    }
-
-    public void setLastMessage(StringProperty lastMessage) {
-        this.lastMessage = lastMessage;
-    }
-
-    public LongProperty chatIdProperty() {
-        return chatId;
+    public LongProperty userIdProperty() {
+        return userId;
     }
 
     public AtomicInteger getThisNumber() {
         return tableNumber;
     }
 
-    public long getChatId() {
-        return chatId.get();
+    public long getUserId() {
+        return userId.get();
     }
 
     public BooleanProperty isChosen() {
@@ -74,8 +70,51 @@ public class JLocalCommunityMember {
         totalNumber.set(1);
     }
 
+    public String getFirstName() {
+        return firstName.get();
+    }
+
+    public StringProperty firstNameProperty() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName.set(firstName);
+    }
+
+    public String getLastName() {
+        return lastName.get();
+    }
+
+    public StringProperty lastNameProperty() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName.set(lastName);
+    }
+
+    public StringProperty phoneNumberProperty() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber.set(phoneNumber);
+    }
+
+    public StringProperty getFullName(){
+        return new SimpleStringProperty(getFirstName() + " " + getLastName());
+    }
+
     @Override
     public String toString() {
-        return "title = " + title.toString() + ", lastMessage = " + lastMessage.toString() + ", chatId = " + chatId.toString() ;
+        return "JLocalCommunityMember{" +
+                "tableNumber=" + tableNumber +
+                ", firstName=" + firstName +
+                ", lastName=" + lastName +
+                ", phoneNumber=" + phoneNumber +
+                ", userId=" + userId +
+                ", isChosen=" + isChosen +
+                '}';
     }
 }

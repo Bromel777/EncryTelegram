@@ -6,10 +6,7 @@ import org.javaFX.util.observers.BasicObserver;
 
 public class RootLayoutHandler extends DataHandler {
 
-    @FXML
-    private void closeWindow(){
-        getStage().close();
-    }
+
 
     private void terminateObserver(){
         BasicObserver observer = getObserver();
@@ -22,6 +19,11 @@ public class RootLayoutHandler extends DataHandler {
     private void createLocalCommunity(){
         terminateObserver();
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToCreateCommunityWindowFXML);
+    }
+
+    @FXML
+    private void closeWindow(){
+        System.exit(0);
     }
 
     @FXML

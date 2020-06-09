@@ -18,7 +18,7 @@
                     <columns>
                       <TableColumn fx:id="rowNumberColumn" minWidth="0.0" prefWidth="60.0" resizable="false" sortable="false" text="№" />
                       <TableColumn fx:id="chatsNameColumn" prefWidth="240.0" resizable="false" sortable="false" text="Contact Name" />
-                        <TableColumn fx:id="chatsIDColumn" prefWidth="223.0" resizable="false" sortable="false" text="chat ID" />
+                        <TableColumn fx:id="phoneNumberColumn" prefWidth="223.0" resizable="false" sortable="false" text="Phone Number" />
                         <TableColumn fx:id="checkBoxesColumn" prefWidth="61.0" resizable="false" sortable="false" text="Choose" />
                     </columns>
                      <columnResizePolicy>

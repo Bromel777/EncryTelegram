@@ -10,10 +10,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.drinkless.tdlib.TdApi;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JLocalCommunityMember;
+import org.javaFX.model.JUser;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -33,7 +35,7 @@ public class LocalCommunityHandler extends DataHandler{
     private TableColumn<JLocalCommunityMember, String> chatsNameColumn;
 
     @FXML
-    private TableColumn<JLocalCommunityMember, Long> chatsIDColumn;
+    private TableColumn<JLocalCommunityMember, String> phoneNumberColumn;
 
     @FXML
     private TableColumn<JLocalCommunityMember, Boolean> checkBoxesColumn;
@@ -52,30 +54,24 @@ public class LocalCommunityHandler extends DataHandler{
     @Override
     public void updateEncryWindow(EncryWindow encryWindow) {
         super.setEncryWindow(encryWindow);
-        chatsTable.setItems(getObservableJCommunityMemberList());
+        chatsTable.setItems(getObservableUserList());
         initChatsTable();
     }
 
-    private ObservableList<JLocalCommunityMember> getObservableJCommunityMemberList(){
-        ObservableList<JLocalCommunityMember> result = FXCollections.observableArrayList();
-        getObservableChatList().forEach(
-                chat -> result.add(new JLocalCommunityMember(chat.getTitle(), chat.getLastMessage(), chat.chatIdProperty()) )
-        );
-        return result;
-    }
 
-    private ObservableList<JChat> getObservableChatList(){
-        ObservableList<JChat> observableChatList = FXCollections.observableArrayList();
-        getUserStateRef().get().getChatList().forEach(
-                chat -> observableChatList.add(new JChat(chat.title, "test", chat.id) )
-        );
+    private ObservableList<JLocalCommunityMember> getObservableUserList(){
+        ObservableList<JLocalCommunityMember> observableChatList = FXCollections.observableArrayList();
+        for(Integer jUserId: getUserStateRef().get().getUsers().keySet()){
+            TdApi.User user = getUserStateRef().get().getUsers().get(jUserId);
+            observableChatList.add(new JLocalCommunityMember(user.firstName, user.lastName, user.phoneNumber, (long)user.id));
+        }
         return observableChatList;
     }
 
     private void initChatsTable(){
         rowNumberColumn.setCellValueFactory(cellDate -> new SimpleIntegerProperty(cellDate.getValue().getThisNumber().get()).asObject() );
-        chatsNameColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
-        chatsIDColumn.setCellValueFactory(cellData -> cellData.getValue().chatIdProperty().asObject());
+        chatsNameColumn.setCellValueFactory(cellData -> cellData.getValue().getFullName());
+        phoneNumberColumn.setCellValueFactory(cellData -> cellData.getValue().getPhoneNumber());
         checkBoxesColumn.setCellValueFactory(cellData ->  cellData.getValue().isChosen());
         service.shutdown();
     }
@@ -85,7 +81,6 @@ public class LocalCommunityHandler extends DataHandler{
         JLocalCommunity localCommunity = new JLocalCommunity();
         chatsTable.getItems().filtered(JLocalCommunityMember::isChosenBoolean).
                forEach(localCommunity::addContactToCommunity);
-        localCommunity.getCommunityMembers().forEach(System.out::println);
         JLocalCommunityMember.resetRowNumber();
         launchEnterNameDialog(localCommunity);
     }
@@ -93,7 +88,7 @@ public class LocalCommunityHandler extends DataHandler{
     @FXML
     private void changeCheckBoxValue() {
         JLocalCommunityMember communityMember = chatsTable.getSelectionModel().getSelectedItem();
-        if(communityMember.getChatId() > 0L ){
+        if(communityMember.getUserId() > 0L ){
             boolean isChosen = communityMember.isChosenBoolean();
             communityMember.setBooleanChosen(!isChosen);
         }

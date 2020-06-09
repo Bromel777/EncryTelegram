@@ -2,43 +2,37 @@ package org.javaFX.model;
 
 import java.util.Objects;
 
-// simple stub entity
 public class JUser {
 
-    private String name;
-    private int chatId;
+    private int ID;
+    private String firstName;
+    private String lastName;
     private String phoneNumber;
 
-    public JUser(String name) {
-        this.name = name;
+    public JUser(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
-    public JUser(String name, int chatId, String phoneNumber) {
-        this.name = name;
-        this.chatId = chatId;
+    public JUser(int ID, String firstName, String lastName, String phoneNumber) {
+        this.ID = ID;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.phoneNumber = phoneNumber;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getLastName() {
+        return lastName;
     }
 
     public String getPhone() { return phoneNumber; }
 
-    public void setPhone(String phone) {
-        this.phoneNumber = phone;
-    }
-
-    public int getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(int chatId) {
-        this.chatId = chatId;
+    public int getID() {
+        return ID;
     }
 
     @Override
@@ -46,20 +40,24 @@ public class JUser {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JUser jUser = (JUser) o;
-        return chatId == jUser.chatId &&
-                Objects.equals(name, jUser.name);
+        return ID == jUser.ID &&
+                Objects.equals(firstName, jUser.firstName) &&
+                Objects.equals(lastName, jUser.lastName) &&
+                Objects.equals(phoneNumber, jUser.phoneNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, chatId);
+        return Objects.hash(ID, firstName, lastName, phoneNumber);
     }
 
     @Override
     public String toString() {
         return "JUser{" +
-                "name='" + name + '\'' +
-                ", chatId=" + chatId +
+                "chatId=" + ID +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 '}';
     }
 }

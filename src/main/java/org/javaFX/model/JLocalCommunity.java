@@ -46,7 +46,7 @@ public class JLocalCommunity {
     private JLocalCommunityMember removeContactFromCommunityById(int chatId){
         JLocalCommunityMember contact = null;
         for(JLocalCommunityMember member: communityMembers){
-            if( member.getChatId() == chatId){
+            if( member.getUserId() == chatId){
                 contact = member;
                 break;
             }

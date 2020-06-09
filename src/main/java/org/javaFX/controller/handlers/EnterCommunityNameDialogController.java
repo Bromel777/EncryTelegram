@@ -58,7 +58,7 @@ public class EnterCommunityNameDialogController{
         encryWindow.launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
         List<String> members = localCommunity.getCommunityMembers()
                 .stream()
-                .map(elem -> elem.getPhoneNumber().toString())
+                .map(elem -> elem.getPhoneNumber().getValue())
                 .collect(Collectors.toList());
         JavaInterMsg msg = new JavaInterMsg.CreateCommunityJava(
                 localCommunity.getCommunityName(),

@@ -7,14 +7,17 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JLocalCommunity;
+import org.javaFX.model.JUserState;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class EnterCommunityNameDialogController{
 
     private Stage dialogStage;
     private JLocalCommunity localCommunity;
     private EncryWindow encryWindow;
+    private AtomicReference<JUserState> state;
 
     @FXML
     private TextField nameTextField;
@@ -24,6 +27,10 @@ public class EnterCommunityNameDialogController{
     }
 
     public EnterCommunityNameDialogController( ) {
+    }
+
+    public void setState(AtomicReference<JUserState> state) {
+        this.state = state;
     }
 
     public void setDialogStage(Stage dialogStage) {
@@ -47,6 +54,9 @@ public class EnterCommunityNameDialogController{
     private void createButtonAction(){
         localCommunity.setCommunityName(nameTextField.getText());
         encryWindow.launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
+        /*
+        state.set....()
+         */
         dialogStage.close();
     }
 

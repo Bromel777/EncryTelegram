@@ -108,6 +108,7 @@ public class LocalCommunityHandler extends DataHandler{
             controller.setEncryWindow(getEncryWindow());
             controller.setDialogStage(dialogStage);
             controller.setLocalCommunity(localCommunity);
+            controller.setState(getUserStateRef());
             dialogStage.show();
         } catch (IOException e) {
             e.printStackTrace();

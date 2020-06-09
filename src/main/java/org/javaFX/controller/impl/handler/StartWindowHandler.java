@@ -1,8 +1,9 @@
-package org.javaFX.controller.handlers;
+package org.javaFX.controller.impl.handler;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
+import org.javaFX.controller.DataHandler;
 
 public class StartWindowHandler extends DataHandler {
 
@@ -13,7 +14,6 @@ public class StartWindowHandler extends DataHandler {
     private Button signInButton;
 
     public StartWindowHandler() {
-
     }
 
     @FXML

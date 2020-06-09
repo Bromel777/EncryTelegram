@@ -1,4 +1,4 @@
-package org.javaFX.controller.handlers;
+package org.javaFX.controller.impl.handler;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -12,10 +12,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.drinkless.tdlib.TdApi;
 import org.javaFX.EncryWindow;
-import org.javaFX.model.JChat;
+import org.javaFX.controller.DataHandler;
+import org.javaFX.controller.impl.dialog.EnterCommunityNameDialogController;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JLocalCommunityMember;
-import org.javaFX.model.JUser;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class LocalCommunityHandler extends DataHandler{
+public class LocalCommunityHandler extends DataHandler {
 
     @FXML
     private TableView<JLocalCommunityMember> chatsTable;
@@ -94,6 +94,9 @@ public class LocalCommunityHandler extends DataHandler{
             communityMember.setBooleanChosen(!isChosen);
         }
     }
+
+
+    //refactor later
 
     private void launchEnterNameDialog(JLocalCommunity localCommunity){
         FXMLLoader loader = new FXMLLoader();

@@ -1,4 +1,4 @@
-package org.javaFX.controller.handlers;
+package org.javaFX.controller.impl.handler;
 
 import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
@@ -9,6 +9,7 @@ import javafx.util.Duration;
 
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
+import org.javaFX.controller.DataHandler;
 import org.javaFX.model.JChat;
 import org.javaFX.model.JDialog;
 import org.javaFX.util.KeyboardHandler;

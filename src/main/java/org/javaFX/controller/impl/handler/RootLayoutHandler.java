@@ -1,12 +1,11 @@
-package org.javaFX.controller.handlers;
+package org.javaFX.controller.impl.handler;
 
 import javafx.fxml.FXML;
 import org.javaFX.EncryWindow;
+import org.javaFX.controller.DataHandler;
 import org.javaFX.util.observers.BasicObserver;
 
 public class RootLayoutHandler extends DataHandler {
-
-
 
     private void terminateObserver(){
         BasicObserver observer = getObserver();
@@ -33,19 +32,9 @@ public class RootLayoutHandler extends DataHandler {
     }
 
     @FXML
-    private void updateLocalCommunity(){
-        terminateObserver();
-        System.out.println("update local community");
-    }
-    @FXML
-    private void deleteLocalCommunity(){
-        terminateObserver();
-        System.out.println("delete local community");
-    }
-    @FXML
     private void showLocalCommunity(){
         terminateObserver();
-        System.out.println("show local community");
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToLocalShowCommunitiesWindowFXML);
     }
 
     @Override

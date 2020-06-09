@@ -2,7 +2,7 @@ package org.javaFX.util;
 
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
-import org.javaFX.controller.handlers.DataHandler;
+import org.javaFX.controller.DataHandler;
 
 public class JChatTimerService extends ScheduledService<Object > {
 

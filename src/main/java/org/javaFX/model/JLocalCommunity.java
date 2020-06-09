@@ -1,5 +1,8 @@
 package org.javaFX.model;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +10,6 @@ public class JLocalCommunity {
 
     private String communityName;
     private long communityID;
-
     private List<JLocalCommunityMember> communityMembers;
 
     private void generatePseudoRandomCommunityID(){
@@ -19,6 +21,12 @@ public class JLocalCommunity {
         generatePseudoRandomCommunityID();
     }
 
+    public JLocalCommunity(String communityName) {
+        communityMembers = new ArrayList<>();
+        generatePseudoRandomCommunityID();
+        this.communityName = communityName;
+    }
+
     public JLocalCommunity(List<JLocalCommunityMember> communityMembers) {
         this.communityMembers = communityMembers;
         generatePseudoRandomCommunityID();
@@ -26,6 +34,10 @@ public class JLocalCommunity {
 
     public List<JLocalCommunityMember> getCommunityMembers() {
         return communityMembers;
+    }
+
+    public StringProperty getStringPropertyCommunityName(){
+        return new SimpleStringProperty(getCommunityName());
     }
 
     public void setCommunityMembers(List<JLocalCommunityMember> communityMembers) {

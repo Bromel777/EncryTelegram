@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.javaFX.controller.handlers.DataHandler;
+import org.javaFX.controller.DataHandler;
 import org.javaFX.model.JUserState;
 import org.javaFX.util.DelayAuthentication;
 
@@ -29,6 +29,8 @@ public class EncryWindow extends Application {
     public final static String pathToAuthenticationWindowFXML = "view/authenticationWindow.fxml";
     public final static String pathToCreateCommunityWindowFXML = "view/localCommunityWindow.fxml";
     public final static String pathToLocalCommunityNameDialogFXML = "view/localCommunityNameDialog.fxml";
+    public final static String pathToLocalShowCommunitiesWindowFXML = "view/showCreatedLocalCommunitiesWindow.fxml";
+    public final static String pathToCreateSubmitPrivateChatFXML = "view/createPrivateChatDialog.fxml";
     private final static String pathToRootLayout = "view/rootLayout.fxml";
 
     private DataHandler rootLayoutHandler;

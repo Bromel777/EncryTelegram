@@ -1,7 +1,7 @@
 package org.javaFX.util.observers;
 
 import javafx.concurrent.Task;
-import org.javaFX.controller.handlers.DataHandler;
+import org.javaFX.controller.DataHandler;
 
 public class JTableObserver extends BasicObserver {
 

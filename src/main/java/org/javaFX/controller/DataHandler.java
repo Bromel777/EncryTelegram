@@ -1,4 +1,4 @@
-package org.javaFX.controller.handlers;
+package org.javaFX.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
@@ -67,4 +67,5 @@ public abstract class DataHandler {
     public String toString() {
         return this.getClass().toString();
     }
+
 }

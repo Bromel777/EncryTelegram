@@ -2,9 +2,11 @@ package org.encryfoundation.tg.userState
 
 import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.pipelines.Pipeline
+
 import scala.collection.SortedMap
 import java.util.concurrent.atomic.AtomicReference
 
+import cats.effect.concurrent.MVar
 import org.drinkless.tdlib.{Client, Client123, TdApi}
 import org.javaFX.model.JUserState
 
@@ -20,4 +22,5 @@ case class UserState[F[_]](chatList: List[TdApi.Chat] = List.empty,
                            secretChats: Map[Int, TdApi.SecretChat] = Map.empty,
                            isAuth: Boolean = false,
                            client: Client[F],
+                           activeChat: Long = 0,
                            javaState: AtomicReference[JUserState])

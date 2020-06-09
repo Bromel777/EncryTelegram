@@ -101,10 +101,10 @@ public class MainWindowHandler extends DataHandler {
 
     @FXML
     private void clickItem() throws InterruptedException {
-        JavaInterMsg msg = new JavaInterMsg.GetChatMsgs(
-                chatsTable.getSelectionModel().getSelectedItem().chatIdProperty().get(),
-                jDialog,
-                dialogArea
+        getUserStateRef().get().setActiveDialog(jDialog);
+        getUserStateRef().get().setActiveDialogArea(dialogArea);
+        JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
+                chatsTable.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );
         getUserStateRef().get().msgsQueue.put(msg);
         System.out.println(chatsTable.getSelectionModel().getSelectedItem());

@@ -6,5 +6,5 @@ import org.javaFX.model.JDialog
 sealed trait JavaInterMsg
 object JavaInterMsg {
 
-  case class GetChatMsgs(id: Long, jDialog: JDialog, dialogArea: TextArea) extends JavaInterMsg
+  case class SetActiveChat(id: Long) extends JavaInterMsg
 }

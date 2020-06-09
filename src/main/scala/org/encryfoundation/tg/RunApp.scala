@@ -4,7 +4,7 @@ import java.io.File
 import java.security.Security
 import java.util.concurrent.atomic.AtomicReference
 
-import cats.effect.concurrent.Ref
+import cats.effect.concurrent.{MVar, Ref}
 import cats.effect.{Concurrent, ContextShift, ExitCode, IO, IOApp, Resource, Sync, Timer}
 import cats.effect.{Concurrent, ExitCode, IO, IOApp, Resource, Sync, Timer}
 import fs2.Stream

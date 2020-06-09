@@ -1,12 +1,14 @@
 package org.encryfoundation.tg
 
+import cats.Applicative
 import cats.effect.concurrent.Ref
 import cats.effect.{ConcurrentEffect, Sync, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
+
 import collection.JavaConverters._
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
-import org.drinkless.tdlib.TdApi.MessageText
+import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
 import org.encryfoundation.tg.pipelines.Pipelines
@@ -150,12 +152,12 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
                           stepMsg
                         )
                       }
-                    case Right(_) => (()).pure[F]
-                    case Left(_) => Logger[F].info(s"Receive msg: ${msg}")
+                    case Right(_) => processLastMessage(msg.message)
+                    case Left(_) => processLastMessage(msg.message)
                   }
-                case Failure(err) => Logger[F].info(s"Receive unkown elem1: ${obj}. Err: ${err.getMessage}")
+                case Failure(err) => processLastMessage(msg.message)
               }
-            case _ => Logger[F].info(s"Receive unkown elem2: ${obj}")
+            case _ => processLastMessage(msg.message)
           }
         } yield ()
       case _ => Logger[F].info(s"Receive unkown elem3: ${obj}")
@@ -227,6 +229,28 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case _ =>
         println(s"Got unknown event in auth. ${authEvent}").pure[F]
     }
+  }
+
+  def processLastMessage(msg: TdApi.Message): F[Unit] = {
+
+    def msg2Str(msg: TdApi.Message): String =
+      msg.content match {
+        case text: MessageText => msg.senderUserId + ": " + text.text.text
+        case _: MessagePhoto => msg.senderUserId + ": " + "photo"
+        case _: MessageVideo => msg.senderUserId + ": " + "video"
+        case _ => "Unknown msg type"
+      }
+
+    for {
+      state <- userStateRef.get
+      _ <- if (msg.chatId == state.activeChat) Sync[F].delay {
+        val javaState = state.javaState.get()
+        val localDialogHistory = javaState.activeDialog.getContent
+        localDialogHistory.append(msg2Str(msg) + "\n")
+        javaState.activeDialogArea.setText(localDialogHistory.toString)
+        javaState.activeDialog.setContent(localDialogHistory)
+      } else Applicative[F].pure(())
+    } yield ()
   }
 }
 

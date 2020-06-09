@@ -7,11 +7,13 @@ import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
+import javafx.scene.control.TextArea
 import org.drinkless.tdlib.TdApi
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.handlers.{AccumulatorHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg.GetChatMsgs
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{SetActiveChat}
+import org.javaFX.model.JDialog
 
 trait UIProgram[F[_]] {
 
@@ -20,7 +22,9 @@ trait UIProgram[F[_]] {
 
 object UIProgram {
 
-  private class Live[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]]) extends UIProgram[F] {
+  private class Live[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
+                                                      dialogAreaRef: MVar[F, TextArea],
+                                                      jDialogRef: MVar[F, JDialog]) extends UIProgram[F] {
 
     def processLastMessage(msg: TdApi.Message): String =
       msg.content match {
@@ -31,23 +35,25 @@ object UIProgram {
       }
 
     def processMsg(msg: JavaInterMsg): F[Unit] = msg match {
-      case _@GetChatMsgs(chatId, jDialog, dialogArea) =>
+      case _@SetActiveChat(chatId) =>
         for {
           state <- userStateRef.get
+          javaState <- state.javaState.get().pure[F]
           msgsMVar <- MVar.empty[F, String]
           _ <- state.client.send(
             new TdApi.GetChatHistory(chatId, 0, 0, 20, false),
             ValueHandler(
               userStateRef,
               msgsMVar,
-              (msg: TdApi.Messages) => msg.messages.map(processLastMessage).mkString("\n ").pure[F])
+              (msg: TdApi.Messages) => msg.messages.map(processLastMessage).reverse.mkString("\n ").pure[F])
           )
+          _ <- userStateRef.update(_.copy(activeChat = chatId))
           msgs <- msgsMVar.read
           _ <- Sync[F].delay {
-            val localDialogHistory = jDialog.getContent
-            localDialogHistory.append(msgs)
-            dialogArea.setText(msgs)
-            jDialog.setContent(localDialogHistory)
+            val localDialogHistory = javaState.activeDialog.getContent
+            localDialogHistory.append(msgs + "\n")
+            javaState.activeDialogArea.setText(localDialogHistory.toString)
+            javaState.activeDialog.setContent(localDialogHistory)
           }
         } yield ()
     }
@@ -62,5 +68,8 @@ object UIProgram {
   }
 
   def apply[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]]): F[UIProgram[F]] =
-    Applicative[F].pure(new Live(userStateRef))
+    for {
+      dialogAreaMVar <- MVar.empty[F, TextArea]
+      jDialogMVar <- MVar.empty[F, JDialog]
+    } yield new Live(userStateRef, dialogAreaMVar, jDialogMVar)
 }

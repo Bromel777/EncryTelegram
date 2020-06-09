@@ -4,6 +4,7 @@ import java.math.BigInteger
 
 import cats.FlatMap
 import cats.effect.Sync
+import cats.effect.concurrent.Ref
 import it.unisa.dia.gas.jpbc.{Element, Pairing}
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
 import org.encryfoundation.sectionSeven.SectionSeven
@@ -12,6 +13,7 @@ import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.mitmImun.{Prover, Verifier}
 import org.encryfoundation.tg.community.{CommunityUser, PrivateCommunity}
+import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
 
@@ -29,13 +31,16 @@ trait PrivateConferenceService[F[_]] {
 
 object PrivateConferenceService {
 
-  private class Live[F[_]: Sync: Logger](db: Database[F]) extends PrivateConferenceService[F] {
+  private class Live[F[_]: Sync: Logger](db: Database[F],
+                                         userStateRef: Ref[F, UserState[F]]) extends PrivateConferenceService[F] {
 
     private val conferencesKey = Blake2b256("Conferences")
     private def confInfo(confName: String) = Blake2b256(s"ConfInfo${confName}")
 
     override def createConference(name: String, users: List[String]): F[Unit] =
       for {
+        state <- userStateRef.get
+        jState <- Sync[F].delay(state.javaState.get())
         pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
         generatorG1 <- Sync[F].delay(pairing.getG1.newRandomElement().getImmutable)
         generatorG2 <- Sync[F].delay(generatorG1.getImmutable)
@@ -47,6 +52,7 @@ object PrivateConferenceService {
         }.pure[F]
         community <- PrivateCommunity(name, usersIds, generatorG1, generatorG2, generatorZr, usersInfo._2).pure[F]
         _ <- Logger[F].info(s"Create private community with name: ${name}. And users: ${usersIds.map(_.userTelegramLogin)}")
+        _ <- Sync[F].delay(jState.communities.add(name))
         _ <- db.put(conferencesKey, name.getBytes())
         _ <- db.put(confInfo(name), PrivateCommunity.toBytes(community))
       } yield ()
@@ -71,6 +77,6 @@ object PrivateConferenceService {
       getConfs.map(_.find(_.name == conf).get)
   }
 
-  def apply[F[_]: Sync: Logger](db: Database[F]): F[PrivateConferenceService[F]] =
-    Sync[F].delay(new Live[F](db))
+  def apply[F[_]: Sync: Logger](db: Database[F], userStateRef: Ref[F, UserState[F]]): F[PrivateConferenceService[F]] =
+    Sync[F].delay(new Live[F](db, userStateRef))
 }

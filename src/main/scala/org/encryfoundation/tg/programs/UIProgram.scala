@@ -13,10 +13,12 @@ import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{AccumulatorHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{SendToChat, SetActiveChat}
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, SendToChat, SetActiveChat}
 import org.encryfoundation.tg.RunApp.sendMsg
+import org.encryfoundation.tg.services.PrivateConferenceService
 import org.javaFX.model.JDialog
 import scorex.crypto.encode.Base64
+import collection.JavaConverters._
 
 trait UIProgram[F[_]] {
 
@@ -26,6 +28,7 @@ trait UIProgram[F[_]] {
 object UIProgram {
 
   private class Live[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
+                                                      privateConfService: PrivateConferenceService[F],
                                                       dialogAreaRef: MVar[F, TextArea],
                                                       jDialogRef: MVar[F, JDialog]) extends UIProgram[F] {
 
@@ -65,6 +68,8 @@ object UIProgram {
         } yield ()
       case _@SendToChat(msg) =>
         userStateRef.get.flatMap( state => sendMsg(state.chatList.find(_.id == state.activeChat).get, msg, userStateRef))
+      case _@CreateCommunityJava(name, usersJava) =>
+        privateConfService.createConference(name, usersJava.asScala.toList)
     }
 
     override def run: Stream[F, Unit] = (for {
@@ -76,9 +81,10 @@ object UIProgram {
     } yield ()).repeat
   }
 
-  def apply[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]]): F[UIProgram[F]] =
+  def apply[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
+                                             privateConfService: PrivateConferenceService[F]): F[UIProgram[F]] =
     for {
       dialogAreaMVar <- MVar.empty[F, TextArea]
       jDialogMVar <- MVar.empty[F, JDialog]
-    } yield new Live(userStateRef, dialogAreaMVar, jDialogMVar)
+    } yield new Live(userStateRef, privateConfService, dialogAreaMVar, jDialogMVar)
 }

@@ -36,7 +36,7 @@ object RunApp extends App {
     client <- Client[IO](EmptyHandlerWithQueue(queueRef))
     _ <- client.execute(new TdApi.SetLogVerbosityLevel(0))
     ref <- Ref.of[IO, UserState[IO]](UserState[IO](client = client, javaState = state, db = db))
-    confService <- PrivateConferenceService[IO](db)
+    confService <- PrivateConferenceService[IO](db, ref)
     handler <- Handler[IO](ref, queueRef, confService, client)
     _ <- client.setUpdatesHandler(handler)
   } yield (queueRef, client, ref, logger, confService)
@@ -49,7 +49,7 @@ object RunApp extends App {
     Stream.eval(program(db, state)).flatMap { case (queue, client, ref, logger, confService) =>
       implicit val loggerForIo = logger
       Stream.eval(ConsoleProgram[IO](client, ref, confService, db)).flatMap { consoleProgram =>
-        Stream.eval(UIProgram(ref)).flatMap { uiProg =>
+        Stream.eval(UIProgram(ref, confService)).flatMap { uiProg =>
           client.run() concurrently consoleProgram.run() concurrently uiProg.run()
         }
       }

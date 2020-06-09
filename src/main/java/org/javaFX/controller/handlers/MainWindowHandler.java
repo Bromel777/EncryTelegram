@@ -1,6 +1,5 @@
 package org.javaFX.controller.handlers;
 
-
 import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

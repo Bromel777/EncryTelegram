@@ -1,5 +1,6 @@
 package org.javaFX.model;
 
+import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TextArea;
 import org.drinkless.tdlib.TdApi;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
@@ -22,6 +23,7 @@ public class JUserState {
     private Map<Integer, TdApi.BasicGroup> basicGroups = new HashMap<>();
     private Map<Integer, TdApi.Supergroup> superGroups = new HashMap<>();
     private Map<Integer, TdApi.SecretChat> secretChats = new HashMap<>();
+    public List<String> communities = new ArrayList<String>();
     public LinkedBlockingQueue<JavaInterMsg> msgsQueue = new LinkedBlockingQueue<JavaInterMsg>(100);
     public JDialog activeDialog;
     public TextArea activeDialogArea;

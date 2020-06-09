@@ -63,7 +63,8 @@ public class LocalCommunityHandler extends DataHandler{
         ObservableList<JLocalCommunityMember> observableChatList = FXCollections.observableArrayList();
         for(Integer jUserId: getUserStateRef().get().getUsers().keySet()){
             TdApi.User user = getUserStateRef().get().getUsers().get(jUserId);
-            observableChatList.add(new JLocalCommunityMember(user.firstName, user.lastName, user.phoneNumber, (long)user.id));
+            if(!user.lastName.isEmpty())
+                observableChatList.add(new JLocalCommunityMember(user.firstName, user.lastName, user.phoneNumber, (long)user.id));
         }
         return observableChatList;
     }

@@ -25,7 +25,7 @@ case class MessagesHandler[F[_]: Concurrent](password: Option[String]) extends R
             case _ => "Unknown msg!"
           }
         }
-      } getOrElse(Array.empty[String])
+      } getOrElse(messages.messages)
       Sync[F].delay(println("Messages:" + msgs.mkString("\n ")))
     case TdApi.Message.CONSTRUCTOR =>
       Sync[F].delay(println("Receive message"))

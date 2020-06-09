@@ -1,11 +1,14 @@
 package org.javaFX.model;
 
 import org.drinkless.tdlib.TdApi;
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public class JUserState {
@@ -14,9 +17,10 @@ public class JUserState {
     private Map<Long, JGroupChat> privateGroups = new HashMap<>();
     private Map<Integer, TdApi.User> users =  new HashMap<>();
     public AtomicReferenceArray<String> userInfo = new AtomicReferenceArray(3);
-    private Map<Integer, TdApi.BasicGroup> basicGroups =  new HashMap<>();
-    private Map<Integer, TdApi.Supergroup> superGroups =  new HashMap<>();
-    private Map<Integer, TdApi.SecretChat> secretChats =  new HashMap<>();
+    private Map<Integer, TdApi.BasicGroup> basicGroups = new HashMap<>();
+    private Map<Integer, TdApi.Supergroup> superGroups = new HashMap<>();
+    private Map<Integer, TdApi.SecretChat> secretChats = new HashMap<>();
+    public LinkedBlockingQueue<JavaInterMsg> msgsQueue = new LinkedBlockingQueue<JavaInterMsg>(100);
     private boolean isAuth = false;
 
     /*

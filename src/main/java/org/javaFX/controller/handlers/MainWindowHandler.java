@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Duration;
 
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
 import org.javaFX.model.JDialog;
@@ -99,7 +100,13 @@ public class MainWindowHandler extends DataHandler {
     }
 
     @FXML
-    private void clickItem() {
+    private void clickItem() throws InterruptedException {
+        JavaInterMsg msg = new JavaInterMsg.GetChatMsgs(
+                chatsTable.getSelectionModel().getSelectedItem().chatIdProperty().get(),
+                jDialog,
+                dialogArea
+        );
+        getUserStateRef().get().msgsQueue.put(msg);
         System.out.println(chatsTable.getSelectionModel().getSelectedItem());
     }
 

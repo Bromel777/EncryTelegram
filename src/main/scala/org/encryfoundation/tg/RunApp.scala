@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicReference
 
 import cats.effect.concurrent.Ref
 import cats.effect.{Concurrent, ContextShift, ExitCode, IO, IOApp, Resource, Sync, Timer}
-import cats.implicits._
 import cats.effect.{Concurrent, ExitCode, IO, IOApp, Resource, Sync, Timer}
 import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
@@ -18,7 +17,7 @@ import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.errors.TdError
 import org.encryfoundation.tg.handlers.{EmptyHandler, EmptyHandlerWithQueue, MessagesHandler}
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.programs.ConsoleProgram
+import org.encryfoundation.tg.programs.{ConsoleProgram, UIProgram}
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
 import org.javaFX.EncryWindow
@@ -59,7 +58,9 @@ object RunApp extends App {
     Stream.eval(program(db, state)).flatMap { case (queue, client, ref, logger, confService) =>
       implicit val loggerForIo = logger
       Stream.eval(ConsoleProgram[IO](client, ref, confService, db)).flatMap { consoleProgram =>
-        client.run() concurrently consoleProgram.run()
+        Stream.eval(UIProgram(ref)).flatMap { uiProg =>
+          client.run() concurrently consoleProgram.run() concurrently uiProg.run()
+        }
       }
     }
   }

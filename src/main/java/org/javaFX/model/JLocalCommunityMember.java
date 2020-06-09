@@ -12,13 +12,14 @@ public class JLocalCommunityMember {
     private StringProperty title;
     private StringProperty lastMessage;
     private LongProperty chatId;
-    private boolean isChosen = false;
+    private BooleanProperty isChosen;
 
     public JLocalCommunityMember(StringProperty title, StringProperty lastMessage, LongProperty chatId) {
         this.title = title;
         this.lastMessage = lastMessage;
         this.chatId = chatId;
-        tableNumber = new AtomicInteger( totalNumber.getAndIncrement() );
+        this.tableNumber = new AtomicInteger( totalNumber.getAndIncrement() );
+        this.isChosen = new SimpleBooleanProperty(false);
     }
 
     public JLocalCommunityMember(String titleStr, String lastMessageStr, Long chatId) {
@@ -53,12 +54,20 @@ public class JLocalCommunityMember {
         return chatId.get();
     }
 
-    public boolean isChosen() {
+    public BooleanProperty isChosen() {
         return isChosen;
     }
 
-    public void setChosen(boolean chosen) {
+    public void setChosen(BooleanProperty chosen) {
         isChosen = chosen;
+    }
+
+    public boolean isChosenBoolean() {
+        return isChosen.get();
+    }
+
+    public void setBooleanChosen(boolean chosen) {
+        isChosen.setValue(chosen);
     }
 
     public static void resetRowNumber(){

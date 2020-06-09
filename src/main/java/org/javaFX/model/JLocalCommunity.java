@@ -5,14 +5,23 @@ import java.util.List;
 
 public class JLocalCommunity {
 
+    private String communityName;
+    private long communityID;
+
     private List<JLocalCommunityMember> communityMembers;
+
+    private void generatePseudoRandomCommunityID(){
+        this.communityID = (long)(Long.MAX_VALUE*Math.random());
+    }
 
     public JLocalCommunity() {
         communityMembers = new ArrayList<>();
+        generatePseudoRandomCommunityID();
     }
 
     public JLocalCommunity(List<JLocalCommunityMember> communityMembers) {
         this.communityMembers = communityMembers;
+        generatePseudoRandomCommunityID();
     }
 
     public List<JLocalCommunityMember> getCommunityMembers() {
@@ -46,5 +55,17 @@ public class JLocalCommunity {
             removeContactFromCommunity(contact);
         }
         return contact;
+    }
+
+    public String getCommunityName() {
+        return communityName;
+    }
+
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
+    }
+
+    public long getCommunityID() {
+        return communityID;
     }
 }

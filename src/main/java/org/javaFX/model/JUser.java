@@ -7,14 +7,16 @@ public class JUser {
 
     private String name;
     private int chatId;
+    private String phoneNumber;
 
     public JUser(String name) {
         this.name = name;
     }
 
-    public JUser(String name, int chatId) {
+    public JUser(String name, int chatId, String phoneNumber) {
         this.name = name;
         this.chatId = chatId;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getName() {
@@ -23,6 +25,12 @@ public class JUser {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPhone() { return phoneNumber; }
+
+    public void setPhone(String phone) {
+        this.phoneNumber = phone;
     }
 
     public int getChatId() {

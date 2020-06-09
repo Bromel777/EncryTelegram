@@ -33,11 +33,11 @@ object UIProgram {
       msg.content match {
         case text: MessageText if state.privateGroups.contains(msg.chatId) =>
           val aes = AESEncryption(state.privateGroups(msg.chatId)._2.getBytes())
-          state.users(msg.senderUserId).phoneNumber + ": " + aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString
-        case text: MessageText => state.users(msg.senderUserId).phoneNumber + ": " + text.text.text
-        case _: MessagePhoto => state.users(msg.senderUserId).phoneNumber + ": " + "photo"
-        case _: MessageVideo => state.users(msg.senderUserId).phoneNumber + ": " + "video"
-        case _ => state.users(msg.senderUserId).phoneNumber + ": Unknown msg type"
+          state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString
+        case text: MessageText => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + text.text.text
+        case _: MessagePhoto => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "photo"
+        case _: MessageVideo => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "video"
+        case _ => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
       }
 
     def processMsg(msg: JavaInterMsg): F[Unit] = msg match {

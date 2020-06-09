@@ -15,6 +15,7 @@ import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JLocalCommunityMember;
+import org.javaFX.model.JUser;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -74,6 +75,14 @@ public class LocalCommunityHandler extends DataHandler{
                 chat -> observableChatList.add(new JChat(chat.title, "test", chat.id) )
         );
         return observableChatList;
+    }
+
+    private ObservableList<JUser> getObservableUserList(){
+        ObservableList<JUser> observableUserList = FXCollections.observableArrayList();
+        getUserStateRef().get().getUsers().values().forEach(
+                user -> observableUserList.add(new JUser(user.firstName, user.id, user.phoneNumber) )
+        );
+        return observableUserList;
     }
 
     private void initChatsTable(){

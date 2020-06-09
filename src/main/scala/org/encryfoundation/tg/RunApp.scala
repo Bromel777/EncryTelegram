@@ -1,21 +1,16 @@
 package org.encryfoundation.tg
 
 import java.io.File
-import java.security.Security
 import java.util.concurrent.atomic.AtomicReference
 
-import cats.effect.concurrent.{MVar, Ref}
-import cats.effect.{Concurrent, ContextShift, ExitCode, IO, IOApp, Resource, Sync, Timer}
-import cats.effect.{Concurrent, ExitCode, IO, IOApp, Resource, Sync, Timer}
+import cats.effect.concurrent.Ref
+import cats.effect.{Concurrent, ContextShift, IO, Timer}
 import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
-import org.encryfoundation.tg.commands.Command
+import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.crypto.AESEncryption
-import org.encryfoundation.tg.errors.TdError
-import org.encryfoundation.tg.handlers.{EmptyHandler, EmptyHandlerWithQueue, MessagesHandler}
+import org.encryfoundation.tg.handlers.{EmptyHandler, EmptyHandlerWithQueue}
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.programs.{ConsoleProgram, UIProgram}
 import org.encryfoundation.tg.services.PrivateConferenceService
@@ -23,13 +18,9 @@ import org.encryfoundation.tg.userState.UserState
 import org.javaFX.EncryWindow
 import org.javaFX.model.JUserState
 import scorex.crypto.encode.Base64
-import tofu.Raise
-import tofu._
 import tofu.syntax.monadic._
-import tofu.syntax.raise._
 
 import scala.concurrent.ExecutionContext
-import scala.io.StdIn
 
 object RunApp extends App {
 
@@ -44,7 +35,7 @@ object RunApp extends App {
     implicit0(logger: Logger[IO]) <- Slf4jLogger.create[IO]
     client <- Client[IO](EmptyHandlerWithQueue(queueRef))
     _ <- client.execute(new TdApi.SetLogVerbosityLevel(0))
-    ref <- Ref.of[IO, UserState[IO]](UserState[IO](client = client, javaState = state))
+    ref <- Ref.of[IO, UserState[IO]](UserState[IO](client = client, javaState = state, db = db))
     confService <- PrivateConferenceService[IO](db)
     handler <- Handler[IO](ref, queueRef, confService, client)
     _ <- client.setUpdatesHandler(handler)

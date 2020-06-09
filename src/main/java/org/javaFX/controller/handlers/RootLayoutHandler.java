@@ -25,6 +25,12 @@ public class RootLayoutHandler extends DataHandler {
     }
 
     @FXML
+    private void launchMainWindow(){
+        terminateObserver();
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
+    }
+
+    @FXML
     private void updateLocalCommunity(){
         terminateObserver();
         System.out.println("update local community");

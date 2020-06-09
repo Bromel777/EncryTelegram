@@ -47,6 +47,8 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           state <- userStateRef.get
           _ <- Logger[F].info(s"Receive chat: ${obj}")
           _ <- userStateRef.update(_.copy(chatIds = state.chatIds + (chat.id -> chat)))
+//          newState <- state.checkChat(chat)
+//          _ <- userStateRef.update(_ => newState)
           _ <- setChatOrder(chat, newOrder)
         } yield ()
       case TdApi.UpdateUser.CONSTRUCTOR =>

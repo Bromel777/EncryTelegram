@@ -10,6 +10,7 @@ import collection.JavaConverters._
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
+import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
 import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
@@ -233,12 +234,16 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
 
   def processLastMessage(msg: TdApi.Message): F[Unit] = {
 
-    def msg2Str(msg: TdApi.Message): String =
+
+    def msg2Str(msg: TdApi.Message, state: UserState[F]): String =
       msg.content match {
-        case text: MessageText => msg.senderUserId + ": " + text.text.text
-        case _: MessagePhoto => msg.senderUserId + ": " + "photo"
-        case _: MessageVideo => msg.senderUserId + ": " + "video"
-        case _ => "Unknown msg type"
+        case text: MessageText if state.privateGroups.contains(msg.chatId) =>
+          val aes = AESEncryption(state.privateGroups(msg.chatId)._2.getBytes())
+          state.users(msg.senderUserId).phoneNumber + ": " + aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString
+        case text: MessageText => state.users(msg.senderUserId).phoneNumber + ": " + text.text.text
+        case _: MessagePhoto => state.users(msg.senderUserId).phoneNumber + ": " + "photo"
+        case _: MessageVideo => state.users(msg.senderUserId).phoneNumber + ": " + "video"
+        case _ => state.users(msg.senderUserId).phoneNumber + ": Unknown msg type"
       }
 
     for {
@@ -246,7 +251,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       _ <- if (msg.chatId == state.activeChat) Sync[F].delay {
         val javaState = state.javaState.get()
         val localDialogHistory = javaState.activeDialog.getContent
-        localDialogHistory.append(msg2Str(msg) + "\n")
+        localDialogHistory.append(msg2Str(msg, state) + "\n")
         javaState.activeDialogArea.setText(localDialogHistory.toString)
         javaState.activeDialog.setContent(localDialogHistory)
       } else Applicative[F].pure(())

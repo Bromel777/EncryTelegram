@@ -13,7 +13,8 @@ import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{AccumulatorHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg.SetActiveChat
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{SendToChat, SetActiveChat}
+import org.encryfoundation.tg.RunApp.sendMsg
 import org.javaFX.model.JDialog
 import scorex.crypto.encode.Base64
 
@@ -62,6 +63,8 @@ object UIProgram {
             javaState.activeDialog.setContent(localDialogHistory)
           }
         } yield ()
+      case _@SendToChat(msg) =>
+        userStateRef.get.flatMap( state => sendMsg(state.chatList.find(_.id == state.activeChat).get, msg, userStateRef))
     }
 
     override def run: Stream[F, Unit] = (for {

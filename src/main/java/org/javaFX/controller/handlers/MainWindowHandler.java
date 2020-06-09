@@ -87,15 +87,12 @@ public class MainWindowHandler extends DataHandler {
     }
 
     @FXML
-    private void sendMessage(){
+    private void sendMessage() throws InterruptedException {
         String messageStr = sendMessageArea.getText().trim();
         if(!messageStr.isEmpty()) {
-            String preparedStr = "You:\t" + messageStr;
-            StringBuffer localDialogHistory = jDialog.getContent();
-            localDialogHistory.append(preparedStr + "\n");
-            dialogArea.setText(localDialogHistory.toString());
+            JavaInterMsg msg = new JavaInterMsg.SendToChat(messageStr);
+            getUserStateRef().get().msgsQueue.put(msg);
             sendMessageArea.setText("");
-            jDialog.setContent(localDialogHistory);
         }
     }
 
@@ -107,7 +104,6 @@ public class MainWindowHandler extends DataHandler {
                 chatsTable.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );
         getUserStateRef().get().msgsQueue.put(msg);
-        System.out.println(chatsTable.getSelectionModel().getSelectedItem());
     }
 
     @FXML
@@ -117,7 +113,11 @@ public class MainWindowHandler extends DataHandler {
             @Override
             public void handle(long now) {
                 if (keysPressed[0].get() && keysPressed[1].get()) {
-                    sendMessage();
+                    try {
+                        sendMessage();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }.start();

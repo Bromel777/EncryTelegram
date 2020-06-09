@@ -7,4 +7,6 @@ sealed trait JavaInterMsg
 object JavaInterMsg {
 
   case class SetActiveChat(id: Long) extends JavaInterMsg
+  //will send msg to active chat
+  case class SendToChat(msg: String) extends JavaInterMsg
 }

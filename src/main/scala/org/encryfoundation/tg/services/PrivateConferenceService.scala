@@ -35,7 +35,6 @@ object PrivateConferenceService {
                                          userStateRef: Ref[F, UserState[F]]) extends PrivateConferenceService[F] {
 
     private val conferencesKey = Blake2b256("Conferences")
-    private def confInfo(confName: String) = Blake2b256(s"ConfInfo${confName}")
 
     override def createConference(name: String, users: List[String]): F[Unit] =
       for {
@@ -76,6 +75,8 @@ object PrivateConferenceService {
     override def findConf(conf: String): F[PrivateCommunity] =
       getConfs.map(_.find(_.name == conf).get)
   }
+
+  def confInfo(confName: String) = Blake2b256(s"ConfInfo${confName}")
 
   def apply[F[_]: Sync: Logger](db: Database[F], userStateRef: Ref[F, UserState[F]]): F[PrivateConferenceService[F]] =
     Sync[F].delay(new Live[F](db, userStateRef))

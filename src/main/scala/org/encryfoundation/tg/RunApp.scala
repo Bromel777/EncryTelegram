@@ -49,7 +49,7 @@ object RunApp extends App {
     Stream.eval(program(db, state)).flatMap { case (queue, client, ref, logger, confService) =>
       implicit val loggerForIo = logger
       Stream.eval(ConsoleProgram[IO](client, ref, confService, db)).flatMap { consoleProgram =>
-        Stream.eval(UIProgram(ref, confService)).flatMap { uiProg =>
+        Stream.eval(UIProgram(ref, confService, client)).flatMap { uiProg =>
           client.run() concurrently consoleProgram.run() concurrently uiProg.run()
         }
       }

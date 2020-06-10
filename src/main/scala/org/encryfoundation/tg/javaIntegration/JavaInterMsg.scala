@@ -11,8 +11,5 @@ object JavaInterMsg {
   //will send msg to active chat
   case class SendToChat(msg: String) extends JavaInterMsg
   case class CreateCommunityJava(name: String, users: java.util.List[String]) extends JavaInterMsg
-  case class CreatePrivateGroupChat(comName: String,
-                                    chatName: String,
-                                    pass: String,
-                                    users: List[String]) extends JavaInterMsg
+  case class CreatePrivateGroupChat(comName: String) extends JavaInterMsg
 }

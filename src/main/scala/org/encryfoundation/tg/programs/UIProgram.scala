@@ -8,16 +8,19 @@ import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import javafx.scene.control.TextArea
-import org.drinkless.tdlib.TdApi
+import org.drinkless.tdlib.{Client, TdApi}
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.crypto.AESEncryption
-import org.encryfoundation.tg.handlers.{AccumulatorHandler, ValueHandler}
+import org.encryfoundation.tg.handlers.{AccumulatorHandler, PrivateGroupChatCreationHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, SendToChat, SetActiveChat}
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, SendToChat, SetActiveChat}
 import org.encryfoundation.tg.RunApp.sendMsg
+import org.encryfoundation.tg.community.PrivateCommunity
+import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.javaFX.model.JDialog
 import scorex.crypto.encode.Base64
+
 import collection.JavaConverters._
 
 trait UIProgram[F[_]] {
@@ -29,6 +32,7 @@ object UIProgram {
 
   private class Live[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                                       privateConfService: PrivateConferenceService[F],
+                                                      client: Client[F],
                                                       dialogAreaRef: MVar[F, TextArea],
                                                       jDialogRef: MVar[F, JDialog]) extends UIProgram[F] {
 
@@ -70,6 +74,50 @@ object UIProgram {
         userStateRef.get.flatMap( state => sendMsg(state.chatList.find(_.id == state.activeChat).get, msg, userStateRef))
       case _@CreateCommunityJava(name, usersJava) =>
         privateConfService.createConference(name, "me" :: usersJava.asScala.toList)
+      case _@CreatePrivateGroupChat(name) =>
+        for {
+          state <- userStateRef.get
+          communityBytes <- state.db.get(PrivateConferenceService.confInfo(name))
+          _ <- communityBytes match {
+            case Some(bytes) =>
+              val community = PrivateCommunity.parseBytes(bytes).get
+              Sync[F].delay(println("Got bytes")) >> createGroup(
+                name + "Chat",
+                name,
+                "1234",
+                community.users.tail.map(_.userTelegramLogin)
+              )
+            case None => Sync[F].delay(println("Got nothing"))
+          }
+        } yield ()
+    }
+
+    private def createGroup(groupname: String,
+                            conferenceName: String,
+                            password: String,
+                            users: List[String]): F[Unit] = {
+      for {
+        state <- userStateRef.get
+        userIds <- Concurrent[F].delay(users.flatMap(
+          username => state.users.find(userInfo => userInfo._2.username == username || userInfo._2.phoneNumber == username)
+        ))
+        _ <- Logger[F].info(s"Create private group chat for conference ${conferenceName} with next group: ${groupname} " +
+          s"and users(${users}):")
+        confInfo <- privateConfService.findConf(conferenceName)
+        _ <- client.send(
+          new TdApi.CreateNewBasicGroupChat(userIds.map(_._1).toArray, groupname),
+          PrivateGroupChatCreationHandler[F](
+            userStateRef,
+            client,
+            confInfo,
+            userIds.map(_._2),
+            confInfo.users.head.userTelegramLogin,
+            password
+          )(privateConfService)
+        )
+        _ <- state.db.put(Database.privateGroupChatsKey, groupname.getBytes())
+        _ <- state.db.put(groupname.getBytes(), password.getBytes())
+      } yield ()
     }
 
     override def run: Stream[F, Unit] = (for {
@@ -82,9 +130,10 @@ object UIProgram {
   }
 
   def apply[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
-                                             privateConfService: PrivateConferenceService[F]): F[UIProgram[F]] =
+                                             privateConfService: PrivateConferenceService[F],
+                                             client: Client[F]): F[UIProgram[F]] =
     for {
       dialogAreaMVar <- MVar.empty[F, TextArea]
       jDialogMVar <- MVar.empty[F, JDialog]
-    } yield new Live(userStateRef, privateConfService, dialogAreaMVar, jDialogMVar)
+    } yield new Live(userStateRef, privateConfService, client, dialogAreaMVar, jDialogMVar)
 }

@@ -183,7 +183,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           )
           prevState.copy(
             chatList = (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20),
-            mainChatList = (prevState.mainChatList + (newOrder -> chat))
+            mainChatList = (prevState.mainChatList.filterNot(_._2.id == chat.id) + (newOrder -> chat))
           )
         } else prevState
       )

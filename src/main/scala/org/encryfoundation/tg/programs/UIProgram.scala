@@ -86,7 +86,7 @@ object UIProgram {
           _ <- communityBytes match {
             case Some(bytes) =>
               val community = PrivateCommunity.parseBytes(bytes).get
-              Sync[F].delay(println("Got bytes")) >> createGroup(
+              createGroup(
                 name + "Chat",
                 name,
                 "1234",
@@ -130,7 +130,6 @@ object UIProgram {
       state <- Stream.eval(userStateRef.get)
       queue <- Stream.emit(state.javaState.get().msgsQueue)
       elem <- Stream.emit(queue.take())
-      _ <- Stream.eval(Sync[F].delay(println(s"Elem: ${elem}")))
       _ <- Stream.eval(processMsg(elem))
     } yield ()).repeat
   }

@@ -22,6 +22,7 @@ import org.javaFX.model.JDialog
 import scorex.crypto.encode.Base64
 
 import collection.JavaConverters._
+import scala.util.Try
 
 trait UIProgram[F[_]] {
 
@@ -40,7 +41,11 @@ object UIProgram {
       msg.content match {
         case text: MessageText if state.privateGroups.contains(msg.chatId) =>
           val aes = AESEncryption(state.privateGroups(msg.chatId)._2.getBytes())
-          state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString
+          Try(
+            state.users.get(msg.senderUserId)
+            .map(_.phoneNumber)
+              .getOrElse("Unknown sender") + ": " +
+              aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
         case text: MessageText => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + text.text.text
         case _: MessagePhoto => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "photo"
         case _: MessageVideo => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "video"

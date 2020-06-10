@@ -13,6 +13,8 @@ case class CloseChatHandler[F[_]: Concurrent: Timer: Logger](stateRef: Ref[F, Us
   override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
     case TdApi.Ok.CONSTRUCTOR =>
       stateRef.update { prevState =>
+        val javaState = prevState.javaState.get()
+        javaState.getChatList.removeIf(chat => chat.id == chatId)
         prevState.copy(
           mainChatList = prevState.mainChatList - chatId,
           chatIds = prevState.chatIds - chatId,

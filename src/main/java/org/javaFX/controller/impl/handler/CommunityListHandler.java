@@ -5,17 +5,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.controller.impl.dialog.CreatePrivateCommonDialogController;
 import org.javaFX.model.JLocalCommunity;
 
-import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

@@ -2,14 +2,11 @@ package org.javaFX.model;
 
 import javafx.beans.property.*;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class JChat {
-
 
     private StringProperty title;
     private StringProperty lastMessage;
-    private LongProperty chatId;
+    private final LongProperty chatId;
 
     public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId) {
         this.title = title;

@@ -1,17 +1,17 @@
 package org.javaFX.controller.impl.handler;
 
+import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
 import org.javaFX.controller.DataHandler;
+import org.javaFX.util.KeyboardHandler;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class StartWindowHandler extends DataHandler {
 
     @FXML
-    private ImageView loadingGif;
-
-    @FXML
-    private Button signInButton;
+    private Button cancelButton;
 
     public StartWindowHandler() {
     }
@@ -22,7 +22,15 @@ public class StartWindowHandler extends DataHandler {
     }
 
     @FXML
-    public void singInAction(){
-        System.out.println("the button is disabled");
+    public void handleKeyPressedAction(){
+        AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(cancelButton);
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if ( keysPressed.get() ) {
+                    handleCancelAction();
+                }
+            }
+        }.start();
     }
 }

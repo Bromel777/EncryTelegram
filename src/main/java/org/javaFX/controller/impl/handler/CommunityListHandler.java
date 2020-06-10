@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.controller.impl.dialog.CreatePrivateCommonDialogController;
-import org.javaFX.controller.impl.dialog.EnterCommunityNameDialogController;
 import org.javaFX.model.JLocalCommunity;
 
 import java.io.IOException;
@@ -69,27 +68,17 @@ public class CommunityListHandler extends DataHandler {
         service.shutdown();
     }
 
-//refactor later
     @FXML
     private void toMoreInfoWindowAction(){
         JLocalCommunity localCommunity = communitiesTable.getSelectionModel().getSelectedItem();
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(EncryWindow.class.getResource(EncryWindow.pathToCreateSubmitPrivateChatFXML));
-        Stage dialogStage = new Stage();
-        try {
-            AnchorPane startOverview = loader.load();
-            Scene scene = new Scene(startOverview);
-            dialogStage.setScene(scene);
-            dialogStage.setResizable(false);
-            CreatePrivateCommonDialogController controller = loader.getController();
-            controller.setEncryWindow(getEncryWindow());
-            controller.setDialogStage(dialogStage);
-            controller.setLocalCommunity(localCommunity);
-            controller.setState(getUserStateRef());
-            dialogStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Stage dialogStage = createDialogByPathToFXML(loader, EncryWindow.pathToCreateSubmitPrivateChatFXML);
+        CreatePrivateCommonDialogController controller = loader.getController();
+        controller.setEncryWindow(getEncryWindow());
+        controller.setDialogStage(dialogStage);
+        controller.setLocalCommunity(localCommunity);
+        controller.setState(getUserStateRef());
+        dialogStage.show();
     }
 
     @FXML

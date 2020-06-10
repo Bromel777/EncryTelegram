@@ -1,12 +1,16 @@
 package org.javaFX.controller;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JUserState;
 import org.javaFX.util.observers.BasicObserver;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class DataHandler {
@@ -59,13 +63,27 @@ public abstract class DataHandler {
         return observer;
     }
 
-    public void setObserver(BasicObserver observer) {
-        this.observer = observer;
+    public void setObserver(BasicObserver newObserver) {
+        observer = newObserver;
     }
 
     @Override
     public String toString() {
         return this.getClass().toString();
+    }
+
+    protected Stage createDialogByPathToFXML(FXMLLoader loader, String path){
+        loader.setLocation(EncryWindow.class.getResource(path));
+        Stage dialogStage = new Stage();
+        try {
+            AnchorPane startOverview = loader.load();
+            Scene scene = new Scene(startOverview);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return dialogStage;
     }
 
 }

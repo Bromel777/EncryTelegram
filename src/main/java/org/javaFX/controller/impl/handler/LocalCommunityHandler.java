@@ -5,10 +5,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.drinkless.tdlib.TdApi;
 import org.javaFX.EncryWindow;
@@ -17,7 +15,6 @@ import org.javaFX.controller.impl.dialog.EnterCommunityNameDialogController;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JLocalCommunityMember;
 
-import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -95,27 +92,16 @@ public class LocalCommunityHandler extends DataHandler {
         }
     }
 
-
-    //refactor later
-
     private void launchEnterNameDialog(JLocalCommunity localCommunity){
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(EncryWindow.class.getResource(EncryWindow.pathToLocalCommunityNameDialogFXML));
-        Stage dialogStage = new Stage();
-        try {
-            AnchorPane startOverview = loader.load();
-            Scene scene = new Scene(startOverview);
-            dialogStage.setScene(scene);
-            dialogStage.setResizable(false);
-            EnterCommunityNameDialogController controller = loader.getController();
-            controller.setEncryWindow(getEncryWindow());
-            controller.setDialogStage(dialogStage);
-            controller.setLocalCommunity(localCommunity);
-            controller.setState(getUserStateRef());
-            dialogStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Stage dialogStage = createDialogByPathToFXML(loader, EncryWindow.pathToLocalCommunityNameDialogFXML);
+        EnterCommunityNameDialogController controller = loader.getController();
+        controller.setEncryWindow(getEncryWindow());
+        controller.setDialogStage(dialogStage);
+        controller.setLocalCommunity(localCommunity);
+        controller.setState(getUserStateRef());
+        dialogStage.show();
     }
+
 
 }

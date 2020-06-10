@@ -16,7 +16,7 @@
                 <Font name="Centaur" size="36.0" />
             </font>
         </Label>
-        <Button id="cancelButton2" fx:id="cancelButton" cancelButton="true" layoutX="320.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleCancelAction" prefHeight="46.0" prefWidth="270.0" text="Cancel">
+        <Button id="cancelButton2" fx:id="cancelButton" cancelButton="true" layoutX="320.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleCancelAction" onKeyPressed="#handleKeyPressedAction" prefHeight="46.0" prefWidth="270.0" text="Cancel">
             <font>
                 <Font name="Centaur" size="24.0" />
             </font>
@@ -24,7 +24,7 @@
             <Cursor fx:constant="DEFAULT" />
          </cursor>
         </Button>
-        <Button id="signInButton" fx:id="signInButton" defaultButton="true" disable="true" layoutX="23.0" layoutY="337.0" mnemonicParsing="false" onAction="#singInAction" prefHeight="46.0" prefWidth="270.0" text="Sign in">
+        <Button id="signInButton" fx:id="signInButton" defaultButton="true" disable="true" layoutX="23.0" layoutY="337.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="270.0" text="Sign in">
             <font>
                 <Font name="Centaur" size="24.0" />
             </font>

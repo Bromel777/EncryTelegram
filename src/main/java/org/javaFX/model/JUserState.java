@@ -1,16 +1,13 @@
 package org.javaFX.model;
 
-import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TextArea;
 import org.drinkless.tdlib.TdApi;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
@@ -29,10 +26,6 @@ public class JUserState {
     public TextArea activeDialogArea;
     private boolean isAuth = false;
 
-    /*
-        TODO: implement the client
-        client: Client[F]
-    */
 
     public JUserState() {
     }
@@ -50,6 +43,8 @@ public class JUserState {
     }
 
     public void setPhoneNumber(String number) { this.userInfo.set(0, number); }
+
+    public String getPhoneNumber() { return this.userInfo.get(0); }
 
     public void setCode(String code) { this.userInfo.set(1, code); }
 

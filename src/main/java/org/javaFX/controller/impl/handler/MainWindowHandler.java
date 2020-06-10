@@ -27,9 +27,6 @@ public class MainWindowHandler extends DataHandler {
     private TableColumn<JChat, String> chatsColumn;
 
     @FXML
-    private MenuButton profileSettings;
-
-    @FXML
     private TextArea searchMessageArea;
 
     @FXML
@@ -38,11 +35,6 @@ public class MainWindowHandler extends DataHandler {
     @FXML
     private TextArea dialogArea;
 
-    /*@FXML
-    private MenuBar menuBar;*/
-
-    @FXML
-    private Button sendMessageButton;
 
     private JDialog jDialog;
 
@@ -145,7 +137,7 @@ public class MainWindowHandler extends DataHandler {
             StringBuffer results = new StringBuffer();
             Arrays.stream(messagesArray)
                     .filter(str -> str.toLowerCase().contains(searchingStr.toLowerCase()))
-                    .forEach(str -> results.append(str+"\n"));
+                    .forEach(str -> results.append(str).append("\n"));
             dialogArea.setText(results.toString());
         }
     }
@@ -157,22 +149,22 @@ public class MainWindowHandler extends DataHandler {
 
     @FXML
     private void showMenu(){
-        System.out.println("show menu");
+
     }
 
     @FXML
     private void showChats(){
-        System.out.println("show chats");
+
     }
 
     @FXML
     private void showPrivateChats(){
-        System.out.println("show private chats");
+
     }
 
     @FXML
     private void showOptions(){
-        System.out.println("show options");
+
     }
 
 }

@@ -20,7 +20,7 @@
                 <Font name="Centaur" size="24.0" />
             </font>
         </Button>
-        <Button id="signInButton" fx:id="signInButton" defaultButton="true" disable="true" layoutX="23.0" layoutY="337.0" mnemonicParsing="false" onAction="#singInAction" prefHeight="46.0" prefWidth="270.0" text="Sign in">
+        <Button id="signInButton" fx:id="signInButton" defaultButton="true" disable="true" layoutX="23.0" layoutY="337.0" mnemonicParsing="false" onAction="#singInAction" onKeyPressed="#handleSignInPressed" prefHeight="46.0" prefWidth="270.0" text="Sign in">
             <font>
                 <Font name="Centaur" size="24.0" />
             </font>
@@ -42,27 +42,27 @@
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </Label>
-                <TextField fx:id="phoneNumber" GridPane.columnIndex="1">
+                <TextField fx:id="phoneNumber" onKeyPressed="#handlePhoneNubmerAreaPressed" GridPane.columnIndex="1">
                     <font>
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="verificationCode" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <TextField fx:id="verificationCode" disable="true" onKeyPressed="#handleVerificationCodeAreaPressed" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <font>
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </TextField>
-                <PasswordField fx:id="password" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <PasswordField fx:id="password" disable="true" onKeyPressed="#handlePasswordAreaPressed" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <font>
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </PasswordField>
-            <Button fx:id="confirmNumberButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleConfirmNumberAction" text="Confirm" GridPane.columnIndex="3">
+            <Button fx:id="confirmNumberButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleConfirmNumberAction" onKeyPressed="#handleConfirmNumberPressed" text="Confirm" GridPane.columnIndex="3">
                <font>
                   <Font name="Centaur" size="24.0" />
                </font>
             </Button>
-            <Button fx:id="confirmVCButton" disable="true" mnemonicParsing="false" onAction="#handleConfirmVCAction" text="Confirm" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <Button fx:id="confirmVCButton" disable="true" mnemonicParsing="false" onAction="#handleConfirmVCAction" onKeyPressed="#handleConfirmVCPressed" text="Confirm" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <font>
                   <Font name="Centaur" size="24.0" />
                </font>

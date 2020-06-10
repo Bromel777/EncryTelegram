@@ -7,7 +7,7 @@ import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
-import org.encryfoundation.tg.handlers.EmptyHandler
+import org.encryfoundation.tg.handlers.{CloseChatHandler, EmptyHandler}
 
 case class CloseSecretChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
                                                             userStateRef: Ref[F, UserState[F]],
@@ -17,7 +17,7 @@ case class CloseSecretChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
   override def run(args: List[String]): F[Unit] = for {
     _ <- client.send(
       new TdApi.CloseSecretChat(args.head.toInt),
-      EmptyHandler[F]()
+      CloseChatHandler[F](userStateRef, client, args.last.toLong)
     )
   } yield ()
 }

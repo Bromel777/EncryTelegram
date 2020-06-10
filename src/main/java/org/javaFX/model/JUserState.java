@@ -42,6 +42,10 @@ public class JUserState {
         this.chatList = chatList;
     }
 
+    public void removeChatById(long chatId) {
+        this.chatList.removeIf(chat -> chat.id == chatId);
+    }
+
     public void setPhoneNumber(String number) { this.userInfo.set(0, number); }
 
     public String getPhoneNumber() { return this.userInfo.get(0); }

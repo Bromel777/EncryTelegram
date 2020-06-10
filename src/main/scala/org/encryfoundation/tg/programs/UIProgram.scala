@@ -104,6 +104,7 @@ object UIProgram {
         _ <- Logger[F].info(s"Create private group chat for conference ${conferenceName} with next group: ${groupname} " +
           s"and users(${users}):")
         confInfo <- privateConfService.findConf(conferenceName)
+
         _ <- client.send(
           new TdApi.CreateNewBasicGroupChat(userIds.map(_._1).toArray, groupname),
           PrivateGroupChatCreationHandler[F](

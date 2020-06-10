@@ -7,6 +7,8 @@ import org.drinkless.tdlib.TdApi
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 
+import scala.util.Try
+
 object UserStateUtils {
 
   def findUserByIdentifier[F[_]: Monad](userIdentifier: String,
@@ -23,7 +25,7 @@ object UserStateUtils {
                                         stateRef: Ref[F, UserState[F]]): OptionT[F, TdApi.Chat] = for {
     state <- OptionT.liftF(stateRef.get)
     possibleChat <- OptionT.fromOption[F](state.chatList.find { chat =>
-      chat.title == chatIdentifier
+      chat.title == chatIdentifier || Try(chatIdentifier.toLong).exists(_ == chat.id)
     })
   } yield possibleChat
 }

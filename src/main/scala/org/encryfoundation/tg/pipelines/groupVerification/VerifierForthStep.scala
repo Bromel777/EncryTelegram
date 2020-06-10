@@ -11,10 +11,11 @@ import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.St
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import it.unisa.dia.gas.jpbc.Element
-import org.drinkless.tdlib.Client
+import org.drinkless.tdlib.{Client, TdApi}
 import org.drinkless.tdlib.TdApi.SecretChat
 import org.encryfoundation.mitmImun.Verifier
 import org.encryfoundation.tg.crypto.AESEncryption
+import org.encryfoundation.tg.handlers.CloseChatHandler
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
@@ -55,6 +56,7 @@ case class VerifierForthStep[F[_]: Concurrent: Timer: Logger](verifier: Verifier
     _ <- Logger[F].info(s"common key: ${Base64.encode(commonKey)}")
     _ <- Logger[F].info(s"Group name: ${aes.decrypt(Base64.decode(thirdStepMsg.name).get).map(_.toChar).mkString}." +
       s" Pass: ${aes.decrypt(Base64.decode(thirdStepMsg.pass).get).map(_.toChar).mkString}")
+    _ <- client.send(new TdApi.CloseChat(chatId), CloseChatHandler[F](stateRef, client, chatId))
   } yield this
 
   def processStepInput(input: StepMsg): F[Pipeline[F]] = input match {

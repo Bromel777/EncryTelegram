@@ -16,6 +16,7 @@ import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
+import org.encryfoundation.tg.utils.UserStateUtils
 import scorex.crypto.encode.Base64
 
 import scala.io.StdIn
@@ -209,17 +210,20 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case a: TdApi.AuthorizationStateWaitEncryptionKey =>
         client.send(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F]())
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>
-        println("Enter phone number:")
-        val phoneNumber = StdIn.readLine()
-        client.send(new TdApi.SetAuthenticationPhoneNumber(phoneNumber, null), AuthRequestHandler())
+        for {
+          phoneNumber <- UserStateUtils.getPhoneNumber(userStateRef)
+          _ <- client.send(new TdApi.SetAuthenticationPhoneNumber(phoneNumber, null), AuthRequestHandler())
+        } yield ()
       case a: TdApi.AuthorizationStateWaitCode =>
-        println("Enter code number:")
-        val code = StdIn.readLine()
-        client.send(new TdApi.CheckAuthenticationCode(code), AuthRequestHandler())
+        for {
+          code <- UserStateUtils.getVC(userStateRef)
+          _ <- client.send(new TdApi.CheckAuthenticationCode(code), AuthRequestHandler())
+        } yield ()
       case a: TdApi.AuthorizationStateWaitPassword =>
-        println("Enter password")
-        val pass = StdIn.readLine()
-        client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
+        for {
+          pass <- UserStateUtils.getPass(userStateRef)
+          _ <- client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
+        } yield ()
       case a: TdApi.AuthorizationStateReady =>
         userStateRef.update{ prevState =>
           prevState.javaState.get().setAuth(true)

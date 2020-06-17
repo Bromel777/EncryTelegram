@@ -11,6 +11,7 @@ import org.encryfoundation.mitmImun.Prover
 import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.crypto.AESEncryption
+import org.encryfoundation.tg.handlers.CloseChatHandler
 import org.encryfoundation.tg.pipelines.Pipeline
 import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
 import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.{ProverThirdStepMsg, VerifierSecondStepMsg}
@@ -65,6 +66,7 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
       )
     )
     _ <- send2Chat(EndPipeline(ProverThirdStep.pipelineName))
+    _ <- client.send(new TdApi.CloseChat(chatId), CloseChatHandler[F](userState, client, chatId))
   } yield this
 
   def processStepInput(input: StepMsg): F[Pipeline[F]] = input match {

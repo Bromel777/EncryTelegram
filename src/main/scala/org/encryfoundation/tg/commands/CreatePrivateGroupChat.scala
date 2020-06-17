@@ -41,7 +41,7 @@ case class CreatePrivateGroupChat[F[_]: Concurrent: Timer: Logger](client: Clien
         username => state.users.find(userInfo => userInfo._2.username == username || userInfo._2.phoneNumber == username)
       ))
       _ <- Logger[F].info(s"Create private group chat for conference ${conferenceName} with next group: ${groupname} " +
-        s"and users(${users}): ${userIds}. ${state.users}")
+        s"and users(${users}):")
       confInfo <- privateConferenceService.findConf(conferenceName)
       _ <- client.send(
         new TdApi.CreateNewBasicGroupChat(userIds.map(_._1).toArray, groupname),

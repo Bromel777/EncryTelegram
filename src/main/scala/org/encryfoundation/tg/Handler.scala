@@ -1,16 +1,22 @@
 package org.encryfoundation.tg
 
+import cats.Applicative
 import cats.effect.concurrent.Ref
 import cats.effect.{ConcurrentEffect, Sync, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
-import org.drinkless.tdlib.TdApi.MessageText
+
+import collection.JavaConverters._
+import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
+import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
+import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
 import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
+import org.encryfoundation.tg.utils.UserStateUtils
 import scorex.crypto.encode.Base64
 
 import scala.io.StdIn
@@ -42,13 +48,19 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           state <- userStateRef.get
           _ <- Logger[F].info(s"Receive chat: ${obj}")
           _ <- userStateRef.update(_.copy(chatIds = state.chatIds + (chat.id -> chat)))
+//          newState <- state.checkChat(chat)
+//          _ <- userStateRef.update(_ => newState)
           _ <- setChatOrder(chat, newOrder)
         } yield ()
       case TdApi.UpdateUser.CONSTRUCTOR =>
         val updateUser = obj.asInstanceOf[TdApi.UpdateUser]
         for {
-          state <- userStateRef.get
-          _ <- userStateRef.update(_.copy(users = state.users + (updateUser.user.id -> updateUser.user)))
+          _ <- userStateRef.update { prevState =>
+            val newUsers = prevState.javaState.get().getUsers
+            newUsers.put(updateUser.user.id, updateUser.user)
+            prevState.javaState.get().setUsers(newUsers)
+            prevState.copy(users = prevState.users + (updateUser.user.id -> updateUser.user))
+          }
         } yield ()
       case TdApi.UpdateChatOrder.CONSTRUCTOR =>
         val updateChatOrder = obj.asInstanceOf[TdApi.UpdateChatOrder]
@@ -99,14 +111,14 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
               chatInfo <- state.pendingSecretChatsForInvite(secretChat.secretChat.id).pure[F]
               chatId <- state.pendingSecretChatsForInvite(secretChat.secretChat.id)._1.id.pure[F]
               newPipeline <- state.pipelineSecretChats(chatId).processInput(Array.emptyByteArray)
-              _ <- userStateRef.update(
-                _.copy(
+              _ <- userStateRef.update { prevState =>
+                prevState.copy(
                   pendingSecretChatsForInvite = state.pendingSecretChatsForInvite - secretChat.secretChat.id,
                   privateGroups = state.privateGroups + (chatInfo._1.id -> (chatInfo._1 -> chatInfo._2)),
                   pipelineSecretChats = state.pipelineSecretChats +
                     (chatId -> newPipeline)
                 )
-              )
+              }
             } yield ()
           else if (secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStatePending] && !secretChat.secretChat.isOutbound) {
             for {
@@ -144,12 +156,12 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
                           stepMsg
                         )
                       }
-                    case Right(_) => (()).pure[F]
-                    case Left(_) => Logger[F].info(s"Receive msg: ${msg}")
+                    case Right(_) => processLastMessage(msg.message)
+                    case Left(_) => processLastMessage(msg.message)
                   }
-                case Failure(err) => Logger[F].info(s"Receive unkown elem1: ${obj}. Err: ${err.getMessage}")
+                case Failure(err) => processLastMessage(msg.message)
               }
-            case _ => Logger[F].info(s"Receive unkown elem2: ${obj}")
+            case _ => processLastMessage(msg.message)
           }
         } yield ()
       case _ => Logger[F].info(s"Receive unkown elem3: ${obj}")
@@ -165,10 +177,15 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       )
       _ <- Sync[F].delay(chat.order = newOrder)
       _ <- userStateRef.update(prevState =>
-        if (newOrder != 0) prevState.copy(
-          chatList = (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20),
-          mainChatList = (prevState.mainChatList + (newOrder -> chat))
-        ) else prevState
+        if (newOrder != 0) {
+          prevState.javaState.get().setChatList(
+            (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20).reverse.asJava
+          )
+          prevState.copy(
+            chatList = (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20),
+            mainChatList = (prevState.mainChatList.filterNot(_._2.id == chat.id) + (newOrder -> chat))
+          )
+        } else prevState
       )
     } yield ()
   }
@@ -193,19 +210,25 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case a: TdApi.AuthorizationStateWaitEncryptionKey =>
         client.send(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F]())
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>
-        println("Enter phone number:")
-        val phoneNumber = StdIn.readLine()
-        client.send(new TdApi.SetAuthenticationPhoneNumber(phoneNumber, null), AuthRequestHandler())
+        for {
+          phoneNumber <- UserStateUtils.getPhoneNumber(userStateRef)
+          _ <- client.send(new TdApi.SetAuthenticationPhoneNumber(phoneNumber, null), AuthRequestHandler())
+        } yield ()
       case a: TdApi.AuthorizationStateWaitCode =>
-        println("Enter code number:")
-        val code = StdIn.readLine()
-        client.send(new TdApi.CheckAuthenticationCode(code), AuthRequestHandler())
+        for {
+          code <- UserStateUtils.getVC(userStateRef)
+          _ <- client.send(new TdApi.CheckAuthenticationCode(code), AuthRequestHandler())
+        } yield ()
       case a: TdApi.AuthorizationStateWaitPassword =>
-        println("Enter password")
-        val pass = StdIn.readLine()
-        client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
+        for {
+          pass <- UserStateUtils.getPass(userStateRef)
+          _ <- client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
+        } yield ()
       case a: TdApi.AuthorizationStateReady =>
-        userStateRef.update(_.copy(isAuth = true)).map(_ => ()) >>
+        userStateRef.update{ prevState =>
+          prevState.javaState.get().setAuth(true)
+          prevState.copy(isAuth = true)
+        }.map(_ => ()) >>
           client.send(
             new TdApi.GetChats(new TdApi.ChatListMain(), Long.MaxValue, 0, 20),
             EmptyHandler[F]()
@@ -213,6 +236,32 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case _ =>
         println(s"Got unknown event in auth. ${authEvent}").pure[F]
     }
+  }
+
+  def processLastMessage(msg: TdApi.Message): F[Unit] = {
+
+
+    def msg2Str(msg: TdApi.Message, state: UserState[F]): String =
+      msg.content match {
+        case text: MessageText if state.privateGroups.contains(msg.chatId) =>
+          val aes = AESEncryption(state.privateGroups(msg.chatId)._2.getBytes())
+          state.users(msg.senderUserId).phoneNumber + ": " + aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString
+        case text: MessageText => state.users(msg.senderUserId).phoneNumber + ": " + text.text.text
+        case _: MessagePhoto => state.users(msg.senderUserId).phoneNumber + ": " + "photo"
+        case _: MessageVideo => state.users(msg.senderUserId).phoneNumber + ": " + "video"
+        case _ => state.users(msg.senderUserId).phoneNumber + ": Unknown msg type"
+      }
+
+    for {
+      state <- userStateRef.get
+      _ <- if (msg.chatId == state.activeChat) Sync[F].delay {
+        val javaState = state.javaState.get()
+        val localDialogHistory = javaState.activeDialog.getContent
+        localDialogHistory.append(msg2Str(msg, state) + "\n")
+        javaState.activeDialogArea.setText(localDialogHistory.toString)
+        javaState.activeDialog.setContent(localDialogHistory)
+      } else Applicative[F].pure(())
+    } yield ()
   }
 }
 

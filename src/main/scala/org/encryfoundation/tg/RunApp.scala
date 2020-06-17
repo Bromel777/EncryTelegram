@@ -1,42 +1,42 @@
 package org.encryfoundation.tg
 
 import java.io.File
-import java.security.Security
+import java.util.concurrent.atomic.AtomicReference
 
 import cats.effect.concurrent.Ref
-import cats.effect.{Concurrent, ExitCode, IO, IOApp, Resource, Sync, Timer}
+import cats.effect.{Concurrent, ContextShift, IO, Timer}
 import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.drinkless.tdlib.{Client, DummyHandler, TdApi}
-import org.encryfoundation.tg.commands.Command
+import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.crypto.AESEncryption
-import org.encryfoundation.tg.errors.TdError
-import org.encryfoundation.tg.handlers.{EmptyHandler, EmptyHandlerWithQueue, MessagesHandler}
+import org.encryfoundation.tg.handlers.{EmptyHandler, EmptyHandlerWithQueue}
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.programs.ConsoleProgram
+import org.encryfoundation.tg.programs.{ConsoleProgram, UIProgram}
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.userState.UserState
+import org.javaFX.EncryWindow
+import org.javaFX.model.JUserState
 import scorex.crypto.encode.Base64
-import tofu.Raise
-import tofu._
 import tofu.syntax.monadic._
-import tofu.syntax.raise._
 
-import scala.io.StdIn
+import scala.concurrent.ExecutionContext
 
-object RunApp extends IOApp {
+object RunApp extends App {
+
+  implicit val shift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
+  implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
 
   System.loadLibrary("tdjni")
 
-  def program(db: Database[IO]) = for {
+  def program(db: Database[IO],
+              state: AtomicReference[JUserState]) = for {
     queueRef <- Ref.of[IO, List[TdApi.Object]](List.empty)
     implicit0(logger: Logger[IO]) <- Slf4jLogger.create[IO]
     client <- Client[IO](EmptyHandlerWithQueue(queueRef))
     _ <- client.execute(new TdApi.SetLogVerbosityLevel(0))
-    ref <- Ref.of[IO, UserState[IO]](UserState[IO](client = client))
-    confService <- PrivateConferenceService[IO](db)
+    ref <- Ref.of[IO, UserState[IO]](UserState[IO](client = client, javaState = state, db = db))
+    confService <- PrivateConferenceService[IO](db, ref)
     handler <- Handler[IO](ref, queueRef, confService, client)
     _ <- client.setUpdatesHandler(handler)
   } yield (queueRef, client, ref, logger, confService)
@@ -45,11 +45,13 @@ object RunApp extends IOApp {
     db <- Database[IO](new File("db"))
   } yield db
 
-  val anotherProg = Stream.resource(database).flatMap { db =>
-    Stream.eval(program(db)).flatMap { case (queue, client, ref, logger, confService) =>
+  def anotherProg(state: AtomicReference[JUserState]) = Stream.resource(database).flatMap { db =>
+    Stream.eval(program(db, state)).flatMap { case (queue, client, ref, logger, confService) =>
       implicit val loggerForIo = logger
       Stream.eval(ConsoleProgram[IO](client, ref, confService, db)).flatMap { consoleProgram =>
-        client.run() concurrently consoleProgram.run()
+        Stream.eval(UIProgram(ref, confService, client)).flatMap { uiProg =>
+          client.run() concurrently consoleProgram.run() concurrently uiProg.run()
+        }
       }
     }
   }
@@ -75,6 +77,7 @@ object RunApp extends IOApp {
     )
   }
 
-  override def run(args: List[String]): IO[ExitCode] =
-    anotherProg.compile.drain.as(ExitCode.Success)
+  anotherProg(EncryWindow.state).compile.drain.unsafeRunAsyncAndForget()
+  EncryWindow.main(Array.empty)
+
 }

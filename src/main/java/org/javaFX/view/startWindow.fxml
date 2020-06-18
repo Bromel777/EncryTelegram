@@ -36,7 +36,7 @@
       </Label>
       <ImageView fx:id="loadingGif" fitHeight="220.0" fitWidth="220.0" layoutX="203.0" layoutY="106.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="203.0" AnchorPane.rightAnchor="240.82473754882812" AnchorPane.topAnchor="106.0">
          <image>
-            <Image url="file:src/main/resources/images/loading.gif" />
+            <Image url="@../../../../resources/images/loading.gif" />
          </image>
       </ImageView>
     </children>

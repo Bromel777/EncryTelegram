@@ -35,6 +35,9 @@ public class MainWindowHandler extends DataHandler {
     @FXML
     private TextArea dialogArea;
 
+    @FXML
+    private Button callButton;
+
 
     private JDialog jDialog;
 
@@ -60,7 +63,7 @@ public class MainWindowHandler extends DataHandler {
     public void updateEncryWindow(EncryWindow encryWindow) {
         super.setEncryWindow(encryWindow);
         chatsTable.setItems(getObservableChatList());
-        initializeChats();
+        initializeTable();
         enableMenuBar();
     }
 
@@ -74,7 +77,7 @@ public class MainWindowHandler extends DataHandler {
     }
 
     @FXML
-    private void initializeChats() {
+    private void initializeTable() {
         chatsColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
     }
 
@@ -96,6 +99,8 @@ public class MainWindowHandler extends DataHandler {
                 chatsTable.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );
         getUserStateRef().get().msgsQueue.put(msg);
+        callButton.setVisible(true);
+        callButton.setDisable(false);
     }
 
     @FXML
@@ -148,6 +153,12 @@ public class MainWindowHandler extends DataHandler {
     }
 
     @FXML
+    private void callContactAction(){
+        //TODO implement
+    }
+
+
+    @FXML
     private void showMenu(){
 
     }
@@ -166,5 +177,11 @@ public class MainWindowHandler extends DataHandler {
     private void showOptions(){
 
     }
+
+    @FXML
+    private void makeCall(){
+
+    }
+
 
 }

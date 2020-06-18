@@ -10,9 +10,9 @@
     <top>
         <MenuBar fx:id="menuBar" disable="true" prefHeight="32.0" prefWidth="600.0">
             <menus>
-            <Menu mnemonicParsing="false" text="Window">
+            <Menu mnemonicParsing="false" text="Actions">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="Close" />
+                  <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="Close" />
               </items>
             </Menu>
                 <Menu mnemonicParsing="false" text="Chats">

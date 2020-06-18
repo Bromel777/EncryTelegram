@@ -12,7 +12,7 @@ import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class InputDataHandler extends DataHandler {
+public class AuthenticationHandler extends DataHandler {
 
     @FXML
     private TextField phoneNumber;
@@ -33,7 +33,7 @@ public class InputDataHandler extends DataHandler {
     @FXML
     private ImageView resetPasswordImageView;
 
-    public InputDataHandler () {}
+    public AuthenticationHandler() {}
 
     @FXML
     private void handleCancelAction(){
@@ -91,7 +91,7 @@ public class InputDataHandler extends DataHandler {
 
     @FXML
     private void handleVerificationCodeAreaPressed(){
-        handleKeyPressed(confirmNumberButton);
+        handleKeyPressed(confirmVCButton);
     }
 
     @FXML
@@ -101,7 +101,7 @@ public class InputDataHandler extends DataHandler {
 
     @FXML
     private void handlePasswordAreaPressed(){
-        handleKeyPressed(confirmNumberButton);
+        handleKeyPressed(signInButton);
     }
 
 

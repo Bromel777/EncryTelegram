@@ -21,8 +21,6 @@ public class EncryWindow extends Application {
 
     private final String windowTitle = "ETC";
     private final String pathToLogoImage = "file:src/main/resources/images/logo.png";
-    private final String pathToResetImage = "file:src/main/resources/images/reset.png";
-    private final String pathToLoadingGIF = "file:src/main/resources/images/loading.gif";
 
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
     public final static String pathToMainWindowFXML = "view/mainWindow.fxml";

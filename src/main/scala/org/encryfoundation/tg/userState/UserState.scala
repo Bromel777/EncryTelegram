@@ -24,7 +24,7 @@ import collection.JavaConverters._
 case class UserState[F[_]: Sync](chatList: List[TdApi.Chat] = List.empty,
                                  mainChatList: SortedMap[Long, TdApi.Chat] = SortedMap.empty[Long, TdApi.Chat],
                                  chatIds: Map[Long, TdApi.Chat] = Map.empty,
-                                 privateGroups: Map[Long, (TdApi.Chat, String)] = Map.empty,
+                                 privateGroups: Set[PrivateGroupChat] = Set.empty,
                                  pipelineSecretChats: Map[Long, Pipeline[F]] = Map.empty[Long, Pipeline[F]],
                                  pendingSecretChatsForInvite: Map[Long, (TdApi.Chat, String, TdApi.User)] = Map.empty,
                                  users: Map[Int, TdApi.User] = Map.empty,
@@ -36,22 +36,7 @@ case class UserState[F[_]: Sync](chatList: List[TdApi.Chat] = List.empty,
                                  client: Client[F],
                                  activeChat: Long = 0,
                                  javaState: AtomicReference[JUserState],
-                                 db: Database[F]) {
-
-  def updatePrivateGroups(newGroupChat: TdApi.Chat, pass: String): F[UserState[F]] =
-    for {
-      _ <- db.put(UserState.privateGroupChatKey(newGroupChat.id), pass.getBytes)
-    } yield this.copy(
-      privateGroups = privateGroups + (newGroupChat.id -> (newGroupChat, pass))
-    )
-
-  def checkChat(chat: TdApi.Chat): F[UserState[F]] =
-    db.get(UserState.privateGroupChatKey(chat.id)).flatMap {
-      case Some(bytes) =>
-        Applicative[F].pure(this.copy(privateGroups = privateGroups + (chat.id -> (chat, bytes.map(_.toChar).mkString))))
-      case None => Applicative[F].pure(this)
-    }
-}
+                                 db: Database[F])
 
 object UserState {
   def privateGroupChatKey(chatId: Long): Array[Byte] = Blake2b256.hash(chatId + "privateChat")

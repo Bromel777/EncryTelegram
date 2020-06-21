@@ -25,8 +25,8 @@ object ClientUtils {
   def sendMsg[F[_]: Concurrent: Logger](chat: TdApi.Chat, msg: String, stateRef: Ref[F, UserState[F]]): F[Unit] = {
 
     stateRef.get.flatMap(state =>
-      state.privateGroups.find(_._2._1.id == chat.id).map { case (_, (_, pass)) =>
-        val aes = AESEncryption(pass.getBytes())
+      state.privateGroups.find(_.chatId == chat.id).map { privGroup =>
+        val aes = AESEncryption(privGroup.password.getBytes())
         sendMessage(chat.id, Base64.encode(aes.encrypt(msg.getBytes)), state.client)
       }.getOrElse(sendMessage(chat.id, msg, state.client))
     )

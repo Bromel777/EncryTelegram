@@ -4,10 +4,9 @@ import cats.Applicative
 import cats.effect.concurrent.{MVar, Ref}
 import cats.effect.{Concurrent, Sync, Timer}
 import io.chrisdavenport.log4cats.Logger
-import org.drinkless.tdlib.Client
+import org.drinkless.tdlib.{Client, ClientUtils}
 import org.drinkless.tdlib.TdApi.SecretChat
 import org.encryfoundation.mitmImun.{Prover, Verifier}
-import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.pipelines.{HeadPipelineCompanion, Pipeline}
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
@@ -30,7 +29,7 @@ case class VerifierSecondStep[F[_]: Concurrent: Timer: Logger](proverMsg: MVar[F
 
   private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] = for {
     _ <- Logger[F].info(s"Send: ${msg}")
-    _ <- sendMessage(
+    _ <- ClientUtils.sendMessage(
       chatId,
       Base64.encode(StepMsgSerializer.toBytes(msg)),
       client

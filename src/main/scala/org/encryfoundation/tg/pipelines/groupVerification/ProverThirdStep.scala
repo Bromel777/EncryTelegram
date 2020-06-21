@@ -6,9 +6,8 @@ import cats.effect.{Concurrent, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import it.unisa.dia.gas.jpbc.Element
-import org.drinkless.tdlib.{Client, TdApi}
+import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.encryfoundation.mitmImun.Prover
-import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.CloseChatHandler
@@ -36,7 +35,7 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
                                                             verifierSecondStepMsg: MVar[F, VerifierSecondStepMsg]) extends Pipeline[F] {
 
   private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] =
-    sendMessage(
+    ClientUtils.sendMessage(
       chatId,
       Base64.encode(StepMsgSerializer.toBytes(msg)),
       client

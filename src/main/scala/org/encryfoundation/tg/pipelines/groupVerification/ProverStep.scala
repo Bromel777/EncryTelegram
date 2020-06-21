@@ -5,7 +5,6 @@ import cats.effect.concurrent.Ref
 import org.drinkless.tdlib.Client
 import org.drinkless.tdlib.TdApi.SecretChat
 import org.encryfoundation.mitmImun.Prover
-import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64

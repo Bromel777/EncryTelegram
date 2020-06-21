@@ -1,23 +1,15 @@
 package org.encryfoundation.tg.services
 
-import java.math.BigInteger
-
-import cats.FlatMap
 import cats.effect.Sync
 import cats.effect.concurrent.Ref
-import it.unisa.dia.gas.jpbc.{Element, Pairing}
-import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
-import org.encryfoundation.sectionSeven.SectionSeven
-import org.encryfoundation.tg.leveldb.Database
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
-import org.encryfoundation.mitmImun.{Prover, Verifier}
+import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
+import org.encryfoundation.sectionSeven.SectionSeven
 import org.encryfoundation.tg.community.{CommunityUser, PrivateCommunity}
-import org.encryfoundation.tg.userState.UserState
-import scorex.crypto.encode.Base64
+import org.encryfoundation.tg.leveldb.Database
+import org.encryfoundation.tg.userState.{ConferencesNames, UserState}
 import scorex.crypto.hash.Blake2b256
-
-import scala.concurrent.Future
 
 trait PrivateConferenceService[F[_]] {
   def createConference(name: String, users: List[String]): F[Unit]
@@ -31,10 +23,10 @@ trait PrivateConferenceService[F[_]] {
 
 object PrivateConferenceService {
 
+  val conferencesKey = Blake2b256("Conferences")
+
   private class Live[F[_]: Sync: Logger](db: Database[F],
                                          userStateRef: Ref[F, UserState[F]]) extends PrivateConferenceService[F] {
-
-    private val conferencesKey = Blake2b256("Conferences")
 
     override def createConference(name: String, users: List[String]): F[Unit] =
       for {
@@ -52,7 +44,10 @@ object PrivateConferenceService {
         community <- PrivateCommunity(name, usersIds, generatorG1, generatorG2, generatorZr, usersInfo._2).pure[F]
         _ <- Logger[F].info(s"Create private community with name: ${name}. And users: ${usersIds.map(_.userTelegramLogin)}")
         _ <- Sync[F].delay(jState.communities.add(name))
-        _ <- db.put(conferencesKey, name.getBytes())
+        _ <- db.put(
+          conferencesKey,
+          ConferencesNames.toBytes(ConferencesNames(state.privateCommunities.map(_.name) :+ name))
+        )
         _ <- db.put(confInfo(name), PrivateCommunity.toBytes(community))
       } yield ()
 
@@ -77,6 +72,8 @@ object PrivateConferenceService {
   }
 
   def confInfo(confName: String) = Blake2b256(s"ConfInfo${confName}")
+
+
 
   def apply[F[_]: Sync: Logger](db: Database[F], userStateRef: Ref[F, UserState[F]]): F[PrivateConferenceService[F]] =
     Sync[F].delay(new Live[F](db, userStateRef))

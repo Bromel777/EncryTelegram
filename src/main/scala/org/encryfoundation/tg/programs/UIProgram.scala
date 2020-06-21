@@ -8,13 +8,12 @@ import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import javafx.scene.control.TextArea
-import org.drinkless.tdlib.{Client, TdApi}
+import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{AccumulatorHandler, PrivateGroupChatCreationHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, SendToChat, SetActiveChat}
-import org.encryfoundation.tg.RunApp.sendMsg
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.PrivateConferenceService
@@ -76,7 +75,7 @@ object UIProgram {
           }
         } yield ()
       case _@SendToChat(msg) =>
-        userStateRef.get.flatMap( state => sendMsg(state.chatList.find(_.id == state.activeChat).get, msg, userStateRef))
+        userStateRef.get.flatMap( state => ClientUtils.sendMsg(state.chatList.find(_.id == state.activeChat).get, msg, userStateRef))
       case _@CreateCommunityJava(name, usersJava) =>
         privateConfService.createConference(name, "me" :: usersJava.asScala.toList)
       case _@CreatePrivateGroupChat(name) =>

@@ -3,10 +3,9 @@ package org.encryfoundation.tg.pipelines.groupVerification
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.effect.concurrent.{MVar, Ref}
 import it.unisa.dia.gas.jpbc.Element
-import org.drinkless.tdlib.{Client, TdApi}
+import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.drinkless.tdlib.TdApi.SecretChat
 import org.encryfoundation.mitmImun.{Prover, Verifier}
-import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.pipelines.Pipeline
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
@@ -35,7 +34,7 @@ class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
 
   private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] = for {
     _ <- Logger[F].info(s"Send : ${msg}")
-    _ <- sendMessage(
+    _ <- ClientUtils.sendMessage(
       chatId,
       Base64.encode(StepMsgSerializer.toBytes(msg)),
       client

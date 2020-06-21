@@ -176,6 +176,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         ) else prevState
       )
       _ <- Sync[F].delay(chat.order = newOrder)
+      _ <- Logger[F].info(s"Got chat with id: ${chat.id}")
       _ <- userStateRef.update(prevState =>
         if (newOrder != 0) {
           prevState.javaState.get().setChatList(

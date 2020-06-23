@@ -14,7 +14,7 @@ import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
 import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
-import org.encryfoundation.tg.services.PrivateConferenceService
+import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 import org.encryfoundation.tg.utils.UserStateUtils
 import scorex.crypto.encode.Base64
@@ -24,6 +24,7 @@ import scala.util.{Failure, Success}
 
 case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                                           privateConferenceService: PrivateConferenceService[F],
+                                                          userStateService: UserStateService[F],
                                                           client: Client[F]) extends ResultHandler[F] {
 
   /**
@@ -98,6 +99,19 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         } yield ()
       case TdApi.UpdateSecretChat.CONSTRUCTOR =>
         val secretChat = obj.asInstanceOf[TdApi.UpdateSecretChat]
+        secretChat.secretChat.state match {
+          case closed: TdApi.SecretChatStateClosed =>
+          case pending: TdApi.SecretChatStatePending if !secretChat.secretChat.isOutbound =>
+            for {
+              _ <- client.send(new TdApi.OpenChat(secretChat.secretChat.id), SecretChatCreationHandler[F](userStateRef))
+              _ <- userStateService.persistSecretChat(secretChat.secretChat)
+            } yield ()
+          case ready: TdApi.SecretChatStateReady =>
+            for {
+              _ <- userStateService.persistSecretChat(secretChat.secretChat)
+            } yield ()
+          case _ =>
+        }
         for {
           state <- userStateRef.get
           _ <- userStateRef.update(

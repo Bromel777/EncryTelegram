@@ -5,7 +5,7 @@ import cats.effect.concurrent.Ref
 import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.pipelines.groupVerification.ProverFirstStep
-import org.encryfoundation.tg.services.PrivateConferenceService
+import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 
@@ -14,7 +14,9 @@ case class SecretGroupPrivateChatCreationHandler[F[_]: Concurrent: Timer: Logger
                                                                                   pass: String,
                                                                                   recipient: TdApi.User,
                                                                                   confChatId: Long,
-                                                                                  client: Client[F])(privConfServ: PrivateConferenceService[F]) extends ResultHandler[F]{
+                                                                                  client: Client[F])
+                                                                                 (privConfServ: PrivateConferenceService[F],
+                                                                                  stateService: UserStateService[F]) extends ResultHandler[F]{
   override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
     case TdApi.Chat.CONSTRUCTOR =>
       for {
@@ -28,18 +30,7 @@ case class SecretGroupPrivateChatCreationHandler[F[_]: Concurrent: Timer: Logger
           obj.asInstanceOf[TdApi.Chat],
           obj.asInstanceOf[TdApi.Chat].id
         )(privConfServ)
-        _ <- stateRef.update(
-          _.copy(
-            mainChatList = state.mainChatList + (obj.asInstanceOf[TdApi.Chat].id -> obj.asInstanceOf[TdApi.Chat]),
-            pendingSecretChatsForInvite = state.pendingSecretChatsForInvite + (
-              obj.asInstanceOf[TdApi.Chat].`type`.asInstanceOf[TdApi.ChatTypeSecret].secretChatId.toLong -> (
-                obj.asInstanceOf[TdApi.Chat],
-                confname,
-                recipient
-              )),
-            pipelineSecretChats = state.pipelineSecretChats + (obj.asInstanceOf[TdApi.Chat].id -> pipeLineStep)
-          )
-        )
+        _ <- stateService.addPipelineChat(obj.asInstanceOf[TdApi.Chat], pipeLineStep)
       } yield ()
     case _ => ().pure[F]
   }

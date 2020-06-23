@@ -16,7 +16,7 @@ import org.encryfoundation.tg.javaIntegration.JavaInterMsg
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, SendToChat, SetActiveChat}
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.services.PrivateConferenceService
+import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
 import org.javaFX.model.JDialog
 import scorex.crypto.encode.Base64
 
@@ -32,6 +32,7 @@ object UIProgram {
 
   private class Live[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                                       privateConfService: PrivateConferenceService[F],
+                                                      userStateService: UserStateService[F],
                                                       client: Client[F],
                                                       dialogAreaRef: MVar[F, TextArea],
                                                       jDialogRef: MVar[F, JDialog]) extends UIProgram[F] {
@@ -115,10 +116,11 @@ object UIProgram {
             userStateRef,
             client,
             confInfo,
+            groupname,
             userIds.map(_._2),
             confInfo.users.head.userTelegramLogin,
             password
-          )(privateConfService)
+          )(privateConfService, userStateService)
         )
         _ <- state.db.put(Database.privateGroupChatsKey, groupname.getBytes())
         _ <- state.db.put(groupname.getBytes(), password.getBytes())

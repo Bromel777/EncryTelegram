@@ -3,5 +3,6 @@ syntax = "proto3";
 message PrivateGroupChatProtoMessage {
     uint64 chatId = 1;
     string communityName = 2;
-    string password = 3;
+    string groupName = 3;
+    string password = 4;
 }

@@ -5,28 +5,30 @@ import cats.effect.concurrent.Ref
 import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.community.PrivateCommunity
-import org.encryfoundation.tg.services.PrivateConferenceService
+import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 
 case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Timer: Logger](stateRef: Ref[F, UserState[F]],
                                                                             client: Client[F],
                                                                             confInfo: PrivateCommunity,
+                                                                            groupName: String,
                                                                             users: List[TdApi.User],
                                                                             myLogin: String,
-                                                                            password: String)(privConfServ: PrivateConferenceService[F]) extends ResultHandler[F] {
+                                                                            password: String)
+                                                                           (privConfServ: PrivateConferenceService[F],
+                                                                            userStateService: UserStateService[F]) extends ResultHandler[F] {
 
   override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
     case TdApi.Chat.CONSTRUCTOR =>
       val newChat = obj.asInstanceOf[TdApi.Chat]
       for {
-        state <- stateRef.get
         _ <- Sync[F].delay(println("New chat created!"))
-        _ <- stateRef.update(
-          _.copy(
-            chatIds = state.chatIds + (newChat.id -> newChat),
-            privateGroups = state.privateGroups + (newChat.id -> (newChat, password))
-          )
+        _ <- userStateService.persistPrivateGroupChat(
+          newChat,
+          confInfo.name,
+          groupName,
+          password
         )
         _ <- users.traverse { user =>
           client.send(
@@ -37,7 +39,7 @@ case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Timer: Logger](stat
               password,
               user,
               newChat.id,
-              client)(privConfServ)
+              client)(privConfServ, userStateService)
           )
         }
       } yield ()

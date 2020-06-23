@@ -48,7 +48,7 @@
                   <Insets left="560.0" />
                </padding>
             </AnchorPane>
-          <AnchorPane fx:id="leftPane" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="200.0">
+          <AnchorPane fx:id="leftPane" prefHeight="400.0" prefWidth="200.0">
                <children>
                   <TableView fx:id="chatsTable" editable="true" layoutX="-1.0" minHeight="0.0" minWidth="0.0" onMouseClicked="#clickItem" prefHeight="398.0" prefWidth="156.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
@@ -60,34 +60,43 @@
                   </TableView>
                </children>
             </AnchorPane>
-          <AnchorPane fx:id="rightPane" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="357.0">
+          <AnchorPane fx:id="rightPane" prefHeight="400.0" prefWidth="357.0">
                <children>
-                  <Button fx:id="sendMessageButton" defaultButton="true" layoutX="288.0" layoutY="355.0" minHeight="31.0" minWidth="69.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="44.0" prefWidth="69.0" text="Send" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="355.0">
-                     <cursor>
-                        <Cursor fx:constant="DEFAULT" />
-                     </cursor>
+                  <TextArea fx:id="dialogArea" editable="false" layoutY="44.0" wrapText="true" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0">
                      <font>
-                        <Font name="Centaur" size="21.0" />
-                     </font></Button>
-                  <TextArea fx:id="dialogArea" editable="false" layoutY="44.0" wrapText="true" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0">
-                     <font>
-                        <Font name="Centaur" size="20.0" />
-                     </font></TextArea>
-                  <TextArea fx:id="searchMessageArea" layoutY="1.0" onKeyPressed="#findMessageByKeyboard" prefHeight="44.0" prefWidth="293.0" promptText="Search" wrapText="true" AnchorPane.bottomAnchor="354.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="0.0">
-                     <font>
-                        <Font size="20.0" />
+                        <Font name="Centaur" size="15.0" />
                      </font>
                   </TextArea>
-                  <TextArea fx:id="sendMessageArea" layoutY="355.0" onKeyPressed="#sendMessageByKeyboard" prefHeight="44.0" prefWidth="288.0" promptText="Write a message..." wrapText="true" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="355.0">
-                     <font>
-                        <Font name="Centaur" size="20.0" />
-                     </font>
-                  </TextArea>
-                  <Button fx:id="callButton" disable="true" layoutX="293.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#callContactAction" prefHeight="44.0" prefWidth="69.0" text="Call" AnchorPane.bottomAnchor="354.0" AnchorPane.leftAnchor="293.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <font>
-                        <Font name="Centaur" size="24.0" />
-                     </font>
-                  </Button>
+                  <AnchorPane prefHeight="44.0" prefWidth="362.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <TextArea fx:id="searchMessageArea" maxHeight="44.0" onKeyPressed="#findMessageByKeyboard" prefHeight="44.0" prefWidth="293.0" promptText="Search" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="0.0">
+                           <font>
+                              <Font name="Centaur" size="14.0" />
+                           </font></TextArea>
+                        <Button fx:id="callButton" disable="true" mnemonicParsing="false" onMouseClicked="#callContactAction" prefHeight="44.0" prefWidth="69.0" text="Call" textAlignment="CENTER" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <font>
+                              <Font name="Centaur" size="24.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane layoutY="355.0" prefHeight="44.0" prefWidth="362.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <Button fx:id="sendMessageButton" alignment="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#sendMessage" prefHeight="44.0" prefWidth="69.0" text="Send" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                           <cursor>
+                              <Cursor fx:constant="DEFAULT" />
+                           </cursor>
+                           <font>
+                              <Font name="Centaur" size="21.0" />
+                           </font>
+                        </Button>
+                        <TextArea fx:id="sendMessageArea" maxHeight="44.0" onKeyPressed="#sendMessageByKeyboard" prefHeight="44.0" prefWidth="293.0" promptText="Write a message..." wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0">
+                           <font>
+                              <Font name="Centaur" size="14.0" />
+                           </font>
+                        </TextArea>
+                     </children>
+                  </AnchorPane>
                </children>
             </AnchorPane>
         </items>

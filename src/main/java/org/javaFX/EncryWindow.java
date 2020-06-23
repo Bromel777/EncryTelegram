@@ -73,7 +73,7 @@ public class EncryWindow extends Application {
         rootLayoutHandler = loader.getController();
         Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
+        //primaryStage.setResizable(false);
         updateController(loader);
         primaryStage.show();
     }

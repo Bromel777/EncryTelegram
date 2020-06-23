@@ -70,8 +70,8 @@ public class LocalCommunityHandler extends DataHandler {
         rowNumberColumn.setCellValueFactory(cellDate -> new SimpleIntegerProperty(cellDate.getValue().getRowNumber().get()).asObject() );
         chatsNameColumn.setCellValueFactory(cellData -> cellData.getValue().getFullName());
         phoneNumberColumn.setCellValueFactory(cellData -> cellData.getValue().getPhoneNumber());
-        checkBoxesColumn.setCellValueFactory(arg0 -> {
-            JLocalCommunityMember jLocalCommunityMember = arg0.getValue();
+        checkBoxesColumn.setCellValueFactory(cellData -> {
+            JLocalCommunityMember jLocalCommunityMember = cellData.getValue();
             CheckBox checkBox = new CheckBox();
             checkBox.selectedProperty().setValue(jLocalCommunityMember.isChosenBoolean());
             checkBox.selectedProperty().addListener((ov, old_val, new_val) ->

@@ -24,7 +24,7 @@
             <Cursor fx:constant="DEFAULT" />
          </cursor>
         </Button>
-        <Button id="signInButton" fx:id="signInButton" defaultButton="true" disable="true" layoutX="23.0" layoutY="337.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="270.0" text="Sign in" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="23.0">
+        <Button id="signInButton" fx:id="signInButton" defaultButton="true" disable="true" layoutX="23.0" layoutY="337.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="270.0" text="Sign in" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0">
             <font>
                 <Font name="Centaur" size="24.0" />
             </font>

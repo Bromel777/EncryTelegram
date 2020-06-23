@@ -42,12 +42,12 @@
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </Label>
-                <TextField fx:id="phoneNumber" onKeyPressed="#handlePhoneNubmerAreaPressed" GridPane.columnIndex="1">
+                <TextField fx:id="phoneNumber" onKeyPressed="#handlePhoneNumberAreaPressed" GridPane.columnIndex="1">
                     <font>
                         <Font name="Centaur" size="24.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="verificationCode" disable="true" onKeyPressed="#handleVerificationCodeAreaPressed" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <TextField fx:id="verificationCode" disable="true" onKeyPressed="#handleVCAreaPressed" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <font>
                         <Font name="Centaur" size="24.0" />
                     </font>
@@ -69,17 +69,17 @@
             </Button>
             <ImageView id="resetPNImage" fx:id="resetPhoneNumberImageView" fitHeight="45.0" fitWidth="37.0" onMouseClicked="#resetPhoneNumberInputAction" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
                <image>
-                  <Image url="@../../../../resources/images/reset.png" />
+                  <Image url="file:src/main/resources/images/reset.png" />
                </image>
             </ImageView>
             <ImageView fx:id="resetVCImageView" disable="true" fitHeight="46.0" fitWidth="38.0" onMouseClicked="#resetVCAction" pickOnBounds="true" preserveRatio="true" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <image>
-                  <Image url="@../../../../resources/images/reset.png" />
+                  <Image url="file:src/main/resources/images/reset.png" />
                </image>
             </ImageView>
             <ImageView fx:id="resetPasswordImageView" disable="true" fitHeight="46.0" fitWidth="39.0" onMouseClicked="#resetPasswordAction" pickOnBounds="true" preserveRatio="true" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <image>
-                  <Image url="@../../../../resources/images/reset.png" />
+                  <Image url="file:src/main/resources/images/reset.png" />
                </image>
             </ImageView>
             </children>

@@ -3,6 +3,7 @@ package org.javaFX.controller.impl.handler;
 import javafx.fxml.FXML;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
+import org.javaFX.model.JTableEntity;
 import org.javaFX.util.observers.BasicObserver;
 
 public class RootLayoutHandler extends DataHandler {
@@ -17,6 +18,7 @@ public class RootLayoutHandler extends DataHandler {
     @FXML
     private void createLocalCommunity(){
         terminateObserver();
+        JTableEntity.resetRowNumber();
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToCreateCommunityWindowFXML);
     }
 
@@ -28,12 +30,14 @@ public class RootLayoutHandler extends DataHandler {
     @FXML
     private void launchMainWindow(){
         terminateObserver();
+        JTableEntity.resetRowNumber();
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
     }
 
     @FXML
     private void showLocalCommunity(){
         terminateObserver();
+        JTableEntity.resetRowNumber();
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToLocalShowCommunitiesWindowFXML);
     }
 

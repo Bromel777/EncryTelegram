@@ -67,7 +67,7 @@ public class LocalCommunityHandler extends DataHandler {
     }
 
     private void initChatsTable(){
-        rowNumberColumn.setCellValueFactory(cellDate -> new SimpleIntegerProperty(cellDate.getValue().getThisNumber().get()).asObject() );
+        rowNumberColumn.setCellValueFactory(cellDate -> new SimpleIntegerProperty(cellDate.getValue().getRowNumber().get()).asObject() );
         chatsNameColumn.setCellValueFactory(cellData -> cellData.getValue().getFullName());
         phoneNumberColumn.setCellValueFactory(cellData -> cellData.getValue().getPhoneNumber());
         checkBoxesColumn.setCellValueFactory(cellData ->  cellData.getValue().isChosen());
@@ -102,6 +102,5 @@ public class LocalCommunityHandler extends DataHandler {
         controller.setState(getUserStateRef());
         dialogStage.show();
     }
-
 
 }

@@ -18,27 +18,27 @@
                      <children>
                         <ImageView fx:id="menuButton" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#showMenu" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../../../../resources/images/menu.png" />
+                                <Image url="file:src/main/resources/images/menu.png" />
                             </image>
                         </ImageView>
                         <ImageView fx:id="allChatsButton" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#showChats" pickOnBounds="true" preserveRatio="true">
                              <image>
-                                 <Image url="@../../../../resources/images/chats.png" />
+                                 <Image url="file:src/main/resources/images/chats.png" />
                              </image>
                         </ImageView>
                         <ImageView fx:id="privateChatsButton" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#showPrivateChats" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../../../../resources/images/lock.png" />
+                                <Image url="file:src/main/resources/images/lock.png" />
                             </image>
                         </ImageView>
                         <ImageView fx:id="phoneButton" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#makeCall" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../../../resources/images/call.png" />
+                              <Image url="file:src/main/resources/images/call.png" />
                            </image>
                         </ImageView>
                         <ImageView fx:id="editButton" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#showOptions" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../../../../resources/images/edit.png" />
+                                <Image url="file:src/main/resources/images/edit.png" />
                             </image>
                         </ImageView>
                      </children>
@@ -73,7 +73,7 @@
                      <font>
                         <Font name="Centaur" size="20.0" />
                      </font></TextArea>
-                  <TextArea fx:id="searchMessageArea" layoutY="1.0" onKeyPressed="#findMessageByKeyboard" prefHeight="43.0" prefWidth="412.0" promptText="Search" wrapText="true" AnchorPane.bottomAnchor="354.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TextArea fx:id="searchMessageArea" layoutY="1.0" onKeyPressed="#findMessageByKeyboard" prefHeight="44.0" prefWidth="293.0" promptText="Search" wrapText="true" AnchorPane.bottomAnchor="354.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="0.0">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -83,9 +83,9 @@
                         <Font name="Centaur" size="20.0" />
                      </font>
                   </TextArea>
-                  <Button fx:id="callButton" disable="true" layoutX="311.0" layoutY="44.0" mnemonicParsing="false" onMouseClicked="#callContactAction" text="Call" visible="false">
+                  <Button fx:id="callButton" disable="true" layoutX="293.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#callContactAction" prefHeight="44.0" prefWidth="69.0" text="Call" AnchorPane.bottomAnchor="354.0" AnchorPane.leftAnchor="293.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <font>
-                        <Font name="Centaur" size="18.0" />
+                        <Font name="Centaur" size="24.0" />
                      </font>
                   </Button>
                </children>

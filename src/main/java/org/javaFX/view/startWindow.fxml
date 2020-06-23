@@ -16,7 +16,7 @@
                 <Font name="Centaur" size="36.0" />
             </font>
         </Label>
-        <Button id="cancelButton2" fx:id="cancelButton" cancelButton="true" layoutX="320.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleCancelAction" onKeyPressed="#handleKeyPressedAction" prefHeight="46.0" prefWidth="270.0" text="Cancel">
+        <Button id="cancelButton2" fx:id="cancelButton" cancelButton="true" layoutX="320.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleCancelAction" onKeyPressed="#handleKeyPressedAction" prefHeight="46.0" prefWidth="270.0" text="Cancel" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="33.0">
             <font>
                 <Font name="Centaur" size="24.0" />
             </font>
@@ -24,7 +24,7 @@
             <Cursor fx:constant="DEFAULT" />
          </cursor>
         </Button>
-        <Button id="signInButton" fx:id="signInButton" defaultButton="true" disable="true" layoutX="23.0" layoutY="337.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="270.0" text="Sign in">
+        <Button id="signInButton" fx:id="signInButton" defaultButton="true" disable="true" layoutX="23.0" layoutY="337.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="270.0" text="Sign in" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="23.0">
             <font>
                 <Font name="Centaur" size="24.0" />
             </font>
@@ -36,7 +36,7 @@
       </Label>
       <ImageView fx:id="loadingGif" fitHeight="220.0" fitWidth="220.0" layoutX="203.0" layoutY="106.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="203.0" AnchorPane.rightAnchor="240.82473754882812" AnchorPane.topAnchor="106.0">
          <image>
-            <Image url="@../../../../resources/images/loading.gif" />
+            <Image url="file:src/main/resources/images/loading.gif" />
          </image>
       </ImageView>
     </children>

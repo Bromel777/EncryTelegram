@@ -76,42 +76,66 @@ public class AuthenticationHandler extends DataHandler {
 
     @FXML
     private void handleConfirmNumberPressed(){
-        handleKeyPressed(confirmNumberButton);
+        handleNumberAccepted(confirmNumberButton);
     }
 
     @FXML
-    private void handlePhoneNubmerAreaPressed(){
-        handleKeyPressed(confirmNumberButton);
+    private void handlePhoneNumberAreaPressed(){
+        handleNumberAccepted(confirmNumberButton);
     }
 
     @FXML
     private void handleConfirmVCPressed(){
-       handleKeyPressed(confirmVCButton);
+        handleVCAccepted(confirmVCButton);
     }
 
     @FXML
-    private void handleVerificationCodeAreaPressed(){
-        handleKeyPressed(confirmVCButton);
+    private void handleVCAreaPressed(){
+        handleVCAccepted(confirmVCButton);
     }
 
     @FXML
     private void handleSignInPressed(){
-        handleKeyPressed(signInButton);
+        handleVPasswordAccepted(signInButton);
     }
 
     @FXML
     private void handlePasswordAreaPressed(){
-        handleKeyPressed(signInButton);
+        handleVPasswordAccepted(signInButton);
     }
 
 
-    private void handleKeyPressed(Node node){
-        AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(node);
+    private void handleNumberAccepted(Node node){
+        AtomicBoolean[] keysPressed = KeyboardHandler.handleShiftEnterPressed(node);
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if ( keysPressed.get() ) {
+                if ( keysPressed[0].get() && keysPressed[1].get()   ) {
                     handleConfirmNumberAction();
+                }
+            }
+        }.start();
+    }
+
+    private void handleVCAccepted(Node node){
+        AtomicBoolean[] keysPressed = KeyboardHandler.handleShiftEnterPressed(node);
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (keysPressed[0].get() && keysPressed[1].get()   ) {
+                    handleConfirmVCAction();
+                }
+            }
+        }.start();
+    }
+
+    private void handleVPasswordAccepted(Node node){
+        AtomicBoolean[] keysPressed = KeyboardHandler.handleShiftEnterPressed(node);
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if ( keysPressed[0].get() && keysPressed[1].get()  ) {
+                    singInAction();
                 }
             }
         }.start();

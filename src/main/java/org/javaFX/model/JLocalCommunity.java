@@ -5,12 +5,14 @@ import javafx.beans.property.StringProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class JLocalCommunity {
+public class JLocalCommunity extends JTableEntity{
 
     private String communityName;
     private long communityID;
     private List<JLocalCommunityMember> communityMembers;
+    private int communitySize;
 
     private void generatePseudoRandomCommunityID(){
         this.communityID = (long)(Long.MAX_VALUE*Math.random());
@@ -22,14 +24,21 @@ public class JLocalCommunity {
     }
 
     public JLocalCommunity(String communityName) {
-        communityMembers = new ArrayList<>();
-        generatePseudoRandomCommunityID();
+        this();
         this.communityName = communityName;
     }
 
+
+    public JLocalCommunity(String communityName, int localCommunitySize) {
+        this();
+        this.communityName = communityName;
+        this.communitySize = localCommunitySize;
+    }
+
+
     public JLocalCommunity(List<JLocalCommunityMember> communityMembers) {
+        this();
         this.communityMembers = communityMembers;
-        generatePseudoRandomCommunityID();
     }
 
     public List<JLocalCommunityMember> getCommunityMembers() {
@@ -55,6 +64,7 @@ public class JLocalCommunity {
             communityMembers.remove(contact);
         }
     }
+
     private JLocalCommunityMember removeContactFromCommunityById(int chatId){
         JLocalCommunityMember contact = null;
         for(JLocalCommunityMember member: communityMembers){
@@ -80,4 +90,9 @@ public class JLocalCommunity {
     public long getCommunityID() {
         return communityID;
     }
+
+    public AtomicInteger getCommunitySize(){
+        return new AtomicInteger(communityMembers.size() == 0 ?communitySize : communityMembers.size());
+    }
+
 }

@@ -27,6 +27,9 @@ public class MainWindowHandler extends DataHandler {
     private TableColumn<JChat, String> chatsColumn;
 
     @FXML
+    private TableColumn<JChat, String> lastMsgColumn;
+
+    @FXML
     private TextArea searchMessageArea;
 
     @FXML
@@ -71,7 +74,7 @@ public class MainWindowHandler extends DataHandler {
     private ObservableList<JChat> getObservableChatList(){
         ObservableList<JChat> observableChatList = FXCollections.observableArrayList();
         getUserStateRef().get().getChatList().forEach(
-                chat -> observableChatList.add(new JChat(chat.title, "test", chat.id) )
+                chat -> observableChatList.add(new JChat(chat.title, "stub", chat.id) )
         );
         return observableChatList;
     }
@@ -79,6 +82,7 @@ public class MainWindowHandler extends DataHandler {
     @FXML
     private void initializeTable() {
         chatsColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
+        lastMsgColumn.setCellValueFactory(cellData -> cellData.getValue().getLastMessage());
     }
 
     @FXML

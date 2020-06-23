@@ -14,8 +14,8 @@
          <children>
             <TableView fx:id="chatsTable" onMouseClicked="#changeCheckBoxValue" prefHeight="371.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columns>
-                <TableColumn fx:id="rowNumberColumn" minWidth="0.0" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="№" />
-                <TableColumn fx:id="chatsNameColumn" prefWidth="240.0" sortable="false" style="-fx-alignment: CENTER;" text="Contact Name" />
+                <TableColumn fx:id="rowNumberColumn" minWidth="0.0" prefWidth="38.0" sortable="false" style="-fx-alignment: CENTER;" text="№" />
+                <TableColumn fx:id="chatsNameColumn" prefWidth="157.0" sortable="false" style="-fx-alignment: CENTER;" text="Contact Name" />
                   <TableColumn fx:id="phoneNumberColumn" prefWidth="223.0" sortable="false" style="-fx-alignment: CENTER;" text="Phone Number" />
                   <TableColumn fx:id="checkBoxesColumn" prefWidth="70.0" sortable="false" style="-fx-alignment: CENTER;" text="Choose" />
               </columns>

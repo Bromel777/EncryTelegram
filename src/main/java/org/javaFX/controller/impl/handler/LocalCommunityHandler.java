@@ -1,12 +1,12 @@
 package org.javaFX.controller.impl.handler;
 
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.drinkless.tdlib.TdApi;
 import org.javaFX.EncryWindow;
@@ -35,7 +35,7 @@ public class LocalCommunityHandler extends DataHandler {
     private TableColumn<JLocalCommunityMember, String> phoneNumberColumn;
 
     @FXML
-    private TableColumn<JLocalCommunityMember, Boolean> checkBoxesColumn;
+    private TableColumn<JLocalCommunityMember, CheckBox> checkBoxesColumn;
 
     private ScheduledExecutorService service;
 
@@ -70,7 +70,14 @@ public class LocalCommunityHandler extends DataHandler {
         rowNumberColumn.setCellValueFactory(cellDate -> new SimpleIntegerProperty(cellDate.getValue().getRowNumber().get()).asObject() );
         chatsNameColumn.setCellValueFactory(cellData -> cellData.getValue().getFullName());
         phoneNumberColumn.setCellValueFactory(cellData -> cellData.getValue().getPhoneNumber());
-        checkBoxesColumn.setCellValueFactory(cellData ->  cellData.getValue().isChosen());
+        checkBoxesColumn.setCellValueFactory(arg0 -> {
+            JLocalCommunityMember jLocalCommunityMember = arg0.getValue();
+            CheckBox checkBox = new CheckBox();
+            checkBox.selectedProperty().setValue(jLocalCommunityMember.isChosenBoolean());
+            checkBox.selectedProperty().addListener((ov, old_val, new_val) ->
+                    jLocalCommunityMember.setBooleanChosen(new_val));
+            return new SimpleObjectProperty<>(checkBox);
+        });
         service.shutdown();
     }
 

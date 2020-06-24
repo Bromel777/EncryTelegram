@@ -12,6 +12,11 @@ public class JLocalCommunityMember extends JTableEntity{
     private LongProperty userId;
     private BooleanProperty isChosen;
 
+    public JLocalCommunityMember(String firstNameStr, String lastNameStr){
+        firstName = new SimpleStringProperty(firstNameStr);
+        lastName = new SimpleStringProperty(lastNameStr);
+    }
+
     public JLocalCommunityMember(StringProperty firstName, StringProperty lastName, StringProperty phoneNumber, LongProperty chatId) {
         this.firstName = firstName;
         this.lastName = lastName;

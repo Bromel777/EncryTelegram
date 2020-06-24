@@ -118,7 +118,7 @@ public class LocalCommunityHandler extends DataHandler {
     }
 
     @FXML
-    private void searchContactByKeyBoard(){
+    private void searchContactByKeyboard(){
         AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(searchContactTextArea);
         new AnimationTimer() {
             @Override

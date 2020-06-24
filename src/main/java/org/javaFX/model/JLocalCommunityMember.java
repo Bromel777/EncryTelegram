@@ -2,8 +2,6 @@ package org.javaFX.model;
 
 import javafx.beans.property.*;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class JLocalCommunityMember extends JTableEntity{
 
     private StringProperty firstName;

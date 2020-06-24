@@ -17,7 +17,6 @@ import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JLocalCommunityMember;
 import org.javaFX.util.KeyboardHandler;
 
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

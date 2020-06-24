@@ -17,10 +17,6 @@ public class EnterCommunityNameDialogController extends DialogController {
 
     private static int localCommunitySize = 0;
 
-    public static int getLocalCommunitySize(){
-        return localCommunitySize;
-    }
-
     @FXML
     private void initialize() {
     }

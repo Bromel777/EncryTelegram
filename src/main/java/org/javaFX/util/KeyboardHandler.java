@@ -1,8 +1,7 @@
 package org.javaFX.util;
 
-
 import javafx.scene.Node;
-import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,19 +38,14 @@ public class KeyboardHandler {
     public static AtomicBoolean handleEnterPressed(Node element ){
         AtomicBoolean keyPressed = new AtomicBoolean(false);
         element.setOnKeyPressed(keyEvent -> {
-            switch (keyEvent.getCode()) {
-                case ENTER:
-                    keyPressed.set(true);
-                    break;
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                keyPressed.set(true);
             }
         });
 
         element.setOnKeyReleased(keyEvent -> {
-            switch (keyEvent.getCode()) {
-                case ENTER:
-                    keyPressed.set(false);
-                    break;
-
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                keyPressed.set(false);
             }
         });
         return keyPressed;

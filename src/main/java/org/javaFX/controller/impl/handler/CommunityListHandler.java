@@ -3,7 +3,6 @@ package org.javaFX.controller.impl.handler;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
@@ -12,7 +11,6 @@ import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.controller.impl.dialog.CreatePrivateCommonDialogController;
-import org.javaFX.controller.impl.dialog.EnterCommunityNameDialogController;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.util.InfoContainer;
 
@@ -54,7 +52,7 @@ public class CommunityListHandler extends DataHandler {
 
     private ObservableList<JLocalCommunity> getObservableCommunityList(){
         ObservableList<JLocalCommunity> observableList = FXCollections.observableArrayList();
-        getUserStateRef().get().communities.stream().forEach(community -> observableList.add(new JLocalCommunity(community, InfoContainer.getSizeByName(community)) ) );
+        getUserStateRef().get().communities.forEach(community -> observableList.add(new JLocalCommunity(community, InfoContainer.getSizeByName(community)) ) );
         return observableList;
     }
 

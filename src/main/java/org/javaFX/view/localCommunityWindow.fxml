@@ -32,6 +32,11 @@
                   <Font name="Centaur" size="18.0" />
                </font>
             </Button>
+            <TextArea fx:id="searchContactTextArea" onKeyPressed="#searchContactByKeyBoard" prefHeight="45.0" prefWidth="509.0" promptText="Search..." AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="0.0">
+               <font>
+                  <Font name="Centaur" size="14.0" />
+               </font>
+            </TextArea>
          </children>
       </AnchorPane>
    </children>

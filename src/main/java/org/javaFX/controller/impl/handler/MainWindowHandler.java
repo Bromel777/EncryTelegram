@@ -20,6 +20,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainWindowHandler extends DataHandler {
 
+    //HARDCODED
+    private final int delayDuration = 3;
+
     @FXML
     private TableView<JChat> chatsTable;
 
@@ -30,17 +33,16 @@ public class MainWindowHandler extends DataHandler {
     private TableColumn<JChat, String> lastMsgColumn;
 
     @FXML
-    private TextArea searchMessageArea;
+    private TextArea searchMessageTextArea;
 
     @FXML
-    private TextArea sendMessageArea;
+    private TextArea sendMessageTextArea;
 
     @FXML
-    private TextArea dialogArea;
+    private TextArea dialogTextArea;
 
     @FXML
     private Button callButton;
-
 
     private JDialog jDialog;
 
@@ -57,7 +59,7 @@ public class MainWindowHandler extends DataHandler {
 
     private void chatListObserve(DataHandler controller){
         setObserver(new JTableObserver(controller));
-        getObserver().setPeriod(Duration.seconds(3));
+        getObserver().setPeriod(Duration.seconds(delayDuration));
         getObserver().start();
     }
 
@@ -87,18 +89,18 @@ public class MainWindowHandler extends DataHandler {
 
     @FXML
     private void sendMessage() throws InterruptedException {
-        String messageStr = sendMessageArea.getText().trim();
+        String messageStr = sendMessageTextArea.getText().trim();
         if(!messageStr.isEmpty()) {
             JavaInterMsg msg = new JavaInterMsg.SendToChat(messageStr);
             getUserStateRef().get().msgsQueue.put(msg);
-            sendMessageArea.setText("");
+            sendMessageTextArea.setText("");
         }
     }
 
     @FXML
     private void clickItem() throws InterruptedException {
         getUserStateRef().get().setActiveDialog(jDialog);
-        getUserStateRef().get().setActiveDialogArea(dialogArea);
+        getUserStateRef().get().setActiveDialogArea(dialogTextArea);
         JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
                 chatsTable.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );
@@ -109,7 +111,7 @@ public class MainWindowHandler extends DataHandler {
 
     @FXML
     private void sendMessageByKeyboard(){
-        AtomicBoolean[] keysPressed = KeyboardHandler.handleShiftEnterPressed(sendMessageArea);
+        AtomicBoolean[] keysPressed = KeyboardHandler.handleShiftEnterPressed(sendMessageTextArea);
         new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -126,7 +128,7 @@ public class MainWindowHandler extends DataHandler {
 
     @FXML
     private void findMessageByKeyboard(){
-        AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(searchMessageArea);
+        AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(searchMessageTextArea);
         new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -138,8 +140,7 @@ public class MainWindowHandler extends DataHandler {
     }
 
     private void findMessage(){
-        final String searchingStr = searchMessageArea.getText().trim();
-        searchMessageArea.setText(searchingStr);
+        final String searchingStr = searchMessageTextArea.getText().trim();
         if(!searchingStr.isEmpty()) {
             StringBuffer localDialogHistory = jDialog.getContent();
             String [] messagesArray = localDialogHistory.toString().split("\n");
@@ -147,10 +148,9 @@ public class MainWindowHandler extends DataHandler {
             Arrays.stream(messagesArray)
                     .filter(str -> str.toLowerCase().contains(searchingStr.toLowerCase()))
                     .forEach(str -> results.append(str).append("\n"));
-            dialogArea.setText(results.toString());
+            dialogTextArea.setText(results.toString());
         }
     }
-
 
     private void createDialog(){
         jDialog = new JDialog("title stub");
@@ -161,30 +161,29 @@ public class MainWindowHandler extends DataHandler {
         //TODO implement
     }
 
-
     @FXML
     private void showMenu(){
-
+        //TODO implement
     }
 
     @FXML
     private void showChats(){
-
+        //TODO implement
     }
 
     @FXML
     private void showPrivateChats(){
-
+        //TODO implement
     }
 
     @FXML
     private void showOptions(){
-
+        //TODO implement
     }
 
     @FXML
-    private void makeCall(){
-
+    private void showCalls(){
+        //TODO implement
     }
 
 

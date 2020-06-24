@@ -1,5 +1,6 @@
 package org.javaFX.controller.impl.handler;
 
+import javafx.animation.AnimationTimer;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -14,10 +15,13 @@ import org.javaFX.controller.DataHandler;
 import org.javaFX.controller.impl.dialog.EnterCommunityNameDialogController;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JLocalCommunityMember;
+import org.javaFX.util.KeyboardHandler;
 
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class LocalCommunityHandler extends DataHandler {
@@ -36,6 +40,9 @@ public class LocalCommunityHandler extends DataHandler {
 
     @FXML
     private TableColumn<JLocalCommunityMember, CheckBox> checkBoxesColumn;
+
+    @FXML
+    private TextArea searchContactTextArea;
 
     private ScheduledExecutorService service;
 
@@ -108,6 +115,30 @@ public class LocalCommunityHandler extends DataHandler {
         controller.setLocalCommunity(localCommunity);
         controller.setState(getUserStateRef());
         dialogStage.show();
+    }
+
+    @FXML
+    private void searchContactByKeyBoard(){
+        AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(searchContactTextArea);
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if ( keysPressed.get() ) {
+                    findContact();
+                }
+            }
+        }.start();
+    }
+
+    private void findContact(){
+        final String searchingStr = searchContactTextArea.getText().trim();
+        chatsTable.getItems().stream()
+                .filter(item -> item.getFullName().getValueSafe().toLowerCase().contains(searchingStr.toLowerCase()) )
+                .findAny()
+                .ifPresent(item -> {
+                    chatsTable.getSelectionModel().select(item);
+                    chatsTable.scrollTo(item);
+                });
     }
 
 }

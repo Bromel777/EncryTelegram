@@ -13,11 +13,9 @@ public class CreatePrivateCommonDialogController extends DialogController {
 
     @FXML
     private void createButtonAction() throws InterruptedException {
+        final String secretChatName = privateChatTitle.getText();
+        //TODO: insert somewhere
         JavaInterMsg msg = new JavaInterMsg.CreatePrivateGroupChat(getLocalCommunity().getCommunityName());
-        //TODO
-        // здесь создаётся приватный чат. В классе надо создавать метод для инъекции названия, например:
-        // msg.setTitle(privateChatTitle.getText());
-
         getState().get().msgsQueue.put(msg);
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
         getDialogStage().close();

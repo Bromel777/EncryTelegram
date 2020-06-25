@@ -11,10 +11,9 @@ import cats.implicits._
 trait UserStateService[F[_]] {
   def persistChat(chat: TdApi.Chat): F[Unit]
   def persistSecretChat(chat: TdApi.SecretChat): F[Unit]
-  def addPipelineChat(chat: TdApi.Chat, pipeline: Pipeline[F]): F[Unit]
-  def updatePipelineChat(chat: TdApi.Chat, newPipeline: Pipeline[F]): F[Unit]
+  def addPipelineChat(chat: TdApi.Chat, newPipeline: Pipeline[F]): F[Unit]
+  def updatePipelineChat(secretChatId: Long, newPipeline: Pipeline[F]): F[Unit]
   def getPipeline(secretChatId: Long): F[Option[Pipeline[F]]]
-  def upgradePendingSecretChat2Pipeline(chat: TdApi.Chat): F[Unit]
   def persistPrivateGroupChat(chat: TdApi.Chat, communityName: String, groupName: String, password: String): F[Unit]
   def recoverOrPersistChat(chat: TdApi.Chat): F[Unit]
 }
@@ -39,17 +38,28 @@ object UserStateService {
 
     override def recoverOrPersistChat(chat: TdApi.Chat): F[Unit] = ???
 
-    override def upgradePendingSecretChat2Pipeline(chat: TdApi.Chat): F[Unit] = ???
-
     override def addPipelineChat(chat: TdApi.Chat, pipeline: Pipeline[F]): F[Unit] =
-      userState.update( prevState =>
+      userState.update(prevState =>
         prevState.copy(
           pipelineSecretChats = prevState.pipelineSecretChats +
             (chat.`type`.asInstanceOf[TdApi.ChatTypeSecret].secretChatId.toLong -> pipeline)
         )
       )
 
-    override def updatePipelineChat(chat: TdApi.Chat, newPipeline: Pipeline[F]): F[Unit] = ???
+    override def updatePipelineChat(secretChatId: Long, newPipeline: Pipeline[F]): F[Unit] = for {
+      state <- userState.get
+      isPending <- state.pendingSecretChatsForInvite.contains(secretChatId).pure[F]
+      _ <- if (isPending) userState.update { prevState =>
+        prevState.copy(
+          pendingSecretChatsForInvite = prevState.pendingSecretChatsForInvite - secretChatId,
+          pipelineSecretChats = state.pipelineSecretChats + (secretChatId -> newPipeline)
+        )
+      } else userState.update { prevState =>
+        prevState.copy(
+          pipelineSecretChats = state.pipelineSecretChats + (secretChatId -> newPipeline)
+        )
+      }
+    } yield ()
 
     override def getPipeline(secretChatId: Long): F[Option[Pipeline[F]]] =
       userState.get.map(_.pipelineSecretChats.get(secretChatId))
@@ -59,4 +69,7 @@ object UserStateService {
         prevState.copy(secretChats = prevState.secretChats + (chat.id -> chat))
       )
   }
+
+  def apply[F[_]: Sync](userState: Ref[F, UserState[F]],
+                        db: Database[F]): F[UserStateService[F]] = Sync[F].delay(new Live[F](userState, db))
 }

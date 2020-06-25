@@ -12,7 +12,7 @@ import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.tg.handlers.EmptyHandlerWithQueue
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.programs.{ConsoleProgram, UIProgram}
-import org.encryfoundation.tg.services.PrivateConferenceService
+import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 import org.javaFX.EncryWindow
 import org.javaFX.model.JUserState
@@ -35,7 +35,8 @@ object RunApp extends App {
     mainState <- UserState.recoverOrCreate(client, state, db)
     ref <- Ref.of[IO, UserState[IO]](mainState)
     confService <- PrivateConferenceService[IO](db, ref)
-    handler <- Handler[IO](ref, queueRef, confService, client)
+    userStateService <- UserStateService[IO](ref, db)
+    handler <- Handler[IO](ref, queueRef, confService, userStateService, client)
     _ <- client.setUpdatesHandler(handler)
   } yield (queueRef, client, ref, logger, confService)
 

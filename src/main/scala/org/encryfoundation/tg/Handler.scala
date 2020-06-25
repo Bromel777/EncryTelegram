@@ -100,7 +100,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case TdApi.UpdateSecretChat.CONSTRUCTOR =>
         val secretChat = obj.asInstanceOf[TdApi.UpdateSecretChat]
         secretChat.secretChat.state match {
-          case closed: TdApi.SecretChatStateClosed =>
+          case closed: TdApi.SecretChatStateClosed =>().pure[F]
           case pending: TdApi.SecretChatStatePending if !secretChat.secretChat.isOutbound =>
             for {
               _ <- client.send(new TdApi.OpenChat(secretChat.secretChat.id), SecretChatCreationHandler[F](userStateRef))
@@ -109,44 +109,17 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           case ready: TdApi.SecretChatStateReady =>
             for {
               _ <- userStateService.persistSecretChat(secretChat.secretChat)
-            } yield ()
-          case _ =>
-        }
-        for {
-          state <- userStateRef.get
-          _ <- userStateRef.update(
-            _.copy(secretChats = state.secretChats + (secretChat.secretChat.id -> secretChat.secretChat))
-          )
-          _ <- if (
-            secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStateReady] &&
-              state.pendingSecretChatsForInvite.contains(secretChat.secretChat.id)
-          ) for {
-              _ <- Logger[F].info("Secret chat for key sharing accepted. Start first step!")
-              chatInfo <- state.pendingSecretChatsForInvite(secretChat.secretChat.id).pure[F]
-              chatId <- state.pendingSecretChatsForInvite(secretChat.secretChat.id)._1.id.pure[F]
-              newPipeline <- state.pipelineSecretChats(chatId).processInput(Array.emptyByteArray)
-              _ <- userStateRef.update { prevState =>
-                prevState.copy(
-                  pendingSecretChatsForInvite = state.pendingSecretChatsForInvite - secretChat.secretChat.id,
-                  privateGroups = state.privateGroups + (chatInfo._1.id -> (chatInfo._1 -> chatInfo._2)),
-                  pipelineSecretChats = state.pipelineSecretChats +
-                    (chatId -> newPipeline)
-                )
+              possiblePipeline <- userStateService.getPipeline(secretChat.secretChat.id)
+              _ <- possiblePipeline match {
+                case Some(pipeline) =>
+                  pipeline.processInput(Array.emptyByteArray).flatMap( newPipeline =>
+                    userStateService.updatePipelineChat(secretChat.secretChat.id, newPipeline)
+                  )
+                case None => (()).pure[F]
               }
             } yield ()
-          else if (secretChat.secretChat.state.isInstanceOf[TdApi.SecretChatStatePending] && !secretChat.secretChat.isOutbound) {
-            for {
-              _ <- client.send(new TdApi.OpenChat(secretChat.secretChat.id), SecretChatCreationHandler[F](userStateRef))
-              state <- userStateRef.get
-              _ <- userStateRef.update(
-                _.copy(
-                  secretChats = state.secretChats + (secretChat.secretChat.id -> secretChat.secretChat)
-                )
-              )
-            } yield ()
-          }
-          else Sync[F].delay()
-        } yield ()
+          case _ =>().pure[F]
+        }
       case TdApi.UpdateNewMessage.CONSTRUCTOR =>
         val msg = obj.asInstanceOf[TdApi.UpdateNewMessage]
         for {
@@ -258,8 +231,8 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
 
     def msg2Str(msg: TdApi.Message, state: UserState[F]): String =
       msg.content match {
-        case text: MessageText if state.privateGroups.contains(msg.chatId) =>
-          val aes = AESEncryption(state.privateGroups(msg.chatId)._2.getBytes())
+        case text: MessageText if state.privateGroups.exists(_.chatId == msg.chatId) =>
+          val aes = AESEncryption(state.privateGroups.find(_.chatId == msg.chatId).get.password.getBytes())
           state.users(msg.senderUserId).phoneNumber + ": " + aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString
         case text: MessageText => state.users(msg.senderUserId).phoneNumber + ": " + text.text.text
         case _: MessagePhoto => state.users(msg.senderUserId).phoneNumber + ": " + "photo"
@@ -284,8 +257,9 @@ object Handler {
   def apply[F[_]: ConcurrentEffect: Timer: Logger](stateRef: Ref[F, UserState[F]],
                                                    queueRef: Ref[F, List[TdApi.Object]],
                                                    privateConferenceService: PrivateConferenceService[F],
+                                                   userStateService: UserStateService[F],
                                                    client: Client[F]): F[Handler[F]] = {
-    val handler = new Handler(stateRef, privateConferenceService, client)
+    val handler = new Handler(stateRef, privateConferenceService, userStateService, client)
     for {
       list <- queueRef.get
       _ <- Sync[F].delay(list)

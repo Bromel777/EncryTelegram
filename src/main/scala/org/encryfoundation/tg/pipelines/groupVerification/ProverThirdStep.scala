@@ -55,7 +55,7 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
       s" CypherText: ${Base64.encode(aes.encrypt(community.name.getBytes))}. Decypher: ${
         aes.decrypt(Base64.decode(Base64.encode(aes.encrypt(community.name.getBytes))).get).map(_.toChar).mkString
       }")
-    groupChatId <- state.privateGroups.find(_._2._2 == chatPass).get._1.pure[F]
+    groupChatId <- state.privateGroups.find(_.password == chatPass).get._1.pure[F]
     _ <- send2Chat(
       ProverThirdStepMsg(
         thirdStep,

@@ -11,7 +11,7 @@ public class JLocalCommunity extends JTableEntity{
 
     private String communityName;
     private long communityID;
-    private List<JLocalCommunityMember> communityMembers;
+    private List<JSingleContact> communityMembers;
     private int communitySize;
 
     private void generatePseudoRandomCommunityID(){
@@ -36,12 +36,12 @@ public class JLocalCommunity extends JTableEntity{
     }
 
 
-    public JLocalCommunity(List<JLocalCommunityMember> communityMembers) {
+    public JLocalCommunity(List<JSingleContact> communityMembers) {
         this();
         this.communityMembers = communityMembers;
     }
 
-    public List<JLocalCommunityMember> getCommunityMembers() {
+    public List<JSingleContact> getCommunityMembers() {
         return communityMembers;
     }
 
@@ -49,25 +49,25 @@ public class JLocalCommunity extends JTableEntity{
         return new SimpleStringProperty(getCommunityName());
     }
 
-    public void setCommunityMembers(List<JLocalCommunityMember> communityMembers) {
+    public void setCommunityMembers(List<JSingleContact> communityMembers) {
         this.communityMembers = communityMembers;
     }
 
-    public void addContactToCommunity(JLocalCommunityMember contact){
+    public void addContactToCommunity(JSingleContact contact){
         if(!communityMembers.contains(contact)){
             communityMembers.add(contact);
         }
     }
 
-    private void removeContactFromCommunity(JLocalCommunityMember contact){
+    private void removeContactFromCommunity(JSingleContact contact){
         if(!communityMembers.contains(contact)){
             communityMembers.remove(contact);
         }
     }
 
-    private JLocalCommunityMember removeContactFromCommunityById(int chatId){
-        JLocalCommunityMember contact = null;
-        for(JLocalCommunityMember member: communityMembers){
+    private JSingleContact removeContactFromCommunityById(int chatId){
+        JSingleContact contact = null;
+        for(JSingleContact member: communityMembers){
             if( member.getUserId() == chatId){
                 contact = member;
                 break;

@@ -2,7 +2,7 @@ package org.javaFX.model;
 
 import javafx.beans.property.*;
 
-public class JLocalCommunityMember extends JTableEntity{
+public class JSingleContact extends JTableEntity{
 
     private StringProperty firstName;
     private StringProperty lastName;
@@ -10,12 +10,13 @@ public class JLocalCommunityMember extends JTableEntity{
     private LongProperty userId;
     private BooleanProperty isChosen;
 
-    public JLocalCommunityMember(String firstNameStr, String lastNameStr){
+    public JSingleContact(String firstNameStr, String lastNameStr, long userChatId){
         firstName = new SimpleStringProperty(firstNameStr);
         lastName = new SimpleStringProperty(lastNameStr);
+        this.userId = new SimpleLongProperty(userChatId);
     }
 
-    public JLocalCommunityMember(StringProperty firstName, StringProperty lastName, StringProperty phoneNumber, LongProperty chatId) {
+    public JSingleContact(StringProperty firstName, StringProperty lastName, StringProperty phoneNumber, LongProperty chatId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -23,7 +24,7 @@ public class JLocalCommunityMember extends JTableEntity{
         this.isChosen = new SimpleBooleanProperty(false);
     }
 
-    public JLocalCommunityMember(String firstNameStr, String lastNameStr, String lastMessageStr, Long chatId) {
+    public JSingleContact(String firstNameStr, String lastNameStr, String lastMessageStr, Long chatId) {
         this(new SimpleStringProperty(firstNameStr), new SimpleStringProperty(lastNameStr), new SimpleStringProperty(lastMessageStr), new SimpleLongProperty(chatId));
     }
 

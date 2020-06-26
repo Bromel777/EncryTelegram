@@ -20,7 +20,8 @@ public class DelayAuthentication extends Thread{
             if (EncryWindow.state.get().isAuth()) {
                 encryWindow.launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
             } else {
-                encryWindow.launchWindowByPathToFXML(EncryWindow.pathToAuthenticationWindowFXML);
+                encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
+                //encryWindow.launchWindowByPathToFXML(EncryWindow.pathToAuthenticationWindowFXML);
             }
         };
         AtomicInteger atomicInteger = new AtomicInteger(0);

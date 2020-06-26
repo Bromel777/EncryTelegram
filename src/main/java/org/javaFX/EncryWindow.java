@@ -23,6 +23,12 @@ public class EncryWindow extends Application {
     private final String pathToLogoImage = "file:src/main/resources/images/logo.png";
 
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
+
+    public final static String pathToEnterPhoneNumberWindowFXML = "view/_enterPhoneNumberWindow.fxml";
+    public final static String pathToEnterVerificationCodeWindowFXML = "view/_enterVerificationCodeWindow.fxml";
+    public final static String pathToEnterPasswordWindowFXML = "view/_enterPasswordWindow.fxml";
+    public final static String pathToChatsWindowFXML = "view/_chatsWindow.fxml";
+
     public final static String pathToMainWindowFXML = "view/mainWindow.fxml";
     public final static String pathToContactsMainWindowFXML = "view/contactsMainWindow.fxml";
     public final static String pathToAuthenticationWindowFXML = "view/authenticationWindow.fxml";
@@ -33,6 +39,8 @@ public class EncryWindow extends Application {
     private final static String pathToRootLayout = "view/rootLayout.fxml";
 
     private DataHandler rootLayoutHandler;
+
+    private DataHandler currentController;
 
     public static AtomicReference<JUserState> state = new AtomicReference<>(new JUserState());
 
@@ -91,11 +99,18 @@ public class EncryWindow extends Application {
     }
 
     private void updateController(FXMLLoader loader){
-        DataHandler controller = loader.getController();
-        controller.setUserStateRef(state);
-        controller.setEncryWindow(this);
-        controller.setStage(primaryStage);
-        controller.setRootLayout(rootLayout);
+        currentController = loader.getController();
+        currentController.setUserStateRef(state);
+        currentController.setEncryWindow(this);
+        currentController.setStage(primaryStage);
+        currentController.setRootLayout(rootLayout);
+    }
+
+    public DataHandler getCurrentController(){
+        if (currentController != null){
+            return currentController;
+        }
+        return null;
     }
 
 }

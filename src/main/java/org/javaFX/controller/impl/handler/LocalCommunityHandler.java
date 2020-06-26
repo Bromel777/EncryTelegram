@@ -14,7 +14,7 @@ import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.controller.impl.dialog.EnterCommunityNameDialogController;
 import org.javaFX.model.JLocalCommunity;
-import org.javaFX.model.JLocalCommunityMember;
+import org.javaFX.model.JSingleContact;
 import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.Executors;
@@ -26,19 +26,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class LocalCommunityHandler extends DataHandler {
 
     @FXML
-    private TableView<JLocalCommunityMember> chatsTable;
+    private TableView<JSingleContact> chatsTable;
 
     @FXML
-    private TableColumn<JLocalCommunityMember, Integer> rowNumberColumn;
+    private TableColumn<JSingleContact, Integer> rowNumberColumn;
 
     @FXML
-    private TableColumn<JLocalCommunityMember, String> chatsNameColumn;
+    private TableColumn<JSingleContact, String> chatsNameColumn;
 
     @FXML
-    private TableColumn<JLocalCommunityMember, String> phoneNumberColumn;
+    private TableColumn<JSingleContact, String> phoneNumberColumn;
 
     @FXML
-    private TableColumn<JLocalCommunityMember, CheckBox> checkBoxesColumn;
+    private TableColumn<JSingleContact, CheckBox> checkBoxesColumn;
 
     @FXML
     private TextArea searchContactTextArea;
@@ -62,12 +62,12 @@ public class LocalCommunityHandler extends DataHandler {
     }
 
 
-    private ObservableList<JLocalCommunityMember> getObservableUserList(){
-        ObservableList<JLocalCommunityMember> observableChatList = FXCollections.observableArrayList();
-        for(Integer jUserId: getUserStateRef().get().getUsers().keySet()){
-            TdApi.User user = getUserStateRef().get().getUsers().get(jUserId);
+    private ObservableList<JSingleContact> getObservableUserList(){
+        ObservableList<JSingleContact> observableChatList = FXCollections.observableArrayList();
+        for(Long jUserId: getUserStateRef().get().getUsersMap().keySet()){
+            TdApi.User user = getUserStateRef().get().getUsersMap().get(jUserId);
             if(!user.lastName.isEmpty())
-                observableChatList.add(new JLocalCommunityMember(user.firstName, user.lastName, user.phoneNumber, (long)user.id));
+                observableChatList.add(new JSingleContact(user.firstName, user.lastName, user.phoneNumber, (long)user.id));
         }
         return observableChatList;
     }
@@ -77,11 +77,11 @@ public class LocalCommunityHandler extends DataHandler {
         chatsNameColumn.setCellValueFactory(cellData -> cellData.getValue().getFullName());
         phoneNumberColumn.setCellValueFactory(cellData -> cellData.getValue().getPhoneNumber());
         checkBoxesColumn.setCellValueFactory(cellData -> {
-            JLocalCommunityMember jLocalCommunityMember = cellData.getValue();
+            JSingleContact jSingleContact = cellData.getValue();
             CheckBox checkBox = new CheckBox();
-            checkBox.selectedProperty().setValue(jLocalCommunityMember.isChosenBoolean());
+            checkBox.selectedProperty().setValue(jSingleContact.isChosenBoolean());
             checkBox.selectedProperty().addListener((ov, old_val, new_val) ->
-                    jLocalCommunityMember.setBooleanChosen(new_val));
+                    jSingleContact.setBooleanChosen(new_val));
             return new SimpleObjectProperty<>(checkBox);
         });
         service.shutdown();
@@ -90,15 +90,15 @@ public class LocalCommunityHandler extends DataHandler {
     @FXML
     private void createButtonAction(){
         JLocalCommunity localCommunity = new JLocalCommunity();
-        chatsTable.getItems().filtered(JLocalCommunityMember::isChosenBoolean).
+        chatsTable.getItems().filtered(JSingleContact::isChosenBoolean).
                forEach(localCommunity::addContactToCommunity);
-        JLocalCommunityMember.resetRowNumber();
+        JSingleContact.resetRowNumber();
         launchEnterNameDialog(localCommunity);
     }
 
     @FXML
     private void changeCheckBoxValue() {
-        JLocalCommunityMember communityMember = chatsTable.getSelectionModel().getSelectedItem();
+        JSingleContact communityMember = chatsTable.getSelectionModel().getSelectedItem();
         if(communityMember.getUserId() > 0L ){
             boolean isChosen = communityMember.isChosenBoolean();
             communityMember.setBooleanChosen(!isChosen);

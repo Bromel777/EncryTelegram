@@ -4,6 +4,8 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.util.Duration;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
@@ -38,6 +40,9 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     public MainWindowBasicHandler() {
         chatListObserve(this);
         createDialog();
+        /*dialogTextArea.setBackground(new Background(new BackgroundImage(new Image("file:src/main/resources/images/back.jpg"),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT)));*/
     }
 
     private void terminateObserver(){
@@ -50,6 +55,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     public void enableMenuBar(){
         if(getRootLayout().getTop().isDisable()) {
             getRootLayout().getTop().setDisable(false);
+            getRootLayout().getTop().setVisible(true);
         }
     }
 
@@ -121,7 +127,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     }
 
     private void createDialog(){
-        jDialog = new JDialog("title stub");
+        jDialog = new JDialog();
     }
 
     @FXML

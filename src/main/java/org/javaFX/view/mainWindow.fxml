@@ -63,7 +63,7 @@
             </AnchorPane>
           <AnchorPane fx:id="rightPane" prefHeight="400.0" prefWidth="357.0">
                <children>
-                  <TextArea fx:id="dialogTextArea" editable="false" layoutY="44.0" wrapText="true" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0">
+                  <TextArea fx:id="dialogTextArea" editable="false" layoutY="44.0"  wrapText="true" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0">
                      <font>
                         <Font name="Centaur" size="15.0" />
                      </font>

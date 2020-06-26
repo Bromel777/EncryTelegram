@@ -11,7 +11,7 @@ import org.drinkless.tdlib.TdApi;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
-import org.javaFX.model.JLocalCommunityMember;
+import org.javaFX.model.JSingleContact;
 import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,21 +19,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ContactsMainWindowHandler extends MainWindowBasicHandler {
 
     @FXML
-    private TableView<JLocalCommunityMember> contactsTable;
+    private TableView<JSingleContact> contactsTable;
 
     @FXML
-    private TableColumn<JLocalCommunityMember, String> contactsColumn;
+    private TableColumn<JSingleContact, String> contactsColumn;
 
     @FXML
     private TextArea searchContactTextArea;
 
     @FXML
-    private ObservableList<JLocalCommunityMember> getObservableUserList(){
-        ObservableList<JLocalCommunityMember> observableContactList = FXCollections.observableArrayList();
-        for(Integer jUserId: getUserStateRef().get().getUsers().keySet()){
-            TdApi.User user = getUserStateRef().get().getUsers().get(jUserId);
-            if(!user.lastName.isEmpty())
-                observableContactList.add(new JLocalCommunityMember(user.firstName, user.lastName));
+    private ObservableList<JSingleContact> getObservableUserList(){
+        ObservableList<JSingleContact> observableContactList = FXCollections.observableArrayList();
+        for(Long jUserId: getUserStateRef().get().getUsersMap().keySet()){
+            TdApi.User user = getUserStateRef().get().getUsersMap().get(jUserId);
+            if(!user.lastName.isEmpty()){
+                observableContactList.add(new JSingleContact(user.firstName, user.lastName, user.id));
+            }
         }
         return observableContactList;
     }
@@ -57,7 +58,7 @@ public class ContactsMainWindowHandler extends MainWindowBasicHandler {
         getUserStateRef().get().setActiveDialogArea(dialogTextArea);
         //TODO: userID не совпадает с chatID! решить конфликт
         JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
-                contactsTable.getSelectionModel().getSelectedItem().userIdProperty().get()
+                contactsTable.getSelectionModel().getSelectedItem().getUserId()
         );
         try {
             getUserStateRef().get().msgsQueue.put(msg);

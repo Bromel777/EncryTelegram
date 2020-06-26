@@ -10,7 +10,7 @@ import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
 import org.javaFX.model.JChat;
 
-public class MainWindowHandler extends MainWindowBasicHandler {
+public class _ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     private TableView<JChat> chatsTable;
@@ -60,5 +60,4 @@ public class MainWindowHandler extends MainWindowBasicHandler {
         callButton.setVisible(true);
         callButton.setDisable(false);
     }
-
 }

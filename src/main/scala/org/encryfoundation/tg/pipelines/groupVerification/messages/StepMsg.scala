@@ -1,6 +1,7 @@
 package org.encryfoundation.tg.pipelines.groupVerification.messages
 
 import it.unisa.dia.gas.jpbc.Element
+import org.encryfoundation.tg.userState.PrivateGroupChat
 
 sealed trait StepMsg
 object StepMsg {
@@ -23,6 +24,6 @@ object StepMsg {
     case class ProverThirdStepMsg(thirdStep: Array[Byte],
                                   chatId: Long,
                                   name: String,
-                                  pass: String) extends GroupVerificationStepMsg
+                                  privateGroupChat: PrivateGroupChat) extends GroupVerificationStepMsg
   }
 }

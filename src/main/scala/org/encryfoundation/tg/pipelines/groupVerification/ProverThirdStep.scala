@@ -19,7 +19,8 @@ import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.En
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.ProverThirdMsgSerializer._
-import org.encryfoundation.tg.userState.UserState
+import org.encryfoundation.tg.services.UserStateService
+import org.encryfoundation.tg.userState.{PrivateGroupChat, UserState}
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
 
@@ -32,7 +33,10 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
                                                             secretChat: TdApi.Chat,
                                                             chatId: Long,
                                                             firstStep: Element,
-                                                            verifierSecondStepMsg: MVar[F, VerifierSecondStepMsg]) extends Pipeline[F] {
+                                                            privateGroupChat: PrivateGroupChat,
+                                                            verifierSecondStepMsg: MVar[F, VerifierSecondStepMsg])(
+                                                            userStateService: UserStateService[F]
+                                                            ) extends Pipeline[F] {
 
   private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] =
     ClientUtils.sendMessage(
@@ -55,13 +59,12 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
       s" CypherText: ${Base64.encode(aes.encrypt(community.name.getBytes))}. Decypher: ${
         aes.decrypt(Base64.decode(Base64.encode(aes.encrypt(community.name.getBytes))).get).map(_.toChar).mkString
       }")
-    groupChatId <- state.privateGroups.find(_.password == chatPass).get._1.pure[F]
     _ <- send2Chat(
       ProverThirdStepMsg(
         thirdStep,
-        groupChatId,
+        privateGroupChat.chatId,
         Base64.encode(aes.encrypt(community.name.getBytes)),
-        Base64.encode(aes.encrypt(chatPass.getBytes))
+        privateGroupChat
       )
     )
     _ <- send2Chat(EndPipeline(ProverThirdStep.pipelineName))

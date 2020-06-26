@@ -6,10 +6,11 @@ import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.pipelines.groupVerification.ProverFirstStep
 import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
-import org.encryfoundation.tg.userState.UserState
+import org.encryfoundation.tg.userState.{PrivateGroupChat, UserState}
 import cats.implicits._
 
 case class SecretGroupPrivateChatCreationHandler[F[_]: Concurrent: Timer: Logger](stateRef: Ref[F, UserState[F]],
+                                                                                  privateGroupChat: PrivateGroupChat,
                                                                                   confname: String,
                                                                                   pass: String,
                                                                                   recipient: TdApi.User,
@@ -24,12 +25,13 @@ case class SecretGroupPrivateChatCreationHandler[F[_]: Concurrent: Timer: Logger
         pipeLineStep <- ProverFirstStep(
           client,
           stateRef,
+          privateGroupChat,
           confname,
           recipient.phoneNumber,
           pass,
           obj.asInstanceOf[TdApi.Chat],
           obj.asInstanceOf[TdApi.Chat].id
-        )(privConfServ)
+        )(privConfServ, stateService)
         _ <- stateService.addPipelineChat(obj.asInstanceOf[TdApi.Chat], pipeLineStep)
       } yield ()
     case _ => ().pure[F]

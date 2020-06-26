@@ -10,14 +10,14 @@ final case class PrivateGroupChat(chatId: Long,
                                   password: String)
 
 object PrivateGroupChat {
-  private def toProto(pgc: PrivateGroupChat): PrivateGroupChatProtoMessage =
+  def toProto(pgc: PrivateGroupChat): PrivateGroupChatProtoMessage =
     PrivateGroupChatProtoMessage()
     .withChatId(pgc.chatId)
     .withCommunityName(pgc.communityName)
     .withGroupName(pgc.communityName)
     .withPassword(pgc.password)
 
-  private def fromProto(pgcProto: PrivateGroupChatProtoMessage): PrivateGroupChat =
+  def fromProto(pgcProto: PrivateGroupChatProtoMessage): PrivateGroupChat =
     PrivateGroupChat(pgcProto.chatId, pgcProto.communityName, pgcProto.groupName, pgcProto.password)
 
   def toBytes(pgc: PrivateGroupChat): Array[Byte] = toProto(pgc).toByteArray

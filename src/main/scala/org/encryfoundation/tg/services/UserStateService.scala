@@ -11,6 +11,8 @@ import cats.implicits._
 trait UserStateService[F[_]] {
   def persistChat(chat: TdApi.Chat): F[Unit]
   def persistSecretChat(chat: TdApi.SecretChat): F[Unit]
+  def addPrivateGroupChat(newChat: PrivateGroupChat): F[Unit]
+  def getPrivateGroupChat(chatId: Long): F[Option[PrivateGroupChat]]
   def addPipelineChat(chat: TdApi.Chat, newPipeline: Pipeline[F]): F[Unit]
   def updatePipelineChat(secretChatId: Long, newPipeline: Pipeline[F]): F[Unit]
   def getPipeline(secretChatId: Long): F[Option[Pipeline[F]]]
@@ -68,6 +70,14 @@ object UserStateService {
       userState.update(prevState =>
         prevState.copy(secretChats = prevState.secretChats + (chat.id -> chat))
       )
+
+    override def addPrivateGroupChat(newChat: PrivateGroupChat): F[Unit] =
+      userState.update(prevState =>
+        prevState.copy(privateGroups = prevState.privateGroups + newChat)
+      )
+
+    override def getPrivateGroupChat(chatId: Long): F[Option[PrivateGroupChat]] =
+      userState.get.map(_.privateGroups.find(_.chatId == chatId))
   }
 
   def apply[F[_]: Sync](userState: Ref[F, UserState[F]],

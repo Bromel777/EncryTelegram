@@ -38,17 +38,17 @@ object RunApp extends App {
     userStateService <- UserStateService[IO](ref, db)
     handler <- Handler[IO](ref, queueRef, confService, userStateService, client)
     _ <- client.setUpdatesHandler(handler)
-  } yield (queueRef, client, ref, logger, confService)
+  } yield (queueRef, client, ref, logger, confService, userStateService)
 
   val database = for {
     db <- Database[IO](new File("db"))
   } yield db
 
   def anotherProg(state: AtomicReference[JUserState]) = Stream.resource(database).flatMap { db =>
-    Stream.eval(program(db, state)).flatMap { case (queue, client, ref, logger, confService) =>
+    Stream.eval(program(db, state)).flatMap { case (queue, client, ref, logger, confService, userStateService) =>
       implicit val loggerForIo = logger
-      Stream.eval(ConsoleProgram[IO](client, ref, confService, db)).flatMap { consoleProgram =>
-        Stream.eval(UIProgram(ref, confService, client)).flatMap { uiProg =>
+      Stream.eval(ConsoleProgram[IO](client, ref, confService, userStateService, db)).flatMap { consoleProgram =>
+        Stream.eval(UIProgram(ref, confService, userStateService, client)).flatMap { uiProg =>
           client.run() concurrently consoleProgram.run() concurrently uiProg.run()
         }
       }

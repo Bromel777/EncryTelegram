@@ -138,6 +138,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
                         } yield ()
                         case None => Pipelines.findStart(
                           userStateRef,
+                          userStateService,
                           msg.message.chatId,
                           client,
                           stepMsg

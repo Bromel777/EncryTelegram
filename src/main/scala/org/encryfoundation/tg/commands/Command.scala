@@ -26,7 +26,7 @@ object Command {
                                                                          ): List[Command[F]] = List(
     CreatePrivateGroupChat[F](client, userStateRef, db)(confService, userStateService),
     PrintChats[F](client, userStateRef, db),
-    ReadChat[F](client, userStateRef, db),
+    ReadChat[F](client, userStateRef, db)(userStateService),
     SendToChat[F](client, userStateRef),
     CreatePrivateConference[F](client, userStateRef, db)(confService),
     ShowPrivateConferences[F](client, userStateRef, db)(confService),

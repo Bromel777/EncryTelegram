@@ -229,7 +229,6 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
 
   def processLastMessage(msg: TdApi.Message): F[Unit] = {
 
-
     def msg2Str(msg: TdApi.Message, state: UserState[F]): String =
       msg.content match {
         case text: MessageText if state.privateGroups.exists(_.chatId == msg.chatId) =>

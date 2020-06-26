@@ -1,5 +1,7 @@
 package org.encryfoundation.tg.services
 
+import cats.Applicative
+import cats.data.OptionT
 import cats.effect.Sync
 import cats.effect.concurrent.Ref
 import cats.implicits._
@@ -26,7 +28,7 @@ object PrivateConferenceService {
   val conferencesKey = Blake2b256("Conferences")
 
   private class Live[F[_]: Sync: Logger](db: Database[F],
-                                         userStateRef: Ref[F, UserState[F]]) extends PrivateConferenceService[F] {
+                                                userStateRef: Ref[F, UserState[F]]) extends PrivateConferenceService[F] {
 
     override def createConference(name: String, users: List[String]): F[Unit] =
       for {
@@ -55,12 +57,11 @@ object PrivateConferenceService {
 
     override def deleteUserFromConf(conf: String, userName: String): F[Unit] = ???
 
-    override def getConfs: F[List[PrivateCommunity]] = for {
-      activeConference <- db.get(conferencesKey)
-      conferenceInfo <- db
-        .get(confInfo(activeConference.get.map(_.toChar).mkString))
-        .map(confBytes => PrivateCommunity.parseBytes(confBytes.get))
-    } yield List(conferenceInfo.get)
+    override def getConfs: F[List[PrivateCommunity]] = (for {
+      possibleConfs <- OptionT(db.get(conferencesKey))
+      confNames <- OptionT.fromOption[F](ConferencesNames.parseBytes(possibleConfs).toOption)
+      privateConfs <- OptionT.liftF[F, List[PrivateCommunity]](confNames.conferences.traverse(recoverConf).map(_.flatten))
+    } yield privateConfs).getOrElse(List.empty)
 
     override def saveMyConfCredentials(conf: String,
                                        userInfo: CommunityUser): F[Unit] = ???
@@ -69,11 +70,14 @@ object PrivateConferenceService {
 
     override def findConf(conf: String): F[PrivateCommunity] =
       getConfs.map(_.find(_.name == conf).get)
+
+    private def recoverConf(confName: String): F[Option[PrivateCommunity]] = (for {
+      possibleBytes <- OptionT(db.get(confInfo(confName)))
+      possibleConf <- OptionT.fromOption[F](PrivateCommunity.parseBytes(possibleBytes).toOption)
+    } yield possibleConf).value
   }
 
   def confInfo(confName: String) = Blake2b256(s"ConfInfo${confName}")
-
-
 
   def apply[F[_]: Sync: Logger](db: Database[F], userStateRef: Ref[F, UserState[F]]): F[PrivateConferenceService[F]] =
     Sync[F].delay(new Live[F](db, userStateRef))

@@ -3,8 +3,6 @@ package org.javaFX.controller.impl.handler;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.util.KeyboardHandler;
 

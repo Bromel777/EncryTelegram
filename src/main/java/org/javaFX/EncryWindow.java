@@ -98,6 +98,20 @@ public class EncryWindow extends Application {
         }
     }
 
+    public void launchWindowByPathToFXML(String pathToTemplate, int newWidth, int newHeight){
+        try{
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(EncryWindow.class.getResource(pathToTemplate));
+            AnchorPane startOverview = loader.load();
+            rootLayout.setCenter(startOverview);
+            primaryStage.setHeight(newHeight);
+            primaryStage.setWidth(newWidth);
+            updateController(loader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void updateController(FXMLLoader loader){
         currentController = loader.getController();
         currentController.setUserStateRef(state);
@@ -111,6 +125,10 @@ public class EncryWindow extends Application {
             return currentController;
         }
         return null;
+    }
+
+    public Stage getPrimaryStage(){
+        return primaryStage;
     }
 
 }

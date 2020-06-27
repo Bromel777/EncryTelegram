@@ -8,7 +8,7 @@ import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import javafx.collections.{FXCollections, ObservableList}
-import javafx.scene.control.TextArea
+import javafx.scene.control.{ListView, TextArea}
 import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.crypto.AESEncryption
@@ -90,6 +90,7 @@ object UIProgram {
           _ <- Sync[F].delay {
             val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
             msgs.foreach(observList.add)
+            javaState.messagesListView = new ListView[VBoxMessageCell]()
             javaState.messagesListView.setItems(observList)
           }
         } yield ()

@@ -11,6 +11,8 @@ import io.chrisdavenport.log4cats.Logger
 import collection.JavaConverters._
 
 trait UserStateService[F[_]] {
+  //common ops
+  def setAuth(): F[Unit]
   //basic chats ops
   def addChat(chat: TdApi.Chat): F[Unit]
   def updateChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit]
@@ -167,6 +169,12 @@ object UserStateService {
     override def getPipelineChatIdBySecChat(secretChatId: Int): F[Option[Long]] =
       Logger[F].info("Invoke getPipelineChatIdBySecChat") >>
       userState.get.map(_.pipelineSecretChatInfo.get(secretChatId))
+
+    override def setAuth(): F[Unit] =
+      userState.update { prevState =>
+        prevState.javaState.get().setAuth(true)
+        prevState.copy(isAuth = true)
+      }
   }
 
   def apply[F[_]: Sync: Logger](userState: Ref[F, UserState[F]],

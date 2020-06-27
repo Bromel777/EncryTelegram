@@ -36,11 +36,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
 
   override def onResult(obj: TdApi.Object): F[Unit] = obj match {
       case authEvent: TdApi.UpdateAuthorizationState =>
-        for {
-          _ <- Logger[F].info(s"Receive auth event: ${authEvent}")
-          state <- userStateRef.get
-          _ <- authHandler(obj.asInstanceOf[TdApi.UpdateAuthorizationState], state.client)
-        } yield ()
+        authHandler(authEvent, client)
       case updateNewChat: TdApi.UpdateNewChat =>
         for {
           _ <- Logger[F].info(s"Receive update new chat with chat id: ${updateNewChat.chat}")
@@ -166,10 +162,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           _ <- client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
         } yield ()
       case a: TdApi.AuthorizationStateReady =>
-        userStateRef.update { prevState =>
-          prevState.javaState.get().setAuth(true)
-          prevState.copy(isAuth = true)
-        }.map(_ => ()) >>
+        userStateService.setAuth() >>
           client.send(
             new TdApi.GetChats(new TdApi.ChatListMain(), Long.MaxValue, 0, 20),
             EmptyHandler[F]()

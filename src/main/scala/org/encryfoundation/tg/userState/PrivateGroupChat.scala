@@ -1,6 +1,7 @@
 package org.encryfoundation.tg.userState
 
 import PrivateGroupChatProto.PrivateGroupChatProtoMessage
+import PrivateGroupChatsProto.PrivateGroupChatsProtoMessage
 
 import scala.util.Try
 
@@ -14,7 +15,7 @@ object PrivateGroupChat {
     PrivateGroupChatProtoMessage()
     .withChatId(pgc.chatId)
     .withCommunityName(pgc.communityName)
-    .withGroupName(pgc.communityName)
+    .withGroupName(pgc.groupName)
     .withPassword(pgc.password)
 
   def fromProto(pgcProto: PrivateGroupChatProtoMessage): PrivateGroupChat =
@@ -24,4 +25,18 @@ object PrivateGroupChat {
 
   def parseBytes(bytes: Array[Byte]): Try[PrivateGroupChat] =
     Try(fromProto(PrivateGroupChatProtoMessage.parseFrom(bytes)))
+}
+
+object PrivateGroupChats {
+  def toProto(pgc: List[PrivateGroupChat]): PrivateGroupChatsProtoMessage =
+    PrivateGroupChatsProtoMessage()
+      .withPrivateGroupChats(pgc.map(PrivateGroupChat.toProto))
+
+  def fromProto(pgcProto: PrivateGroupChatsProtoMessage): List[PrivateGroupChat] =
+    pgcProto.privateGroupChats.map(PrivateGroupChat.fromProto).toList
+
+  def toBytes(pgc: List[PrivateGroupChat]): Array[Byte] = toProto(pgc).toByteArray
+
+  def parseBytes(bytes: Array[Byte]): Try[List[PrivateGroupChat]] =
+    Try(fromProto(PrivateGroupChatsProtoMessage.parseFrom(bytes)))
 }

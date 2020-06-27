@@ -32,7 +32,8 @@ case class SecretGroupPrivateChatCreationHandler[F[_]: Concurrent: Timer: Logger
           obj.asInstanceOf[TdApi.Chat],
           obj.asInstanceOf[TdApi.Chat].id
         )(privConfServ, stateService)
-        _ <- stateService.addPipelineChat(obj.asInstanceOf[TdApi.Chat], pipeLineStep)
+        _ <- Logger[F].info(s"Receive secret chat. Add chat to pending")
+        _ <- stateService.addPendingPipelineChat(obj.asInstanceOf[TdApi.Chat], pipeLineStep)
       } yield ()
     case _ => ().pure[F]
   }

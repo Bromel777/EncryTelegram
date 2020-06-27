@@ -45,6 +45,7 @@ class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
 
 
   override def processInput(input: Array[Byte]): F[Pipeline[F]] = for {
+    _ <- Logger[F].info("Start pipeline with prover!")
     msg <- getFirstMsg.pure[F]
     _ <- send2Chat(StartPipeline(ProverFirstStep.pipelineName))
     _ <- send2Chat(msg)

@@ -38,14 +38,23 @@ case class VerifierForthStep[F[_]: Concurrent: Timer: Logger](verifier: Verifier
       secondStep,
       thirdStepMsg.thirdStep
     ).pure[F]
-    commonKey <- verifier.produceCommonKey(
-      firstStep,
-      secondStep,
-      verifier.RoI1,
-      verifier.RoI2
-    ).pure[F]
-    aes <- AESEncryption(Blake2b256.hash(commonKey)).pure[F]
-    _ <- userStateService.addPrivateGroupChat(thirdStepMsg.privateGroupChat)
+    _ <- if (result) {
+      for {
+        commonKey <- verifier.produceCommonKey(
+          firstStep,
+          secondStep,
+          verifier.RoI1,
+          verifier.RoI2
+        ).pure[F]
+        aes <- AESEncryption(Blake2b256.hash(commonKey)).pure[F]
+        decypherdGroup <- thirdStepMsg.privateGroupChat.copy(
+          groupName = aes.decrypt(Base64.decode(thirdStepMsg.privateGroupChat.groupName).get).map(_.toChar).mkString,
+          communityName = aes.decrypt(Base64.decode(thirdStepMsg.privateGroupChat.communityName).get).map(_.toChar).mkString,
+          password = aes.decrypt(Base64.decode(thirdStepMsg.privateGroupChat.password).get).map(_.toChar).mkString
+        ).pure[F]
+        _ <- userStateService.persistPrivateGroupChat(decypherdGroup)
+      } yield ()
+    } else ().pure[F]
     _ <- client.send(new TdApi.CloseChat(chatId), CloseChatHandler[F](stateRef, client, chatId))
   } yield this
 

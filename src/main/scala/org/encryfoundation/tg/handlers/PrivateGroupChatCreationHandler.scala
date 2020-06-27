@@ -25,10 +25,7 @@ case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Timer: Logger](stat
       for {
         _ <- Sync[F].delay(println("New chat created!"))
         _ <- userStateService.persistPrivateGroupChat(
-          newChat,
-          confInfo.name,
-          groupName,
-          password
+          PrivateGroupChat(newChat.id, confInfo.name, groupName, password)
         )
         _ <- users.traverse { user =>
           client.send(

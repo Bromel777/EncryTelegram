@@ -100,7 +100,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case TdApi.UpdateSecretChat.CONSTRUCTOR =>
         val secretChat = obj.asInstanceOf[TdApi.UpdateSecretChat]
         secretChat.secretChat.state match {
-          case closed: TdApi.SecretChatStateClosed =>().pure[F]
+          case closed: TdApi.SecretChatStateClosed => ().pure[F]
           case pending: TdApi.SecretChatStatePending if !secretChat.secretChat.isOutbound =>
             for {
               _ <- client.send(new TdApi.OpenChat(secretChat.secretChat.id), SecretChatCreationHandler[F](userStateRef))
@@ -124,6 +124,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         val msg = obj.asInstanceOf[TdApi.UpdateNewMessage]
         for {
           state <- userStateRef.get
+          _ <- Logger[F].info(s"Receive: ${msg}")
           _ <- msg.message.content match {
             case a: MessageText =>
               Base64.decode(a.text.text) match {
@@ -132,6 +133,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
                     case Right(stepMsg) if !msg.message.isOutgoing =>
                       state.pipelineSecretChats.get(msg.message.chatId) match {
                         case Some(pipeline) => for {
+                          _ <- Logger[F].info(s"Receive new messga for pipeline. Current pipeline: ${pipeline}. Msg: ${msg.message}")
                           newPipeLine <- pipeline.processInput(value)
                           _ <- userStateRef.update(_.copy(
                             pipelineSecretChats = state.pipelineSecretChats + (msg.message.chatId -> newPipeLine)))

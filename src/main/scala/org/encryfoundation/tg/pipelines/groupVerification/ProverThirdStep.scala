@@ -48,23 +48,22 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
   def processPreviousStepStart: F[Pipeline[F]] = Applicative[F].pure(this)
 
   def processPreviousStepEnd: F[Pipeline[F]] = for {
-    state <- userState.get
     _ <- send2Chat(StartPipeline(ProverThirdStep.pipelineName))
     secondStep <- verifierSecondStepMsg.read
     thirdStep <- prover.thirdStep(secondStep.secondStep).pure[F]
     commonKey <- prover.produceCommonKey(secondStep.verifierPubKey1, firstStep, secondStep.secondStep).pure[F]
     aes <- AESEncryption(Blake2b256.hash(commonKey)).pure[F]
-    _ <- Logger[F].info(s"Common key: ${Base64.encode(commonKey)}" +
-      s"Community name: ${community.name}." +
-      s" CypherText: ${Base64.encode(aes.encrypt(community.name.getBytes))}. Decypher: ${
-        aes.decrypt(Base64.decode(Base64.encode(aes.encrypt(community.name.getBytes))).get).map(_.toChar).mkString
-      }")
+    cypherdGroup <- privateGroupChat.copy(
+      communityName = Base64.encode(aes.encrypt(privateGroupChat.communityName.getBytes())),
+      groupName = Base64.encode(aes.encrypt(privateGroupChat.groupName.getBytes())),
+      password = Base64.encode(aes.encrypt(privateGroupChat.password.getBytes()))
+    ).pure[F]
     _ <- send2Chat(
       ProverThirdStepMsg(
         thirdStep,
         privateGroupChat.chatId,
         Base64.encode(aes.encrypt(community.name.getBytes)),
-        privateGroupChat
+        cypherdGroup
       )
     )
     _ <- send2Chat(EndPipeline(ProverThirdStep.pipelineName))
@@ -81,10 +80,12 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
   }
 
   override def processInput(input: Array[Byte]): F[Pipeline[F]] =
-    StepMsgSerializer.parseBytes(input).right.get match {
-      case StartPipeline(pipelineName) if pipelineName == VerifierSecondStep.pipeLineName  => processPreviousStepStart
-      case EndPipeline(pipelineName) if pipelineName == VerifierSecondStep.pipeLineName => processPreviousStepEnd
-      case msg: VerifierSecondStepMsg => processStepInput(msg)
+    StepMsgSerializer.parseBytes(input) match {
+      case Right(StartPipeline(pipelineName)) if pipelineName == VerifierSecondStep.pipeLineName  => processPreviousStepStart
+      case Right(EndPipeline(pipelineName)) if pipelineName == VerifierSecondStep.pipeLineName => processPreviousStepEnd
+      case Right(msg) => processStepInput(msg)
+      case Left(err) =>
+        Logger[F].error(s"Err during parsing step: ${err}. Input: ${input.map(_.toChar).mkString}") >> Applicative[F].pure(this)
     }
 }
 

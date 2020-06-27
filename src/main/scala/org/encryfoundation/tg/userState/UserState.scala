@@ -26,7 +26,7 @@ case class UserState[F[_]: Sync](chatList: List[TdApi.Chat] = List.empty,
                                  chatIds: Map[Long, TdApi.Chat] = Map.empty,
                                  privateGroups: Set[PrivateGroupChat] = Set.empty,
                                  pipelineSecretChats: Map[Long, Pipeline[F]] = Map.empty[Long, Pipeline[F]],
-                                 pendingSecretChatsForInvite: Map[Long, (TdApi.Chat, String, TdApi.User)] = Map.empty,
+                                 pendingSecretChatsForInvite: Map[Int, (TdApi.Chat, Pipeline[F])] = Map.empty[Int, (TdApi.Chat, Pipeline[F])],
                                  users: Map[Int, TdApi.User] = Map.empty,
                                  basicGroups: Map[Int, TdApi.BasicGroup] = Map.empty,
                                  superGroups: Map[Int, TdApi.Supergroup] = Map.empty,
@@ -39,7 +39,9 @@ case class UserState[F[_]: Sync](chatList: List[TdApi.Chat] = List.empty,
                                  db: Database[F])
 
 object UserState {
+
   def privateGroupChatKey(chatId: Long): Array[Byte] = Blake2b256.hash(chatId + "privateChat")
+  val privateChatsKey = Blake2b256.hash("privatechats")
 
   private def recoverState[F[_]: Sync](client: Client[F],
                                        javaState: AtomicReference[JUserState],
@@ -47,15 +49,23 @@ object UserState {
     privateConfsNamesBytes <- OptionT(db.get(PrivateConferenceService.conferencesKey))
     confsNames <- OptionT.fromOption[F](ConferencesNames.parseBytes(privateConfsNamesBytes).toOption)
     privateConfs <- OptionT.liftF(recoverCommunityConfByName(confsNames.conferences, db))
+    privateGroupChats <- OptionT.liftF(recoverPrivateGroupChats(db))
   } yield {
     javaState.get().communities = privateConfs.map(_.name).asJava
-    UserState(
+    UserState[F](
       client = client,
       javaState = javaState,
       db = db,
-      privateCommunities = privateConfs
+      privateCommunities = privateConfs,
+      privateGroups = privateGroupChats.toSet
     )
   }}.value
+
+  private def recoverPrivateGroupChats[F[_]: Sync](db: Database[F]): F[List[PrivateGroupChat]] =
+    db.get(privateChatsKey).map {
+      case Some(bytes) => PrivateGroupChats.parseBytes(bytes).get
+      case None => List.empty[PrivateGroupChat]
+    }
 
   private def recoverCommunityConfByName[F[_]: Sync](names: List[String],
                                                      db: Database[F]): F[List[PrivateCommunity]] =

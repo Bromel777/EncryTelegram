@@ -2,14 +2,7 @@ package org.javaFX.model;
 
 import javafx.beans.property.*;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-public class JLocalCommunityMember {
-
-    private static AtomicInteger totalNumber = new AtomicInteger(1);
-
-    private AtomicInteger tableNumber;
-
+public class JSingleContact extends JTableEntity{
 
     private StringProperty firstName;
     private StringProperty lastName;
@@ -17,16 +10,21 @@ public class JLocalCommunityMember {
     private LongProperty userId;
     private BooleanProperty isChosen;
 
-    public JLocalCommunityMember(StringProperty firstName, StringProperty lastName, StringProperty phoneNumber, LongProperty chatId) {
+    public JSingleContact(String firstNameStr, String lastNameStr, long userChatId){
+        firstName = new SimpleStringProperty(firstNameStr);
+        lastName = new SimpleStringProperty(lastNameStr);
+        this.userId = new SimpleLongProperty(userChatId);
+    }
+
+    public JSingleContact(StringProperty firstName, StringProperty lastName, StringProperty phoneNumber, LongProperty chatId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.userId = chatId;
-        this.tableNumber = new AtomicInteger( totalNumber.getAndIncrement() );
         this.isChosen = new SimpleBooleanProperty(false);
     }
 
-    public JLocalCommunityMember(String firstNameStr, String lastNameStr, String lastMessageStr, Long chatId) {
+    public JSingleContact(String firstNameStr, String lastNameStr, String lastMessageStr, Long chatId) {
         this(new SimpleStringProperty(firstNameStr), new SimpleStringProperty(lastNameStr), new SimpleStringProperty(lastMessageStr), new SimpleLongProperty(chatId));
     }
 
@@ -40,10 +38,6 @@ public class JLocalCommunityMember {
 
     public LongProperty userIdProperty() {
         return userId;
-    }
-
-    public AtomicInteger getThisNumber() {
-        return tableNumber;
     }
 
     public long getUserId() {
@@ -64,10 +58,6 @@ public class JLocalCommunityMember {
 
     public void setBooleanChosen(boolean chosen) {
         isChosen.setValue(chosen);
-    }
-
-    public static void resetRowNumber(){
-        totalNumber.set(1);
     }
 
     public String getFirstName() {
@@ -109,7 +99,7 @@ public class JLocalCommunityMember {
     @Override
     public String toString() {
         return "JLocalCommunityMember{" +
-                "tableNumber=" + tableNumber +
+                "rowNumber=" + getRowNumber() +
                 ", firstName=" + firstName +
                 ", lastName=" + lastName +
                 ", phoneNumber=" + phoneNumber +

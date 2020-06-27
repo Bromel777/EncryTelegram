@@ -1,8 +1,10 @@
 package org.javaFX.model;
 
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import org.drinkless.tdlib.TdApi;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.javaFX.model.nodes.VBoxMessageCell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,19 +15,22 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public class JUserState {
     private List<TdApi.Chat> chatList = new ArrayList<>();
-    private Map<Long, TdApi.Chat> chatIds = new HashMap<>();
-    private Map<Long, JGroupChat> privateGroups = new HashMap<>();
-    private Map<Integer, TdApi.User> users =  new HashMap<>();
+    private Map<Long, TdApi.Chat> chatsMap = new HashMap<>();
+    private Map<Long, JGroupChat> privateGroupsMap = new HashMap<>();
+    private Map<Long, TdApi.User> usersMap =  new HashMap<>();
     public AtomicReferenceArray<String> userInfo = new AtomicReferenceArray(3);
-    private Map<Integer, TdApi.BasicGroup> basicGroups = new HashMap<>();
-    private Map<Integer, TdApi.Supergroup> superGroups = new HashMap<>();
-    private Map<Integer, TdApi.SecretChat> secretChats = new HashMap<>();
+    private Map<Long, TdApi.BasicGroup> basicGroups = new HashMap<>();
+    private Map<Long, TdApi.Supergroup> superGroups = new HashMap<>();
+    private Map<Long, TdApi.SecretChat> secretChats = new HashMap<>();
     public List<String> communities = new ArrayList<String>();
     public LinkedBlockingQueue<JavaInterMsg> msgsQueue = new LinkedBlockingQueue<JavaInterMsg>(100);
     public JDialog activeDialog;
     public TextArea activeDialogArea;
     private boolean isAuth = false;
 
+    //новая переменная для записи в диалоговое окно
+
+    public ListView<VBoxMessageCell> messagesListView;
 
     public JUserState() {
     }
@@ -50,55 +55,77 @@ public class JUserState {
 
     public String getPhoneNumber() { return this.userInfo.get(0); }
 
+    public String getPreparedPhoneNumber(){
+        String phoneNumber = this.userInfo.get(0);
+        StringBuilder sb = new StringBuilder("+");
+        switch (phoneNumber.substring(0,1)){
+            case "7":
+                sb.append("7 ");
+                sb.append(phoneNumber.substring(1,4)+" ");
+                sb.append(phoneNumber.substring(4,7)+" ");
+                sb.append(phoneNumber.substring(7,9)+" ");
+                sb.append(phoneNumber.substring(9,11)+" ");
+                break;
+            case "3":
+                sb.append("375 ");
+                sb.append(phoneNumber.substring(3,5)+" ");
+                sb.append(phoneNumber.substring(5,8)+" ");
+                sb.append(phoneNumber.substring(8,10)+" ");
+                sb.append(phoneNumber.substring(10,12)+" ");
+                break;
+        }
+        return sb.toString();
+    }
+
     public void setCode(String code) { this.userInfo.set(1, code); }
 
     public void setPass(String pass) { this.userInfo.set(2, pass); }
 
-    public Map<Long, TdApi.Chat> getChatIds() {
-        return chatIds;
+    public Map<Long, TdApi.Chat> getChatsMap() {
+        return chatsMap;
     }
 
-    public void setChatIds(Map<Long, TdApi.Chat> chatIds) {
-        this.chatIds = chatIds;
+    public void setChatsMap(Map<Long, TdApi.Chat> chatsMap) {
+        this.chatsMap = chatsMap;
     }
 
-    public Map<Long, JGroupChat> getPrivateGroups() {
-        return privateGroups;
+    public Map<Long, JGroupChat> getPrivateGroupsMap() {
+        return privateGroupsMap;
     }
 
-    public void setPrivateGroups(Map<Long, JGroupChat> privateGroups) {
-        this.privateGroups = privateGroups;
+    public void setPrivateGroupsMap(Map<Long, JGroupChat> privateGroupsMap) {
+        this.privateGroupsMap = privateGroupsMap;
     }
 
-    public Map<Integer, TdApi.User> getUsers() {
-        return users;
+    public Map<Long, TdApi.User> getUsersMap() {
+        return usersMap;
     }
 
-    public void setUsers(Map<Integer, TdApi.User> users) {
-        this.users = users;
+    public void setUsersMap(Map<Long, TdApi.User> usersMap) {
+        this.usersMap = usersMap;
     }
 
-    public Map<Integer, TdApi.BasicGroup> getBasicGroups() {
+    public Map<Long, TdApi.BasicGroup> getBasicGroups() {
         return basicGroups;
     }
 
-    public void setBasicGroups(Map<Integer, TdApi.BasicGroup> basicGroups) {
+    public void setBasicGroups(Map<Long, TdApi.BasicGroup> basicGroups) {
         this.basicGroups = basicGroups;
     }
 
-    public Map<Integer, TdApi.Supergroup> getSuperGroups() {
+    public Map<Long, TdApi.Supergroup> getSuperGroups() {
         return superGroups;
     }
 
-    public void setSuperGroups(Map<Integer, TdApi.Supergroup> superGroups) {
+    public void setSuperGroups(Map<Long, TdApi.Supergroup> superGroups) {
         this.superGroups = superGroups;
     }
 
-    public Map<Integer, TdApi.SecretChat> getSecretChats() {
+    public Map<Long, TdApi.SecretChat> getSecretChats() {
         return secretChats;
     }
 
-    public void setSecretChats(Map<Integer, TdApi.SecretChat> secretChats) {
+    public void setSecretChats(Map<Long, TdApi.SecretChat> secretChats) {
         this.secretChats = secretChats;
     }
 

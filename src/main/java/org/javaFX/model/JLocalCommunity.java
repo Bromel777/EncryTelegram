@@ -5,12 +5,14 @@ import javafx.beans.property.StringProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class JLocalCommunity {
+public class JLocalCommunity extends JTableEntity{
 
     private String communityName;
     private long communityID;
-    private List<JLocalCommunityMember> communityMembers;
+    private List<JSingleContact> communityMembers;
+    private int communitySize;
 
     private void generatePseudoRandomCommunityID(){
         this.communityID = (long)(Long.MAX_VALUE*Math.random());
@@ -22,17 +24,24 @@ public class JLocalCommunity {
     }
 
     public JLocalCommunity(String communityName) {
-        communityMembers = new ArrayList<>();
-        generatePseudoRandomCommunityID();
+        this();
         this.communityName = communityName;
     }
 
-    public JLocalCommunity(List<JLocalCommunityMember> communityMembers) {
-        this.communityMembers = communityMembers;
-        generatePseudoRandomCommunityID();
+
+    public JLocalCommunity(String communityName, int localCommunitySize) {
+        this();
+        this.communityName = communityName;
+        this.communitySize = localCommunitySize;
     }
 
-    public List<JLocalCommunityMember> getCommunityMembers() {
+
+    public JLocalCommunity(List<JSingleContact> communityMembers) {
+        this();
+        this.communityMembers = communityMembers;
+    }
+
+    public List<JSingleContact> getCommunityMembers() {
         return communityMembers;
     }
 
@@ -40,24 +49,25 @@ public class JLocalCommunity {
         return new SimpleStringProperty(getCommunityName());
     }
 
-    public void setCommunityMembers(List<JLocalCommunityMember> communityMembers) {
+    public void setCommunityMembers(List<JSingleContact> communityMembers) {
         this.communityMembers = communityMembers;
     }
 
-    public void addContactToCommunity(JLocalCommunityMember contact){
+    public void addContactToCommunity(JSingleContact contact){
         if(!communityMembers.contains(contact)){
             communityMembers.add(contact);
         }
     }
 
-    private void removeContactFromCommunity(JLocalCommunityMember contact){
+    private void removeContactFromCommunity(JSingleContact contact){
         if(!communityMembers.contains(contact)){
             communityMembers.remove(contact);
         }
     }
-    private JLocalCommunityMember removeContactFromCommunityById(int chatId){
-        JLocalCommunityMember contact = null;
-        for(JLocalCommunityMember member: communityMembers){
+
+    private JSingleContact removeContactFromCommunityById(int chatId){
+        JSingleContact contact = null;
+        for(JSingleContact member: communityMembers){
             if( member.getUserId() == chatId){
                 contact = member;
                 break;
@@ -80,4 +90,9 @@ public class JLocalCommunity {
     public long getCommunityID() {
         return communityID;
     }
+
+    public AtomicInteger getCommunitySize(){
+        return new AtomicInteger(communityMembers.size() == 0 ?communitySize : communityMembers.size());
+    }
+
 }

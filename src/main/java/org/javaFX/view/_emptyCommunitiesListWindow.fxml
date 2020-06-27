@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler._EmptyCommunitiesListHandler">
+    <children>
+        <AnchorPane prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Label layoutX="368.0" layoutY="14.0" prefHeight="32.0" prefWidth="165.0" text="Communities List" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="368.0" AnchorPane.rightAnchor="368.0" AnchorPane.topAnchor="14.0">
+                    <font>
+                        <Font name="Calibri Bold" size="22.0" />
+                    </font>
+                </Label>
+            <Line endX="873.0" fill="#7fa1ae" smooth="false" startX="27.0" stroke="#7fa1ae" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" />
+            </children>
+        </AnchorPane>
+        <AnchorPane prefHeight="537.0" prefWidth="901.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+            <children>
+                <ImageView fx:id="createButtonImage" fitHeight="45.0" fitWidth="137.0" layoutX="432.0" layoutY="270.0" onMouseClicked="#toCreateCommunityWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="225.0" AnchorPane.rightAnchor="432.3505172729492">
+                    <image>
+                        <Image url="file:src/main/resources/images/create.png" />
+                    </image>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor></ImageView>
+                <Label fx:id="communityNameLabel" layoutX="217.0" layoutY="158.0" prefHeight="28.0" prefWidth="466.0" text="It appears you don't have any Communities yet" textFill="#00b6ff">
+               <font>
+                  <Font name="System Bold" size="19.0" />
+               </font></Label>
+            <Label fx:id="communityNameLabel1" layoutX="203.0" layoutY="203.0" prefHeight="28.0" prefWidth="494.0" text="Create a new Community and have a good communication!">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>

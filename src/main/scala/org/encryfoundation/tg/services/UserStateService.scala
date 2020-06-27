@@ -122,9 +122,9 @@ object UserStateService {
 
     override def updateUser(user: TdApi.User): F[Unit] = for {
       _ <- userState.update { prevState =>
-        val newUsers = prevState.javaState.get().getUsers
-        newUsers.put(user.id, user)
-        prevState.javaState.get().setUsers(newUsers)
+        val newUsers = prevState.javaState.get().getUsersMap
+        newUsers.put(user.id.toLong, user)
+        prevState.javaState.get().setUsersMap(newUsers)
         prevState.copy(users = prevState.users + (user.id -> user))
       }
     } yield ()

@@ -19,9 +19,9 @@ public class JUserState {
     private Map<Long, JGroupChat> privateGroupsMap = new HashMap<>();
     private Map<Long, TdApi.User> usersMap =  new HashMap<>();
     public AtomicReferenceArray<String> userInfo = new AtomicReferenceArray(3);
-    private Map<Integer, TdApi.BasicGroup> basicGroups = new HashMap<>();
-    private Map<Integer, TdApi.Supergroup> superGroups = new HashMap<>();
-    private Map<Integer, TdApi.SecretChat> secretChats = new HashMap<>();
+    private Map<Long, TdApi.BasicGroup> basicGroups = new HashMap<>();
+    private Map<Long, TdApi.Supergroup> superGroups = new HashMap<>();
+    private Map<Long, TdApi.SecretChat> secretChats = new HashMap<>();
     public ArrayList<String> communities = new ArrayList<String>();
     public LinkedBlockingQueue<JavaInterMsg> msgsQueue = new LinkedBlockingQueue<JavaInterMsg>(100);
     public JDialog activeDialog;

@@ -6,6 +6,7 @@ import StepProto.StepMsgProto
 import com.google.protobuf.ByteString
 import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverThirdStepMsg
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.{StepMsgSerializationError, StepMsgSerializer}
+import org.encryfoundation.tg.userState.PrivateGroupChat
 
 object ProverThirdMsgSerializer {
 
@@ -20,7 +21,7 @@ object ProverThirdMsgSerializer {
                   .withThirdStep(ByteString.copyFrom(msg.thirdStep))
                   .withChatId(msg.chatId)
                   .withGroupName(msg.name)
-                  .withPass(msg.pass)
+                  .withPrivateGroup(PrivateGroupChat.toProto(msg.privateGroupChat))
               )
           )
 
@@ -32,7 +33,7 @@ object ProverThirdMsgSerializer {
           proto.thirdStep.toByteArray,
           proto.chatId,
           proto.groupName,
-          proto.pass
+          PrivateGroupChat.fromProto(proto.privateGroup.get)
         )
       )
     }

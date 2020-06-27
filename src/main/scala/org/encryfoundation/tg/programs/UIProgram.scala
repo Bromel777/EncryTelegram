@@ -7,18 +7,19 @@ import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
-import javafx.scene.control.TextArea
-import org.drinkless.tdlib.{Client, TdApi}
+import javafx.collections.{FXCollections, ObservableList}
+import javafx.scene.control.{ListView, TextArea}
+import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{AccumulatorHandler, PrivateGroupChatCreationHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, SendToChat, SetActiveChat}
-import org.encryfoundation.tg.RunApp.sendMsg
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.services.PrivateConferenceService
-import org.javaFX.model.JDialog
+import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
+import org.javaFX.model.{JDialog, JTextMessage}
+import org.javaFX.model.nodes.VBoxMessageCell
 import scorex.crypto.encode.Base64
 
 import collection.JavaConverters._
@@ -33,23 +34,41 @@ object UIProgram {
 
   private class Live[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                                       privateConfService: PrivateConferenceService[F],
+                                                      userStateService: UserStateService[F],
                                                       client: Client[F],
                                                       dialogAreaRef: MVar[F, TextArea],
                                                       jDialogRef: MVar[F, JDialog]) extends UIProgram[F] {
 
-    def processLastMessage(msg: TdApi.Message, state: UserState[F]): String =
-      msg.content match {
-        case text: MessageText if state.privateGroups.contains(msg.chatId) =>
-          val aes = AESEncryption(state.privateGroups(msg.chatId)._2.getBytes())
-          Try(
-            state.users.get(msg.senderUserId)
-            .map(_.phoneNumber)
-              .getOrElse("Unknown sender") + ": " +
-              aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
-        case text: MessageText => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + text.text.text
-        case _: MessagePhoto => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "photo"
-        case _: MessageVideo => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "video"
-        case _ => state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
+    def processLastMessage(msg: TdApi.Message, state: UserState[F]): F[VBoxMessageCell] =
+      userStateService.getPrivateGroupChat(msg.chatId).map {
+        case Some(privateGroupChat) =>
+          msg.content match {
+            case text: MessageText =>
+              val aes = AESEncryption(privateGroupChat.password.getBytes())
+              val msgText = Try(state.users.get(msg.senderUserId)
+                  .map(_.phoneNumber)
+                  .getOrElse("Unknown sender") + ": " +
+                  aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
+              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+            case _ =>
+              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
+              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+          }
+        case None =>
+          msg.content match {
+            case text: MessageText =>
+              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + text.text.text
+              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+            case _: MessagePhoto =>
+              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "photo"
+              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+            case _: MessageVideo =>
+              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "video"
+              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+            case _ =>
+              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
+              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+          }
       }
 
     def processMsg(msg: JavaInterMsg): F[Unit] = msg match {
@@ -57,26 +76,26 @@ object UIProgram {
         for {
           state <- userStateRef.get
           javaState <- state.javaState.get().pure[F]
-          msgsMVar <- MVar.empty[F, String]
+          msgsMVar <- MVar.empty[F, List[VBoxMessageCell]]
           _ <- state.client.send(
             new TdApi.GetChatHistory(chatId, 0, 0, 20, false),
             ValueHandler(
               userStateRef,
               msgsMVar,
-              (msg: TdApi.Messages) => msg.messages.map(processLastMessage(_, state)).reverse.mkString("\n ").pure[F])
+              (msg: TdApi.Messages) =>
+                msg.messages.toList.traverse(processLastMessage(_, state)).map(_.reverse))
           )
           _ <- userStateRef.update(_.copy(activeChat = chatId))
           msgs <- msgsMVar.read
           _ <- Sync[F].delay {
-            javaState.activeDialog.setContent(new StringBuffer())
-            val localDialogHistory = javaState.activeDialog.getContent
-            localDialogHistory.append(msgs + "\n")
-            javaState.activeDialogArea.setText(localDialogHistory.toString)
-            javaState.activeDialog.setContent(localDialogHistory)
+            val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
+            msgs.foreach(observList.add)
+            javaState.messagesListView = new ListView[VBoxMessageCell]()
+            javaState.messagesListView.setItems(observList)
           }
         } yield ()
       case _@SendToChat(msg) =>
-        userStateRef.get.flatMap( state => sendMsg(state.chatList.find(_.id == state.activeChat).get, msg, userStateRef))
+        userStateRef.get.flatMap( state => ClientUtils.sendMsg(state.chatList.find(_.id == state.activeChat).get, msg, userStateRef))
       case _@CreateCommunityJava(name, usersJava) =>
         privateConfService.createConference(name, "me" :: usersJava.asScala.toList)
       case _@CreatePrivateGroupChat(name) =>
@@ -116,10 +135,11 @@ object UIProgram {
             userStateRef,
             client,
             confInfo,
+            groupname,
             userIds.map(_._2),
             confInfo.users.head.userTelegramLogin,
             password
-          )(privateConfService)
+          )(privateConfService, userStateService)
         )
         _ <- state.db.put(Database.privateGroupChatsKey, groupname.getBytes())
         _ <- state.db.put(groupname.getBytes(), password.getBytes())
@@ -136,9 +156,10 @@ object UIProgram {
 
   def apply[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                              privateConfService: PrivateConferenceService[F],
+                                             userStateService: UserStateService[F],
                                              client: Client[F]): F[UIProgram[F]] =
     for {
       dialogAreaMVar <- MVar.empty[F, TextArea]
       jDialogMVar <- MVar.empty[F, JDialog]
-    } yield new Live(userStateRef, privateConfService, client, dialogAreaMVar, jDialogMVar)
+    } yield new Live(userStateRef, privateConfService, userStateService, client, dialogAreaMVar, jDialogMVar)
 }

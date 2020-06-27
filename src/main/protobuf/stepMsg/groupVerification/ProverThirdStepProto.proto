@@ -1,8 +1,10 @@
 syntax = "proto3";
 
+import "chats/PrivateGroupChatProto.proto";
+
 message ProverThirdStepProtoMsg {
     bytes thirdStep = 1;
     uint64 chatId = 2;
     string groupName = 3;
-    string pass = 4;
+    PrivateGroupChatProtoMessage privateGroup = 4;
 }

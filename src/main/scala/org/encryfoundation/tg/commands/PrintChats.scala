@@ -20,7 +20,7 @@ case class PrintChats[F[_]: Concurrent: Timer](client: Client[F],
     dbChats <- db.get(Database.privateGroupChatsKey)
     _ <- Sync[F].delay(println(s"Chats: ${
       state.chatList.take(20).reverse.map { case (chat) =>
-        if (state.privateGroups.contains(chat.id) ||
+        if (state.privateGroups.exists(_.chatId == chat.id) ||
           dbChats.exists(_.map(_.toChar).mkString == chat.title)) chat.title ++ s". ChatId: ${chat.id} [Private group]."
         else if (chat.`type`.isInstanceOf[ChatTypeSecret])
           chat.title ++ s". ChatId: ${chat.id}. Secret chat id: ${chat.`type`.asInstanceOf[ChatTypeSecret].secretChatId} [Secret chat]"

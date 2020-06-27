@@ -6,9 +6,8 @@ import cats.effect.{Concurrent, Timer}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import it.unisa.dia.gas.jpbc.Element
-import org.drinkless.tdlib.{Client, TdApi}
+import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.encryfoundation.mitmImun.Prover
-import org.encryfoundation.tg.RunApp.sendMessage
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.CloseChatHandler
@@ -20,7 +19,8 @@ import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.En
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.ProverThirdMsgSerializer._
-import org.encryfoundation.tg.userState.UserState
+import org.encryfoundation.tg.services.UserStateService
+import org.encryfoundation.tg.userState.{PrivateGroupChat, UserState}
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
 
@@ -33,10 +33,13 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
                                                             secretChat: TdApi.Chat,
                                                             chatId: Long,
                                                             firstStep: Element,
-                                                            verifierSecondStepMsg: MVar[F, VerifierSecondStepMsg]) extends Pipeline[F] {
+                                                            privateGroupChat: PrivateGroupChat,
+                                                            verifierSecondStepMsg: MVar[F, VerifierSecondStepMsg])(
+                                                            userStateService: UserStateService[F]
+                                                            ) extends Pipeline[F] {
 
   private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] =
-    sendMessage(
+    ClientUtils.sendMessage(
       chatId,
       Base64.encode(StepMsgSerializer.toBytes(msg)),
       client
@@ -45,24 +48,22 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
   def processPreviousStepStart: F[Pipeline[F]] = Applicative[F].pure(this)
 
   def processPreviousStepEnd: F[Pipeline[F]] = for {
-    state <- userState.get
     _ <- send2Chat(StartPipeline(ProverThirdStep.pipelineName))
     secondStep <- verifierSecondStepMsg.read
     thirdStep <- prover.thirdStep(secondStep.secondStep).pure[F]
     commonKey <- prover.produceCommonKey(secondStep.verifierPubKey1, firstStep, secondStep.secondStep).pure[F]
     aes <- AESEncryption(Blake2b256.hash(commonKey)).pure[F]
-    _ <- Logger[F].info(s"Common key: ${Base64.encode(commonKey)}" +
-      s"Community name: ${community.name}." +
-      s" CypherText: ${Base64.encode(aes.encrypt(community.name.getBytes))}. Decypher: ${
-        aes.decrypt(Base64.decode(Base64.encode(aes.encrypt(community.name.getBytes))).get).map(_.toChar).mkString
-      }")
-    groupChatId <- state.privateGroups.find(_._2._2 == chatPass).get._1.pure[F]
+    cypherdGroup <- privateGroupChat.copy(
+      communityName = Base64.encode(aes.encrypt(privateGroupChat.communityName.getBytes())),
+      groupName = Base64.encode(aes.encrypt(privateGroupChat.groupName.getBytes())),
+      password = Base64.encode(aes.encrypt(privateGroupChat.password.getBytes()))
+    ).pure[F]
     _ <- send2Chat(
       ProverThirdStepMsg(
         thirdStep,
-        groupChatId,
+        privateGroupChat.chatId,
         Base64.encode(aes.encrypt(community.name.getBytes)),
-        Base64.encode(aes.encrypt(chatPass.getBytes))
+        cypherdGroup
       )
     )
     _ <- send2Chat(EndPipeline(ProverThirdStep.pipelineName))
@@ -79,10 +80,12 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
   }
 
   override def processInput(input: Array[Byte]): F[Pipeline[F]] =
-    StepMsgSerializer.parseBytes(input).right.get match {
-      case StartPipeline(pipelineName) if pipelineName == VerifierSecondStep.pipeLineName  => processPreviousStepStart
-      case EndPipeline(pipelineName) if pipelineName == VerifierSecondStep.pipeLineName => processPreviousStepEnd
-      case msg: VerifierSecondStepMsg => processStepInput(msg)
+    StepMsgSerializer.parseBytes(input) match {
+      case Right(StartPipeline(pipelineName)) if pipelineName == VerifierSecondStep.pipeLineName  => processPreviousStepStart
+      case Right(EndPipeline(pipelineName)) if pipelineName == VerifierSecondStep.pipeLineName => processPreviousStepEnd
+      case Right(msg) => processStepInput(msg)
+      case Left(err) =>
+        Logger[F].error(s"Err during parsing step: ${err}. Input: ${input.map(_.toChar).mkString}") >> Applicative[F].pure(this)
     }
 }
 

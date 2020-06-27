@@ -8,13 +8,13 @@ import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.handlers.{PrivateGroupChatCreationHandler, SecretGroupPrivateChatCreationHandler}
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.services.PrivateConferenceService
+import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
 
 case class CreatePrivateGroupChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
                                                                    userStateRef: Ref[F, UserState[F]],
                                                                    db: Database[F])(
-                                                                   privateConferenceService: PrivateConferenceService[F]
-                                                                   ) extends Command[F] {
+                                                                   privateConferenceService: PrivateConferenceService[F],
+                                                                   userStateService: UserStateService[F]) extends Command[F] {
 
   override val name: String = "createPrivateGroupChat"
 
@@ -49,10 +49,11 @@ case class CreatePrivateGroupChat[F[_]: Concurrent: Timer: Logger](client: Clien
           stateRef,
           client,
           confInfo,
+          groupname,
           userIds.map(_._2),
           confInfo.users.head.userTelegramLogin,
           password
-        )(privateConferenceService)
+        )(privateConferenceService, userStateService)
       )
       _ <- db.put(Database.privateGroupChatsKey, groupname.getBytes())
       _ <- db.put(groupname.getBytes(), password.getBytes())

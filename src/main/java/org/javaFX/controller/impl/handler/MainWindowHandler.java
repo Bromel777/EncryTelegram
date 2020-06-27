@@ -34,7 +34,11 @@ public class MainWindowHandler extends MainWindowBasicHandler {
     private ObservableList<JChat> getObservableChatList(){
         ObservableList<JChat> observableChatList = FXCollections.observableArrayList();
         getUserStateRef().get().getChatList().forEach(
-                chat -> observableChatList.add(new JChat(chat.title, "stub", chat.id) )
+                chat -> observableChatList.add(
+                        new JChat(
+                                chat.title,
+                                "stub",
+                                chat.id))
         );
         return observableChatList;
     }

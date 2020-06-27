@@ -56,9 +56,9 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         val updateUser = obj.asInstanceOf[TdApi.UpdateUser]
         for {
           _ <- userStateRef.update { prevState =>
-            val newUsers = prevState.javaState.get().getUsers
+            val newUsers = prevState.javaState.get().getUsersMap
             newUsers.put(updateUser.user.id, updateUser.user)
-            prevState.javaState.get().setUsers(newUsers)
+            prevState.javaState.get().setUsersMap(newUsers)
             prevState.copy(users = prevState.users + (updateUser.user.id -> updateUser.user))
           }
         } yield ()

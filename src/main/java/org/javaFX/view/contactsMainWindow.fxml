@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.MainWindowHandler">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.ContactsMainWindowHandler">
    <children>
       <SplitPane dividerPositions="0.0903010033444816, 0.3963210702341137" focusTraversable="false" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -50,27 +50,35 @@
             </AnchorPane>
           <AnchorPane fx:id="leftPane" prefHeight="400.0" prefWidth="200.0">
                <children>
-                  <TableView fx:id="chatsTable" editable="true" layoutX="-1.0" minHeight="0.0" minWidth="0.0" onMouseClicked="#clickItem" prefHeight="398.0" prefWidth="156.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TableView fx:id="contactsTable" editable="true" layoutX="-1.0" minHeight="0.0" minWidth="0.0" onMouseClicked="#clickItem" prefHeight="356.0" prefWidth="180.0" AnchorPane.bottomAnchor="41.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                      <TableColumn fx:id="chatsColumn" prefWidth="114.0" sortable="false" text="Chats" />
-                        <TableColumn fx:id="lastMsgColumn" prefWidth="114.0" sortable="false" text="Last Msg" />
+                      <TableColumn fx:id="contactsColumn" prefWidth="114.0" sortable="false" text="Contacts" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
+                  <AnchorPane layoutX="-5.0" layoutY="352.0" prefHeight="44.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <TextArea fx:id="searchContactTextArea" layoutX="-8.0" layoutY="-82.0" onKeyPressed="#searchContactByKeyboard" prefHeight="200.0" prefWidth="200.0" promptText="Find contact..." wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <font>
+                              <Font name="Centaur" size="14.0" />
+                           </font>
+                        </TextArea>
+                     </children>
+                  </AnchorPane>
                </children>
             </AnchorPane>
           <AnchorPane fx:id="rightPane" prefHeight="400.0" prefWidth="357.0">
                <children>
-                  <TextArea fx:id="dialogTextArea" editable="false" layoutY="44.0"  wrapText="true" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0">
+                  <TextArea fx:id="dialogTextArea" editable="false" layoutY="44.0" wrapText="true" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0">
                      <font>
                         <Font name="Centaur" size="15.0" />
                      </font>
                   </TextArea>
                   <AnchorPane prefHeight="44.0" prefWidth="362.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TextArea fx:id="searchMessageTextArea" maxHeight="44.0" onKeyPressed="#findMessageByKeyboard" prefHeight="44.0" prefWidth="293.0" promptText="Search" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="0.0">
+                        <TextArea fx:id="searchMessageTextArea" maxHeight="44.0" onKeyPressed="#findMessageByKeyboard" prefHeight="44.0" prefWidth="293.0" promptText="Search..." wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="0.0">
                            <font>
                               <Font name="Centaur" size="14.0" />
                            </font></TextArea>

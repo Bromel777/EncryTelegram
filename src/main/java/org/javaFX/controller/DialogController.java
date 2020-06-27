@@ -8,7 +8,7 @@ import org.javaFX.model.JUserState;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public abstract class DialoguController {
+public abstract class DialogController {
 
     private Stage dialogStage;
     private JLocalCommunity localCommunity;

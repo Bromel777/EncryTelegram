@@ -3,6 +3,7 @@ package org.javaFX.controller.impl.handler;
 import javafx.fxml.FXML;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
+import org.javaFX.model.JTableEntity;
 import org.javaFX.util.observers.BasicObserver;
 
 public class RootLayoutHandler extends DataHandler {
@@ -17,7 +18,8 @@ public class RootLayoutHandler extends DataHandler {
     @FXML
     private void createLocalCommunity(){
         terminateObserver();
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToCreateCommunityWindowFXML);
+        JTableEntity.resetRowNumber();
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToCreateNewCommunityWindowFXML);
     }
 
     @FXML
@@ -28,13 +30,20 @@ public class RootLayoutHandler extends DataHandler {
     @FXML
     private void launchMainWindow(){
         terminateObserver();
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
+        JTableEntity.resetRowNumber();
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
     }
 
     @FXML
     private void showLocalCommunity(){
         terminateObserver();
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToLocalShowCommunitiesWindowFXML);
+        JTableEntity.resetRowNumber();
+        if (getUserStateRef().get().communities.size() == 0 ){
+            getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEmptyCommunitiesListWindowFXML);
+        }
+        else {
+            getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToCommunitiesListWindowFXML);
+        }
     }
 
     @Override

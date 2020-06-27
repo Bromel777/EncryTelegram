@@ -1,18 +1,16 @@
 package org.javaFX.util;
 
-
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class KeyboardHandler {
-    public static AtomicBoolean[] handleShiftEnterPressed(TextArea sendMessageArea ){
+    public static AtomicBoolean[] handleShiftEnterPressed(Node element ){
         AtomicBoolean[] keysPressed = new AtomicBoolean[2];
         keysPressed[0] = new AtomicBoolean(false);
         keysPressed[1] = new AtomicBoolean(false);
-        sendMessageArea.setOnKeyPressed(keyEvent -> {
+        element.setOnKeyPressed(keyEvent -> {
             switch (keyEvent.getCode()) {
                 case ENTER:
                     keysPressed[0].set(true);
@@ -23,7 +21,7 @@ public class KeyboardHandler {
             }
         });
 
-        sendMessageArea.setOnKeyReleased(keyEvent -> {
+        element.setOnKeyReleased(keyEvent -> {
             switch (keyEvent.getCode()) {
                 case ENTER:
                     keysPressed[0].set(false);
@@ -37,26 +35,20 @@ public class KeyboardHandler {
     }
 
 
-    public static AtomicBoolean handleEnterPressed(Node button ){
+    public static AtomicBoolean handleEnterPressed(Node element ){
         AtomicBoolean keyPressed = new AtomicBoolean(false);
-        button.setOnKeyPressed(keyEvent -> {
-            switch (keyEvent.getCode()) {
-                case ENTER:
-                    keyPressed.set(true);
-                    break;
+        element.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                keyPressed.set(true);
             }
         });
 
-        button.setOnKeyReleased(keyEvent -> {
-            switch (keyEvent.getCode()) {
-                case ENTER:
-                    keyPressed.set(false);
-                    break;
-
+        element.setOnKeyReleased(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                keyPressed.set(false);
             }
         });
         return keyPressed;
     }
-
 
 }

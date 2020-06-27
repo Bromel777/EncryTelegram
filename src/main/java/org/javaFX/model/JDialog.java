@@ -9,6 +9,12 @@ public class JDialog {
     private String title;
     private StringBuffer content;
 
+    public JDialog() {
+        this.title = "";
+        userList = new ArrayList<>();
+        content = new StringBuffer();
+    }
+
     public JDialog(String title) {
         this.title = title;
         userList = new ArrayList<>();

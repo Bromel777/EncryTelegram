@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane minHeight="600.0" minWidth="600.0" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler._EnterVerificationCodeHandler">
+    <children>
+        <AnchorPane layoutX="7.0" layoutY="7.0" prefHeight="200.0" prefWidth="600.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="-7.0" AnchorPane.topAnchor="7.0">
+            <children>
+                <ImageView fx:id="encryTelegramClientImg" fitHeight="166.0" fitWidth="311.0" layoutX="232.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="30.0">
+                    <image>
+                        <Image url="file:src/main/resources/images/encryLogoBig.png" />
+                    </image>
+                </ImageView>
+            <ImageView fx:id="arrowImg" fitHeight="45.0" fitWidth="45.0" onMouseClicked="#backToEnterPhoneNumberPage" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <image>
+                  <Image url="file:src/main/resources/images/arrow.png" />
+               </image>
+            </ImageView>
+            </children>
+        </AnchorPane>
+        <AnchorPane layoutX="14.0" layoutY="121.0" prefHeight="120.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
+            <children>
+                <Label layoutX="136.0" layoutY="54.0" prefHeight="73.0" prefWidth="328.0" text="Please enter the code you've just received via SMS" wrapText="true" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="54.0">
+                    <font>
+                        <Font name="Times New Roman" size="20.0" />
+                    </font>
+                </Label>
+            <Label fx:id="phoneNumberLabel" layoutX="170.0" layoutY="4.0" prefHeight="66.0" prefWidth="328.0" wrapText="true" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0">
+               <font>
+                  <Font name="Times New Roman Bold" size="22.0" />
+               </font>
+            </Label>
+            </children></AnchorPane>
+        <AnchorPane prefHeight="150.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="320.0">
+            <children>
+            <Label layoutX="136.0" layoutY="63.0" prefHeight="73.0" prefWidth="328.0" text="We have sent you a code via SMS. Please enter it above." wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0">
+               <font>
+                  <Font name="Times New Roman" size="20.0" />
+               </font>
+            </Label>
+                <TextField fx:id="verificationCodeTextField" layoutX="136.0" layoutY="28.0" onKeyPressed="#handleVerificationCodeAreaPressed" onKeyTyped="#handleKeyTyped" prefHeight="33.0" prefWidth="264.0" promptText="-----" style="-fx-border-color: blue;" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="28.0" />
+                <Label layoutX="136.0" layoutY="1.0" prefHeight="21.0" prefWidth="264.0" text="  Code" textFill="#00b6ff" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="200.0">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font></Label>
+            </children>
+        </AnchorPane>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="470.0">
+            <children>
+                <ImageView fx:id="nextButtonImg" fitHeight="60.0" fitWidth="328.0" onMouseClicked="#handleConfirmVCAction" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="0.0">
+                    <image>
+                        <Image url="file:src/main/resources/images/nextButton.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>

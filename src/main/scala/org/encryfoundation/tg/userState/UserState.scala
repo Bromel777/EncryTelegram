@@ -45,7 +45,7 @@ object UserState {
     privateConfs <- recoverCommunities(db)
     privateGroupChats <- recoverPrivateGroupChats(db)
   } yield {
-    javaState.get().communities = privateConfs.map(_.name).asJava
+    privateConfs.foreach(community => javaState.get().communities.add(community.name))
     UserState[F](
       client = client,
       javaState = javaState,

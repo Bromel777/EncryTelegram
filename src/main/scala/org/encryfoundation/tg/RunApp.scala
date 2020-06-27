@@ -33,6 +33,7 @@ object RunApp extends App {
     client <- Client[IO](EmptyHandlerWithQueue(queueRef))
     _ <- client.execute(new TdApi.SetLogVerbosityLevel(0))
     mainState <- UserState.recoverOrCreate(client, state, db)
+    _ <- Logger[IO].info("State recovered successfully")
     ref <- Ref.of[IO, UserState[IO]](mainState)
     confService <- PrivateConferenceService[IO](db, ref)
     userStateService <- UserStateService[IO](ref, db)

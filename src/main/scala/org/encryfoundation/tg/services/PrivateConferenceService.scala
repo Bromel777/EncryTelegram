@@ -44,7 +44,7 @@ object PrivateConferenceService {
           CommunityUser(userLogin, userInfo)
         }.pure[F]
         community <- PrivateCommunity(name, usersIds, generatorG1, generatorG2, generatorZr, usersInfo._2).pure[F]
-        _ <- Logger[F].info(s"Create private community with name: ${name}. And users: ${usersIds.map(_.userTelegramLogin)}")
+        _ <- Logger[F].info(s"Create private community with name: ${name}. com: ${jState.communities}. And users: ${usersIds.map(_.userTelegramLogin)}")
         _ <- Sync[F].delay(jState.communities.add(name))
         _ <- db.put(
           conferencesKey,

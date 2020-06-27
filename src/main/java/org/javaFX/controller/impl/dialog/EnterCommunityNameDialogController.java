@@ -15,8 +15,6 @@ public class EnterCommunityNameDialogController extends DialogController {
     @FXML
     private TextField nameTextField;
 
-    private static int localCommunitySize = 0;
-
     @FXML
     private void initialize() {
     }
@@ -33,7 +31,6 @@ public class EnterCommunityNameDialogController extends DialogController {
                 .stream()
                 .map(elem -> elem.getPhoneNumber().getValue())
                 .collect(Collectors.toList());
-        localCommunitySize = members.size();
         JavaInterMsg msg = new JavaInterMsg.CreateCommunityJava(
                 getLocalCommunity().getCommunityName(),
                 members

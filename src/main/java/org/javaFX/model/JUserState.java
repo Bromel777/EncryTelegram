@@ -1,8 +1,10 @@
 package org.javaFX.model;
 
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import org.drinkless.tdlib.TdApi;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.javaFX.model.nodes.VBoxMessageCell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +28,9 @@ public class JUserState {
     public TextArea activeDialogArea;
     private boolean isAuth = false;
 
+    //новая переменная для записи в диалоговое окно
+
+    public ListView<VBoxMessageCell> messagesListView;
 
     public JUserState() {
     }

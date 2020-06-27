@@ -16,27 +16,36 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class EncryWindow extends Application {
 
+    public final static int afterInitializationWidth = 920;
+    public final static int afterInitializationHeight = 645;
+
     private Stage primaryStage;
     private BorderPane rootLayout;
 
-    private final String windowTitle = "ETC";
+    private final String windowTitle = "ENCRY Telegram Client";
     private final String pathToLogoImage = "file:src/main/resources/images/logo.png";
 
-    public final static String pathToStartWindowFXML = "view/startWindow.fxml";
+    private final static String pathToRootLayout = "view/rootLayout.fxml";
 
     public final static String pathToEnterPhoneNumberWindowFXML = "view/_enterPhoneNumberWindow.fxml";
     public final static String pathToEnterVerificationCodeWindowFXML = "view/_enterVerificationCodeWindow.fxml";
     public final static String pathToEnterPasswordWindowFXML = "view/_enterPasswordWindow.fxml";
     public final static String pathToChatsWindowFXML = "view/_chatsWindow.fxml";
+    public final static String pathToCreateNewCommunityWindowFXML = "view/_createNewLocalCommunity.fxml";
+    public final static String pathToEmptyCommunitiesListWindowFXML = "view/_emptyCommunitiesListWindow.fxml";
+    public final static String pathToCommunitiesListWindowFXML = "view/_communitiesListWindow.fxml";
+
+
+    public final static String pathToStartWindowFXML = "view/startWindow.fxml";
 
     public final static String pathToMainWindowFXML = "view/mainWindow.fxml";
     public final static String pathToContactsMainWindowFXML = "view/contactsMainWindow.fxml";
     public final static String pathToAuthenticationWindowFXML = "view/authenticationWindow.fxml";
     public final static String pathToCreateCommunityWindowFXML = "view/localCommunityWindow.fxml";
     public final static String pathToLocalCommunityNameDialogFXML = "view/localCommunityNameDialog.fxml";
-    public final static String pathToLocalShowCommunitiesWindowFXML = "view/showCreatedLocalCommunitiesWindow.fxml";
+    public final static String pathToShowCLocalommunitiesWindowFXML = "view/showCreatedLocalCommunitiesWindow.fxml";
     public final static String pathToCreateSubmitPrivateChatFXML = "view/createPrivateChatDialog.fxml";
-    private final static String pathToRootLayout = "view/rootLayout.fxml";
+
 
     private DataHandler rootLayoutHandler;
 

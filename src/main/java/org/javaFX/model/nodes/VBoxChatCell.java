@@ -1,4 +1,4 @@
-package org.javaFX.model;
+package org.javaFX.model.nodes;
 
 import javafx.beans.property.LongProperty;
 import javafx.scene.control.Label;
@@ -7,11 +7,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import org.javaFX.model.JChat;
 import org.javaFX.util.RandomChooser;
 
-public class VBoxCell extends VBox {
-    private AnchorPane rootPane;
+public class VBoxChatCell extends VBoxCell<JChat>{
     private Label chatTitleLabel;
     private Label lastMessageLabel;
     private Label timeLabel;
@@ -22,40 +23,40 @@ public class VBoxCell extends VBox {
     private Color circleColor;
     private LongProperty chatId;
 
-    public VBoxCell(JChat jChat) {
-        super();
-        circleColor = RandomChooser.getRandomColor();
-        initNodes(jChat);
-        setNodesToRootPane();
+    public VBoxChatCell(JChat jChat) {
+        super(jChat);
         chatId = jChat.chatIdProperty();
     }
 
-    private void initNodes(JChat jChat){
+    @Override
+    protected void initNodes(JChat jChat){
         initAnchorPane();
         initChatTitleLabel(jChat);
         initlLastMessageLabel(jChat);
         initTimeLabel(jChat);
+        circleColor = RandomChooser.getRandomColor();
         initBigCircle(jChat);
         initBigCircleText(jChat);
         initSmallCircle(jChat);
         initSmallCircleText(jChat);
     }
 
-    private void setNodesToRootPane(){
-        rootPane.getChildren().add(chatTitleLabel);
-        rootPane.getChildren().add(lastMessageLabel);
-        rootPane.getChildren().add(timeLabel);
-        rootPane.getChildren().add(smallCircle);
-        rootPane.getChildren().add(unreadMsgsNumberText);
-        rootPane.getChildren().add(bigCircle);
-        rootPane.getChildren().add(abbreviationText);
-        this.getChildren().add(rootPane);
+    @Override
+    protected void setNodesToRootPane(){
+        getRootPane().getChildren().add(chatTitleLabel);
+        getRootPane().getChildren().add(lastMessageLabel);
+        getRootPane().getChildren().add(timeLabel);
+        getRootPane().getChildren().add(smallCircle);
+        getRootPane().getChildren().add(unreadMsgsNumberText);
+        getRootPane().getChildren().add(bigCircle);
+        getRootPane().getChildren().add(abbreviationText);
+        this.getChildren().add(getRootPane());
     }
 
 
     private void initAnchorPane(){
-        rootPane = new AnchorPane();
-        rootPane.setPrefSize(260,62);
+        setRootPane(new AnchorPane() );
+        getRootPane().setPrefSize(260,62);
     }
 
     private void initChatTitleLabel(JChat jChat){
@@ -94,15 +95,17 @@ public class VBoxCell extends VBox {
         abbreviationText = new Text();
         abbreviationText.setLayoutX(22);
         abbreviationText.setLayoutY(38);
-        String [] strings = jChat.getTitle().get().toUpperCase().split(" ");
-        String result = "";
+        String [] strings = jChat.getTitle().get().split(" ");
+        String result = " ";
         if(strings.length > 1){
-            result = strings[0].charAt(0)+" "+ strings[1].charAt(0);
+            result = ""+strings[0].charAt(0)+ strings[1].charAt(0);
         }
         else {
-            result += " "+strings[0].charAt(0);
+            result += ""+strings[0].charAt(0);
         }
-        abbreviationText.setText(result);
+        abbreviationText.setText(result.toUpperCase());
+        abbreviationText.setFont(Font.font("Times New Roman", FontWeight.BOLD ,16) );
+        abbreviationText.setFill(Color.WHITE);
     }
 
     private void initSmallCircle(JChat jChat){
@@ -119,6 +122,7 @@ public class VBoxCell extends VBox {
         unreadMsgsNumberText.setLayoutX(236);
         unreadMsgsNumberText.setLayoutY(50);
         unreadMsgsNumberText.setText("1");
+        unreadMsgsNumberText.setFill(Color.WHITE);
     }
 
     public long getChatId() {

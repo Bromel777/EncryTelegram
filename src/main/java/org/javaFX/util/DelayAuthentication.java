@@ -18,8 +18,9 @@ public class DelayAuthentication extends Thread{
     public void run() {
         Runnable updater = () -> {
             if (EncryWindow.state.get().isAuth()) {
-                encryWindow.launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML, 900, 645);
-                //encryWindow.launchWindowByPathToFXML(EncryWindow.pathToMainWindowFXML);
+                encryWindow.launchWindowByPathToFXML(
+                        EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
+                );
             } else {
                 encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
             }

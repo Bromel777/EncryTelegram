@@ -26,7 +26,9 @@ public class _EnterPasswordHandler extends DataHandler {
     private void handleConfirmPasswordAction(){
         String passwordStr = passwordField.getCharacters().toString();
         getUserStateRef().get().setPass(passwordStr);
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML, 900, 645);
+        getEncryWindow().launchWindowByPathToFXML(
+                EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
+        );
     }
 
     @FXML

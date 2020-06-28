@@ -13873,7 +13873,7 @@ public class TdApi {
      */
     public static class LocalFile extends Object {
         /**
-         * Local path to the locally available file part; may be empty.
+         * Local path to thelocally available file part; may be empty.
          */
         public String path;
         /**

@@ -20,10 +20,12 @@ import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateServi
 import org.encryfoundation.tg.steps.Step.AuthStep
 import org.encryfoundation.tg.userState.UserState
 import org.encryfoundation.tg.utils.UserStateUtils
+import org.javaFX.model.JMessage
+import org.javaFX.model.nodes.{VBoxDialogMessageCell, VBoxMessageCell}
 import scorex.crypto.encode.Base64
 
 import scala.io.StdIn
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                                           privateConferenceService: PrivateConferenceService[F],
@@ -181,25 +183,47 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
 
   def processLastMessage(msg: TdApi.Message): F[Unit] = {
 
-    def msg2Str(msg: TdApi.Message, state: UserState[F]): String =
-      msg.content match {
-        case text: MessageText if state.privateGroups.exists(_.chatId == msg.chatId) =>
-          val aes = AESEncryption(state.privateGroups.find(_.chatId == msg.chatId).get.password.getBytes())
-          state.users(msg.senderUserId).phoneNumber + ": " + aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString
-        case text: MessageText => state.users(msg.senderUserId).phoneNumber + ": " + text.text.text
-        case _: MessagePhoto => state.users(msg.senderUserId).phoneNumber + ": " + "photo"
-        case _: MessageVideo => state.users(msg.senderUserId).phoneNumber + ": " + "video"
-        case _ => state.users(msg.senderUserId).phoneNumber + ": Unknown msg type"
+    def msg2VBox(msg: TdApi.Message, state: UserState[F]): F[VBoxDialogMessageCell] =
+      userStateService.getPrivateGroupChat(msg.chatId).map {
+        case Some(privateGroupChat) =>
+          msg.content match {
+            case text: MessageText =>
+              val aes = AESEncryption(privateGroupChat.password.getBytes())
+              val msgText = Try(state.users.get(msg.senderUserId)
+                .map(_.phoneNumber)
+                .getOrElse("Unknown sender") + ": " +
+                aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
+            case _ =>
+              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
+          }
+        case None =>
+          msg.content match {
+            case text: MessageText =>
+              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + text.text.text
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
+            case _: MessagePhoto =>
+              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "photo"
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
+            case _: MessageVideo =>
+              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "video"
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
+            case _ =>
+              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
+          }
       }
 
     for {
       state <- userStateRef.get
+      newmsg <- msg2VBox(msg, state)
       _ <- if (msg.chatId == state.activeChat) Sync[F].delay {
         val javaState = state.javaState.get()
-        val localDialogHistory = javaState.activeDialog.getContent
-        localDialogHistory.append(msg2Str(msg, state) + "\n")
-        javaState.activeDialogArea.setText(localDialogHistory.toString)
-        javaState.activeDialog.setContent(localDialogHistory)
+        val localDialogHistory = javaState.messagesListView
+        val newMessageView = localDialogHistory.getItems
+        newMessageView.add(newmsg)
+        localDialogHistory.setItems(newMessageView)
       } else Applicative[F].pure(())
     } yield ()
   }

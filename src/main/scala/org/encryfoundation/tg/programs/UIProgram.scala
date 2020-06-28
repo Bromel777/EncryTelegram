@@ -19,8 +19,8 @@ import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava,
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
-import org.javaFX.model.{JDialog, JTextMessage}
-import org.javaFX.model.nodes.VBoxMessageCell
+import org.javaFX.model.{JDialog, JMessage}
+import org.javaFX.model.nodes.{VBoxDialogMessageCell, VBoxMessageCell}
 import scorex.crypto.encode.Base64
 
 import collection.JavaConverters._
@@ -50,25 +50,25 @@ object UIProgram {
                   .map(_.phoneNumber)
                   .getOrElse("Unknown sender") + ": " +
                   aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
             case _ =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
           }
         case None =>
           msg.content match {
             case text: MessageText =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + text.text.text
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
             case _: MessagePhoto =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "photo"
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
             case _: MessageVideo =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "video"
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
             case _ =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
           }
       }
 

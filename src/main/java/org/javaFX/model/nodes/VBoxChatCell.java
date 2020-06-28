@@ -112,7 +112,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         smallCircle = new Circle();
         smallCircle.setLayoutX(240);
         smallCircle.setLayoutY(47);
-        smallCircle.setRadius(15);
+        smallCircle.setRadius(16);
         smallCircle.setFill(circleColor);
     }
 
@@ -120,7 +120,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         unreadMsgsNumberText = new Text();
         unreadMsgsNumberText.setFont(new Font(14));
         unreadMsgsNumberText.setLayoutX(236);
-        unreadMsgsNumberText.setLayoutY(50);
+        unreadMsgsNumberText.setLayoutY(52);
         unreadMsgsNumberText.setText("1");
         unreadMsgsNumberText.setFill(Color.WHITE);
     }

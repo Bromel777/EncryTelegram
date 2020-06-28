@@ -39,6 +39,8 @@ public class JUserState {
     public void setActiveDialog(JDialog activeDialog) { this.activeDialog = activeDialog; }
     public void setActiveDialogArea(TextArea activeDialogArea) { this.activeDialogArea = activeDialogArea; }*/
 
+    public void setActiveDialog(ListView<VBoxMessageCell> messagesListView) { this.messagesListView = messagesListView; }
+
     public List<TdApi.Chat> getChatList() {
         return chatList;
     }

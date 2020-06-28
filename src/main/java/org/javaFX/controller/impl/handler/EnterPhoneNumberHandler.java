@@ -19,7 +19,7 @@ import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class _EnterPhoneNumberHandler extends DataHandler {
+public class EnterPhoneNumberHandler extends DataHandler {
 
     @FXML
     private TextField phoneNumberTextField;
@@ -45,7 +45,7 @@ public class _EnterPhoneNumberHandler extends DataHandler {
     @FXML
     private Label error;
 
-    public _EnterPhoneNumberHandler() {}
+    public EnterPhoneNumberHandler() {}
 
     @FXML
     private void handleKeyTyped(){
@@ -71,7 +71,7 @@ public class _EnterPhoneNumberHandler extends DataHandler {
             AuthMsg nextStep = getUserStateRef().get().authQueue.take();
             if (nextStep.code() == AuthMsg.loadVC().code()) {
                 getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
-                ((_EnterVerificationCodeHandler) getEncryWindow().getCurrentController() )
+                ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController() )
                         .setPhoneNumberLabelText( getUserStateRef().get().getPreparedPhoneNumber());
             } else if (nextStep.code() == AuthMsg.err().code()) {
                 error.setText("Oops! Error");

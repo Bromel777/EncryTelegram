@@ -16,7 +16,7 @@ import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class _EnterVerificationCodeHandler extends DataHandler {
+public class EnterVerificationCodeHandler extends DataHandler {
 
     @FXML
     private TextField verificationCodeTextField;
@@ -30,8 +30,7 @@ public class _EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private Label error;
 
-    public _EnterVerificationCodeHandler() {
-    }
+    public EnterVerificationCodeHandler() {
 
     @FXML
     private void handleKeyTyped(){
@@ -61,14 +60,11 @@ public class _EnterVerificationCodeHandler extends DataHandler {
 
     @FXML
     private void handleVerificationCodeAreaPressed(){
-        System.out.println("Invoke handleVerificationCodeAreaPressed");
         handleVerificationCodeAccepted(nextButtonImg);
     }
 
     private void handleVerificationCodeAccepted(Node node){
-        System.out.println("Invoke handleVerificationCodeAccepted");
         AtomicBoolean[] keysPressed = KeyboardHandler.handleShiftEnterPressed(node);
-        System.out.println("keysPressed " + keysPressed);
         new AnimationTimer() {
             @Override
             public void handle(long now) {

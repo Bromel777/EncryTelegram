@@ -27,25 +27,15 @@ public class EncryWindow extends Application {
 
     private final static String pathToRootLayout = "view/rootLayout.fxml";
 
-    public final static String pathToEnterPhoneNumberWindowFXML = "view/_enterPhoneNumberWindow.fxml";
-    public final static String pathToEnterVerificationCodeWindowFXML = "view/_enterVerificationCodeWindow.fxml";
-    public final static String pathToEnterPasswordWindowFXML = "view/_enterPasswordWindow.fxml";
-    public final static String pathToChatsWindowFXML = "view/_chatsWindow.fxml";
-    public final static String pathToCreateNewCommunityWindowFXML = "view/_createNewLocalCommunity.fxml";
-    public final static String pathToEmptyCommunitiesListWindowFXML = "view/_emptyCommunitiesListWindow.fxml";
-    public final static String pathToCommunitiesListWindowFXML = "view/_communitiesListWindow.fxml";
-
+    public final static String pathToEnterPhoneNumberWindowFXML = "view/enterPhoneNumberWindow.fxml";
+    public final static String pathToEnterVerificationCodeWindowFXML = "view/enterVerificationCodeWindow.fxml";
+    public final static String pathToEnterPasswordWindowFXML = "view/enterPasswordWindow.fxml";
+    public final static String pathToChatsWindowFXML = "view/chatsWindow.fxml";
+    public final static String pathToCreateNewCommunityWindowFXML = "view/createNewLocalCommunity.fxml";
+    public final static String pathToEmptyCommunitiesListWindowFXML = "view/emptyCommunitiesListWindow.fxml";
+    public final static String pathToCommunitiesListWindowFXML = "view/communitiesListWindow.fxml";
 
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
-
-    public final static String pathToMainWindowFXML = "view/mainWindow.fxml";
-    public final static String pathToContactsMainWindowFXML = "view/contactsMainWindow.fxml";
-    public final static String pathToAuthenticationWindowFXML = "view/authenticationWindow.fxml";
-    public final static String pathToCreateCommunityWindowFXML = "view/localCommunityWindow.fxml";
-    public final static String pathToLocalCommunityNameDialogFXML = "view/localCommunityNameDialog.fxml";
-    public final static String pathToShowCLocalommunitiesWindowFXML = "view/showCreatedLocalCommunitiesWindow.fxml";
-    public final static String pathToCreateSubmitPrivateChatFXML = "view/createPrivateChatDialog.fxml";
-
 
     private DataHandler rootLayoutHandler;
 

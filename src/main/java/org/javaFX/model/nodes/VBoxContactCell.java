@@ -49,7 +49,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     private void initPhoneNumberLabel(JSingleContact communityMember){
         phoneNumberLabel = new Label();
         phoneNumberLabel.setText(getPreparedTelNumber(communityMember));
-        phoneNumberLabel.setLayoutX(250);
+        phoneNumberLabel.setLayoutX(300);
         phoneNumberLabel.setLayoutY(20);
     }
 

@@ -14,12 +14,13 @@ import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
 import org.javaFX.model.JChat;
 import org.javaFX.model.nodes.VBoxChatCell;
+import org.javaFX.model.nodes.VBoxDialogMessageCell;
 import org.javaFX.model.nodes.VBoxMessageCell;
 import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class _ChatsWindowHandler extends MainWindowBasicHandler {
+public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     private ListView<VBoxChatCell> chatsListView;
@@ -45,7 +46,7 @@ public class _ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private TextField searchThroughChatsTextField;
 
-    public _ChatsWindowHandler(){
+    public ChatsWindowHandler(){
     }
 
     @Override
@@ -77,7 +78,7 @@ public class _ChatsWindowHandler extends MainWindowBasicHandler {
         chatNameLabel.setText(chatsListView.getSelectionModel().getSelectedItem().getChatTitle());
     }
 
-    @FXML
+    /*@FXML
     protected void clickItem() {
         getUserStateRef().get().setActiveDialog(jDialog);
         getUserStateRef().get().setActiveDialogArea(dialogTextArea);
@@ -90,7 +91,25 @@ public class _ChatsWindowHandler extends MainWindowBasicHandler {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }*/
+
+    @FXML
+    protected void clickItem() {
+        this.messagesListView = getUserStateRef().get().messagesListView;
+
+        /*getUserStateRef().get().setActiveDialog(jDialog);
+        getUserStateRef().get().setActiveDialogArea(dialogTextArea);*/
+        JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
+                chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
+        );
+        changeLeftPaneVisibility();
+        try {
+            getUserStateRef().get().msgsQueue.put(msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
 
     @FXML
     private void searchContactByKeyboard(){

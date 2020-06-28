@@ -4,14 +4,10 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
 import javafx.util.Duration;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
-
 import org.javaFX.model.JDialog;
-import org.javaFX.model.JTableEntity;
 import org.javaFX.util.KeyboardHandler;
 import org.javaFX.util.observers.BasicObserver;
 import org.javaFX.util.observers.JTableObserver;
@@ -130,35 +126,4 @@ public abstract class MainWindowBasicHandler extends DataHandler{
         jDialog = new JDialog();
     }
 
-    @FXML
-    protected void callContactAction(){
-        //TODO implement
-    }
-
-    @FXML
-    protected void showMenu(){
-        //TODO implement
-    }
-
-    @FXML
-    protected void showContacts(){
-        terminateObserver();
-        JTableEntity.resetRowNumber();
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToContactsMainWindowFXML);
-    }
-
-    @FXML
-    protected void showPrivateChats(){
-        //TODO implement
-    }
-
-    @FXML
-    protected void showOptions(){
-        //TODO implement
-    }
-
-    @FXML
-    protected void showCalls(){
-        //TODO implement
-    }
 }

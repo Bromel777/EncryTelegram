@@ -11,7 +11,7 @@ import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class _EnterPasswordHandler extends DataHandler {
+public class EnterPasswordHandler extends DataHandler {
 
     @FXML
     private PasswordField passwordField;
@@ -19,7 +19,7 @@ public class _EnterPasswordHandler extends DataHandler {
     @FXML
     private ImageView nextButtonImg;
 
-    public _EnterPasswordHandler() {
+    public EnterPasswordHandler() {
     }
 
     @FXML

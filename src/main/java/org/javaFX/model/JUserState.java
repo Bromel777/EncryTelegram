@@ -22,22 +22,18 @@ public class JUserState {
     private Map<Long, TdApi.BasicGroup> basicGroups = new HashMap<>();
     private Map<Long, TdApi.Supergroup> superGroups = new HashMap<>();
     private Map<Long, TdApi.SecretChat> secretChats = new HashMap<>();
-    public ArrayList<String> communities = new ArrayList<String>();
+    public List<String> communities = new ArrayList<String>();
     public LinkedBlockingQueue<JavaInterMsg> msgsQueue = new LinkedBlockingQueue<JavaInterMsg>(100);
-    public JDialog activeDialog;
-    public TextArea activeDialogArea;
     private boolean isAuth = false;
-
-    //новая переменная для записи в диалоговое окно
-
     public ListView<VBoxMessageCell> messagesListView;
 
     public JUserState() {
     }
 
+    /*public JDialog activeDialog;
+    public TextArea activeDialogArea;
     public void setActiveDialog(JDialog activeDialog) { this.activeDialog = activeDialog; }
-
-    public void setActiveDialogArea(TextArea activeDialogArea) { this.activeDialogArea = activeDialogArea; }
+    public void setActiveDialogArea(TextArea activeDialogArea) { this.activeDialogArea = activeDialogArea; }*/
 
     public List<TdApi.Chat> getChatList() {
         return chatList;

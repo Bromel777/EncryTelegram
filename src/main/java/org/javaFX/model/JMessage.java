@@ -1,12 +1,12 @@
 package org.javaFX.model;
 
-public class JTextMessage {
+public class JMessage<T> {
 
     private boolean isMine;
-    private String content;
+    private T content;
     private String time;
 
-    public JTextMessage(boolean isMine, String content, String time) {
+    public JMessage(boolean isMine, T content, String time) {
         this.isMine = isMine;
         this.content = content;
         this.time = time;
@@ -16,7 +16,7 @@ public class JTextMessage {
         return isMine;
     }
 
-    public String getContent() {
+    public T getContent() {
         return content;
     }
 

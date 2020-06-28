@@ -1,65 +1,77 @@
 package org.javaFX.model.nodes;
 
-import javafx.scene.control.Label;
+import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import org.javaFX.model.JTextMessage;
+import org.javaFX.model.JMessage;
 
-public class VBoxMessageCell extends VBoxCell<JTextMessage> {
+public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     //private ImageView backGroundImage;
     private Rectangle messageRectangle;
-    private Label textLabel;
+    private Node contentNode;
     private Text timeText;
 
-    public VBoxMessageCell(JTextMessage jTextMessage){
-        super(jTextMessage);
+    public VBoxMessageCell(JMessage jMessage){
+        super(jMessage);
     }
 
     @Override
-    protected void initNodes(JTextMessage jTextMessage){
-        initAnchorPane(jTextMessage);
-        initTextLabel(jTextMessage);
+    protected void initNodes(JMessage jMessage){
+        initAnchorPane(jMessage);
+        initContentNode(jMessage);
         initMessageRectangle();
-        initTimeText(jTextMessage);
+        initTimeText(jMessage);
     }
 
     @Override
     protected void setNodesToRootPane(){
         getRootPane().getChildren().add(messageRectangle);
-        getRootPane().getChildren().add(textLabel);
+        getRootPane().getChildren().add(contentNode);
         getRootPane().getChildren().add(timeText);
         this.getChildren().add( getRootPane() );
     }
 
-    private void initTextLabel(JTextMessage jTextMessage){
-        textLabel = new Label();
-        textLabel.setText(jTextMessage.getContent());
-        textLabel.setWrapText(true);
-        textLabel.setLayoutX(15);
-        textLabel.setLayoutY(31);
-    }
+    protected abstract void initContentNode(JMessage jMessage);
 
-    private void initAnchorPane(JTextMessage jTextMessage){
+    private void initAnchorPane(JMessage jMessage){
         setRootPane(new AnchorPane() );
-        if(jTextMessage.isMine()){
+        if(jMessage.isMine()){
             getRootPane().setLayoutX(100);
         }
         getRootPane().setPrefSize(490,62);
     }
 
-    private void initMessageRectangle(){
-        messageRectangle = new Rectangle();
-        getRootPane().setPrefSize(textLabel.getWidth(),textLabel.getHeight());
-        textLabel.setLayoutX(0);
-        textLabel.setLayoutY(0);
-    }
+    protected abstract void initMessageRectangle();
 
-    private void initTimeText(JTextMessage jTextMessage){
+    private void initTimeText(JMessage jMessage){
         timeText = new Text();
-        timeText.setText("18:23");
+        timeText.setText(jMessage.getTime());
         timeText.setLayoutX(450);
         timeText.setLayoutY(42);
     }
 
+    public Rectangle getMessageRectangle() {
+        return messageRectangle;
+    }
+
+    public void setMessageRectangle(Rectangle messageRectangle) {
+        this.messageRectangle = messageRectangle;
+    }
+
+    public Node getContentNode() {
+        return contentNode;
+    }
+
+    public void setContentNode(Node contentNode) {
+        this.contentNode = contentNode;
+    }
+
+    public Text getTimeText() {
+        return timeText;
+    }
+
+    public void setTimeText(Text timeText) {
+        this.timeText = timeText;
+    }
 }

@@ -92,7 +92,6 @@ object UIProgram {
           _ <- Sync[F].delay {
             val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
             msgs.foreach(observList.add)
-            javaState.messagesListView = new ListView[VBoxMessageCell]()
             javaState.messagesListView.setItems(observList)
             println("update after:" + javaState.messagesListView.getItems.toString)
           }

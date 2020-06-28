@@ -27,17 +27,13 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     @Override
     protected void initNodes(JSingleContact sourceElement) {
-        initAnchorPane();
+        initRootPane(sourceElement);
         initContactNameLabel(sourceElement);
         initPhoneNumberLabel(sourceElement);
         initCheckBoxImg();
         initSeparatorLine();
     }
 
-    private void initAnchorPane(){
-        setRootPane(new AnchorPane() );
-        getRootPane().setPrefSize(800,60);
-    }
 
     private void initContactNameLabel(JSingleContact communityMember){
         contactNameLabel = new Label();
@@ -75,6 +71,13 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         getRootPane().getChildren().add(checkBoxImg);
         getRootPane().getChildren().add(separatorLine);
         this.getChildren().add(getRootPane());
+    }
+
+    @Override
+    protected void initRootPane(JSingleContact sourceElement) {
+        setRootPane(new AnchorPane() );
+        getRootPane().setPrefSize(800,60);
+
     }
 
     public JSingleContact getCurrentContact() {

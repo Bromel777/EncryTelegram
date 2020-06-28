@@ -26,6 +26,7 @@ public class EnterPasswordHandler extends DataHandler {
     private Label error;
 
     public EnterPasswordHandler() {
+        EncryWindow.setUserPhoneNumber(getUserStateRef().get().getPhoneNumber());
     }
 
     @FXML

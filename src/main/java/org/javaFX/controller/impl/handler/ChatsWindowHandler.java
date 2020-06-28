@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     private final String pathToBlueButton = "file:src/main/resources/images/sendMessageBlue.png";
+    private final String pathToGreyButton ="file:src/main/resources/images/sendMessage.png";
 
     @FXML
     private ListView<VBoxChatCell> chatsListView;
@@ -55,8 +56,13 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     }
 
     @FXML
-    private void changeSendMessagePicture(){
+    private void onMouseEntered(){
         sendMessageImage = new ImageView(new Image(pathToBlueButton));
+    }
+
+    @FXML
+    private void onMouseExited(){
+        sendMessageImage = new ImageView(new Image(pathToGreyButton));
     }
 
     @Override
@@ -70,7 +76,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private ObservableList<VBoxChatCell> getObservableJChatList(){
         ObservableList<VBoxChatCell> observableChatList = FXCollections.observableArrayList();
         getUserStateRef().get().getChatList().forEach(
-                chat -> observableChatList.add(new VBoxChatCell( new JChat(chat.title, "stub", chat.id)  ))
+                chat -> observableChatList.add(new VBoxChatCell(
+                        new JChat(chat.title, chat.lastMessage.content.toString(), chat.id)
+                ))
         );
         return observableChatList;
     }
@@ -102,38 +110,20 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         chatNameLabel.setText(chatsListView.getSelectionModel().getSelectedItem().getChatTitle());
     }
 
-    /*@FXML
-    protected void clickItem() {
-        getUserStateRef().get().setActiveDialog(jDialog);
-        getUserStateRef().get().setActiveDialogArea(dialogTextArea);
-        JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
-                chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
-        );
-        changeLeftPaneVisibility();
-        try {
-            getUserStateRef().get().msgsQueue.put(msg);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }*/
-
     @FXML
-    protected void clickItem() {
+    protected void clickItem() throws InterruptedException {
         getUserStateRef().get().setActiveDialog(messagesListView);
         JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
                 chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );
-        /*initializeDialogArea();
-        System.out.println();
-        System.out.println(getUserStateRef().get().messagesListView.getItems().size());*/
-        changeLeftPaneVisibility();
+        initializeDialogArea();
         try {
             getUserStateRef().get().msgsQueue.put(msg);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        changeLeftPaneVisibility();
     }
-
 
     @FXML
     private void searchContactByKeyboard(){

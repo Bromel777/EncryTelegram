@@ -11,7 +11,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler._CreateNewLocalCommunityHandler">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.CreateNewLocalCommunityHandler">
     <children>
       <AnchorPane prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -31,9 +31,9 @@
             </ListView>
             <AnchorPane prefHeight="62.0" prefWidth="846.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0">
                <children>
-                  <Label text="Contact" textFill="#787878" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0" />
-                  <Label text="Phone Number" textFill="#787878" AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="20.0" />
-                  <Label text="Choose" textFill="#787878" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="20.0" />
+                  <Label text="Contact" textFill="#787878" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
+                  <Label text="Phone Number" textFill="#787878" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="20.0" />
+                  <Label text="Choose" textFill="#787878" AnchorPane.leftAnchor="756.0" AnchorPane.topAnchor="20.0" />
                   <Line endX="846.0" stroke="#787878" strokeWidth="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>

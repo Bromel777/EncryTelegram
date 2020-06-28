@@ -14,7 +14,7 @@ import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class _EnterVerificationCodeHandler extends DataHandler {
+public class EnterVerificationCodeHandler extends DataHandler {
 
     @FXML
     private TextField verificationCodeTextField;
@@ -25,7 +25,7 @@ public class _EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private Label phoneNumberLabel;
 
-    public _EnterVerificationCodeHandler() {
+    public EnterVerificationCodeHandler() {
     }
 
     @FXML

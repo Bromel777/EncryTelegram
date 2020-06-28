@@ -37,6 +37,8 @@ public class EncryWindow extends Application {
 
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
 
+    private static String userPhoneNumber;
+
     private DataHandler rootLayoutHandler;
 
     private DataHandler currentController;
@@ -128,6 +130,16 @@ public class EncryWindow extends Application {
 
     public Stage getPrimaryStage(){
         return primaryStage;
+    }
+
+    public static String getUserPhoneNumber(){
+        return userPhoneNumber;
+    }
+
+    public static void setUserPhoneNumber(String phoneNumber){
+        if(userPhoneNumber == null){
+            userPhoneNumber = phoneNumber;
+        }
     }
 
 }

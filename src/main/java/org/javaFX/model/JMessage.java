@@ -23,4 +23,16 @@ public class JMessage<T> {
     public String getTime() {
         return time;
     }
+
+    public void setMine(boolean mine) {
+        isMine = mine;
+    }
+
+    public void setContent(T content) {
+        this.content = content;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 }

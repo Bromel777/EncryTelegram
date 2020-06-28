@@ -20,6 +20,7 @@ public class EnterPasswordHandler extends DataHandler {
     private ImageView nextButtonImg;
 
     public EnterPasswordHandler() {
+        EncryWindow.setUserPhoneNumber(getUserStateRef().get().getPhoneNumber());
     }
 
     @FXML

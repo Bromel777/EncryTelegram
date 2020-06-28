@@ -30,7 +30,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     @Override
     protected void initNodes(JChat jChat){
-        initAnchorPane();
+        initRootPane(jChat);
         initChatTitleLabel(jChat);
         initlLastMessageLabel(jChat);
         initTimeLabel(jChat);
@@ -53,11 +53,13 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         this.getChildren().add(getRootPane());
     }
 
-
-    private void initAnchorPane(){
+    @Override
+    protected void initRootPane(JChat source){
         setRootPane(new AnchorPane() );
         getRootPane().setPrefSize(260,62);
     }
+
+
 
     private void initChatTitleLabel(JChat jChat){
         chatTitleLabel = new Label();

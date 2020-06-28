@@ -7,12 +7,10 @@ import javafx.scene.control.TextArea;
 import javafx.util.Duration;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
-import org.javaFX.model.JDialog;
 import org.javaFX.util.KeyboardHandler;
 import org.javaFX.util.observers.BasicObserver;
 import org.javaFX.util.observers.JTableObserver;
 
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class MainWindowBasicHandler extends DataHandler{
@@ -26,16 +24,10 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     protected TextArea sendMessageTextArea;
 
     @FXML
-    protected TextArea dialogTextArea;
-
-    @FXML
     protected Button callButton;
-
-    protected JDialog jDialog;
 
     public MainWindowBasicHandler() {
         chatListObserve(this);
-        createDialog();
         /*dialogTextArea.setBackground(new Background(new BackgroundImage(new Image("file:src/main/resources/images/back.jpg"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT)));*/
@@ -77,7 +69,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     }
 
     @FXML
-    protected abstract void clickItem();
+    protected abstract void clickItem() throws InterruptedException;
 
     @FXML
     public void sendMessageByKeyboard(){
@@ -110,20 +102,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     }
 
     public void findMessage(){
-        final String searchingStr = searchMessageTextArea.getText().trim();
-        if(!searchingStr.isEmpty()) {
-            StringBuffer localDialogHistory = jDialog.getContent();
-            String [] messagesArray = localDialogHistory.toString().split("\n");
-            StringBuffer results = new StringBuffer();
-            Arrays.stream(messagesArray)
-                    .filter(str -> str.toLowerCase().contains(searchingStr.toLowerCase()))
-                    .forEach(str -> results.append(str).append("\n"));
-            dialogTextArea.setText(results.toString());
-        }
-    }
 
-    private void createDialog(){
-        jDialog = new JDialog();
     }
 
 }

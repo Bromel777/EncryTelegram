@@ -6,21 +6,23 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
 import org.javaFX.model.JChat;
 import org.javaFX.model.nodes.VBoxChatCell;
-import org.javaFX.model.nodes.VBoxDialogMessageCell;
 import org.javaFX.model.nodes.VBoxMessageCell;
 import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChatsWindowHandler extends MainWindowBasicHandler {
+
+    private final String pathToBlueButton = "file:src/main/resources/images/sendMessageBlue.png";
 
     @FXML
     private ListView<VBoxChatCell> chatsListView;
@@ -46,7 +48,15 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private TextField searchThroughChatsTextField;
 
+    @FXML
+    private ImageView sendMessageImage;
+
     public ChatsWindowHandler(){
+    }
+
+    @FXML
+    private void changeSendMessagePicture(){
+        sendMessageImage = new ImageView(new Image(pathToBlueButton));
     }
 
     @Override
@@ -68,6 +78,20 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     protected void initializeTable() {
         chatsListView.setItems(getObservableJChatList());
+    }
+
+    @FXML
+    private ObservableList<VBoxMessageCell>getObservableJMessageList(){
+        ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
+        getUserStateRef().get().messagesListView.getItems().forEach (
+                message -> observableMessageList.add(message)
+        );
+        return observableMessageList;
+    }
+
+    @FXML
+    private void initializeDialogArea(){
+        messagesListView.setItems(getObservableJMessageList());
     }
 
     private void changeLeftPaneVisibility(){
@@ -95,13 +119,13 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     protected void clickItem() {
-        this.messagesListView = getUserStateRef().get().messagesListView;
-
-        /*getUserStateRef().get().setActiveDialog(jDialog);
-        getUserStateRef().get().setActiveDialogArea(dialogTextArea);*/
+        getUserStateRef().get().setActiveDialog(messagesListView);
         JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
                 chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );
+        /*initializeDialogArea();
+        System.out.println();
+        System.out.println(getUserStateRef().get().messagesListView.getItems().size());*/
         changeLeftPaneVisibility();
         try {
             getUserStateRef().get().msgsQueue.put(msg);

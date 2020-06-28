@@ -3,8 +3,7 @@ package org.encryfoundation.tg.commands
 import cats.data.OptionT
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.effect.concurrent.Ref
-import org.drinkless.tdlib.{Client, TdApi}
-import org.encryfoundation.tg.RunApp.sendMsg
+import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
@@ -17,7 +16,7 @@ case class SendToChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
 
   override def run(args: List[String]): F[Unit] =
     UserStateUtils.findChatByIdentifier(args.head, userStateRef).value.flatMap {
-      case Some(chat) => sendMsg(
+      case Some(chat) => ClientUtils.sendMsg(
         chat,
         args.last,
         userStateRef

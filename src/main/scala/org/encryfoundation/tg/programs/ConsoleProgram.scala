@@ -9,7 +9,7 @@ import org.drinkless.tdlib.Client
 import org.encryfoundation.tg.commands.Command
 import org.encryfoundation.tg.errors.TdError
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.services.PrivateConferenceService
+import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 import tofu.Raise
 import tofu.common.Console
@@ -27,6 +27,7 @@ object ConsoleProgram {
   private class Live[F[_]: Concurrent: Logger: Timer](client: Client[F],
                                                       userStateRef: Ref[F, UserState[F]],
                                                       confService: PrivateConferenceService[F],
+                                                      userStateService: UserStateService[F],
                                                       db: Database[F])
                                                      (implicit err: Raise[F, TdError]) extends ConsoleProgram[F] {
 
@@ -38,7 +39,7 @@ object ConsoleProgram {
           println(s"Your command: ${command}.")
           command
         }
-        _ <- Command.getCommands(client, userStateRef, db)(confService).find(_.name == command.split(" ").head)
+        _ <- Command.getCommands(client, userStateRef, db)(confService, userStateService).find(_.name == command.split(" ").head)
           .traverse(_.run(command.split(" ").tail.toList))
         _ <- onlyForReg
       } yield ()
@@ -56,6 +57,7 @@ object ConsoleProgram {
                   Raise[*[_], TdError]: Console](client: Client[F],
                                                  userStateRef: Ref[F, UserState[F]],
                                                  confService: PrivateConferenceService[F],
+                                                 userStateService: UserStateService[F],
                                                  db: Database[F]): F[ConsoleProgram[F]] =
-    Applicative[F].pure(new Live(client, userStateRef, confService, db))
+    Applicative[F].pure(new Live(client, userStateRef, confService, userStateService, db))
 }

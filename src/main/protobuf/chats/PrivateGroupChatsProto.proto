@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+import "chats/PrivateGroupChatProto.proto";
+
+message PrivateGroupChatsProtoMessage {
+    repeated PrivateGroupChatProtoMessage privateGroupChats = 1;
+}

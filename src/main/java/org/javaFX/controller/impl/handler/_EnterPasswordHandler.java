@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.PasswordField;
 import javafx.scene.image.ImageView;
+import org.encryfoundation.tg.javaIntegration.AuthMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.util.KeyboardHandler;
@@ -26,9 +27,16 @@ public class _EnterPasswordHandler extends DataHandler {
     private void handleConfirmPasswordAction(){
         String passwordStr = passwordField.getCharacters().toString();
         getUserStateRef().get().setPass(passwordStr);
-        getEncryWindow().launchWindowByPathToFXML(
-                EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
-        );
+        try {
+            AuthMsg nextStep = getUserStateRef().get().authQueue.take();
+            if (nextStep.code() == AuthMsg.loadChats().code())
+                getEncryWindow().launchWindowByPathToFXML(
+                        EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
+                );
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @FXML

@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import org.encryfoundation.tg.javaIntegration.AuthMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.util.KeyboardHandler;
@@ -34,10 +35,21 @@ public class _EnterVerificationCodeHandler extends DataHandler {
     }
 
     @FXML
-    private void handleConfirmVCAction(){
+    private void handleConfirmVCAction() {
         String verificationCodeStr = verificationCodeTextField.getCharacters().toString();
         getUserStateRef().get().setCode(verificationCodeStr);
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
+        try {
+            AuthMsg nextStep = getUserStateRef().get().authQueue.take();
+            if (nextStep.code() == AuthMsg.loadPass().code()) {
+                getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
+            } else {
+                getEncryWindow().launchWindowByPathToFXML(
+                        EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
+                );
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

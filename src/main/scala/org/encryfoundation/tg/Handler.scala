@@ -13,6 +13,7 @@ import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
+import org.encryfoundation.tg.javaIntegration.AuthMsg.{LoadChatsWindow, LoadPassWindow, LoadVCWindow}
 import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
@@ -153,20 +154,28 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         } yield ()
       case a: TdApi.AuthorizationStateWaitCode =>
         for {
+          state <- userStateRef.get
+          _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadVCWindow))
           code <- UserStateUtils.getVC(userStateRef)
           _ <- client.send(new TdApi.CheckAuthenticationCode(code), AuthRequestHandler())
         } yield ()
       case a: TdApi.AuthorizationStateWaitPassword =>
         for {
+          state <- userStateRef.get
+          _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadPassWindow))
           pass <- UserStateUtils.getPass(userStateRef)
           _ <- client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
         } yield ()
       case a: TdApi.AuthorizationStateReady =>
-        userStateService.setAuth() >>
-          client.send(
+        for {
+          _ <- userStateService.setAuth()
+          state <- userStateRef.get
+          _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadChatsWindow))
+          _ <- client.send(
             new TdApi.GetChats(new TdApi.ChatListMain(), Long.MaxValue, 0, 20),
             EmptyHandler[F]()
           )
+        } yield ()
       case _ =>
         println(s"Got unknown event in auth. ${authEvent}").pure[F]
     }

@@ -5,6 +5,10 @@ import javafx.scene.layout.VBox;
 
 public abstract class VBoxCell<T> extends VBox {
 
+/*
+    private int messageCellWidth;
+    private int messageCellHeight;*/
+
     private int parentWidth;
     private int parentHeight;
     private AnchorPane rootPane;
@@ -54,4 +58,5 @@ public abstract class VBoxCell<T> extends VBox {
     public void setParentHeight(int parentHeight) {
         this.parentHeight = parentHeight;
     }
+
 }

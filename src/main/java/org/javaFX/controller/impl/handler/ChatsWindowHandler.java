@@ -69,6 +69,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     public void updateEncryWindow(EncryWindow encryWindow) {
         super.setEncryWindow(encryWindow);
         initializeTable();
+        initializeDialogArea();
         enableMenuBar();
     }
 

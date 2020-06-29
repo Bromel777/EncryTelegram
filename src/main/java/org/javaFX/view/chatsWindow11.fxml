@@ -62,6 +62,10 @@
                   <AnchorPane fx:id="leftMiddleAnchorPane" layoutY="63.0" minWidth="590.0" prefHeight="491.0" prefWidth="590.0" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="63.0">
                      <children>
                         <ListView fx:id="messagesListView" prefHeight="505.0" prefWidth="590.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0" />
+                        <Circle fill="DODGERBLUE" layoutX="122.0" layoutY="89.0" radius="64.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="128.0" layoutX="122.0" layoutY="25.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="346.0" />
+                        <Circle fill="DODGERBLUE" layoutX="468.0" layoutY="89.0" radius="64.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="72.0" layoutX="186.0" layoutY="81.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="346.0" />
                      </children>
                   </AnchorPane>
                   <Label fx:id="selectChatLabel" layoutX="149.0" layoutY="287.0" text="Please select a chat to start messaging">

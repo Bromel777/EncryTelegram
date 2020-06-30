@@ -1,7 +1,8 @@
 package org.javaFX.model;
 
 import javafx.beans.property.*;
-import monix.execution.atomic.AtomicInt;
+import org.drinkless.tdlib.TdApi;
+
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,6 +13,8 @@ public class JChat {
     private StringProperty lastMessageTime;
     private final LongProperty chatId;
     private AtomicInteger unreadMessagesNumber;
+    private TdApi.File smallPicture;
+
 
     public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, StringProperty lastMessageTime) {
         this.title = title;
@@ -66,6 +69,14 @@ public class JChat {
 
     public AtomicInteger getUnreadMessagesNumber() {
         return unreadMessagesNumber;
+    }
+
+    public TdApi.File getSmallPicture() {
+        return smallPicture;
+    }
+
+    public void setSmallPicture(TdApi.File smallPicture) {
+        this.smallPicture = smallPicture;
     }
 
     @Override

@@ -5,12 +5,8 @@ import javafx.scene.layout.VBox;
 
 public abstract class VBoxCell<T> extends VBox {
 
-/*
-    private int messageCellWidth;
-    private int messageCellHeight;*/
+    private double parentWidth;
 
-    private int parentWidth;
-    private int parentHeight;
     private AnchorPane rootPane;
 
     public VBoxCell(T sourceElement){
@@ -19,15 +15,14 @@ public abstract class VBoxCell<T> extends VBox {
         setNodesToRootPane();
     }
 
-    public VBoxCell(T sourceElement, int parentWidth, int parentHeight){
+    public VBoxCell(T sourceElement, double parentWidth){
         this.parentWidth = parentWidth;
-        this.parentHeight = parentHeight;
         setIsYourMessage(sourceElement);
         initNodes(sourceElement);
         setNodesToRootPane();
     }
 
-    protected void setIsYourMessage(T sourceElement){};
+    protected void setIsYourMessage(T sourceElement){}
 
     protected abstract void initNodes(T sourceElement);
 
@@ -43,20 +38,8 @@ public abstract class VBoxCell<T> extends VBox {
         this.rootPane = rootPane;
     }
 
-    public int getParentWidth() {
+    public double getParentWidth() {
         return parentWidth;
-    }
-
-    public void setParentWidth(int parentWidth) {
-        this.parentWidth = parentWidth;
-    }
-
-    public int getParentHeight() {
-        return parentHeight;
-    }
-
-    public void setParentHeight(int parentHeight) {
-        this.parentHeight = parentHeight;
     }
 
 }

@@ -12,11 +12,11 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
     private Label contentLabel;
 
     public VBoxDialogTextMessageCell(JMessage jMessage) {
-        super(jMessage, 583, 491);
+        super(jMessage, 583);
     }
 
-    public VBoxDialogTextMessageCell(JMessage jMessage, int parentWidth, int parentHeight) {
-        super(jMessage, parentWidth, parentHeight);
+    public VBoxDialogTextMessageCell(JMessage jMessage, int parentWidth) {
+        super(jMessage, parentWidth);
     }
 
     @Override
@@ -47,33 +47,42 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
     @Override
     protected void initMessageRectangle(JMessage jMessage) {
         Rectangle messageRectangle = new Rectangle();
-        messageRectangle.setWidth(getCellWidth()- getCellHeight()/2);
+        messageRectangle.setWidth(getCellWidth()-13);
         messageRectangle.setHeight(getCellHeight());
         messageRectangle.setLayoutY(0);
         double ownerIndent = getParentWidth()/3;
-        double otherIndent = getCellHeight()/2;
+        double otherIndent = 13;
         setFigureProperties(jMessage, messageRectangle, ownerIndent, otherIndent);
         setMessageRectangle(messageRectangle);
     }
 
     @Override
-    protected void initOuterCircle(JMessage jMessage) {
+    protected void initOuterTopCircle(JMessage jMessage) {
+        setOuterTopCircle(initOuterCircle(jMessage, 13));
+    }
+
+    @Override
+    protected void initOuterBotCircle(JMessage jMessage) {
+        setOuterBotCircle(initOuterCircle(jMessage, getCellHeight()-13));
+    }
+
+    protected Circle initOuterCircle(JMessage jMessage, double layoutY){
         Circle outerCircle = new Circle();
-        outerCircle.setRadius(getCellHeight()/2);
-        outerCircle.setLayoutY(getCellHeight()/2);
+        outerCircle.setRadius(13);
+        outerCircle.setLayoutY(layoutY);
         double ownerIndent = getParentWidth()/3;
-        double otherIndent =  getCellWidth() ;
+        double otherIndent =  getCellWidth() + 1;
         setFigureProperties(jMessage, outerCircle, ownerIndent, otherIndent );
-        setOuterCircle(outerCircle);
+        return outerCircle;
     }
 
     @Override
     protected void initInnerCircle(JMessage jMessage) {
         Circle innerCircle = new Circle();
-        innerCircle.setRadius(getCellHeight()/2);
-        innerCircle.setLayoutY(getCellHeight()/2);
-        double ownerIndent = getParentWidth() - getCellHeight()/2;
-        double otherIndent =  getCellHeight()/2  ;
+        innerCircle.setRadius(13);
+        innerCircle.setLayoutY(13);
+        double ownerIndent = getParentWidth() - 13;
+        double otherIndent =  13;
         setFigureProperties(jMessage, innerCircle, ownerIndent, otherIndent);
         setInnerCircle(innerCircle);
     }
@@ -81,13 +90,25 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
     @Override
     protected void initAngleRectangle(JMessage jMessage) {
         Rectangle miniRectangle = new Rectangle();
-        miniRectangle.setWidth(getCellHeight()/2);
-        miniRectangle.setHeight(getCellHeight()/2);
-        miniRectangle.setLayoutY(getCellHeight()/2);
-        double ownerIndent = getParentWidth() - getCellHeight()/2;
-        double otherIndent =  0 ;
+        miniRectangle.setWidth(13);
+        miniRectangle.setHeight(getCellHeight()-13);
+        miniRectangle.setLayoutY(13);
+        double ownerIndent = getParentWidth() - 13;
+        double otherIndent = 0 ;
         setFigureProperties(jMessage, miniRectangle, ownerIndent, otherIndent );
         setAngleRectangle(miniRectangle);
+    }
+
+    @Override
+    protected void initBorderRectangle(JMessage jMessage) {
+        Rectangle borderRectangle = new Rectangle();
+        borderRectangle.setWidth(14);
+        borderRectangle.setHeight(getCellHeight()-26);
+        borderRectangle.setLayoutY(13);
+        double ownerIndent = getParentWidth()/3 -13;
+        double otherIndent = getParentWidth() - getParentWidth()/3;
+        setFigureProperties(jMessage, borderRectangle, ownerIndent, otherIndent);
+        setBorderRectangle(borderRectangle);
     }
 
     protected void setFigureProperties(JMessage jMessage, Shape shape, double ownerIndent, double otherIndent){

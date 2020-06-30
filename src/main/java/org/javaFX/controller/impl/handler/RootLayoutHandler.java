@@ -18,7 +18,6 @@ public class RootLayoutHandler extends DataHandler {
     @FXML
     private void createLocalCommunity(){
         terminateObserver();
-        JTableEntity.resetRowNumber();
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToCreateNewCommunityWindowFXML);
     }
 
@@ -30,14 +29,13 @@ public class RootLayoutHandler extends DataHandler {
     @FXML
     private void launchMainWindow(){
         terminateObserver();
-        JTableEntity.resetRowNumber();
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
+        ((ChatsWindowHandler)getEncryWindow().getCurrentController()).hideLeftPane();
     }
 
     @FXML
     private void showLocalCommunity(){
         terminateObserver();
-        JTableEntity.resetRowNumber();
         if (getUserStateRef().get().communities.size() == 0 ){
             getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEmptyCommunitiesListWindowFXML);
         }

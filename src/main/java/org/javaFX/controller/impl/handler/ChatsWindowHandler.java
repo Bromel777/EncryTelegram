@@ -39,13 +39,16 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private Label chatNameLabel;
 
     @FXML
-    private AnchorPane leftTopAnchorPane;
+    private AnchorPane leftPane;
 
     @FXML
-    private AnchorPane leftMiddleAnchorPane;
+    private AnchorPane rightTopAnchorPane;
 
     @FXML
-    private AnchorPane leftBottomAnchorPane;
+    private AnchorPane rightMiddleAnchorPane;
+
+    @FXML
+    private AnchorPane rightBottomAnchorPane;
 
     @FXML
     private TextField searchThroughChatsTextField;
@@ -70,13 +73,19 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     public void updateEncryWindow(EncryWindow encryWindow) {
         super.setEncryWindow(encryWindow);
         initializeTable();
-        initializeDialogArea();
+        if( messagesListView != null && messagesListView.getItems().size() != 0){
+            initializeDialogArea();
+        }
         enableMenuBar();
     }
 
     @FXML
     private ObservableList<VBoxChatCell> getObservableJChatList(){
         ObservableList<VBoxChatCell> observableChatList = FXCollections.observableArrayList();
+        final double chatCellWidth =
+                (leftPane == null)
+                        ? 300
+                        : leftPane.getPrefWidth();
         getUserStateRef().get().getChatList().forEach(
                 chat -> {
                     observableChatList.add(new VBoxChatCell(
@@ -85,7 +94,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                                     MessagesUtils.processMessage(chat.lastMessage),
                                     chat.id,
                                     MessagesUtils.getLastMessageTime(chat.lastMessage)
-                            )
+                            ), chatCellWidth
                     ));
                 }
         );
@@ -111,12 +120,19 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         messagesListView.setItems(getObservableJMessageList());
     }
 
-    private void changeLeftPaneVisibility(){
-        leftTopAnchorPane.setVisible(true);
-        leftMiddleAnchorPane.setVisible(true);
-        leftBottomAnchorPane.setVisible(true);
+    private void showLeftPane(){
+        rightTopAnchorPane.setVisible(true);
+        rightMiddleAnchorPane.setVisible(true);
+        rightBottomAnchorPane.setVisible(true);
         selectChatLabel.setVisible(false);
         chatNameLabel.setText(chatsListView.getSelectionModel().getSelectedItem().getChatTitle());
+    }
+
+    public void hideLeftPane(){
+        rightTopAnchorPane.setVisible(false);
+        rightMiddleAnchorPane.setVisible(false);
+        rightBottomAnchorPane.setVisible(false);
+        selectChatLabel.setVisible(true);
     }
 
     @FXML
@@ -131,7 +147,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        changeLeftPaneVisibility();
+        showLeftPane();
     }
 
     @FXML

@@ -90,11 +90,17 @@ object UserStateService {
       state <- userState.get
       pending <- state.pendingSecretChatsForInvite.get(chatId).pure[F]
       _ <- if (pending.nonEmpty) userState.update { prevState =>
+        prevState.javaState.get().setChatList(
+          prevState.chatList.filterNot(_.id == chatId).sortBy(_.order).takeRight(20).reverse.asJava
+        )
         prevState.copy(
           pendingSecretChatsForInvite = prevState.pendingSecretChatsForInvite - chatId,
           pipelineSecretChats = state.pipelineSecretChats + (pending.get._1.id -> newPipeline)
         )
       } else userState.update { prevState =>
+        prevState.javaState.get().setChatList(
+          prevState.chatList.filterNot(_.id == chatId).sortBy(_.order).takeRight(20).reverse.asJava
+        )
         prevState.copy(
           pipelineSecretChats = state.pipelineSecretChats + (chatId -> newPipeline)
         )
@@ -116,9 +122,11 @@ object UserStateService {
       case secret: TdApi.ChatTypeSecret =>
         Logger[F].info(s"Add chat with id: ${chat.id} and secret chat id: ${secret.secretChatId}") >>
         userState.update { prevState =>
+          prevState.javaState.get().setChatList(
+            prevState.chatList.filterNot(_.id == chat.id).sortBy(_.order).takeRight(20).reverse.asJava
+          )
           prevState.copy(
-            pendingSecretChatsForInvite = prevState.pendingSecretChatsForInvite +
-              (chat.id -> (chat, newPipeline)),
+            pendingSecretChatsForInvite = prevState.pendingSecretChatsForInvite + (chat.id -> (chat, newPipeline)),
             pipelineSecretChatInfo = prevState.pipelineSecretChatInfo + (secret.secretChatId -> chat.id)
           )
         }
@@ -134,7 +142,12 @@ object UserStateService {
       }
     } yield ()
 
-    override def updateChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit] =
+    override def updateChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit] = {
+
+      def isPipeline(chatForChat: TdApi.Chat, state: UserState[F]): Boolean =
+        state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) ||
+          state.pipelineSecretChats.contains(chat.id)
+
       userState.get.flatMap { state =>
         if (!state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) &&
           !state.pipelineSecretChats.contains(chat.id))
@@ -159,6 +172,7 @@ object UserStateService {
           } yield ()
         else ().pure[F]
       }
+    }
 
     override def updateBasicGroup(basicGroup: TdApi.UpdateBasicGroup): F[Unit] =
       Logger[F].info("Invoke updateBasiGroup") >>

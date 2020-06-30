@@ -17,6 +17,7 @@ import org.encryfoundation.tg.javaIntegration.AuthMsg.{LoadChatsWindow, LoadPass
 import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
+import org.encryfoundation.tg.steps.Step.AuthStep
 import org.encryfoundation.tg.userState.UserState
 import org.encryfoundation.tg.utils.UserStateUtils
 import scorex.crypto.encode.Base64
@@ -144,7 +145,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         parameters.enableStorageOptimizer = true
         Logger[F].info("Setting td-lib settings") >> client.send(
           new TdApi.SetTdlibParameters(parameters), AuthRequestHandler[F]()
-        )
+        ) >> userStateService.setCurrentStep(AuthStep)
       case a: TdApi.AuthorizationStateWaitEncryptionKey =>
         client.send(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F]())
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>

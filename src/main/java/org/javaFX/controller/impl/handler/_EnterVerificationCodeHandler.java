@@ -26,6 +26,9 @@ public class _EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private Label phoneNumberLabel;
 
+    @FXML
+    private Label error;
+
     public _EnterVerificationCodeHandler() {
     }
 
@@ -42,7 +45,10 @@ public class _EnterVerificationCodeHandler extends DataHandler {
             AuthMsg nextStep = getUserStateRef().get().authQueue.take();
             if (nextStep.code() == AuthMsg.loadPass().code()) {
                 getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
-            } else {
+            } else if (nextStep.code() == AuthMsg.err().code()) {
+                error.setText("Incorrect vc code");
+            }
+            else {
                 getEncryWindow().launchWindowByPathToFXML(
                         EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
                 );

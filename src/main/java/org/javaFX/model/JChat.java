@@ -6,16 +6,21 @@ public class JChat {
 
     private StringProperty title;
     private StringProperty lastMessage;
+    private StringProperty lastMessageTime;
     private final LongProperty chatId;
 
-    public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId) {
+    public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, StringProperty lastMessageTime) {
         this.title = title;
         this.lastMessage = lastMessage;
         this.chatId = chatId;
+        this.lastMessageTime = lastMessageTime;
     }
 
-    public JChat(String titleStr, String lastMessageStr, Long chatId) {
-        this(new SimpleStringProperty(titleStr), new SimpleStringProperty(lastMessageStr), new SimpleLongProperty(chatId));
+    public JChat(String titleStr, String lastMessageStr, Long chatId, String lastMessageTime) {
+        this(new SimpleStringProperty(titleStr),
+             new SimpleStringProperty(lastMessageStr),
+             new SimpleLongProperty(chatId),
+             new SimpleStringProperty(lastMessageTime));
     }
 
     public StringProperty getTitle() {
@@ -32,6 +37,14 @@ public class JChat {
 
     public void setLastMessage(StringProperty lastMessage) {
         this.lastMessage = lastMessage;
+    }
+
+    public StringProperty getLastMessageTime() {
+        return lastMessageTime;
+    }
+
+    public void setLastMessageTime(StringProperty lastMessageTime) {
+        this.lastMessageTime = lastMessageTime;
     }
 
     public LongProperty chatIdProperty() {

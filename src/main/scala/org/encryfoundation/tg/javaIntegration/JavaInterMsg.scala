@@ -12,4 +12,7 @@ object JavaInterMsg {
   case class SendToChat(msg: String) extends JavaInterMsg
   case class CreateCommunityJava(name: String, users: java.util.List[String]) extends JavaInterMsg
   case class CreatePrivateGroupChat(comName: String) extends JavaInterMsg
+  case class SetVCCode(vcCode: String) extends JavaInterMsg
+  case class SetPhone(phone: String) extends JavaInterMsg
+  case class SetPass(pass: String) extends JavaInterMsg
 }

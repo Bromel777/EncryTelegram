@@ -11,6 +11,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import org.encryfoundation.tg.javaIntegration.AuthMsg;
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.util.KeyboardHandler;
@@ -40,6 +42,9 @@ public class EnterPhoneNumberHandler extends DataHandler {
     @FXML
     private MenuItem belarusMenuItem;
 
+    @FXML
+    private Label error;
+
     public EnterPhoneNumberHandler() {}
 
     @FXML
@@ -61,10 +66,19 @@ public class EnterPhoneNumberHandler extends DataHandler {
         else if(selectCountryMenu.getText().equals(belarusMenuItem.getText())){
             phoneNumberStr = "375"+phoneNumberStr;
         }
-        getUserStateRef().get().setPhoneNumber(phoneNumberStr);
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
-        ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController() )
-                .setPhoneNumberLabelText( getUserStateRef().get().getPreparedPhoneNumber());
+        try {
+            getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetPhone(phoneNumberStr));
+            AuthMsg nextStep = getUserStateRef().get().authQueue.take();
+            if (nextStep.code() == AuthMsg.loadVC().code()) {
+                getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
+                ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController() )
+                        .setPhoneNumberLabelText( getUserStateRef().get().getPreparedPhoneNumber());
+            } else if (nextStep.code() == AuthMsg.err().code()) {
+                error.setText("Oops! Error");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

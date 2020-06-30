@@ -3,8 +3,11 @@ package org.javaFX.controller.impl.handler;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.image.ImageView;
+import org.encryfoundation.tg.javaIntegration.AuthMsg;
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.util.KeyboardHandler;
@@ -19,6 +22,9 @@ public class EnterPasswordHandler extends DataHandler {
     @FXML
     private ImageView nextButtonImg;
 
+    @FXML
+    private Label error;
+
     public EnterPasswordHandler() {
         EncryWindow.setUserPhoneNumber(getUserStateRef().get().getPhoneNumber());
     }
@@ -26,10 +32,20 @@ public class EnterPasswordHandler extends DataHandler {
     @FXML
     private void handleConfirmPasswordAction(){
         String passwordStr = passwordField.getCharacters().toString();
-        getUserStateRef().get().setPass(passwordStr);
-        getEncryWindow().launchWindowByPathToFXML(
-                EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
-        );
+        try {
+            getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetPass(passwordStr));
+            AuthMsg nextStep = getUserStateRef().get().authQueue.take();
+            if (nextStep.code() == AuthMsg.loadChats().code())
+                getEncryWindow().launchWindowByPathToFXML(
+                        EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
+                );
+            else if (nextStep.code() == AuthMsg.err().code()) {
+                error.setText("Incorrect password");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @FXML

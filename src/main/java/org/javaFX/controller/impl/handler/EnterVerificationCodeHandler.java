@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import org.encryfoundation.tg.javaIntegration.AuthMsg;
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.util.KeyboardHandler;
@@ -25,8 +27,10 @@ public class EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private Label phoneNumberLabel;
 
-    public EnterVerificationCodeHandler() {
-    }
+    @FXML
+    private Label error;
+
+    public EnterVerificationCodeHandler() {}
 
     @FXML
     private void handleKeyTyped(){
@@ -34,10 +38,24 @@ public class EnterVerificationCodeHandler extends DataHandler {
     }
 
     @FXML
-    private void handleConfirmVCAction(){
+    private void handleConfirmVCAction() {
         String verificationCodeStr = verificationCodeTextField.getCharacters().toString();
-        getUserStateRef().get().setCode(verificationCodeStr);
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
+        try {
+            getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetVCCode(verificationCodeStr));
+            AuthMsg nextStep = getUserStateRef().get().authQueue.take();
+            if (nextStep.code() == AuthMsg.loadPass().code()) {
+                getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
+            } else if (nextStep.code() == AuthMsg.err().code()) {
+                error.setText("Incorrect vc code");
+            }
+            else {
+                getEncryWindow().launchWindowByPathToFXML(
+                        EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
+                );
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

@@ -72,7 +72,7 @@ public class EnterPhoneNumberHandler extends DataHandler {
             if (nextStep.code() == AuthMsg.loadVC().code()) {
                 getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
                 ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController() )
-                        .setPhoneNumberLabelText( getUserStateRef().get().getPreparedPhoneNumber());
+                        .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber(phoneNumberTextField.getCharacters().toString()));
             } else if (nextStep.code() == AuthMsg.err().code()) {
                 error.setText("Oops! Error");
             }

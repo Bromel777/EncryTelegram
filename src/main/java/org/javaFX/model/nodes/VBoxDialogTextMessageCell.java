@@ -27,7 +27,7 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
         contentLabel.setText(textContent);
         contentLabel.setWrapText(true);
         int multiplier =
-                textContent.length()%40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
+                textContent.length() % 40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
         double width = getParentWidth() - getParentWidth() / 3;
         double height = 27 * multiplier;
         if( jMessage.isMine() ){
@@ -36,7 +36,7 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
             contentLabel.setTextFill(Color.WHITE);
         }
         else{
-            contentLabel.setLayoutX(1);
+            contentLabel.setLayoutX(20);
             contentLabel.setLayoutY(1);
             contentLabel.setTextFill(Color.BLACK);
         }

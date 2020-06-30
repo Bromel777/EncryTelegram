@@ -38,8 +38,10 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         circleColor = RandomChooser.getRandomColor();
         initBigCircle(jChat);
         initBigCircleText(jChat);
-        initSmallCircle(jChat);
-        initSmallCircleText(jChat);
+        if(jChat.getUnreadMessagesNumber().get() > 0 ){
+            initSmallCircle();
+            initSmallCircleText((String.valueOf(jChat.getUnreadMessagesNumber().get())));
+        }
     }
 
     @Override
@@ -47,8 +49,10 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         getRootPane().getChildren().add(chatTitleLabel);
         getRootPane().getChildren().add(lastMessageLabel);
         getRootPane().getChildren().add(timeLabel);
-        getRootPane().getChildren().add(smallCircle);
-        getRootPane().getChildren().add(unreadMsgsNumberText);
+        if(smallCircle != null){
+            getRootPane().getChildren().add(smallCircle);
+            getRootPane().getChildren().add(unreadMsgsNumberText);
+        }
         getRootPane().getChildren().add(bigCircle);
         getRootPane().getChildren().add(abbreviationText);
         this.getChildren().add(getRootPane());
@@ -111,20 +115,20 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         abbreviationText.setFill(Color.WHITE);
     }
 
-    private void initSmallCircle(JChat jChat){
+    private void initSmallCircle(){
         smallCircle = new Circle();
         smallCircle.setLayoutX(240);
         smallCircle.setLayoutY(47);
         smallCircle.setRadius(16);
-        smallCircle.setFill(circleColor);
+        smallCircle.setFill(Color.GRAY);
     }
 
-    private void initSmallCircleText(JChat jChat){
+    private void initSmallCircleText(String unreadMessagedNumberStr){
         unreadMsgsNumberText = new Text();
         unreadMsgsNumberText.setFont(new Font(14));
         unreadMsgsNumberText.setLayoutX(236);
         unreadMsgsNumberText.setLayoutY(52);
-        unreadMsgsNumberText.setText("1");
+        unreadMsgsNumberText.setText(unreadMessagedNumberStr);
         unreadMsgsNumberText.setFill(Color.WHITE);
     }
 

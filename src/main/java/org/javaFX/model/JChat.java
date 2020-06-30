@@ -1,6 +1,9 @@
 package org.javaFX.model;
 
 import javafx.beans.property.*;
+import monix.execution.atomic.AtomicInt;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class JChat {
 
@@ -8,12 +11,14 @@ public class JChat {
     private StringProperty lastMessage;
     private StringProperty lastMessageTime;
     private final LongProperty chatId;
+    private AtomicInteger unreadMessagesNumber;
 
     public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, StringProperty lastMessageTime) {
         this.title = title;
         this.lastMessage = lastMessage;
         this.chatId = chatId;
         this.lastMessageTime = lastMessageTime;
+        unreadMessagesNumber = new AtomicInteger(0);
     }
 
     public JChat(String titleStr, String lastMessageStr, Long chatId, String lastMessageTime) {
@@ -21,6 +26,14 @@ public class JChat {
              new SimpleStringProperty(lastMessageStr),
              new SimpleLongProperty(chatId),
              new SimpleStringProperty(lastMessageTime));
+    }
+
+    public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, StringProperty lastMessageTime, AtomicInteger unreadMessagesNumber ) {
+        this.title = title;
+        this.lastMessage = lastMessage;
+        this.chatId = chatId;
+        this.lastMessageTime = lastMessageTime;
+        this.unreadMessagesNumber = unreadMessagesNumber;
     }
 
     public StringProperty getTitle() {
@@ -49,6 +62,10 @@ public class JChat {
 
     public LongProperty chatIdProperty() {
         return chatId;
+    }
+
+    public AtomicInteger getUnreadMessagesNumber() {
+        return unreadMessagesNumber;
     }
 
     @Override

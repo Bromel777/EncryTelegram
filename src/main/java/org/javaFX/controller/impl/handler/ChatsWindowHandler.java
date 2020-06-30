@@ -164,9 +164,8 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         getUserStateRef().get().setActiveDialog(messagesListView);
     }
 
-
     @FXML
     private void findContentInDialog(){
-
     }
+
 }

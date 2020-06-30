@@ -61,7 +61,7 @@
                         </AnchorPane>
                   <AnchorPane fx:id="leftMiddleAnchorPane" layoutY="63.0" minWidth="590.0" prefHeight="491.0" prefWidth="590.0" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="63.0">
                      <children>
-                        <ListView fx:id="messagesListView" prefHeight="505.0" prefWidth="590.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0" />
+                        <ListView fx:id="messagesListView" prefHeight="505.0" prefWidth="590.0" style="-fx-background-color: #FBFBFB;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
                   <Label fx:id="selectChatLabel" layoutX="149.0" layoutY="287.0" text="Please select a chat to start messaging">

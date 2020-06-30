@@ -18,7 +18,8 @@ import java.util.Date;
 public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     private final String youMessagesBackgroundColor = "#4988C1";
-    private final String otherMessageBackgroundColor = "#ffffff";
+    private final String otherMessageBackgroundColor = "#FFFFFF";
+    private final String backGroundStyle = "-fx-background-color: #FBFBFB";
 
     private Rectangle messageRectangle;
     private Circle outerCircle;
@@ -95,7 +96,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
         }
         pane.setPrefSize(cellWidth, cellHeight);
         pane.setMinSize(cellWidth, cellHeight);
-        pane.setMaxSize(cellWidth, cellHeight);
+        pane.setStyle(backGroundStyle);
         setRootPane(pane);
     }
 
@@ -113,10 +114,10 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
             timeText.setFill(Color.WHITE);
         }
         else{
-            timeText.setLayoutX(cellWidth - 35);
+            timeText.setLayoutX(cellWidth - 70);
             timeText.setFill(Color.BLACK);
         }
-        timeText.setLayoutY(cellHeight -1);
+        timeText.setLayoutY(cellHeight -3);
     }
 
     public Rectangle getMessageRectangle() {

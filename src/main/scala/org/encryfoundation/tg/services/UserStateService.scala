@@ -8,6 +8,9 @@ import org.encryfoundation.tg.pipelines.Pipeline
 import org.encryfoundation.tg.userState.{PrivateGroupChat, PrivateGroupChats, UserState}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
+import org.encryfoundation.tg.steps.Step
+import org.encryfoundation.tg.steps.Step.ChatsStep
+
 import collection.JavaConverters._
 
 trait UserStateService[F[_]] {
@@ -34,6 +37,8 @@ trait UserStateService[F[_]] {
   def getPipeline(chatId: Long): F[Option[Pipeline[F]]]
   //users
   def updateUser(user: TdApi.User): F[Unit]
+  //steps
+  def setCurrentStep(step: Step): F[Unit]
 }
 
 object UserStateService {
@@ -174,6 +179,11 @@ object UserStateService {
       userState.update { prevState =>
         prevState.javaState.get().setAuth(true)
         prevState.copy(isAuth = true)
+      } >> setCurrentStep(ChatsStep)
+
+    override def setCurrentStep(step: Step): F[Unit] =
+      userState.update { prevState =>
+        prevState.copy(currentStep = step)
       }
   }
 

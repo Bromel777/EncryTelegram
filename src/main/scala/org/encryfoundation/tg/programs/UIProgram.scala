@@ -21,6 +21,7 @@ import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateServi
 import org.javaFX.model.{JDialog, JMessage}
 import org.javaFX.model.nodes.{VBoxDialogTextMessageCell, VBoxMessageCell}
 import scorex.crypto.encode.Base64
+import scorex.utils.Random
 
 import collection.JavaConverters._
 import scala.util.Try
@@ -107,7 +108,7 @@ object UIProgram {
               createGroup(
                 name + "Chat",
                 name,
-                "1234",
+                Random.randomBytes().map(_.toChar).mkString,
                 community.users.tail.map(_.userTelegramLogin)
               )
             case None => Sync[F].delay(println("Got nothing"))

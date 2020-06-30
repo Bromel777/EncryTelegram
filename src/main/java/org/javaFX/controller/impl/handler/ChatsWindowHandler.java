@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
 import org.javaFX.model.JChat;
@@ -77,9 +78,16 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private ObservableList<VBoxChatCell> getObservableJChatList(){
         ObservableList<VBoxChatCell> observableChatList = FXCollections.observableArrayList();
         getUserStateRef().get().getChatList().forEach(
-                chat -> observableChatList.add(new VBoxChatCell(
-                        new JChat(chat.title, chat.lastMessage.content.toString(), chat.id)
-                ))
+                chat -> {
+                    observableChatList.add(new VBoxChatCell(
+                            new JChat(
+                                    chat.title,
+                                    MessagesUtils.processMessage(chat.lastMessage),
+                                    chat.id,
+                                    MessagesUtils.getLastMessageTime(chat.lastMessage)
+                            )
+                    ));
+                }
         );
         return observableChatList;
     }

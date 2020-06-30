@@ -9,6 +9,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.model.JChat;
 import org.javaFX.util.RandomChooser;
 
@@ -71,7 +72,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     private void initlLastMessageLabel(JChat jChat){
         lastMessageLabel = new Label();
-        lastMessageLabel.setText("last message stub");
+        lastMessageLabel.setText(jChat.getLastMessage().getValue());
         lastMessageLabel.setPrefSize(145,31);
         lastMessageLabel.setLayoutX(70);
         lastMessageLabel.setLayoutY(31);
@@ -79,7 +80,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     private void initTimeLabel(JChat jChat){
         timeLabel = new Label();
-        timeLabel.setText("14:47");
+        timeLabel.setText(jChat.getLastMessageTime().getValue());
         timeLabel.setPrefSize(44,31);
         timeLabel.setLayoutX(218);
         timeLabel.setLayoutY(0);

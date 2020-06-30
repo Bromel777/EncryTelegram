@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import org.encryfoundation.tg.javaIntegration.AuthMsg;
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.util.KeyboardHandler;
@@ -26,6 +27,9 @@ public class _EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private Label phoneNumberLabel;
 
+    @FXML
+    private Label error;
+
     public _EnterVerificationCodeHandler() {
     }
 
@@ -37,12 +41,15 @@ public class _EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private void handleConfirmVCAction() {
         String verificationCodeStr = verificationCodeTextField.getCharacters().toString();
-        getUserStateRef().get().setCode(verificationCodeStr);
         try {
+            getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetVCCode(verificationCodeStr));
             AuthMsg nextStep = getUserStateRef().get().authQueue.take();
             if (nextStep.code() == AuthMsg.loadPass().code()) {
                 getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
-            } else {
+            } else if (nextStep.code() == AuthMsg.err().code()) {
+                error.setText("Incorrect vc code");
+            }
+            else {
                 getEncryWindow().launchWindowByPathToFXML(
                         EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
                 );
@@ -54,11 +61,14 @@ public class _EnterVerificationCodeHandler extends DataHandler {
 
     @FXML
     private void handleVerificationCodeAreaPressed(){
+        System.out.println("Invoke handleVerificationCodeAreaPressed");
         handleVerificationCodeAccepted(nextButtonImg);
     }
 
     private void handleVerificationCodeAccepted(Node node){
+        System.out.println("Invoke handleVerificationCodeAccepted");
         AtomicBoolean[] keysPressed = KeyboardHandler.handleShiftEnterPressed(node);
+        System.out.println("keysPressed " + keysPressed);
         new AnimationTimer() {
             @Override
             public void handle(long now) {

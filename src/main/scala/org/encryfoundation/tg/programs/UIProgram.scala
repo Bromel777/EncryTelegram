@@ -11,10 +11,11 @@ import javafx.collections.{FXCollections, ObservableList}
 import javafx.scene.control.{ListView, TextArea}
 import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
+import org.encryfoundation.tg.AuthRequestHandler
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{AccumulatorHandler, PrivateGroupChatCreationHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, SendToChat, SetActiveChat}
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, SendToChat, SetActiveChat, SetPass, SetPhone, SetVCCode}
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
@@ -87,11 +88,13 @@ object UIProgram {
           )
           _ <- userStateRef.update(_.copy(activeChat = chatId))
           msgs <- msgsMVar.read
+          _ <- Logger[F].info(s"msgs: ${msgs}")
           _ <- Sync[F].delay {
             val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
             msgs.foreach(observList.add)
             javaState.messagesListView = new ListView[VBoxMessageCell]()
             javaState.messagesListView.setItems(observList)
+            println("update after:" + javaState.messagesListView.getItems.toString)
           }
         } yield ()
       case _@SendToChat(msg) =>
@@ -114,6 +117,18 @@ object UIProgram {
             case None => Sync[F].delay(println("Got nothing"))
           }
         } yield ()
+      case _@SetPhone(phone) =>
+        userStateRef.get.flatMap(state =>
+          state.client.send(new TdApi.SetAuthenticationPhoneNumber(phone, null), AuthRequestHandler(userStateRef))
+        ) >> Logger[F].info("Set phone")
+      case _@SetPass(pass) =>
+        userStateRef.get.flatMap(state =>
+          state.client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler(userStateRef))
+        ) >> Logger[F].info("Set pass")
+      case _@SetVCCode(vcCode) =>
+        userStateRef.get.flatMap(state =>
+          state.client.send(new TdApi.CheckAuthenticationCode(vcCode), AuthRequestHandler(userStateRef))
+        ) >> Logger[F].info("Set code")
     }
 
     private def createGroup(groupname: String,

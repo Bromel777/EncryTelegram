@@ -11,6 +11,8 @@ import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.pipelines.Pipeline
 import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.services.PrivateConferenceService._
+import org.encryfoundation.tg.steps.Step
+import org.encryfoundation.tg.steps.Step.InitStep
 import org.javaFX.model.JUserState
 import scorex.crypto.hash.Blake2b256
 
@@ -32,6 +34,7 @@ case class UserState[F[_]: Sync](chatList: List[TdApi.Chat] = List.empty,
                                  isAuth: Boolean = false,
                                  client: Client[F],
                                  activeChat: Long = 0,
+                                 currentStep: Step = InitStep,
                                  javaState: AtomicReference[JUserState],
                                  db: Database[F])
 

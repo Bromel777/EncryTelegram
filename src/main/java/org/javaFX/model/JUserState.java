@@ -25,7 +25,7 @@ public class JUserState {
     private Map<Long, TdApi.SecretChat> secretChats = new HashMap<>();
     public ArrayList<String> communities = new ArrayList<String>();
     public LinkedBlockingQueue<JavaInterMsg> msgsQueue = new LinkedBlockingQueue<JavaInterMsg>(100);
-    public LinkedBlockingQueue<AuthMsg> authQueue = new LinkedBlockingQueue<AuthMsg>(5);
+    public LinkedBlockingQueue<AuthMsg> authQueue = new LinkedBlockingQueue<AuthMsg>(100);
     public JDialog activeDialog;
     public TextArea activeDialogArea;
     private boolean isAuth = false;

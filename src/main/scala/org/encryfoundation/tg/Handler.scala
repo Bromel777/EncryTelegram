@@ -150,22 +150,19 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         client.send(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F](userStateRef))
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>
         for {
-          phoneNumber <- UserStateUtils.getPhoneNumber(userStateRef)
-          _ <- client.send(new TdApi.SetAuthenticationPhoneNumber(phoneNumber, null), AuthRequestHandler(userStateRef))
+          _ <- Sync[F].delay(println(s"Get ${a}"))
         } yield ()
       case a: TdApi.AuthorizationStateWaitCode =>
         for {
           state <- userStateRef.get
+          _ <- Sync[F].delay(println(s"Get ${a}"))
           _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadVCWindow))
-          code <- UserStateUtils.getVC(userStateRef)
-          _ <- client.send(new TdApi.CheckAuthenticationCode(code), AuthRequestHandler(userStateRef))
         } yield ()
       case a: TdApi.AuthorizationStateWaitPassword =>
         for {
           state <- userStateRef.get
+          _ <- Sync[F].delay(println(s"Get ${a}"))
           _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadPassWindow))
-          pass <- UserStateUtils.getPass(userStateRef)
-          _ <- client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler(userStateRef))
         } yield ()
       case a: TdApi.AuthorizationStateReady =>
         for {

@@ -1,21 +1,21 @@
 package org.javaFX.model.nodes;
 
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import org.javaFX.model.JMessage;
 
-public class VBoxDialogMessageCell extends VBoxMessageCell{
+public class VBoxDialogTextMessageCell extends VBoxMessageCell{
 
     private Label contentLabel;
 
-    public VBoxDialogMessageCell(JMessage jMessage) {
+    public VBoxDialogTextMessageCell(JMessage jMessage) {
         super(jMessage, 583, 491);
     }
 
-    public VBoxDialogMessageCell(JMessage jMessage, int parentWidth, int parentHeight) {
+    public VBoxDialogTextMessageCell(JMessage jMessage, int parentWidth, int parentHeight) {
         super(jMessage, parentWidth, parentHeight);
     }
 
@@ -29,7 +29,7 @@ public class VBoxDialogMessageCell extends VBoxMessageCell{
         int multiplier =
                 textContent.length()%40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
         double width = getParentWidth() - getParentWidth() / 3;
-        double height = 27*multiplier;
+        double height = 27 * multiplier;
         if( jMessage.isMine() ){
             contentLabel.setLayoutX(getParentWidth() / 3 );
             contentLabel.setLayoutY(1);
@@ -40,7 +40,7 @@ public class VBoxDialogMessageCell extends VBoxMessageCell{
             contentLabel.setLayoutY(1);
             contentLabel.setTextFill(Color.BLACK);
         }
-        contentLabel.setPrefSize(width, height);
+        contentLabel.setPrefSize(width - 5 , height);
         setContentNode(contentLabel);
     }
 
@@ -50,14 +50,9 @@ public class VBoxDialogMessageCell extends VBoxMessageCell{
         messageRectangle.setWidth(getCellWidth()- getCellHeight()/2);
         messageRectangle.setHeight(getCellHeight());
         messageRectangle.setLayoutY(0);
-        if(jMessage.isMine()){
-            messageRectangle.setFill(Color.valueOf("#4988C1"));
-            messageRectangle.setLayoutX(getParentWidth()/3);
-        }
-        else{
-            messageRectangle.setFill(Color.valueOf("#ffffff"));
-            messageRectangle.setLayoutX(getCellHeight()/2);
-        }
+        double ownerIndent = getParentWidth()/3;
+        double otherIndent = getCellHeight()/2;
+        setFigureProperties(jMessage, messageRectangle, ownerIndent, otherIndent);
         setMessageRectangle(messageRectangle);
     }
 
@@ -66,14 +61,9 @@ public class VBoxDialogMessageCell extends VBoxMessageCell{
         Circle outerCircle = new Circle();
         outerCircle.setRadius(getCellHeight()/2);
         outerCircle.setLayoutY(getCellHeight()/2);
-        if(jMessage.isMine()){
-            outerCircle.setFill(Color.valueOf("#4988C1"));
-            outerCircle.setLayoutX(getParentWidth()/3);
-        }
-        else{
-            outerCircle.setFill(Color.valueOf("#ffffff"));
-            outerCircle.setLayoutX(getCellWidth());
-        }
+        double ownerIndent = getParentWidth()/3;
+        double otherIndent =  getCellWidth() ;
+        setFigureProperties(jMessage, outerCircle, ownerIndent, otherIndent );
         setOuterCircle(outerCircle);
     }
 
@@ -82,14 +72,9 @@ public class VBoxDialogMessageCell extends VBoxMessageCell{
         Circle innerCircle = new Circle();
         innerCircle.setRadius(getCellHeight()/2);
         innerCircle.setLayoutY(getCellHeight()/2);
-        if(jMessage.isMine()){
-            innerCircle.setFill(Color.valueOf("#4988C1"));
-            innerCircle.setLayoutX(getParentWidth()-getCellHeight()/2);
-        }
-        else{
-            innerCircle.setFill(Color.valueOf("#ffffff"));
-            innerCircle.setLayoutX(getCellHeight()/2);
-        }
+        double ownerIndent = getParentWidth() - getCellHeight()/2;
+        double otherIndent =  getCellHeight()/2  ;
+        setFigureProperties(jMessage, innerCircle, ownerIndent, otherIndent);
         setInnerCircle(innerCircle);
     }
 
@@ -99,14 +84,28 @@ public class VBoxDialogMessageCell extends VBoxMessageCell{
         miniRectangle.setWidth(getCellHeight()/2);
         miniRectangle.setHeight(getCellHeight()/2);
         miniRectangle.setLayoutY(getCellHeight()/2);
+        double ownerIndent = getParentWidth() - getCellHeight()/2;
+        double otherIndent =  0 ;
+        setFigureProperties(jMessage, miniRectangle, ownerIndent, otherIndent );
+        setAngleRectangle(miniRectangle);
+    }
+
+    protected void setFigureProperties(JMessage jMessage, Shape shape, double ownerIndent, double otherIndent){
         if(jMessage.isMine()){
-            miniRectangle.setFill(Color.valueOf("#4988C1"));
-            miniRectangle.setLayoutX(getParentWidth() - getCellHeight()/2);
+            shape.setFill(Color.valueOf(getYouMessagesBackgroundColor()));
+            shape.setLayoutX(ownerIndent);
         }
         else{
-            miniRectangle.setFill(Color.valueOf("#ffffff"));
-            miniRectangle.setLayoutX(0);
+            shape.setFill(Color.valueOf(getOtherMessageBackgroundColor()));
+            shape.setLayoutX(otherIndent);
         }
-        setAngleRectangle(miniRectangle);
+    }
+
+    public Label getContentLabel() {
+        return contentLabel;
+    }
+
+    public void setContentLabel(Label contentLabel) {
+        this.contentLabel = contentLabel;
     }
 }

@@ -17,7 +17,9 @@ import java.util.Date;
 
 public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
-    //private ImageView backGroundImage;
+    private final String youMessagesBackgroundColor = "#4988C1";
+    private final String otherMessageBackgroundColor = "#ffffff";
+
     private Rectangle messageRectangle;
     private Circle outerCircle;
     private Circle innerCircle;
@@ -104,10 +106,10 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
         timeText.setFont(new Font(12));
         Timestamp ts= new Timestamp ( Long.parseLong(jMessage.getTime())*1000 );
         Date date=new Date(ts.getTime());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");;
         timeText.setText(dateFormat.format(date));
         if(jMessage.isMine()){
-            timeText.setLayoutX(getParentWidth() - 35);
+            timeText.setLayoutX(getParentWidth() - 70);
             timeText.setFill(Color.WHITE);
         }
         else{
@@ -171,5 +173,13 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     public double getCellHeight() {
         return cellHeight;
+    }
+
+    public String getYouMessagesBackgroundColor() {
+        return youMessagesBackgroundColor;
+    }
+
+    public String getOtherMessageBackgroundColor() {
+        return otherMessageBackgroundColor;
     }
 }

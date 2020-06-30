@@ -129,7 +129,7 @@ object UIProgram {
       case _@SetVCCode(vcCode) =>
         userStateRef.get.flatMap(state =>
           state.client.send(new TdApi.CheckAuthenticationCode(vcCode), AuthRequestHandler(userStateRef))
-        ) >> Logger[F].info("Set code")
+        ) >> Logger[F].info(s"Set code ${vcCode}")
     }
 
     private def createGroup(groupname: String,

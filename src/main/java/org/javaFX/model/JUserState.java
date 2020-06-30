@@ -57,7 +57,8 @@ public class JUserState {
 
     public String getPhoneNumber() { return this.userInfo.get(0); }
 
-    public String getPreparedPhoneNumber(String phoneNumber){
+    public String getPreparedPhoneNumber(){
+        String phoneNumber = this.userInfo.get(0);
         StringBuilder sb = new StringBuilder("+");
         switch (phoneNumber.substring(0,1)){
             case "7":

@@ -66,13 +66,14 @@ public class EnterPhoneNumberHandler extends DataHandler {
         else if(selectCountryMenu.getText().equals(belarusMenuItem.getText())){
             phoneNumberStr = "375"+phoneNumberStr;
         }
+        getUserStateRef().get().setPhoneNumber(phoneNumberStr);
         try {
             getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetPhone(phoneNumberStr));
             AuthMsg nextStep = getUserStateRef().get().authQueue.take();
             if (nextStep.code() == AuthMsg.loadVC().code()) {
                 getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
                 ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController() )
-                        .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber(phoneNumberTextField.getCharacters().toString()));
+                        .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber());
             } else if (nextStep.code() == AuthMsg.err().code()) {
                 error.setText("Oops! Error");
             }

@@ -77,6 +77,7 @@ object UIProgram {
       case _@SetActiveChat(chatId) =>
         for {
           state <- userStateRef.get
+          _ <- Sync[F].delay(state.javaState.get().messagesListView.setItems(FXCollections.observableArrayList[VBoxMessageCell]()))
           javaState <- state.javaState.get().pure[F]
           msgsMVar <- MVar.empty[F, List[VBoxMessageCell]]
           _ <- state.client.send(

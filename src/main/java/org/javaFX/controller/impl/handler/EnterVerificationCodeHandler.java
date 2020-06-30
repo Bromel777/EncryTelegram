@@ -30,7 +30,7 @@ public class EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private Label error;
 
-    public EnterVerificationCodeHandler() {
+    public EnterVerificationCodeHandler() {}
 
     @FXML
     private void handleKeyTyped(){

@@ -5,6 +5,7 @@ public class JMessage<T> {
     private boolean isMine;
     private T content;
     private String time;
+    private String author;
 
     public JMessage(boolean isMine, T content, String time) {
         this.isMine = isMine;
@@ -34,5 +35,13 @@ public class JMessage<T> {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

@@ -112,7 +112,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     }
 
     @FXML
-    protected void clickItem() throws InterruptedException {
+    protected void clickItem() {
         getUserStateRef().get().setActiveDialog(messagesListView);
         JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
                 chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
@@ -149,6 +149,11 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                     chatsListView.getSelectionModel().select(item);
                     chatsListView.scrollTo(item);
                 });
+    }
+
+    private void flushDialogArea(){
+        messagesListView = new ListView<>();
+        getUserStateRef().get().setActiveDialog(messagesListView);
     }
 
 

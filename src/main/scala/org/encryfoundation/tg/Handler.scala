@@ -144,28 +144,28 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         parameters.applicationVersion = "0.1"
         parameters.enableStorageOptimizer = true
         Logger[F].info("Setting td-lib settings") >> client.send(
-          new TdApi.SetTdlibParameters(parameters), AuthRequestHandler[F]()
+          new TdApi.SetTdlibParameters(parameters), AuthRequestHandler[F](userStateRef)
         ) >> userStateService.setCurrentStep(AuthStep)
       case a: TdApi.AuthorizationStateWaitEncryptionKey =>
-        client.send(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F]())
+        client.send(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F](userStateRef))
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>
         for {
           phoneNumber <- UserStateUtils.getPhoneNumber(userStateRef)
-          _ <- client.send(new TdApi.SetAuthenticationPhoneNumber(phoneNumber, null), AuthRequestHandler())
+          _ <- client.send(new TdApi.SetAuthenticationPhoneNumber(phoneNumber, null), AuthRequestHandler(userStateRef))
         } yield ()
       case a: TdApi.AuthorizationStateWaitCode =>
         for {
           state <- userStateRef.get
           _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadVCWindow))
           code <- UserStateUtils.getVC(userStateRef)
-          _ <- client.send(new TdApi.CheckAuthenticationCode(code), AuthRequestHandler())
+          _ <- client.send(new TdApi.CheckAuthenticationCode(code), AuthRequestHandler(userStateRef))
         } yield ()
       case a: TdApi.AuthorizationStateWaitPassword =>
         for {
           state <- userStateRef.get
           _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadPassWindow))
           pass <- UserStateUtils.getPass(userStateRef)
-          _ <- client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler())
+          _ <- client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler(userStateRef))
         } yield ()
       case a: TdApi.AuthorizationStateReady =>
         for {

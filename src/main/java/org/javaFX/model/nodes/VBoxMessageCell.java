@@ -19,8 +19,8 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     private final String youMessagesBackgroundColor = "#4988C1";
     //private final String otherMessageBackgroundColor = "#FFFFFF";
-    private final String otherMessageBackgroundColor = "RED";
-    private final String backGroundStyle = "-fx-background-color: #FBFBFB";
+    private final String otherMessageBackgroundColor = "#a4f3c5";
+    private final String backGroundStyle = "-fx-background-color: #fbfbfb";
 
     private Rectangle messageRectangle;
     private Circle outerTopCircle;
@@ -66,19 +66,18 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     protected void setNodesToRootPane() {
         getRootPane().getChildren().add(contentNode);
         getRootPane().getChildren().add(timeText);
-        getRootPane().getChildren().add(messageRectangle);
-        getRootPane().getChildren().get(getRootPane().getChildren().size()-1).toBack();
-        getRootPane().getChildren().add(outerTopCircle);
-        getRootPane().getChildren().get(getRootPane().getChildren().size()-1).toBack();
-        getRootPane().getChildren().add(outerBotCircle);
-        getRootPane().getChildren().get(getRootPane().getChildren().size()-1).toBack();
-        getRootPane().getChildren().add(innerCircle);
-        getRootPane().getChildren().get(getRootPane().getChildren().size()-1).toBack();
-        getRootPane().getChildren().add(angleRectangle);
-        getRootPane().getChildren().get(getRootPane().getChildren().size()-1).toBack();
-        getRootPane().getChildren().add(borderRectangle);
-        getRootPane().getChildren().get(getRootPane().getChildren().size()-1).toBack();
+        addElementToBack(messageRectangle);
+        addElementToBack(outerTopCircle);
+        addElementToBack(outerBotCircle);
+        addElementToBack(innerCircle);
+        addElementToBack(angleRectangle);
+        addElementToBack(borderRectangle);
         this.getChildren().add(getRootPane());
+    }
+
+    private void addElementToBack(Node node){
+        getRootPane().getChildren().add(node);
+        getRootPane().getChildren().get(getRootPane().getChildren().size()-1).toBack();
     }
 
     protected abstract void initContentNode(JMessage jMessage);
@@ -93,6 +92,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     @Override
     protected void initRootPane(JMessage jMessage) {
         AnchorPane pane = new AnchorPane();
+
         String textContent = jMessage.getContent().toString()
                 .substring(jMessage.getContent().toString().indexOf(":")+2);
         int multiplier =
@@ -100,7 +100,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
         cellWidth = getParentWidth() - getParentWidth() / 3;
         cellHeight = 27 * multiplier;
         if (jMessage.isMine()) {
-            pane.setLayoutX(cellWidth);
+            pane.setLayoutX(getParentWidth() / 3);
         }
         else {
             pane.setLayoutX(1);
@@ -115,8 +115,8 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     private void initTimeText(JMessage jMessage) {
         timeText = new Text();
         timeText.setFont(new Font(12));
-        Timestamp ts= new Timestamp ( Long.parseLong(jMessage.getTime())*1000 );
-        Date date=new Date(ts.getTime());
+        Timestamp ts = new Timestamp ( Long.parseLong(jMessage.getTime())*1000 );
+        Date date = new Date(ts.getTime());
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");;
         timeText.setText(dateFormat.format(date));
         if(jMessage.isMine()){

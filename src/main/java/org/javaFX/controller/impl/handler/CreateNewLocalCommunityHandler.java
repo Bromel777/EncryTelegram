@@ -56,7 +56,6 @@ public class CreateNewLocalCommunityHandler extends DataHandler {
         initChatsTable();
     }
 
-
     private ObservableList<VBoxContactCell> getObservableUserList(){
         ObservableList<VBoxContactCell> observableChatList = FXCollections.observableArrayList();
         for(Long jUserId: getUserStateRef().get().getUsersMap().keySet()){

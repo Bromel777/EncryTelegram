@@ -29,6 +29,7 @@ public class JChat {
              new SimpleStringProperty(lastMessageStr),
              new SimpleLongProperty(chatId),
              new SimpleStringProperty(lastMessageTime));
+        unreadMessagesNumber = new AtomicInteger(0);
     }
 
     public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, StringProperty lastMessageTime, AtomicInteger unreadMessagesNumber ) {

@@ -71,7 +71,7 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
         outerCircle.setRadius(13);
         outerCircle.setLayoutY(layoutY);
         double ownerIndent = getParentWidth()/3;
-        double otherIndent =  getCellWidth() + 1;
+        double otherIndent =  getCellWidth() + 2;
         setFigureProperties(jMessage, outerCircle, ownerIndent, otherIndent );
         return outerCircle;
     }
@@ -102,11 +102,11 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
     @Override
     protected void initBorderRectangle(JMessage jMessage) {
         Rectangle borderRectangle = new Rectangle();
-        borderRectangle.setWidth(14);
+        borderRectangle.setWidth(16);
         borderRectangle.setHeight(getCellHeight()-26);
         borderRectangle.setLayoutY(13);
         double ownerIndent = getParentWidth()/3 -13;
-        double otherIndent = getParentWidth() - getParentWidth()/3;
+        double otherIndent = getParentWidth() - getParentWidth()/3 -1;
         setFigureProperties(jMessage, borderRectangle, ownerIndent, otherIndent);
         setBorderRectangle(borderRectangle);
     }

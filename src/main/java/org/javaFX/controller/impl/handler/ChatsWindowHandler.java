@@ -123,6 +123,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private void showLeftPane(){
         rightTopAnchorPane.setVisible(true);
         rightMiddleAnchorPane.setVisible(true);
+        messagesListView.setVisible(true);
         rightBottomAnchorPane.setVisible(true);
         selectChatLabel.setVisible(false);
         chatNameLabel.setText(chatsListView.getSelectionModel().getSelectedItem().getChatTitle());
@@ -130,7 +131,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     public void hideLeftPane(){
         rightTopAnchorPane.setVisible(false);
-        rightMiddleAnchorPane.setVisible(false);
+        messagesListView.setVisible(false);
         rightBottomAnchorPane.setVisible(false);
         selectChatLabel.setVisible(true);
     }

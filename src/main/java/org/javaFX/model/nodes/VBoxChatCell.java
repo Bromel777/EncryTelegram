@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.model.JChat;
 import org.javaFX.util.RandomChooser;
+import org.javaFX.util.TimeParser;
 
 public class VBoxChatCell extends VBoxCell<JChat>{
 
@@ -98,6 +99,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     private void initTimeLabel(JChat jChat){
         timeLabel = new Label();
+        //timeLabel.setText(TimeParser.parseDataString (jChat.getLastMessageTime().getValue()));
         timeLabel.setText(jChat.getLastMessageTime().getValue());
         timeLabel.setPrefSize(44,31);
 
@@ -116,12 +118,12 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         abbreviationText.setLayoutX(22);
         abbreviationText.setLayoutY(38);
         String [] strings = jChat.getTitle().get().split(" ");
-        String result = " ";
+        String result;
         if(strings.length > 1){
             result = ""+strings[0].charAt(0)+ strings[1].charAt(0);
         }
         else {
-            result += ""+strings[0].charAt(0);
+            result = " "+strings[0].charAt(0);
         }
         abbreviationText.setText(result.toUpperCase());
         abbreviationText.setFont(Font.font("Times New Roman", FontWeight.BOLD ,16) );

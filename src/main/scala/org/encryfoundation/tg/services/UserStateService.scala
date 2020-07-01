@@ -159,7 +159,7 @@ object UserStateService {
             )
             _ <- Sync[F].delay(chat.order = newOrder)
             _ <- userState.update(prevState =>
-              if (newOrder != 0) {
+              if (newOrder != 0 && !isPipeline(chat, prevState)) {
                 prevState.javaState.get().setChatList(
                   (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20).reverse.asJava
                 )

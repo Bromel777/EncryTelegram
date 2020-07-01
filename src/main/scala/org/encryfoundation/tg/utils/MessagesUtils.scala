@@ -18,10 +18,5 @@ object MessagesUtils {
       case _ => "Unknown msg type"
     }
 
-  def getLastMessageTime(msg: TdApi.Message): String =
-    if (msg == null) "No message"
-    else {
-      val df = new SimpleDateFormat("HH:mm")
-      df.format(msg.date * 1000L)
-    }
+  def getLastMessageTime(msg: TdApi.Message): Long = msg.date.toLong
 }

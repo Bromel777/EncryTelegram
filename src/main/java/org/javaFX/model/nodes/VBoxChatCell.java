@@ -99,8 +99,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     private void initTimeLabel(JChat jChat){
         timeLabel = new Label();
-        //timeLabel.setText(TimeParser.parseDataString (jChat.getLastMessageTime().getValue()));
-        timeLabel.setText(jChat.getLastMessageTime().getValue());
+        timeLabel.setText(TimeParser.parseDataString (jChat.getLastMessageTime().getValue().toString()));
         timeLabel.setPrefSize(44,31);
 
     }

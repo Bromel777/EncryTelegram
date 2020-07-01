@@ -10,13 +10,13 @@ public class JChat {
 
     private StringProperty title;
     private StringProperty lastMessage;
-    private StringProperty lastMessageTime;
+    private LongProperty lastMessageTime;
     private final LongProperty chatId;
     private AtomicInteger unreadMessagesNumber;
     private TdApi.File smallPicture;
 
 
-    public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, StringProperty lastMessageTime) {
+    public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, LongProperty lastMessageTime) {
         this.title = title;
         this.lastMessage = lastMessage;
         this.chatId = chatId;
@@ -24,15 +24,15 @@ public class JChat {
         unreadMessagesNumber = new AtomicInteger(0);
     }
 
-    public JChat(String titleStr, String lastMessageStr, Long chatId, String lastMessageTime) {
+    public JChat(String titleStr, String lastMessageStr, Long chatId, Long lastMessageTime) {
         this(new SimpleStringProperty(titleStr),
              new SimpleStringProperty(lastMessageStr),
              new SimpleLongProperty(chatId),
-             new SimpleStringProperty(lastMessageTime));
+             new SimpleLongProperty(lastMessageTime));
         unreadMessagesNumber = new AtomicInteger(0);
     }
 
-    public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, StringProperty lastMessageTime, AtomicInteger unreadMessagesNumber ) {
+    public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, LongProperty lastMessageTime, AtomicInteger unreadMessagesNumber ) {
         this.title = title;
         this.lastMessage = lastMessage;
         this.chatId = chatId;
@@ -56,11 +56,11 @@ public class JChat {
         this.lastMessage = lastMessage;
     }
 
-    public StringProperty getLastMessageTime() {
+    public LongProperty getLastMessageTime() {
         return lastMessageTime;
     }
 
-    public void setLastMessageTime(StringProperty lastMessageTime) {
+    public void setLastMessageTime(LongProperty lastMessageTime) {
         this.lastMessageTime = lastMessageTime;
     }
 

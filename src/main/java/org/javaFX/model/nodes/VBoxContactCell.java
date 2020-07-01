@@ -51,8 +51,8 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     private void initCheckBoxImg(){
         checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage) );
-        checkBoxImg.setLayoutX(756);
-        checkBoxImg.setLayoutY(7);
+        /*checkBoxImg.setLayoutX(756);
+        checkBoxImg.setLayoutY(7);*/
     }
 
     private void initSeparatorLine(){
@@ -69,7 +69,9 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         getRootPane().getChildren().add(contactNameLabel);
         getRootPane().getChildren().add(phoneNumberLabel);
         getRootPane().getChildren().add(checkBoxImg);
+        AnchorPane.setRightAnchor(checkBoxImg,20.0);
         getRootPane().getChildren().add(separatorLine);
+        AnchorPane.setBottomAnchor(separatorLine,0.0);
         this.getChildren().add(getRootPane());
     }
 

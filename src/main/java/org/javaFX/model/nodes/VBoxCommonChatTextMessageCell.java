@@ -36,12 +36,12 @@ public class VBoxCommonChatTextMessageCell extends VBoxDialogTextMessageCell{
     }
 
     @Override
-    protected void setNodesToRootPane() {
+    protected void setNodesToRootPane(JMessage jMessage) {
         if(authorCircle != null && abbreviationText!= null){
             getRootPane().getChildren().add(authorCircle);
             getRootPane().getChildren().add(abbreviationText);
         }
-        super.setNodesToRootPane();
+        super.setNodesToRootPane(jMessage);
     }
 
     @Override
@@ -81,27 +81,7 @@ public class VBoxCommonChatTextMessageCell extends VBoxDialogTextMessageCell{
         setMessageRectangle(messageRectangle);
     }
 
-    @Override
-    protected void initBorderRectangle(JMessage jMessage) {
-        Rectangle borderRectangle = new Rectangle();
-        borderRectangle.setWidth(3);
-        borderRectangle.setHeight(getCellHeight()-26);
-        borderRectangle.setLayoutY(0);
-        double ownerIndent = getParentWidth()/3;
-        double otherIndent = indent;
-        setFigureProperties(jMessage, borderRectangle, ownerIndent, otherIndent);
-        setBorderRectangle(borderRectangle);
-    }
 
-    @Override
-    protected void initOuterTopCircle(JMessage jMessage) {
-        initOuterCircle(jMessage, 13);
-    }
-
-    @Override
-    protected void initOuterBotCircle(JMessage jMessage) {
-        initOuterCircle(jMessage, getCellHeight()-13);
-    }
 
     protected Circle initOuterCircle(JMessage jMessage, double layoutY){
         Circle outerCircle = new Circle();
@@ -113,16 +93,7 @@ public class VBoxCommonChatTextMessageCell extends VBoxDialogTextMessageCell{
         return outerCircle;
     }
 
-    @Override
-    protected void initInnerCircle(JMessage jMessage) {
-        Circle innerCircle = new Circle();
-        innerCircle.setRadius(13);
-        innerCircle.setLayoutY(13);
-        double ownerIndent = getParentWidth() - 13;
-        double otherIndent = indent + 13  ;
-        setFigureProperties(jMessage, innerCircle, ownerIndent, otherIndent);
-        setInnerCircle(innerCircle);
-    }
+
 
     @Override
     protected void initAngleRectangle(JMessage jMessage) {

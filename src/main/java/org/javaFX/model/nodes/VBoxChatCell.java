@@ -3,15 +3,11 @@ package org.javaFX.model.nodes;
 import javafx.beans.property.LongProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.model.JChat;
 import org.javaFX.util.RandomChooser;
 import org.javaFX.util.TimeParser;
@@ -49,7 +45,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     }
 
     @Override
-    protected void setNodesToRootPane(){
+    protected void setNodesToRootPane(JChat jChat){
         getRootPane().getChildren().add(chatTitleLabel);
         getRootPane().getChildren().add(lastMessageLabel);
         getRootPane().getChildren().add(timeLabel);

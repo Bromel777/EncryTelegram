@@ -36,9 +36,10 @@ public class StartWindowHandler extends DataHandler {
     @Override
     public void updateEncryWindow(EncryWindow encryWindow) {
         super.updateEncryWindow(encryWindow);
-        double localProgress = loadingStatusInt.getAndAdd(51)/totalTimeMillis ;
+        double localProgress = loadingStatusInt.addAndGet(50)/totalTimeMillis ;
         progressBar.setProgress(localProgress);
-        progressLabel.setText("loading "+String.format("%.0f", localProgress*100)+"%");
+        String progressStatus = localProgress==1? "100" : String.format("%.0f", localProgress*100);
+        progressLabel.setText("loading "+progressStatus+"%");
     }
 
     private void rootPaneObserve(DataHandler controller){

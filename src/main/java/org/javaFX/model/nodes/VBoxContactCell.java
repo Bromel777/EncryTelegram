@@ -1,11 +1,14 @@
 package org.javaFX.model.nodes;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.Shadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+
 import org.javaFX.model.JSingleContact;
 
 public class VBoxContactCell extends VBoxCell<JSingleContact> {
@@ -15,7 +18,9 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     private Label contactNameLabel;
     private Label phoneNumberLabel;
     private ImageView checkBoxImg;
-    private Line separatorLine;
+
+    private Separator separatorLine;
+
 
     private final JSingleContact currentContact;
 
@@ -51,21 +56,26 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     private void initCheckBoxImg(){
         checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage) );
-        /*checkBoxImg.setLayoutX(756);
-        checkBoxImg.setLayoutY(7);*/
     }
 
+    //TODO
+    //пока не инициализруется переменная parentWidth не сделано
     private void initSeparatorLine(){
-        separatorLine = new Line();
-        separatorLine.setLayoutX(0);
-        separatorLine.setLayoutY(62);
-        separatorLine.setEndX(800);
-        separatorLine.setStrokeWidth(3);
-        separatorLine.setStroke(Color.GRAY);
+        separatorLine = new Separator();
+        //!!!
+        separatorLine.setPrefWidth(getRootPane().getPrefWidth());
+        //!!!
+        Shadow effect = new Shadow();
+        effect.setBlurType(BlurType.ONE_PASS_BOX);
+        effect.setColor(Color.GRAY);
+        effect.setHeight(0.0);
+        effect.setRadius(0.0);
+        effect.setWidth(0.0);
+        separatorLine.setEffect(effect);
     }
 
     @Override
-    protected void setNodesToRootPane() {
+    protected void setNodesToRootPane(JSingleContact jMessage) {
         getRootPane().getChildren().add(contactNameLabel);
         getRootPane().getChildren().add(phoneNumberLabel);
         getRootPane().getChildren().add(checkBoxImg);
@@ -117,8 +127,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         else{
             checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage) );
         }
-        checkBoxImg.setLayoutX(756);
-        checkBoxImg.setLayoutY(7);
+        AnchorPane.setRightAnchor(checkBoxImg,20.0);
         getRootPane().getChildren().add(checkBoxImg);
     }
 }

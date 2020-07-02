@@ -61,7 +61,7 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
     }
 
     @Override
-    protected void setNodesToRootPane() {
+    protected void setNodesToRootPane(JLocalCommunity jLocalCommunity) {
         getRootPane().getChildren().add(communityIDLabel);
         getRootPane().getChildren().add(communityNameLabel);
         getRootPane().getChildren().add(numberOfMembersLabel);

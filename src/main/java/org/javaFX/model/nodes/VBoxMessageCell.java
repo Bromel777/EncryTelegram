@@ -23,11 +23,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     private final String backGroundStyle = "-fx-background-color: #fbfbfb";
 
     private Rectangle messageRectangle;
-    private Circle outerTopCircle;
-    private Circle outerBotCircle;
-    private Circle innerCircle;
     private Rectangle angleRectangle;
-    private Rectangle borderRectangle;
     private Node contentNode;
     private Text timeText;
 
@@ -53,25 +49,33 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     protected void initNodes(JMessage jMessage) {
         initRootPane(jMessage);
         initMessageRectangle(jMessage);
-        initOuterBotCircle(jMessage);
-        initOuterTopCircle(jMessage);
-        initInnerCircle(jMessage);
         initAngleRectangle(jMessage);
-        initBorderRectangle(jMessage);
         initContentNode(jMessage);
         initTimeText(jMessage);
     }
 
     @Override
-    protected void setNodesToRootPane() {
-        getRootPane().getChildren().add(contentNode);
-        getRootPane().getChildren().add(timeText);
-        addElementToBack(messageRectangle);
-        addElementToBack(outerTopCircle);
-        addElementToBack(outerBotCircle);
-        addElementToBack(innerCircle);
-        addElementToBack(angleRectangle);
-        addElementToBack(borderRectangle);
+    protected void setNodesToRootPane(JMessage jMessage) {
+        if(jMessage.isMine()){
+            getRootPane().getChildren().add(contentNode);
+            AnchorPane.setRightAnchor(contentNode,5.0);
+            getRootPane().getChildren().add(timeText);
+            AnchorPane.setRightAnchor(timeText,5.0);
+            addElementToBack(messageRectangle);
+            AnchorPane.setRightAnchor(messageRectangle,5.0);
+            addElementToBack(angleRectangle);
+            AnchorPane.setRightAnchor(angleRectangle,5.0);
+        }
+        else {
+            getRootPane().getChildren().add(contentNode);
+            AnchorPane.setLeftAnchor(contentNode,10.0);
+            getRootPane().getChildren().add(timeText);
+            AnchorPane.setLeftAnchor(timeText,getRootPane().getPrefWidth()-65);
+            addElementToBack(messageRectangle);
+            AnchorPane.setLeftAnchor(messageRectangle,5.0);
+            addElementToBack(angleRectangle);
+            AnchorPane.setLeftAnchor(angleRectangle,5.0);
+        }
         this.getChildren().add(getRootPane());
     }
 
@@ -81,18 +85,12 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     }
 
     protected abstract void initContentNode(JMessage jMessage);
-
-    protected abstract void initOuterBotCircle(JMessage jMessage);
-    protected abstract void initOuterTopCircle(JMessage jMessage);
-    protected abstract void initInnerCircle(JMessage jMessage);
     protected abstract void initAngleRectangle(JMessage jMessage);
-    protected abstract void initBorderRectangle(JMessage jMessage);
     protected abstract void initMessageRectangle(JMessage jMessage);
 
     @Override
     protected void initRootPane(JMessage jMessage) {
         AnchorPane pane = new AnchorPane();
-
         String textContent = jMessage.getContent().toString()
                 .substring(jMessage.getContent().toString().indexOf(":")+2);
         int multiplier =
@@ -132,26 +130,6 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     public Rectangle getMessageRectangle() {
         return messageRectangle;
-    }
-
-    public Circle getOuterTopCircle() {
-        return outerTopCircle;
-    }
-
-    public Circle getInnerCircle() {
-        return innerCircle;
-    }
-
-    public void setOuterTopCircle(Circle outerTopCircle) {
-        this.outerTopCircle = outerTopCircle;
-    }
-
-    public void setOuterBotCircle(Circle outerBotCircle) {
-        this.outerBotCircle = outerBotCircle;
-    }
-
-    public void setInnerCircle(Circle innerCircle) {
-        this.innerCircle = innerCircle;
     }
 
     public Rectangle getAngleRectangle() {
@@ -198,11 +176,4 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
         return otherMessageBackgroundColor;
     }
 
-    public Rectangle getBorderRectangle() {
-        return borderRectangle;
-    }
-
-    public void setBorderRectangle(Rectangle borderRectangle) {
-        this.borderRectangle = borderRectangle;
-    }
 }

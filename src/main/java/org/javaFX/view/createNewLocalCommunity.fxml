@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.image.*?>
@@ -41,8 +42,12 @@
         </AnchorPane>
         <AnchorPane layoutY="136.0" minHeight="40.0" minWidth="85.0" prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">
          <children>
+            <Separator prefWidth="200.0" style="-fx-background-color: RED; -fx-border-color: RED;" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="0.0">
+               <effect>
+                  <Shadow blurType="ONE_PASS_BOX" color="#00b7ff" height="0.0" radius="0.0" width="0.0" />
+               </effect>
+            </Separator>
             <TextField fx:id="searchContactTextField" layoutX="27.0" layoutY="15.0" onKeyPressed="#searchContactByKeyboard" prefHeight="31.0" prefWidth="361.0" promptText="Search for contact" AnchorPane.leftAnchor="27.0" />
-            <Line endX="873.0" fill="#00b7ff" smooth="false" startX="27.0" stroke="#00b6ff" strokeWidth="3.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="0.0" />
          </children>
         </AnchorPane>
       <AnchorPane layoutY="60.0" prefHeight="80.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">

@@ -1,7 +1,6 @@
 package org.javaFX.controller.impl.handler;
 
 import javafx.animation.AnimationTimer;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class _CreateNewLocalCommunityHandler extends DataHandler {
+public class CreateNewLocalCommunityHandler extends DataHandler {
 
     @FXML
     private ListView<VBoxContactCell> contactsListView;
@@ -47,7 +46,7 @@ public class _CreateNewLocalCommunityHandler extends DataHandler {
         service.schedule(() -> updateEncryWindow(getEncryWindow()), 1, TimeUnit.SECONDS);
     }
 
-    public _CreateNewLocalCommunityHandler() {
+    public CreateNewLocalCommunityHandler() {
         runDelayedInitialization();
     }
 
@@ -56,7 +55,6 @@ public class _CreateNewLocalCommunityHandler extends DataHandler {
         super.setEncryWindow(encryWindow);
         initChatsTable();
     }
-
 
     private ObservableList<VBoxContactCell> getObservableUserList(){
         ObservableList<VBoxContactCell> observableChatList = FXCollections.observableArrayList();

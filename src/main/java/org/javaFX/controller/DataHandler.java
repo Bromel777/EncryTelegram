@@ -22,6 +22,9 @@ public abstract class DataHandler {
     private AtomicReference<JUserState> userStateRef;
     private BorderPane rootLayout;
 
+    public DataHandler() {
+        terminateObserver();
+    }
 
     public BorderPane getRootLayout() {
         return rootLayout;
@@ -72,18 +75,11 @@ public abstract class DataHandler {
         return this.getClass().toString();
     }
 
-    protected Stage createDialogByPathToFXML(FXMLLoader loader, String path){
-        loader.setLocation(EncryWindow.class.getResource(path));
-        Stage dialogStage = new Stage();
-        try {
-            AnchorPane startOverview = loader.load();
-            Scene scene = new Scene(startOverview);
-            dialogStage.setScene(scene);
-            dialogStage.setResizable(false);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void terminateObserver(){
+        BasicObserver observer = getObserver();
+        if( observer != null){
+            observer.cancel();
         }
-        return dialogStage;
     }
 
 }

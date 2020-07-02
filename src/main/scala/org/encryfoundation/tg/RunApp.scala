@@ -48,10 +48,8 @@ object RunApp extends App {
   def anotherProg(state: AtomicReference[JUserState]) = Stream.resource(database).flatMap { db =>
     Stream.eval(program(db, state)).flatMap { case (queue, client, ref, logger, confService, userStateService) =>
       implicit val loggerForIo = logger
-      Stream.eval(ConsoleProgram[IO](client, ref, confService, userStateService, db)).flatMap { consoleProgram =>
-        Stream.eval(UIProgram(ref, confService, userStateService, client)).flatMap { uiProg =>
-          client.run() concurrently consoleProgram.run() concurrently uiProg.run()
-        }
+      Stream.eval(UIProgram(ref, confService, userStateService, client)).flatMap { uiProg =>
+        client.run() concurrently uiProg.run()
       }
     }
   }

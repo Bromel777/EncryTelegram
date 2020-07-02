@@ -19,7 +19,7 @@ import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class _EnterPhoneNumberHandler extends DataHandler {
+public class EnterPhoneNumberHandler extends DataHandler {
 
     @FXML
     private TextField phoneNumberTextField;
@@ -45,7 +45,7 @@ public class _EnterPhoneNumberHandler extends DataHandler {
     @FXML
     private Label error;
 
-    public _EnterPhoneNumberHandler() {}
+    public EnterPhoneNumberHandler() {}
 
     @FXML
     private void handleKeyTyped(){
@@ -66,13 +66,14 @@ public class _EnterPhoneNumberHandler extends DataHandler {
         else if(selectCountryMenu.getText().equals(belarusMenuItem.getText())){
             phoneNumberStr = "375"+phoneNumberStr;
         }
+        getUserStateRef().get().setPhoneNumber(phoneNumberStr);
         try {
             getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetPhone(phoneNumberStr));
             AuthMsg nextStep = getUserStateRef().get().authQueue.take();
             if (nextStep.code() == AuthMsg.loadVC().code()) {
                 getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
-                ((_EnterVerificationCodeHandler) getEncryWindow().getCurrentController() )
-                        .setPhoneNumberLabelText( getUserStateRef().get().getPreparedPhoneNumber());
+                ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController() )
+                        .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber());
             } else if (nextStep.code() == AuthMsg.err().code()) {
                 error.setText("Oops! Error");
             }

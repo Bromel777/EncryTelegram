@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 
-public class _EmptyCommunitiesListHandler extends DataHandler {
+public class EmptyCommunitiesListHandler extends DataHandler {
 
     @FXML
     private void toCreateCommunityWindow(){

@@ -19,12 +19,12 @@ import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava,
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
-import org.javaFX.model.{JDialog, JTextMessage}
-import org.javaFX.model.nodes.VBoxMessageCell
+import org.javaFX.model.{JDialog, JMessage}
+import org.javaFX.model.nodes.{VBoxDialogTextMessageCell, VBoxMessageCell}
 import scorex.crypto.encode.Base64
 
 import collection.JavaConverters._
-import scala.util.Try
+import scala.util.{Random, Try}
 
 trait UIProgram[F[_]] {
 
@@ -50,25 +50,25 @@ object UIProgram {
                   .map(_.phoneNumber)
                   .getOrElse("Unknown sender") + ": " +
                   aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
             case _ =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
           }
         case None =>
           msg.content match {
             case text: MessageText =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + text.text.text
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
             case _: MessagePhoto =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "photo"
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
             case _: MessageVideo =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "video"
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
             case _ =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
-              new VBoxMessageCell(new JTextMessage(msg.isOutgoing, msgText, msg.date.toString))
+              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
           }
       }
 
@@ -76,6 +76,7 @@ object UIProgram {
       case _@SetActiveChat(chatId) =>
         for {
           state <- userStateRef.get
+          _ <- Sync[F].delay(state.javaState.get().messagesListView.setItems(FXCollections.observableArrayList[VBoxMessageCell]()))
           javaState <- state.javaState.get().pure[F]
           msgsMVar <- MVar.empty[F, List[VBoxMessageCell]]
           _ <- state.client.send(
@@ -92,7 +93,6 @@ object UIProgram {
           _ <- Sync[F].delay {
             val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
             msgs.foreach(observList.add)
-            javaState.messagesListView = new ListView[VBoxMessageCell]()
             javaState.messagesListView.setItems(observList)
             println("update after:" + javaState.messagesListView.getItems.toString)
           }
@@ -111,7 +111,7 @@ object UIProgram {
               createGroup(
                 name + "Chat",
                 name,
-                "1234",
+                Random.nextLong().toString,
                 community.users.tail.map(_.userTelegramLogin)
               )
             case None => Sync[F].delay(println("Got nothing"))
@@ -128,7 +128,7 @@ object UIProgram {
       case _@SetVCCode(vcCode) =>
         userStateRef.get.flatMap(state =>
           state.client.send(new TdApi.CheckAuthenticationCode(vcCode), AuthRequestHandler(userStateRef))
-        ) >> Logger[F].info("Set code")
+        ) >> Logger[F].info(s"Set code ${vcCode}")
     }
 
     private def createGroup(groupname: String,

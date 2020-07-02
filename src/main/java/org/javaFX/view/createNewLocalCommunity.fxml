@@ -34,7 +34,7 @@
                <children>
                   <Label text="Contact" textFill="#787878" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
                   <Label text="Phone Number" textFill="#787878" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="20.0" />
-                  <Label text="Choose" textFill="#787878" AnchorPane.leftAnchor="756.0" AnchorPane.topAnchor="20.0" />
+                  <Label text="Choose" textFill="#787878" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="20.0" />
                   <Line endX="846.0" stroke="#787878" strokeWidth="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>

@@ -15,7 +15,6 @@ public class JChat {
     private AtomicInteger unreadMessagesNumber;
     private TdApi.File smallPicture;
 
-
     public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, LongProperty lastMessageTime) {
         this.title = title;
         this.lastMessage = lastMessage;

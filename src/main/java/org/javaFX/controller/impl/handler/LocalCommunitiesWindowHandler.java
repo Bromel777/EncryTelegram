@@ -34,11 +34,9 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
     @FXML
     private Separator blueSeparator;
 
-
     public LocalCommunitiesWindowHandler() {
         super();
     }
-
 
     @Override
     public void updateEncryWindow(EncryWindow encryWindow) {

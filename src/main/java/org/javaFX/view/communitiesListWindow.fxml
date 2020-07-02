@@ -33,8 +33,8 @@
                 <AnchorPane prefHeight="62.0" prefWidth="846.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0">
                     <children>
                         <Label text="ID" textFill="#787878" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
-                        <Label text="Community name" textFill="#787878" AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="20.0" />
-                        <Label prefHeight="21.0" prefWidth="149.0" text="Number of members" textFill="#787878" AnchorPane.leftAnchor="695.0" AnchorPane.topAnchor="20.0" />
+                        <Label text="Community name" textFill="#787878" AnchorPane.leftAnchor="180.0" AnchorPane.topAnchor="20.0" />
+                        <Label prefHeight="21.0" prefWidth="149.0" text="Number of members" textFill="#787878" AnchorPane.leftAnchor="380.0" AnchorPane.topAnchor="20.0" />
                         <Line endX="846.0" stroke="#787878" strokeWidth="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                     </children>
                 </AnchorPane>

@@ -2,6 +2,8 @@ package org.javaFX.model.nodes;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.util.JavaFXTableBuilder;
@@ -11,7 +13,11 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
     private Label communityIDLabel;
     private Label communityNameLabel;
     private Label numberOfMembersLabel;
+    private ImageView createButtonImg;
+    private ImageView deleteButtonImg;
     private Separator separatorLine;
+    private final String pathToCreateImage = "file:src/main/resources/images/create.png";
+    private final String pathToDeleteImage = "file:src/main/resources/images/delete.png";
 
     private final JLocalCommunity currentCommunity;
 
@@ -26,6 +32,8 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
         initCommunityIDLabel(sourceElement);
         initCommunityNameLabel(sourceElement);
         initNumberOfMembersLabel(sourceElement);
+        initCreateButton();
+        initDeleteButton();
         initSeparatorLine();
     }
 
@@ -40,19 +48,33 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
     private void initCommunityNameLabel(JLocalCommunity sourceElement) {
         communityNameLabel = new Label();
         communityNameLabel.setText(sourceElement.getCommunityName());
-        communityNameLabel.setLayoutX(250);
+        communityNameLabel.setLayoutX(200);
         communityNameLabel.setLayoutY(20);
     }
 
     private void initNumberOfMembersLabel(JLocalCommunity sourceElement) {
         numberOfMembersLabel = new Label();
         numberOfMembersLabel.setText(sourceElement.getCommunitySize().get()+"");
-        numberOfMembersLabel.setLayoutX(756);
+        numberOfMembersLabel.setLayoutX(400);
         numberOfMembersLabel.setLayoutY(20);
     }
 
     private void initSeparatorLine(){
         separatorLine = JavaFXTableBuilder.buildSeparatorLine( getRootPane() );
+    }
+
+    private void initCreateButton(){
+        createButtonImg = new ImageView(new Image(pathToCreateImage) );
+        createButtonImg.setLayoutX(600);
+        createButtonImg.setLayoutY(3);
+    }
+
+    private void initDeleteButton(){
+        deleteButtonImg = new ImageView(new Image(pathToDeleteImage) );
+        deleteButtonImg.setFitWidth(60);
+        deleteButtonImg.setFitHeight(60);
+        deleteButtonImg.setLayoutX(900);
+        deleteButtonImg.setLayoutY(5);
     }
 
     @Override
@@ -62,6 +84,8 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
         getRootPane().getChildren().add(numberOfMembersLabel);
         getRootPane().getChildren().add(separatorLine);
         AnchorPane.setBottomAnchor(separatorLine,0.0);
+        getRootPane().getChildren().add(createButtonImg);
+        getRootPane().getChildren().add(deleteButtonImg);
         this.getChildren().add(getRootPane());
     }
 
@@ -78,4 +102,5 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
     public void setSeparatorLineSize(double newWidth) {
         this.separatorLine.setPrefWidth(newWidth);
     }
+
 }

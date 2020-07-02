@@ -13,11 +13,7 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
     private Label communityIDLabel;
     private Label communityNameLabel;
     private Label numberOfMembersLabel;
-    private ImageView createButtonImg;
-    private ImageView deleteButtonImg;
     private Separator separatorLine;
-    private final String pathToCreateImage = "file:src/main/resources/images/create.png";
-    private final String pathToDeleteImage = "file:src/main/resources/images/delete.png";
 
     private final JLocalCommunity currentCommunity;
 
@@ -32,8 +28,6 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
         initCommunityIDLabel(sourceElement);
         initCommunityNameLabel(sourceElement);
         initNumberOfMembersLabel(sourceElement);
-        initCreateButton();
-        initDeleteButton();
         initSeparatorLine();
     }
 
@@ -63,19 +57,7 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
         separatorLine = JavaFXTableBuilder.buildSeparatorLine( getRootPane() );
     }
 
-    private void initCreateButton(){
-        createButtonImg = new ImageView(new Image(pathToCreateImage) );
-        createButtonImg.setLayoutX(600);
-        createButtonImg.setLayoutY(3);
-    }
 
-    private void initDeleteButton(){
-        deleteButtonImg = new ImageView(new Image(pathToDeleteImage) );
-        deleteButtonImg.setFitWidth(60);
-        deleteButtonImg.setFitHeight(60);
-        deleteButtonImg.setLayoutX(900);
-        deleteButtonImg.setLayoutY(5);
-    }
 
     @Override
     protected void setNodesToRootPane(JLocalCommunity jLocalCommunity) {
@@ -84,8 +66,6 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
         getRootPane().getChildren().add(numberOfMembersLabel);
         getRootPane().getChildren().add(separatorLine);
         AnchorPane.setBottomAnchor(separatorLine,0.0);
-        getRootPane().getChildren().add(createButtonImg);
-        getRootPane().getChildren().add(deleteButtonImg);
         this.getChildren().add(getRootPane());
     }
 

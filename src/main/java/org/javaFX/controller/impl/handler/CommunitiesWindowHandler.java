@@ -1,7 +1,5 @@
 package org.javaFX.controller.impl.handler;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Separator;
 import javafx.util.Duration;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
@@ -15,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 public abstract class CommunitiesWindowHandler extends DataHandler {
 
     private ScheduledExecutorService service;
-
 
     public CommunitiesWindowHandler() {
         runDelayedInitialization();

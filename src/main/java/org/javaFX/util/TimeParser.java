@@ -16,7 +16,8 @@ public class TimeParser {
         Calendar messageTime = new GregorianCalendar();
         messageTime.setTime(date);
         Calendar currentTime =  Calendar.getInstance();
-        if( ( currentTime.getTimeInMillis() - messageTime.getTimeInMillis() ) < 1000*60*60*24 ){
+        long oneDayMillis = 1000*60*60*24;
+        if( ( currentTime.getTimeInMillis()/oneDayMillis - messageTime.getTimeInMillis()/oneDayMillis ) < 1){
             dateFormat = new SimpleDateFormat("HH:mm");
         }
         else if (currentTime.getWeekYear() == messageTime.getWeekYear() ){

@@ -9,7 +9,7 @@ import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.util.KeyboardHandler;
 import org.javaFX.util.observers.BasicObserver;
-import org.javaFX.util.observers.JTableObserver;
+import org.javaFX.util.observers.JWindowObserver;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -33,7 +33,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
                 BackgroundSize.DEFAULT)));*/
     }
 
-    private void terminateObserver(){
+    protected void terminateObserver(){
         BasicObserver observer = getObserver();
         if( observer != null){
             observer.cancel();
@@ -48,7 +48,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     }
 
     public void chatListObserve(DataHandler controller){
-        setObserver(new JTableObserver(controller));
+        setObserver(new JWindowObserver(controller));
         getObserver().setPeriod(Duration.seconds(delayDuration));
         getObserver().start();
     }

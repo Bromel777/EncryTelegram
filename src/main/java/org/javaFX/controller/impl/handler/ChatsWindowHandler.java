@@ -61,12 +61,12 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     private void onMouseEntered(){
-        sendMessageImage = new ImageView(new Image(pathToBlueButton));
+        sendMessageImage.setImage(new Image(pathToBlueButton));
     }
 
     @FXML
     private void onMouseExited(){
-        sendMessageImage = new ImageView(new Image(pathToGreyButton));
+        sendMessageImage.setImage(new Image(pathToGreyButton));
     }
 
     @Override

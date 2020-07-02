@@ -8,7 +8,6 @@ import javafx.util.Duration;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.util.KeyboardHandler;
-import org.javaFX.util.observers.BasicObserver;
 import org.javaFX.util.observers.JWindowObserver;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,21 +22,8 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     @FXML
     protected TextArea sendMessageTextArea;
 
-    @FXML
-    protected Button callButton;
-
     public MainWindowBasicHandler() {
         chatListObserve(this);
-        /*dialogTextArea.setBackground(new Background(new BackgroundImage(new Image("file:src/main/resources/images/back.jpg"),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT)));*/
-    }
-
-    protected void terminateObserver(){
-        BasicObserver observer = getObserver();
-        if( observer != null){
-            observer.cancel();
-        }
     }
 
     public void enableMenuBar(){

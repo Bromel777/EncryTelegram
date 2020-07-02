@@ -48,7 +48,7 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
         Rectangle messageRectangle = new Rectangle();
         messageRectangle.setArcHeight(26);
         messageRectangle.setArcWidth(26);
-        messageRectangle.setWidth(getCellWidth());
+        messageRectangle.setWidth(getCellWidth()+5);
         messageRectangle.setHeight(getCellHeight());
         messageRectangle.setLayoutY(0);
         double ownerIndent = getParentWidth()/3;
@@ -60,7 +60,7 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
     @Override
     protected void initAngleRectangle(JMessage jMessage) {
         Rectangle miniRectangle = new Rectangle();
-        miniRectangle.setWidth(13);
+        miniRectangle.setWidth(18);
         miniRectangle.setHeight(getCellHeight()-13);
         miniRectangle.setLayoutY(13);
         double ownerIndent = getParentWidth() - 13;
@@ -87,7 +87,5 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
     public void setContentLabel(Label contentLabel) {
         this.contentLabel = contentLabel;
     }
-
-
 
 }

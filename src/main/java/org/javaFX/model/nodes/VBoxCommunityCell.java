@@ -1,17 +1,17 @@
 package org.javaFX.model.nodes;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import org.javaFX.model.JLocalCommunity;
+import org.javaFX.util.JavaFXTableBuilder;
 
 public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
 
     private Label communityIDLabel;
     private Label communityNameLabel;
     private Label numberOfMembersLabel;
-    private Line separatorLine;
+    private Separator separatorLine;
 
     private final JLocalCommunity currentCommunity;
 
@@ -52,12 +52,7 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
     }
 
     private void initSeparatorLine(){
-        separatorLine = new Line();
-        separatorLine.setLayoutX(0);
-        separatorLine.setLayoutY(62);
-        separatorLine.setEndX(800);
-        separatorLine.setStrokeWidth(3);
-        separatorLine.setStroke(Color.GRAY);
+        separatorLine = JavaFXTableBuilder.buildSeparatorLine( getRootPane() );
     }
 
     @Override
@@ -66,6 +61,7 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
         getRootPane().getChildren().add(communityNameLabel);
         getRootPane().getChildren().add(numberOfMembersLabel);
         getRootPane().getChildren().add(separatorLine);
+        AnchorPane.setBottomAnchor(separatorLine,0.0);
         this.getChildren().add(getRootPane());
     }
 
@@ -77,5 +73,9 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
 
     public JLocalCommunity getCurrentCommunity() {
         return currentCommunity;
+    }
+
+    public void setSeparatorLineSize(double newWidth) {
+        this.separatorLine.setPrefWidth(newWidth);
     }
 }

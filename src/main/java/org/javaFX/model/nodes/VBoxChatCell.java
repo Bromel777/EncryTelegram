@@ -3,6 +3,7 @@ package org.javaFX.model.nodes;
 import javafx.beans.property.LongProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -45,7 +46,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     }
 
     @Override
-    protected void setNodesToRootPane(JChat jChat){
+    protected void setNodesToRootPane(JChat sourceElement){
         getRootPane().getChildren().add(chatTitleLabel);
         getRootPane().getChildren().add(lastMessageLabel);
         getRootPane().getChildren().add(timeLabel);

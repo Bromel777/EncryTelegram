@@ -8,18 +8,16 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
-import org.javaFX.controller.DataHandler;
+
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.nodes.VBoxCommunityCell;
+import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class LocalCommunitiesWindowHandler extends DataHandler {
+public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
 
     @FXML
     private ListView<VBoxCommunityCell> communitiesListView;
@@ -33,22 +31,21 @@ public class LocalCommunitiesWindowHandler extends DataHandler {
     @FXML
     private Label descriptionLabel;
 
+    @FXML
+    private Separator blueSeparator;
 
-    private ScheduledExecutorService service;
-
-    private void runDelayedInitialization(){
-        service = Executors.newSingleThreadScheduledExecutor();
-        service.schedule(() -> updateEncryWindow(getEncryWindow()), 1, TimeUnit.SECONDS);
-    }
 
     public LocalCommunitiesWindowHandler() {
-        runDelayedInitialization();
+        super();
     }
+
 
     @Override
     public void updateEncryWindow(EncryWindow encryWindow) {
+        for(VBoxCommunityCell cell : communitiesListView.getItems()){
+            cell.setSeparatorLineSize(blueSeparator.getWidth()- 40);
+        }
         super.setEncryWindow(encryWindow);
-        initChatsTable();
     }
 
 
@@ -60,9 +57,10 @@ public class LocalCommunitiesWindowHandler extends DataHandler {
         return observableList;
     }
 
-    private void initChatsTable(){
+    @Override
+    protected void initChatsTable(){
         communitiesListView.setItems(getObservableCommunityList());
-        service.shutdown();
+        shutDownScheduledService();
     }
 
     @FXML

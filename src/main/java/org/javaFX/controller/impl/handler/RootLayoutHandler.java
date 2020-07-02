@@ -8,13 +8,6 @@ import org.javaFX.util.observers.BasicObserver;
 
 public class RootLayoutHandler extends DataHandler {
 
-    private void terminateObserver(){
-        BasicObserver observer = getObserver();
-        if( observer != null){
-            observer.cancel();
-        }
-    }
-
     @FXML
     private void createLocalCommunity(){
         terminateObserver();

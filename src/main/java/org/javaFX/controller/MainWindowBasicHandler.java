@@ -4,19 +4,13 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
 import javafx.util.Duration;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
-
-import org.javaFX.model.JDialog;
-import org.javaFX.model.JTableEntity;
 import org.javaFX.util.KeyboardHandler;
 import org.javaFX.util.observers.BasicObserver;
-import org.javaFX.util.observers.JTableObserver;
+import org.javaFX.util.observers.JWindowObserver;
 
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class MainWindowBasicHandler extends DataHandler{
@@ -30,22 +24,16 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     protected TextArea sendMessageTextArea;
 
     @FXML
-    protected TextArea dialogTextArea;
-
-    @FXML
     protected Button callButton;
-
-    protected JDialog jDialog;
 
     public MainWindowBasicHandler() {
         chatListObserve(this);
-        createDialog();
         /*dialogTextArea.setBackground(new Background(new BackgroundImage(new Image("file:src/main/resources/images/back.jpg"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT)));*/
     }
 
-    private void terminateObserver(){
+    protected void terminateObserver(){
         BasicObserver observer = getObserver();
         if( observer != null){
             observer.cancel();
@@ -60,7 +48,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     }
 
     public void chatListObserve(DataHandler controller){
-        setObserver(new JTableObserver(controller));
+        setObserver(new JWindowObserver(controller));
         getObserver().setPeriod(Duration.seconds(delayDuration));
         getObserver().start();
     }
@@ -81,7 +69,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     }
 
     @FXML
-    protected abstract void clickItem();
+    protected abstract void clickItem() throws InterruptedException;
 
     @FXML
     public void sendMessageByKeyboard(){
@@ -114,51 +102,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     }
 
     public void findMessage(){
-        final String searchingStr = searchMessageTextArea.getText().trim();
-        if(!searchingStr.isEmpty()) {
-            StringBuffer localDialogHistory = jDialog.getContent();
-            String [] messagesArray = localDialogHistory.toString().split("\n");
-            StringBuffer results = new StringBuffer();
-            Arrays.stream(messagesArray)
-                    .filter(str -> str.toLowerCase().contains(searchingStr.toLowerCase()))
-                    .forEach(str -> results.append(str).append("\n"));
-            dialogTextArea.setText(results.toString());
-        }
+
     }
 
-    private void createDialog(){
-        jDialog = new JDialog();
-    }
-
-    @FXML
-    protected void callContactAction(){
-        //TODO implement
-    }
-
-    @FXML
-    protected void showMenu(){
-        //TODO implement
-    }
-
-    @FXML
-    protected void showContacts(){
-        terminateObserver();
-        JTableEntity.resetRowNumber();
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToContactsMainWindowFXML);
-    }
-
-    @FXML
-    protected void showPrivateChats(){
-        //TODO implement
-    }
-
-    @FXML
-    protected void showOptions(){
-        //TODO implement
-    }
-
-    @FXML
-    protected void showCalls(){
-        //TODO implement
-    }
 }

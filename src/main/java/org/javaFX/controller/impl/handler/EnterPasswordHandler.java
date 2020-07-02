@@ -14,7 +14,7 @@ import org.javaFX.util.KeyboardHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class _EnterPasswordHandler extends DataHandler {
+public class EnterPasswordHandler extends DataHandler {
 
     @FXML
     private PasswordField passwordField;
@@ -25,7 +25,10 @@ public class _EnterPasswordHandler extends DataHandler {
     @FXML
     private Label error;
 
-    public _EnterPasswordHandler() {
+    public EnterPasswordHandler() {
+//        String phoneNumber = getUserStateRef().get().getPhoneNumber();
+//        System.out.println("Phone: " + phoneNumber);
+//        EncryWindow.setUserPhoneNumber(getUserStateRef().get().getPhoneNumber());
     }
 
     @FXML

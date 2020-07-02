@@ -20,7 +20,8 @@ case class AuthRequestHandler[F[_]: Sync: Logger](userState: Ref[F, UserState[F]
     case TdApi.Error.CONSTRUCTOR =>
       userState.get.flatMap { state =>
         state.currentStep match {
-          case Step.AuthStep => Sync[F].delay(state.javaState.get().authQueue.put(AuthMsg.Error))
+          case Step.AuthStep =>
+            Sync[F].delay(state.javaState.get().authQueue.put(AuthMsg.Error)) >> Logger[F].info(s"Error occured at step: ${state.currentStep}. Error: ${obj}")
           case _ => Logger[F].info(s"Error occured at step: ${state.currentStep}. Error: ${obj}")
         }
       }

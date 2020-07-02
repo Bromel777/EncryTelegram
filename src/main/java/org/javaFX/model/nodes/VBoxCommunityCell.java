@@ -22,18 +22,13 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
 
     @Override
     protected void initNodes(JLocalCommunity sourceElement) {
-        initAnchorPane();
+        initRootPane(sourceElement);
         initCommunityIDLabel(sourceElement);
         initCommunityNameLabel(sourceElement);
         initNumberOfMembersLabel(sourceElement);
         initSeparatorLine();
     }
 
-
-    private void initAnchorPane(){
-        setRootPane(new AnchorPane() );
-        getRootPane().setPrefSize(800,60);
-    }
 
     private void initCommunityIDLabel(JLocalCommunity sourceElement) {
         communityIDLabel = new Label();
@@ -66,12 +61,18 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
     }
 
     @Override
-    protected void setNodesToRootPane() {
+    protected void setNodesToRootPane(JLocalCommunity jLocalCommunity) {
         getRootPane().getChildren().add(communityIDLabel);
         getRootPane().getChildren().add(communityNameLabel);
         getRootPane().getChildren().add(numberOfMembersLabel);
         getRootPane().getChildren().add(separatorLine);
         this.getChildren().add(getRootPane());
+    }
+
+    @Override
+    protected void initRootPane(JLocalCommunity sourceElement){
+        setRootPane(new AnchorPane() );
+        getRootPane().setPrefSize(800,60);
     }
 
     public JLocalCommunity getCurrentCommunity() {

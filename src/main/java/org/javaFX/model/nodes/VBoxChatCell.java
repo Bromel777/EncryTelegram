@@ -3,7 +3,6 @@ package org.javaFX.model.nodes;
 import javafx.beans.property.LongProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -11,8 +10,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import org.javaFX.model.JChat;
 import org.javaFX.util.RandomChooser;
+import org.javaFX.util.TimeParser;
 
 public class VBoxChatCell extends VBoxCell<JChat>{
+
     private Label chatTitleLabel;
     private Label lastMessageLabel;
     private Label timeLabel;
@@ -23,64 +24,80 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     private Color circleColor;
     private LongProperty chatId;
 
-    public VBoxChatCell(JChat jChat) {
-        super(jChat);
+    public VBoxChatCell(JChat jChat, double parentWidth) {
+        super(jChat, parentWidth);
         chatId = jChat.chatIdProperty();
     }
 
     @Override
     protected void initNodes(JChat jChat){
-        initAnchorPane();
+        initRootPane(jChat);
         initChatTitleLabel(jChat);
         initlLastMessageLabel(jChat);
         initTimeLabel(jChat);
         circleColor = RandomChooser.getRandomColor();
         initBigCircle(jChat);
         initBigCircleText(jChat);
-        initSmallCircle(jChat);
-        initSmallCircleText(jChat);
+        if(jChat.getUnreadMessagesNumber().get() > 0 ){
+            initSmallCircle();
+            initSmallCircleText((String.valueOf(jChat.getUnreadMessagesNumber().get())));
+        }
     }
 
     @Override
-    protected void setNodesToRootPane(){
+    protected void setNodesToRootPane(JChat jChat){
         getRootPane().getChildren().add(chatTitleLabel);
         getRootPane().getChildren().add(lastMessageLabel);
         getRootPane().getChildren().add(timeLabel);
-        getRootPane().getChildren().add(smallCircle);
-        getRootPane().getChildren().add(unreadMsgsNumberText);
+        AnchorPane.setRightAnchor(timeLabel,10.0);
+        if(smallCircle != null){
+            getRootPane().getChildren().add(smallCircle);
+            getRootPane().getChildren().add(unreadMsgsNumberText);
+        }
         getRootPane().getChildren().add(bigCircle);
         getRootPane().getChildren().add(abbreviationText);
         this.getChildren().add(getRootPane());
     }
 
-
-    private void initAnchorPane(){
-        setRootPane(new AnchorPane() );
-        getRootPane().setPrefSize(260,62);
+    @Override
+    protected void initRootPane(JChat source){
+        AnchorPane pane = new AnchorPane();
+        pane.setPrefSize(getParentWidth(),62);
+        setRootPane(pane);
     }
 
     private void initChatTitleLabel(JChat jChat){
         chatTitleLabel = new Label();
         chatTitleLabel.setText(jChat.getTitle().get());
-        chatTitleLabel.setPrefSize(145,31);
+        int chatTitleIndent = 115;
+        chatTitleLabel.setPrefSize(getParentWidth() - chatTitleIndent,31);
         chatTitleLabel.setLayoutX(70);
         chatTitleLabel.setLayoutY(0);
+        chatTitleLabel.setWrapText(false);
     }
 
     private void initlLastMessageLabel(JChat jChat){
         lastMessageLabel = new Label();
-        lastMessageLabel.setText("last message stub");
-        lastMessageLabel.setPrefSize(145,31);
+        String lastMessageStr;
+        if(jChat.getLastMessage().getValue().indexOf("\n") != -1){
+            lastMessageStr = jChat.getLastMessage().getValue().substring(0,jChat.getLastMessage().getValue().indexOf("\n"));
+        }
+        else{
+            lastMessageStr = jChat.getLastMessage().getValue();
+        }
+        lastMessageLabel.setText(lastMessageStr);
+        int lastMessageIndent = 115;
+        lastMessageLabel.setPrefSize(getParentWidth() - lastMessageIndent,31);
         lastMessageLabel.setLayoutX(70);
         lastMessageLabel.setLayoutY(31);
+        lastMessageLabel.setWrapText(false);
     }
 
     private void initTimeLabel(JChat jChat){
         timeLabel = new Label();
-        timeLabel.setText("14:47");
+        timeLabel.setText(TimeParser.parseDataString (jChat.getLastMessageTime().getValue().toString()));
         timeLabel.setPrefSize(44,31);
-        timeLabel.setLayoutX(218);
-        timeLabel.setLayoutY(0);
+
     }
 
     private void initBigCircle(JChat jChat){
@@ -96,32 +113,34 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         abbreviationText.setLayoutX(22);
         abbreviationText.setLayoutY(38);
         String [] strings = jChat.getTitle().get().split(" ");
-        String result = " ";
+        String result;
         if(strings.length > 1){
             result = ""+strings[0].charAt(0)+ strings[1].charAt(0);
         }
         else {
-            result += ""+strings[0].charAt(0);
+            result = " "+strings[0].charAt(0);
         }
         abbreviationText.setText(result.toUpperCase());
         abbreviationText.setFont(Font.font("Times New Roman", FontWeight.BOLD ,16) );
         abbreviationText.setFill(Color.WHITE);
     }
 
-    private void initSmallCircle(JChat jChat){
+    private void initSmallCircle(){
         smallCircle = new Circle();
-        smallCircle.setLayoutX(240);
+        int smallCircleIndent = 20;
+        smallCircle.setLayoutX(getParentWidth()-smallCircleIndent);
         smallCircle.setLayoutY(47);
-        smallCircle.setRadius(15);
-        smallCircle.setFill(circleColor);
+        smallCircle.setRadius(16);
+        smallCircle.setFill(Color.GRAY);
     }
 
-    private void initSmallCircleText(JChat jChat){
+    private void initSmallCircleText(String unreadMessagedNumberStr){
         unreadMsgsNumberText = new Text();
         unreadMsgsNumberText.setFont(new Font(14));
-        unreadMsgsNumberText.setLayoutX(236);
-        unreadMsgsNumberText.setLayoutY(50);
-        unreadMsgsNumberText.setText("1");
+        int smallCircleTextIndent = 24;
+        unreadMsgsNumberText.setLayoutX(getParentWidth()-smallCircleTextIndent);
+        unreadMsgsNumberText.setLayoutY(52);
+        unreadMsgsNumberText.setText(unreadMessagedNumberStr);
         unreadMsgsNumberText.setFill(Color.WHITE);
     }
 

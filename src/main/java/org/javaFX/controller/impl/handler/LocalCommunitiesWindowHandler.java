@@ -19,7 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class _LocalCommunitiesWindowHandler extends DataHandler {
+public class LocalCommunitiesWindowHandler extends DataHandler {
 
     @FXML
     private ListView<VBoxCommunityCell> communitiesListView;
@@ -41,7 +41,7 @@ public class _LocalCommunitiesWindowHandler extends DataHandler {
         service.schedule(() -> updateEncryWindow(getEncryWindow()), 1, TimeUnit.SECONDS);
     }
 
-    public _LocalCommunitiesWindowHandler() {
+    public LocalCommunitiesWindowHandler() {
         runDelayedInitialization();
     }
 
@@ -70,14 +70,13 @@ public class _LocalCommunitiesWindowHandler extends DataHandler {
         if(!privateChatNameTestField.getText().isEmpty()){
             JavaInterMsg msg = new JavaInterMsg.CreatePrivateGroupChat(privateChatNameTestField.getText());
             getUserStateRef().get().msgsQueue.put(msg);
+            getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
         }
         else{
             privateChatNameTestField.setFocusTraversable(true);
             descriptionLabel.setTextFill(Color.RED);
         }
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
     }
-
 
     @FXML
     private void toChatsWindow(){

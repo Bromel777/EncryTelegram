@@ -37,6 +37,7 @@ trait UserStateService[F[_]] {
   def getPipeline(chatId: Long): F[Option[Pipeline[F]]]
   //users
   def updateUser(user: TdApi.User): F[Unit]
+  def getUserById(userId: Int): F[Option[TdApi.User]]
   //steps
   def setCurrentStep(step: Step): F[Unit]
 }
@@ -199,6 +200,9 @@ object UserStateService {
       userState.update { prevState =>
         prevState.copy(currentStep = step)
       }
+
+    override def getUserById(userId: Int): F[Option[TdApi.User]] =
+      userState.get.map(_.users.get(userId))
   }
 
   def apply[F[_]: Sync: Logger](userState: Ref[F, UserState[F]],

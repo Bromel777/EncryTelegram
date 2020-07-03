@@ -35,6 +35,8 @@ public class EncryWindow extends Application {
     public final static String pathToEmptyCommunitiesListWindowFXML = "view/emptyCommunitiesListWindow.fxml";
     public final static String pathToCommunitiesListWindowFXML = "view/communitiesListWindow.fxml";
 
+    public final static String pathToSingleCommunityDialogFXML = "view/singleCommunityDialog.fxml";
+
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
 
     private static String userPhoneNumber;

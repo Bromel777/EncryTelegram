@@ -25,7 +25,7 @@
         </AnchorPane>
         <AnchorPane layoutY="160.0" prefHeight="360.0" prefWidth="903.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
             <children>
-                <ListView fx:id="communitiesListView" onMouseClicked="#createPrivateChat" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
+                <ListView fx:id="communitiesListView" onMouseClicked="#onClick" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
                     <cursor>
                         <Cursor fx:constant="HAND" />
                     </cursor>

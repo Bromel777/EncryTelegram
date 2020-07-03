@@ -1,20 +1,23 @@
 package org.javaFX.controller.impl.handler;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.nodes.VBoxCommunityCell;
-import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
@@ -46,7 +49,7 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
         super.setEncryWindow(encryWindow);
     }
 
-
+    // TODO number of member in created community that we get from data base is shown as zero(0)
     private ObservableList<VBoxCommunityCell> getObservableCommunityList(){
         ObservableList<VBoxCommunityCell> observableList = FXCollections.observableArrayList();
         getUserStateRef().get().communities.forEach(community ->
@@ -62,17 +65,11 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
     }
 
     @FXML
-    private void createPrivateChat() throws InterruptedException {
-        if(!privateChatNameTestField.getText().isEmpty()){
-            JavaInterMsg msg = new JavaInterMsg.CreatePrivateGroupChat(privateChatNameTestField.getText());
-            getUserStateRef().get().msgsQueue.put(msg);
-            getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
-        }
-        else{
-            privateChatNameTestField.setFocusTraversable(true);
-            descriptionLabel.setTextFill(Color.RED);
-        }
+    private void onClick(){
+        JLocalCommunity localCommunity = communitiesListView.getSelectionModel().getSelectedItem().getCurrentCommunity();
+        launchDialog(localCommunity);
     }
+
 
     @FXML
     private void toChatsWindow(){
@@ -102,5 +99,32 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
                     communitiesListView.scrollTo(item);
                 });
     }
+
+    private void launchDialog(JLocalCommunity localCommunity){
+        FXMLLoader loader = new FXMLLoader();
+        Stage dialogStage = createDialogByPathToFXML(loader, EncryWindow.pathToSingleCommunityDialogFXML);
+        SingleCommunityDialogHandler controller = loader.getController();
+        controller.setEncryWindow(getEncryWindow());
+        controller.setDialogStage(dialogStage);
+        controller.setLocalCommunity(localCommunity);
+        controller.setUserStateRef(getUserStateRef());
+        controller.setSecretChatNameText(localCommunity.getCommunityName());
+        dialogStage.show();
+    }
+
+    protected Stage createDialogByPathToFXML(FXMLLoader loader, String path){
+        loader.setLocation(EncryWindow.class.getResource(path));
+        Stage dialogStage = new Stage();
+        try {
+            AnchorPane startOverview = loader.load();
+            Scene scene = new Scene(startOverview);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return dialogStage;
+    }
+
 
 }

@@ -39,11 +39,11 @@ public abstract class DialogController {
         this.encryWindow = encryWindow;
     }
 
-    public AtomicReference<JUserState> getState() {
+    public AtomicReference<JUserState> getUserStateRef() {
         return state;
     }
 
-    public void setState(AtomicReference<JUserState> state) {
+    public void setUserStateRef(AtomicReference<JUserState> state) {
         this.state = state;
     }
 

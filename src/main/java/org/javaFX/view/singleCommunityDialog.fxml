@@ -10,15 +10,29 @@
 
 <AnchorPane prefHeight="201.0" prefWidth="440.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.SingleCommunityDialogHandler">
    <children>
-      <Label layoutX="82.0" layoutY="27.0" prefHeight="45.0" prefWidth="198.0" text="Secret chat name">
+      <Label layoutX="28.0" layoutY="27.0" prefHeight="45.0" prefWidth="198.0" text="Secret chat name:">
          <font>
             <Font name="Times New Roman" size="26.0" />
          </font>
       </Label>
-      <ImageView fx:id="createImg" fitHeight="45.0" fitWidth="120.0" layoutX="6.0" layoutY="232.0" onMouseClicked="#createSecretChat" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="10.0" />
-      <ImageView fx:id="deleteImg" fitHeight="45.0" fitWidth="120.0" layoutX="160.0" layoutY="232.0" onMouseClicked="#deleteLocalCommunity" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="160.0" AnchorPane.rightAnchor="160.0" />
-      <ImageView fx:id="cancelImg" fitHeight="45.0" fitWidth="120.0" layoutX="296.0" layoutY="232.0" onMouseClicked="#closeDialog" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="10.0" />
-      <Label fx:id="secretChatName" layoutX="82.0" layoutY="72.0" prefHeight="29.0" prefWidth="298.0" text="&lt;!!! name !!!&gt;">
+      <ImageView fx:id="createImg" fitHeight="45.0" fitWidth="120.0" layoutX="6.0" layoutY="232.0" onMouseClicked="#createSecretChat" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="10.0">
+         <image>
+            <Image url="file:src/main/resources/images/lightBlueCircle.png" />
+         </image></ImageView>
+      <ImageView fx:id="deleteImg" fitHeight="45.0" fitWidth="120.0" layoutX="160.0" layoutY="232.0" onMouseClicked="#deleteLocalCommunity" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="160.0" AnchorPane.rightAnchor="160.0">
+         <image>
+            <Image url="file:src/main/resources/images/lightBlueCircle.png" />
+         </image></ImageView>
+      <ImageView fx:id="cancelImg" fitHeight="45.0" fitWidth="120.0" layoutX="296.0" layoutY="232.0" onMouseClicked="#closeDialog" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="10.0">
+         <image>
+            <Image url="file:src/main/resources/images/lightBlueCircle.png" />
+         </image></ImageView>
+      <Label fx:id="secretChatName" layoutX="28.0" layoutY="72.0" prefHeight="29.0" prefWidth="380.0" text="&lt;!!! name !!!&gt;" textAlignment="CENTER" AnchorPane.leftAnchor="28.0" AnchorPane.rightAnchor="32.0">
+         <font>
+            <Font name="Times New Roman" size="26.0" />
+         </font>
+      </Label>
+      <Label layoutX="5.0" layoutY="5.0" prefHeight="29.0" prefWidth="434.0" text="Imposible action!!! Contact to developer" textFill="#f80000" visible="false">
          <font>
             <Font name="Times New Roman" size="26.0" />
          </font>

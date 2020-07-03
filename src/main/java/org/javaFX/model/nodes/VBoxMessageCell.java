@@ -18,7 +18,6 @@ import java.util.Date;
 public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     private final String youMessagesBackgroundColor = "#4988C1";
-    //private final String otherMessageBackgroundColor = "#FFFFFF";
     private final String otherMessageBackgroundColor = "#a4f3c5";
     private final String backGroundStyle = "-fx-background-color: #fbfbfb";
 
@@ -96,7 +95,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
         int multiplier =
                 textContent.length()%40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
         cellWidth = getParentWidth() - getParentWidth() / 3;
-        cellHeight = 27 * multiplier;
+        cellHeight = 27 * (multiplier +1);
         if (jMessage.isMine()) {
             pane.setLayoutX(getParentWidth() / 3);
         }

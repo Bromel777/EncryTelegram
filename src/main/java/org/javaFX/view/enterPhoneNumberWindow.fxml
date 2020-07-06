@@ -11,7 +11,7 @@
          <children>
             <ImageView fx:id="encryTelegramClientImg" fitHeight="166.0" fitWidth="311.0" layoutX="232.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="30.0">
                <image>
-                  <Image url="file:src/main/resources/images/encryLogoBig.png" />
+                  <Image url="@../images/encryLogoBig.png" />
                </image>
             </ImageView>
          </children>
@@ -50,7 +50,7 @@
          <children>
             <ImageView fx:id="nextButtonImg" disable="true" fitHeight="60.0" fitWidth="328.0" onMouseClicked="#handleConfirmNumberAction" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="0.0">
                <image>
-                  <Image url="file:src/main/resources/images/nextButton.png" />
+                  <Image url="@../images/nextButton.png" />
                </image>
             </ImageView>
          </children>

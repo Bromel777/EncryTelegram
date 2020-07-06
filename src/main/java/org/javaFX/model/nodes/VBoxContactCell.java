@@ -14,8 +14,8 @@ import org.javaFX.util.JavaFXTableBuilder;
 
 public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
-    private final String pathToCheckboxNeutralImage = "file:src/main/resources/images/checkboxNeutral.png";
-    private final String pathToCheckboxSelectedImage = "file:src/main/resources/images/checkboxSelected.png";
+    private final String pathToCheckboxNeutralImage = "@../images/checkboxNeutral.png";
+    private final String pathToCheckboxSelectedImage = "@../images/checkboxSelected.png";
     private Label contactNameLabel;
     private Label phoneNumberLabel;
     private ImageView checkBoxImg;

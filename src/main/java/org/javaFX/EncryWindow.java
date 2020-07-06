@@ -23,7 +23,7 @@ public class EncryWindow extends Application {
     private BorderPane rootLayout;
 
     private final String windowTitle = "ENCRY Telegram Client";
-    private final String pathToLogoImage = "file:src/main/resources/images/logo.png";
+    private final String pathToLogoImage = "file:/images/logo.png";
 
     private final static String pathToRootLayout = "view/rootLayout.fxml";
 

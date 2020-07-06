@@ -60,14 +60,14 @@
          <children>
             <ImageView fx:id="cancelButtonImage" fitHeight="45.0" fitWidth="137.0" layoutX="731.0" layoutY="18.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="30.0">
                <image>
-                  <Image url="file:src/main/resources/images/cancel.png" />
+                  <Image url="@../images/cancel.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></ImageView>
             <ImageView fx:id="createButtonImage" fitHeight="45.0" fitWidth="137.0" layoutX="570.0" layoutY="18.0" onMouseClicked="#createCommunity" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="200.0">
                <image>
-                  <Image url="file:src/main/resources/images/create.png" />
+                  <Image url="@../images/create.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />

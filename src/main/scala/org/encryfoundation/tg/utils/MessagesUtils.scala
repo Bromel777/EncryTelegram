@@ -27,7 +27,7 @@ object MessagesUtils {
   def getSender[F[_]: Sync](msg: TdApi.Message, userStateService: UserStateService[F]): F[String] =
     if (!msg.isOutgoing) {
       OptionT(userStateService.getUserById(msg.senderUserId)).map { user =>
-        val firstNameWithLast = user.firstName ++ user.lastName
+        val firstNameWithLast = user.firstName ++ " " ++ user.lastName
         val phone = user.phoneNumber
         val login = user.username
         if (!firstNameWithLast.isEmpty) firstNameWithLast

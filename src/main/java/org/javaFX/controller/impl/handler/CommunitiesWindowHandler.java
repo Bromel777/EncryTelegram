@@ -20,7 +20,7 @@ public abstract class CommunitiesWindowHandler extends DataHandler {
 
     private void runDelayedInitialization(){
         service = Executors.newSingleThreadScheduledExecutor();
-        service.schedule(() -> insertDataToView(getEncryWindow()), 1, TimeUnit.SECONDS);
+        service.schedule(() -> insertDataToView(getEncryWindow()), 100, TimeUnit.MILLISECONDS);
         initObserver();
     }
 

@@ -14,8 +14,8 @@ import org.javaFX.util.JavaFXTableBuilder;
 
 public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
-    private final String pathToCheckboxNeutralImage = "@../images/checkboxNeutral.png";
-    private final String pathToCheckboxSelectedImage = "@../images/checkboxSelected.png";
+    private final String pathToCheckboxNeutralImage = "file:images/checkboxNeutral.png";
+    private final String pathToCheckboxSelectedImage = "file:images/checkboxSelected.png";
     private Label contactNameLabel;
     private Label phoneNumberLabel;
     private ImageView checkBoxImg;
@@ -53,7 +53,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     }
 
     private void initCheckBoxImg(){
-        checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage) );
+        checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage));
     }
 
     private void initSeparatorLine(){
@@ -107,10 +107,10 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     public void changeCheckboxStatus(){
         getRootPane().getChildren().remove(checkBoxImg);
         if(currentContact.isChosen()){
-            checkBoxImg = new ImageView(new Image(pathToCheckboxSelectedImage) );
+            checkBoxImg = new ImageView(new Image(pathToCheckboxSelectedImage));
         }
         else{
-            checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage) );
+            checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage));
         }
         AnchorPane.setRightAnchor(checkBoxImg,20.0);
         getRootPane().getChildren().add(checkBoxImg);

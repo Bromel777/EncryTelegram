@@ -17,6 +17,8 @@ import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -53,7 +55,7 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
         ObservableList<VBoxContactCell> observableChatList = FXCollections.observableArrayList();
         for(Long jUserId: getUserStateRef().get().getUsersMap().keySet()){
             TdApi.User user = getUserStateRef().get().getUsersMap().get(jUserId);
-            if(!user.lastName.isEmpty())
+            if(!user.phoneNumber.isEmpty())
                 observableChatList.add(
                         new VBoxContactCell(
                                 new JSingleContact(user.firstName, user.lastName, user.phoneNumber, (long)user.id)));
@@ -63,7 +65,8 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     @Override
     protected void initChatsTable(){
-        contactsListView.setItems(getObservableUserList());
+        ObservableList<VBoxContactCell> t = getObservableUserList();
+        contactsListView.setItems(t);
         shutDownScheduledService();
     }
 

@@ -1,6 +1,5 @@
 package org.javaFX.controller.impl.handler;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;

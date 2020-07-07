@@ -13,10 +13,8 @@ val monocleVersion = "2.0.0"
 unmanagedResourceDirectories in Compile ++= Seq(
   //baseDirectory.value / "lib",
   baseDirectory.value / "bin",
-  baseDirectory.value / "tdlib"
+  baseDirectory.value / "tdlib",
 )
-
-unmanagedResourceDirectories in Compile += { baseDirectory.value / "src/main/resources" }
 
 resolvers ++= Seq(
   "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/",

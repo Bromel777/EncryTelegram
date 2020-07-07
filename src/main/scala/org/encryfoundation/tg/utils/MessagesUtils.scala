@@ -10,6 +10,7 @@ import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.services.UserStateService
 import org.javaFX.model.JMessage
 import org.javaFX.model.nodes.VBoxDialogTextMessageCell
+import cats.implicits._
 
 object MessagesUtils {
 

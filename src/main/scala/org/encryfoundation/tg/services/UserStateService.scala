@@ -81,11 +81,14 @@ object UserStateService {
       ) >> Logger[F].info(s"Persist private group chat: ${privateGroupChat}")
 
     override def addPipelineChat(chat: TdApi.Chat, pipeline: Pipeline[F]): F[Unit] =
-      userState.update(prevState =>
+      userState.update { prevState =>
+        prevState.javaState.get().setChatList(
+          prevState.chatList.filterNot(_.id == chat.id).sortBy(_.order).takeRight(20).reverse.asJava
+        )
         prevState.copy(
           pipelineSecretChats = prevState.pipelineSecretChats + (chat.id -> pipeline)
         )
-      )
+      }
 
     override def updatePipelineChat(chatId: Long, newPipeline: Pipeline[F]): F[Unit] = for {
       state <- userState.get

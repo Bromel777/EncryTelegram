@@ -12,6 +12,10 @@ import javafx.scene.paint.Color;
 import org.javaFX.model.JSingleContact;
 import org.javaFX.util.JavaFXTableBuilder;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     private final String pathToCheckboxNeutralImage = "file:images/checkboxNeutral.png";

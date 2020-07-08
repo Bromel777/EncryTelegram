@@ -13,7 +13,7 @@ import org.encryfoundation.tg.services.PrivateConferenceService
 import org.encryfoundation.tg.services.PrivateConferenceService._
 import org.encryfoundation.tg.steps.Step
 import org.encryfoundation.tg.steps.Step.InitStep
-import org.javaFX.model.JUserState
+import org.javaFX.model.{JLocalCommunity, JUserState}
 import scorex.crypto.hash.Blake2b256
 
 import scala.collection.JavaConverters._
@@ -49,7 +49,9 @@ object UserState {
     privateConfs <- recoverCommunities(db)
     privateGroupChats <- recoverPrivateGroupChats(db)
   } yield {
-    privateConfs.foreach(community => javaState.get().communities.add(community.name))
+    privateConfs.foreach(community =>
+      javaState.get().communities.add(new JLocalCommunity(community.name, community.users.length))
+    )
     UserState[F](
       client = client,
       javaState = javaState,

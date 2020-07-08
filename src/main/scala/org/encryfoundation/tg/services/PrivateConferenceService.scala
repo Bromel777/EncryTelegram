@@ -11,6 +11,7 @@ import org.encryfoundation.sectionSeven.SectionSeven
 import org.encryfoundation.tg.community.{CommunityUser, PrivateCommunity}
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.userState.{ConferencesNames, UserState}
+import org.javaFX.model.JLocalCommunity
 import scorex.crypto.hash.Blake2b256
 
 trait PrivateConferenceService[F[_]] {
@@ -45,7 +46,7 @@ object PrivateConferenceService {
         }.pure[F]
         community <- PrivateCommunity(name, usersIds, generatorG1, generatorG2, generatorZr, usersInfo._2).pure[F]
         _ <- Logger[F].info(s"Create private community with name: ${name}. com: ${jState.communities}. And users: ${usersIds.map(_.userTelegramLogin)}")
-        _ <- Sync[F].delay(jState.communities.add(name))
+        _ <- Sync[F].delay(jState.communities.add(new JLocalCommunity(name, community.users.length)))
         _ <- db.put(
           conferencesKey,
           ConferencesNames.toBytes(ConferencesNames(state.privateCommunities.map(_.name) :+ name))

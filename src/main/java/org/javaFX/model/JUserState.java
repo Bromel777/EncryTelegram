@@ -23,7 +23,7 @@ public class JUserState {
     private Map<Long, TdApi.BasicGroup> basicGroups = new HashMap<>();
     private Map<Long, TdApi.Supergroup> superGroups = new HashMap<>();
     private Map<Long, TdApi.SecretChat> secretChats = new HashMap<>();
-    public List<String> communities = new ArrayList<String>();
+    public List<JLocalCommunity> communities = new ArrayList<JLocalCommunity>();
     public LinkedBlockingQueue<JavaInterMsg> msgsQueue = new LinkedBlockingQueue<JavaInterMsg>(100);
     public LinkedBlockingQueue<AuthMsg> authQueue = new LinkedBlockingQueue<AuthMsg>(100);
     private boolean isAuth = false;

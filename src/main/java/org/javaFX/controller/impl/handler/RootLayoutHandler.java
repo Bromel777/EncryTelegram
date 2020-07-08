@@ -1,10 +1,9 @@
 package org.javaFX.controller.impl.handler;
 
 import javafx.fxml.FXML;
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
-import org.javaFX.model.JTableEntity;
-import org.javaFX.util.observers.BasicObserver;
 
 public class RootLayoutHandler extends DataHandler {
 
@@ -12,6 +11,17 @@ public class RootLayoutHandler extends DataHandler {
     private void createLocalCommunity(){
         terminateObserver();
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToCreateNewCommunityWindowFXML);
+    }
+
+    //TODO If I got it right You told me to send some kind of this message to the queue, but i couldn't find
+    // appropriate method to invoke
+
+    @FXML
+    private void logOut(){
+        /*
+        getUserStateRef().get().msgsQueue.put(new JavaInterMsg.logOut());
+        */
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
     }
 
     @FXML

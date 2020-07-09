@@ -8,7 +8,6 @@ import org.encryfoundation.tg.pipelines.Pipeline
 import org.encryfoundation.tg.userState.{PrivateGroupChat, PrivateGroupChats, UserState}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
-import org.encryfoundation.tg.pipelines.groupVerification.{ProverFirstStep, ProverForthStep, ProverThirdStep, VerifierSecondStep}
 import org.encryfoundation.tg.steps.Step
 import org.encryfoundation.tg.steps.Step.ChatsStep
 import org.encryfoundation.tg.utils.MessagesUtils

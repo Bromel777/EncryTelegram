@@ -23,6 +23,7 @@ public class SingleCommunityDialogHandler extends DialogController {
         if(!secretChatName.getText().isEmpty()){
             JavaInterMsg msg = new JavaInterMsg.CreatePrivateGroupChat(secretChatName.getText());
             getUserStateRef().get().msgsQueue.put(msg);
+            getDialogStage().close();
             getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
         }
         else{
@@ -39,6 +40,7 @@ public class SingleCommunityDialogHandler extends DialogController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        getDialogStage().close();
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
     }
 

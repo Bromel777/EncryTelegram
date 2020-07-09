@@ -92,7 +92,6 @@ object UIProgram {
           )
           _ <- userStateRef.update(_.copy(activeChat = chatId))
           msgs <- msgsMVar.read
-          _ <- Logger[F].info(s"msgs: ${msgs}")
           _ <- Sync[F].delay {
             val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
             msgs.foreach(observList.add)

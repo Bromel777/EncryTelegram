@@ -230,15 +230,8 @@ object UserStateService {
 
     override def updateUnreadMsgsCount(chatId: Long, newCount: Int): F[Unit] =
       userState.get.map { prevState =>
-        prevState.javaState.get().setChatList(
-          prevState.chatList.map {
-            case chat if chat.id == chatId =>
-              chat.unreadCount = newCount
-              chat
-            case chat => chat
-          }.reverse.asJava
-        )
-      }
+        prevState.mainChatList.find(_._2.id == chatId).map(_._2.unreadCount = newCount)
+      } >> ().pure[F]
   }
 
   def apply[F[_]: Sync: Logger](userState: Ref[F, UserState[F]],

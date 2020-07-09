@@ -162,7 +162,10 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     public void updateLastMessage(String newText, Long newTime, Integer unreadCount) {
         lastMessageLabel.setText(newText);
         timeLabel.setText(TimeParser.parseDataString (newTime.toString() ) );
-        if (unreadMsgsNumberText != null)
+//        if (Integer.parseInt(unreadMsgsNumberText.getText()) == 0 && unreadCount > 0) {
+//            System.out.println("Update for ");
+//        }
+        if (unreadMsgsNumberText != null && smallCircle != null)
         {
             if (unreadCount > 0) {
                 if (!smallCircle.isVisible()) {
@@ -175,6 +178,9 @@ public class VBoxChatCell extends VBoxCell<JChat>{
                 unreadMsgsNumberText.setVisible(false);
                 smallCircle.setVisible(false);
             }
+        } else {
+            initSmallCircle();
+            initSmallCircleText(unreadCount.toString());
         }
     }
 }

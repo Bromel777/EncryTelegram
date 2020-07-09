@@ -27,8 +27,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatsWindowHandler extends MainWindowBasicHandler {
 
-    private final String pathToBlueButton = "@../images/sendMessageBlue.png";
-    private final String pathToGreyButton ="@../images/sendMessage.png";
+    private final String pathToBlueButton = "file:images/sendMessageBlue.png";
+    private final String pathToGreyButton ="file:images/sendMessage.png";
 
     @FXML
     private ListView<VBoxChatCell> chatsListView;

@@ -10,16 +10,19 @@ import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.steps.Step
 import org.encryfoundation.tg.steps.Step.ChatsStep
+import org.encryfoundation.tg.utils.MessagesUtils
 
 import collection.JavaConverters._
 
 trait UserStateService[F[_]] {
   //common ops
   def setAuth(): F[Unit]
+  def logout(): F[Unit]
   //basic chats ops
   def addChat(chat: TdApi.Chat): F[Unit]
   def updateChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit]
   def getChatById(chatId: Long): F[Option[TdApi.Chat]]
+  def updateUnreadMsgsCount(chatId: Long, newCount: Int): F[Unit]
   //secret chats
   def addSecretChat(chat: TdApi.SecretChat): F[Unit]
   def removeSecretChat(chat: TdApi.SecretChat): F[Unit]
@@ -37,6 +40,9 @@ trait UserStateService[F[_]] {
   def getPipeline(chatId: Long): F[Option[Pipeline[F]]]
   //users
   def updateUser(user: TdApi.User): F[Unit]
+  def getUserById(userId: Int): F[Option[TdApi.User]]
+  //communities
+  def deleteCommunity(communityName: String): F[Unit]
   //steps
   def setCurrentStep(step: Step): F[Unit]
 }
@@ -80,11 +86,14 @@ object UserStateService {
       ) >> Logger[F].info(s"Persist private group chat: ${privateGroupChat}")
 
     override def addPipelineChat(chat: TdApi.Chat, pipeline: Pipeline[F]): F[Unit] =
-      userState.update(prevState =>
+      userState.update { prevState =>
+        prevState.javaState.get().setChatList(
+          prevState.chatList.filterNot(_.id == chat.id).sortBy(_.order).takeRight(20).reverse.asJava
+        )
         prevState.copy(
           pipelineSecretChats = prevState.pipelineSecretChats + (chat.id -> pipeline)
         )
-      )
+      }
 
     override def updatePipelineChat(chatId: Long, newPipeline: Pipeline[F]): F[Unit] = for {
       state <- userState.get
@@ -144,9 +153,13 @@ object UserStateService {
 
     override def updateChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit] = {
 
+      def checkForPipelineMsg(chat: TdApi.Chat): Boolean =
+        (MessagesUtils.pipelinesStartMsg ++ MessagesUtils.pipelinesEndMsg)
+          .contains(MessagesUtils.processMessage(chat.lastMessage))
+
       def isPipeline(chatForChat: TdApi.Chat, state: UserState[F]): Boolean =
         state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) ||
-          state.pipelineSecretChats.contains(chat.id)
+          state.pipelineSecretChats.contains(chat.id) || checkForPipelineMsg(chatForChat)
 
       userState.get.flatMap { state =>
         if (!state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) &&
@@ -196,9 +209,29 @@ object UserStateService {
       } >> setCurrentStep(ChatsStep)
 
     override def setCurrentStep(step: Step): F[Unit] =
-      userState.update { prevState =>
+      Logger[F].info(s"Switch current step to ${step}") >> userState.update { prevState =>
         prevState.copy(currentStep = step)
       }
+
+    override def getUserById(userId: Int): F[Option[TdApi.User]] =
+      userState.get.map(_.users.get(userId))
+
+    override def logout(): F[Unit] =
+      userState.update(_.copy(isAuth = false))
+
+    override def deleteCommunity(communityName: String): F[Unit] =
+      userState.update { prevState =>
+        prevState.javaState.get().communities =
+          prevState.javaState.get().communities.asScala.filter(_.getCommunityName != communityName).asJava
+        prevState.copy(
+          privateCommunities = prevState.privateCommunities.filter(_.name == communityName)
+        )
+      }
+
+    override def updateUnreadMsgsCount(chatId: Long, newCount: Int): F[Unit] =
+      userState.get.map { prevState =>
+        prevState.mainChatList.find(_._2.id == chatId).map(_._2.unreadCount = newCount)
+      } >> ().pure[F]
   }
 
   def apply[F[_]: Sync: Logger](userState: Ref[F, UserState[F]],

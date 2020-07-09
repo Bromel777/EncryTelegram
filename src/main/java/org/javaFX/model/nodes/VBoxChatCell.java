@@ -3,11 +3,13 @@ package org.javaFX.model.nodes;
 import javafx.beans.property.LongProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import org.javaFX.model.JChat;
 import org.javaFX.util.RandomChooser;
 import org.javaFX.util.TimeParser;
@@ -45,7 +47,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     }
 
     @Override
-    protected void setNodesToRootPane(JChat jChat){
+    protected void setNodesToRootPane(JChat sourceElement){
         getRootPane().getChildren().add(chatTitleLabel);
         getRootPane().getChildren().add(lastMessageLabel);
         getRootPane().getChildren().add(timeLabel);
@@ -136,11 +138,12 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     private void initSmallCircleText(String unreadMessagedNumberStr){
         unreadMsgsNumberText = new Text();
-        unreadMsgsNumberText.setFont(new Font(14));
+        unreadMsgsNumberText.setFont(new Font(10));
         int smallCircleTextIndent = 24;
         unreadMsgsNumberText.setLayoutX(getParentWidth()-smallCircleTextIndent);
         unreadMsgsNumberText.setLayoutY(52);
         unreadMsgsNumberText.setText(unreadMessagedNumberStr);
+        unreadMsgsNumberText.setTextAlignment(TextAlignment.CENTER);
         unreadMsgsNumberText.setFill(Color.WHITE);
     }
 
@@ -154,5 +157,31 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     public String getChatTitle(){
         return chatTitleLabel.getText();
+    }
+
+    public void updateLastMessage(String newText, Long newTime, Integer unreadCount) {
+        lastMessageLabel.setText(newText);
+        timeLabel.setText(TimeParser.parseDataString (newTime.toString() ) );
+        if (unreadMsgsNumberText != null && smallCircle != null)
+        {
+            if (unreadCount > 0) {
+                if (!smallCircle.isVisible()) {
+                    unreadMsgsNumberText.setVisible(true);
+                    smallCircle.setVisible(true);
+                    getRootPane().getChildren().remove(smallCircle);
+                    getRootPane().getChildren().remove(unreadMsgsNumberText);
+                    getRootPane().getChildren().add(smallCircle);
+                    getRootPane().getChildren().add(unreadMsgsNumberText);
+                }
+                unreadMsgsNumberText.setText(unreadCount.toString());
+            }
+            else {
+                unreadMsgsNumberText.setVisible(false);
+                smallCircle.setVisible(false);
+            }
+        } else {
+            initSmallCircle();
+            initSmallCircleText(unreadCount.toString());
+        }
     }
 }

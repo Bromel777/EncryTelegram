@@ -23,7 +23,7 @@ public class EncryWindow extends Application {
     private BorderPane rootLayout;
 
     private final String windowTitle = "ENCRY Telegram Client";
-    private final String pathToLogoImage = "file:src/main/resources/images/logo.png";
+    private final String pathToLogoImage = "file:/images/logo.png";
 
     private final static String pathToRootLayout = "view/rootLayout.fxml";
 
@@ -34,6 +34,8 @@ public class EncryWindow extends Application {
     public final static String pathToCreateNewCommunityWindowFXML = "view/createNewLocalCommunity.fxml";
     public final static String pathToEmptyCommunitiesListWindowFXML = "view/emptyCommunitiesListWindow.fxml";
     public final static String pathToCommunitiesListWindowFXML = "view/communitiesListWindow.fxml";
+
+    public final static String pathToSingleCommunityDialogFXML = "view/singleCommunityDialog.fxml";
 
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
 

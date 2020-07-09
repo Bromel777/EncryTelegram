@@ -11,20 +11,23 @@ import scorex.crypto.hash.Blake2b256
 trait Database[F[_]] {
   def put(key: Array[Byte], value: Array[Byte]): F[Unit]
   def get(key: Array[Byte]): F[Option[Array[Byte]]]
+  def remove(key: Array[Byte]): F[Unit]
 }
 
 object Database {
 
   val privateGroupChatsKey = Blake2b256.hash("privateGroupChatsKey")
 
-  final private case class Live[F[_]: Applicative](db: DB) extends Database[F] {
+  final private case class Live[F[_]: Sync](db: DB) extends Database[F] {
 
-    override def get(key: Array[Byte]): F[Option[Array[Byte]]] = {
+    override def get(key: Array[Byte]): F[Option[Array[Byte]]] = Sync[F].delay{
       val res = db.get(key)
       if (res == null) Option.empty[Array[Byte]] else res.some
-      }.pure[F]
+      }
 
-    override def put(key: Array[Byte], value: Array[Byte]): F[Unit] = db.put(key, value).pure[F]
+    override def put(key: Array[Byte], value: Array[Byte]): F[Unit] = Sync[F].delay(db.put(key, value))
+
+    override def remove(key: Array[Byte]): F[Unit] = Sync[F].delay(db.delete(key))
   }
 
   def apply[F[_]: Sync](dir: File): Resource[F, Database[F]] = {

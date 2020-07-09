@@ -34,7 +34,7 @@
                      <children>
                         <ImageView fx:id="findContentImage" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#findContentInDialog" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="9.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="9.0">
                            <image>
-                              <Image url="file:src/main/resources/images/findContent.png" />
+                              <Image url="@../images/findContent.png" />
                            </image>
                         </ImageView>
                         <Label fx:id="isOnlineLabel" prefHeight="13.0" prefWidth="68.0" text="Online" textFill="#94909085" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" />
@@ -54,7 +54,7 @@
                                 </TextArea>
                         <ImageView fx:id="sendMessageImage" fitHeight="34.0" fitWidth="34.0" onMouseClicked="#sendMessage" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0">
                            <image>
-                              <Image url="file:src/main/resources/images/sendMessage.png" />
+                              <Image url="@../images/sendMessage.png" />
                            </image>
                         </ImageView>
                             </children>

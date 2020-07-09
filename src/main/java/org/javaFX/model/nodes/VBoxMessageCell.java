@@ -18,7 +18,6 @@ import java.util.Date;
 public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     private final String youMessagesBackgroundColor = "#4988C1";
-    //private final String otherMessageBackgroundColor = "#FFFFFF";
     private final String otherMessageBackgroundColor = "#a4f3c5";
     private final String backGroundStyle = "-fx-background-color: #fbfbfb";
 
@@ -60,7 +59,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
             getRootPane().getChildren().add(contentNode);
             AnchorPane.setRightAnchor(contentNode,5.0);
             getRootPane().getChildren().add(timeText);
-            AnchorPane.setRightAnchor(timeText,5.0);
+            AnchorPane.setRightAnchor(timeText,10.0);
             addElementToBack(messageRectangle);
             AnchorPane.setRightAnchor(messageRectangle,5.0);
             addElementToBack(angleRectangle);
@@ -96,7 +95,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
         int multiplier =
                 textContent.length()%40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
         cellWidth = getParentWidth() - getParentWidth() / 3;
-        cellHeight = 27 * multiplier;
+        cellHeight = 27 * (multiplier +1);
         if (jMessage.isMine()) {
             pane.setLayoutX(getParentWidth() / 3);
         }
@@ -109,7 +108,6 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
         setRootPane(pane);
     }
 
-
     private void initTimeText(JMessage jMessage) {
         timeText = new Text();
         timeText.setFont(new Font(12));
@@ -118,11 +116,11 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM HH:mm");;
         timeText.setText(dateFormat.format(date));
         if(jMessage.isMine()){
-            timeText.setLayoutX(getParentWidth() - 70);
+            timeText.setLayoutX(getParentWidth() - 75);
             timeText.setFill(Color.WHITE);
         }
         else{
-            timeText.setLayoutX(cellWidth - 70);
+            timeText.setLayoutX(cellWidth - 75);
             timeText.setFill(Color.BLACK);
         }
         timeText.setLayoutY(cellHeight -3);

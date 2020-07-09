@@ -38,7 +38,7 @@ public class StartWindowHandler extends DataHandler {
         super.updateEncryWindow(encryWindow);
         double localProgress = loadingStatusInt.addAndGet(50)/totalTimeMillis ;
         progressBar.setProgress(localProgress);
-        String progressStatus = localProgress==1? "100" : String.format("%.0f", localProgress*100);
+        String progressStatus = localProgress >=1 ? "100" : String.format("%.0f", localProgress*100);
         progressLabel.setText("loading "+progressStatus+"%");
     }
 

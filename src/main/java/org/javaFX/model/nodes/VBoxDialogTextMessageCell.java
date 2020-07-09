@@ -10,25 +10,36 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
 
     private Label contentLabel;
 
-    public VBoxDialogTextMessageCell(JMessage jMessage) {
+    public VBoxDialogTextMessageCell(JMessage<String> jMessage) {
         super(jMessage, 583);
     }
 
-    public VBoxDialogTextMessageCell(JMessage jMessage, int parentWidth) {
+    public VBoxDialogTextMessageCell(JMessage<String> jMessage, int parentWidth) {
         super(jMessage, parentWidth);
     }
 
     @Override
     protected void initContentNode(JMessage jMessage) {
-        contentLabel = new Label();
+        contentLabel = createContentLabel(jMessage);
+        setLayoutsContentLabel(jMessage);
+        setContentNode(contentLabel);
+    }
+
+    private Label createContentLabel(JMessage jMessage){
+        Label contentLabel = new Label();
         String textContent = jMessage.getContent().toString()
                 .substring(jMessage.getContent().toString().indexOf(":")+2);
-        contentLabel.setText(textContent);
+        contentLabel.setText(jMessage.getAuthor()+"\n"+textContent);
         contentLabel.setWrapText(true);
         int multiplier =
                 textContent.length() % 40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
         double width = getParentWidth() - getParentWidth() / 3;
-        double height = 27 * multiplier;
+        double height = 27 * (multiplier +1);
+        contentLabel.setPrefSize(width - 5 , height);
+        return contentLabel;
+    }
+
+    protected void setLayoutsContentLabel(JMessage jMessage){
         if( jMessage.isMine() ){
             contentLabel.setLayoutX(16 + getParentWidth() / 3 );
             contentLabel.setLayoutY(1);
@@ -39,34 +50,50 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
             contentLabel.setLayoutY(1);
             contentLabel.setTextFill(Color.BLACK);
         }
-        contentLabel.setPrefSize(width - 5 , height);
-        setContentNode(contentLabel);
     }
 
     @Override
     protected void initMessageRectangle(JMessage jMessage) {
+        Rectangle messageRectangle = createBigRectangle();
+        setLayoutsBigRectangle(jMessage, messageRectangle);
+        setMessageRectangle(messageRectangle);
+    }
+
+    private Rectangle createBigRectangle(){
         Rectangle messageRectangle = new Rectangle();
         messageRectangle.setArcHeight(26);
         messageRectangle.setArcWidth(26);
-        messageRectangle.setWidth(getCellWidth());
+        messageRectangle.setWidth(getCellWidth()+5);
         messageRectangle.setHeight(getCellHeight());
         messageRectangle.setLayoutY(0);
+        return messageRectangle;
+    }
+
+    protected void setLayoutsBigRectangle(JMessage jMessage , Rectangle messageRectangle){
         double ownerIndent = getParentWidth()/3;
         double otherIndent = 0;
         setFigureProperties(jMessage, messageRectangle, ownerIndent, otherIndent);
-        setMessageRectangle(messageRectangle);
     }
 
     @Override
     protected void initAngleRectangle(JMessage jMessage) {
+        Rectangle miniRectangle = initAngleRectangle();
+        setLayoutsAngleRectangle(jMessage, miniRectangle);
+        setAngleRectangle(miniRectangle);
+    }
+
+    private Rectangle initAngleRectangle (){
         Rectangle miniRectangle = new Rectangle();
-        miniRectangle.setWidth(13);
+        miniRectangle.setWidth(18);
         miniRectangle.setHeight(getCellHeight()-13);
         miniRectangle.setLayoutY(13);
+        return miniRectangle;
+    }
+
+    protected void setLayoutsAngleRectangle(JMessage jMessage, Rectangle miniRectangle){
         double ownerIndent = getParentWidth() - 13;
         double otherIndent = 0 ;
         setFigureProperties(jMessage, miniRectangle, ownerIndent, otherIndent );
-        setAngleRectangle(miniRectangle);
     }
 
     protected void setFigureProperties(JMessage jMessage, Shape shape, double ownerIndent, double otherIndent){
@@ -87,7 +114,5 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
     public void setContentLabel(Label contentLabel) {
         this.contentLabel = contentLabel;
     }
-
-
 
 }

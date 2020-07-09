@@ -1,24 +1,31 @@
 package org.javaFX.controller.impl.handler;
 
 import javafx.fxml.FXML;
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
-import org.javaFX.model.JTableEntity;
-import org.javaFX.util.observers.BasicObserver;
 
 public class RootLayoutHandler extends DataHandler {
-
-    private void terminateObserver(){
-        BasicObserver observer = getObserver();
-        if( observer != null){
-            observer.cancel();
-        }
-    }
 
     @FXML
     private void createLocalCommunity(){
         terminateObserver();
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToCreateNewCommunityWindowFXML);
+    }
+
+    @FXML
+    private void logOut(){
+        JavaInterMsg msg = new JavaInterMsg.Logout();
+        try {
+            getUserStateRef().get().msgsQueue.put(msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
+        if(getRootLayout().getTop().isVisible()) {
+            getRootLayout().getTop().setDisable(true);
+            getRootLayout().getTop().setVisible(false);
+        }
     }
 
     @FXML

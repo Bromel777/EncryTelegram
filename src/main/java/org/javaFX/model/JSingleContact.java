@@ -1,99 +1,79 @@
 package org.javaFX.model;
 
-import javafx.beans.property.*;
+import org.drinkless.tdlib.TdApi;
 
 public class JSingleContact extends JTableEntity{
 
-    private StringProperty firstName;
-    private StringProperty lastName;
-    private StringProperty phoneNumber;
-    private LongProperty userId;
-    private BooleanProperty isChosen;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+    private Long userId;
+    private boolean isChosen;
+    private TdApi.File circlePhoto;
 
     public JSingleContact(String firstNameStr, String lastNameStr, long userChatId){
-        firstName = new SimpleStringProperty(firstNameStr);
-        lastName = new SimpleStringProperty(lastNameStr);
-        this.userId = new SimpleLongProperty(userChatId);
+        this.firstName = firstNameStr;
+        this.lastName = lastNameStr;
+        this.userId = userChatId;
+    }
+    public JSingleContact(String firstNameStr, String lastNameStr, String phoneNumber,long userChatId){
+        this.firstName = firstNameStr;
+        this.lastName = lastNameStr;
+        this.phoneNumber = phoneNumber;
+        this.userId = userChatId;
     }
 
-    public JSingleContact(StringProperty firstName, StringProperty lastName, StringProperty phoneNumber, LongProperty chatId) {
+    public JSingleContact(String firstName, String lastName, String phoneNumber, Long chatId, TdApi.File circlePhoto) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.userId = chatId;
-        this.isChosen = new SimpleBooleanProperty(false);
-    }
-
-    public JSingleContact(String firstNameStr, String lastNameStr, String lastMessageStr, Long chatId) {
-        this(new SimpleStringProperty(firstNameStr), new SimpleStringProperty(lastNameStr), new SimpleStringProperty(lastMessageStr), new SimpleLongProperty(chatId));
-    }
-
-    public StringProperty getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(StringProperty phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public LongProperty userIdProperty() {
-        return userId;
-    }
-
-    public long getUserId() {
-        return userId.get();
-    }
-
-    public BooleanProperty isChosen() {
-        return isChosen;
-    }
-
-    public void setChosen(BooleanProperty chosen) {
-        isChosen = chosen;
-    }
-
-    public boolean isChosenBoolean() {
-        return isChosen.get();
-    }
-
-    public void setBooleanChosen(boolean chosen) {
-        isChosen.setValue(chosen);
+        this.isChosen = false;
+        this.circlePhoto = circlePhoto;
     }
 
     public String getFirstName() {
-        return firstName.get();
-    }
-
-    public StringProperty firstNameProperty() {
         return firstName;
     }
 
     public void setFirstName(String firstName) {
-        this.firstName.set(firstName);
+        this.firstName = firstName;
     }
 
     public String getLastName() {
-        return lastName.get();
-    }
-
-    public StringProperty lastNameProperty() {
         return lastName;
     }
 
     public void setLastName(String lastName) {
-        this.lastName.set(lastName);
+        this.lastName = lastName;
     }
 
-    public StringProperty phoneNumberProperty() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber.set(phoneNumber);
+        this.phoneNumber = phoneNumber;
     }
 
-    public StringProperty getFullName(){
-        return new SimpleStringProperty(getFirstName() + " " + getLastName());
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public boolean isChosen() {
+        return isChosen;
+    }
+
+    public void setChosen(boolean chosen) {
+        isChosen = chosen;
+    }
+
+    public String getFullName(){
+        return getFirstName() + " " + getLastName();
     }
 
     @Override

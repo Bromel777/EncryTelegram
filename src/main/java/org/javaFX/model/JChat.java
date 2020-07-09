@@ -15,7 +15,6 @@ public class JChat {
     private AtomicInteger unreadMessagesNumber;
     private TdApi.File smallPicture;
 
-
     public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, LongProperty lastMessageTime) {
         this.title = title;
         this.lastMessage = lastMessage;
@@ -30,6 +29,13 @@ public class JChat {
              new SimpleLongProperty(chatId),
              new SimpleLongProperty(lastMessageTime));
         unreadMessagesNumber = new AtomicInteger(0);
+    }
+    public JChat(String titleStr, String lastMessageStr, Long chatId, Long lastMessageTime, AtomicInteger unreadMessagesNumber) {
+        this(new SimpleStringProperty(titleStr),
+                new SimpleStringProperty(lastMessageStr),
+                new SimpleLongProperty(chatId),
+                new SimpleLongProperty(lastMessageTime),
+                unreadMessagesNumber);
     }
 
     public JChat(StringProperty title, StringProperty lastMessage, LongProperty chatId, LongProperty lastMessageTime, AtomicInteger unreadMessagesNumber ) {

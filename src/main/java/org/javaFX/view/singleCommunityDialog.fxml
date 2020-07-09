@@ -22,5 +22,6 @@
          </font>
       </Label>
       <Button layoutX="16.0" layoutY="123.0" mnemonicParsing="false" onMouseClicked="#createSecretChat" text="Create chat" />
+      <Button layoutX="112.0" layoutY="123.0" mnemonicParsing="false" onMouseClicked="#deleteConference" prefHeight="27.0" prefWidth="128.0" text="Delete community" />
    </children>
 </AnchorPane>

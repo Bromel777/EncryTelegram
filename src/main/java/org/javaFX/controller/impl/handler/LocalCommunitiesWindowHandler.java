@@ -48,7 +48,6 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
         super.setEncryWindow(encryWindow);
     }
 
-    // TODO number of member in created community that we get from data base is shown as zero(0)
     private ObservableList<VBoxCommunityCell> getObservableCommunityList(){
         ObservableList<VBoxCommunityCell> observableList = FXCollections.observableArrayList();
         getUserStateRef().get().communities.forEach(community -> observableList.add(new VBoxCommunityCell(community)));

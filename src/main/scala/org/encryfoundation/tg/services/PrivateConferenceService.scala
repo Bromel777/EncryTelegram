@@ -16,6 +16,7 @@ import scorex.crypto.hash.Blake2b256
 
 trait PrivateConferenceService[F[_]] {
   def createConference(name: String, users: List[String]): F[Unit]
+  def deleteConference(name: String): F[Unit]
   def addUserToConf(conf: String, userName: String): F[Unit]
   def sendInvite(conf: String, userName: String): F[Unit]
   def findConf(conf: String): F[PrivateCommunity]
@@ -29,7 +30,7 @@ object PrivateConferenceService {
   val conferencesKey = Blake2b256("Conferences")
 
   private class Live[F[_]: Sync: Logger](db: Database[F],
-                                                userStateRef: Ref[F, UserState[F]]) extends PrivateConferenceService[F] {
+                                         userStateRef: Ref[F, UserState[F]]) extends PrivateConferenceService[F] {
 
     override def createConference(name: String, users: List[String]): F[Unit] =
       for {
@@ -76,6 +77,8 @@ object PrivateConferenceService {
       possibleBytes <- OptionT(db.get(confInfo(confName)))
       possibleConf <- OptionT.fromOption[F](PrivateCommunity.parseBytes(possibleBytes).toOption)
     } yield possibleConf).value
+
+    override def deleteConference(name: String): F[Unit] = db.remove(confInfo(name))
   }
 
   def confInfo(confName: String) = Blake2b256(s"ConfInfo${confName}")

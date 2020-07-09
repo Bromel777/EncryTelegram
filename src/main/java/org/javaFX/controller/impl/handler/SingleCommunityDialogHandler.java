@@ -31,10 +31,15 @@ public class SingleCommunityDialogHandler extends DialogController {
         }
     }
 
-    //TODO implement delete community from Database functionality
     @FXML
-    private void deleteLocalCommunity(){
-
+    private void deleteConference() {
+        JavaInterMsg msg = new JavaInterMsg.DeleteCommunity(secretChatName.getText());
+        try {
+            getUserStateRef().get().msgsQueue.put(msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
     }
 
     public void setSecretChatNameText(String secretChatNameStr) {

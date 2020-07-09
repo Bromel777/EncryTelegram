@@ -39,6 +39,8 @@ trait UserStateService[F[_]] {
   //users
   def updateUser(user: TdApi.User): F[Unit]
   def getUserById(userId: Int): F[Option[TdApi.User]]
+  //communities
+  def deleteCommunity(communityName: String): F[Unit]
   //steps
   def setCurrentStep(step: Step): F[Unit]
 }
@@ -213,6 +215,15 @@ object UserStateService {
 
     override def logout(): F[Unit] =
       userState.update(_.copy(isAuth = false))
+
+    override def deleteCommunity(communityName: String): F[Unit] =
+      userState.update { prevState =>
+        prevState.javaState.get().communities =
+          prevState.javaState.get().communities.asScala.filter(_.getCommunityName != communityName).asJava
+        prevState.copy(
+          privateCommunities = prevState.privateCommunities.filter(_.name == communityName)
+        )
+      }
   }
 
   def apply[F[_]: Sync: Logger](userState: Ref[F, UserState[F]],

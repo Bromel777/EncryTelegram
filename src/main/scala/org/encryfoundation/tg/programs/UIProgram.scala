@@ -15,7 +15,7 @@ import org.encryfoundation.tg.AuthRequestHandler
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{AccumulatorHandler, EmptyHandler, PrivateGroupChatCreationHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, Logout, SendToChat, SetActiveChat, SetPass, SetPhone, SetVCCode}
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, DeleteCommunity, Logout, SendToChat, SetActiveChat, SetPass, SetPhone, SetVCCode}
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
@@ -131,6 +131,8 @@ object UIProgram {
         userStateRef.get.flatMap(state =>
           state.client.send(new TdApi.CheckAuthenticationCode(vcCode), AuthRequestHandler(userStateRef))
         ) >> Logger[F].info(s"Set code ${vcCode}")
+      case _@DeleteCommunity(name) =>
+        privateConfService.deleteConference(name) >> userStateService.deleteCommunity(name)
       case _@Logout() =>
         userStateRef.get.flatMap(state =>
           state.client.send(new TdApi.LogOut, EmptyHandler[F]())

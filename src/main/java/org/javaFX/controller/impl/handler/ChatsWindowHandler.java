@@ -6,11 +6,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.encryfoundation.tg.utils.ChatUtils;
 import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
@@ -19,12 +21,14 @@ import org.javaFX.model.nodes.VBoxChatCell;
 import org.javaFX.model.nodes.VBoxMessageCell;
 import org.javaFX.util.KeyboardHandler;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatsWindowHandler extends MainWindowBasicHandler {
 
-    private final String pathToBlueButton = "file:src/main/resources/images/sendMessageBlue.png";
-    private final String pathToGreyButton ="file:src/main/resources/images/sendMessage.png";
+    private final String pathToBlueButton = "@../images/sendMessageBlue.png";
+    private final String pathToGreyButton ="@../images/sendMessage.png";
 
     @FXML
     private ListView<VBoxChatCell> chatsListView;
@@ -88,14 +92,25 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                         : leftPane.getPrefWidth();
         getUserStateRef().get().getChatList().forEach(
                 chat -> {
-                    observableChatList.add(new VBoxChatCell(
+                    Optional<VBoxChatCell> prevCell =
+                            chatsListView.getItems().stream()
+                                    .filter(elem -> elem.getChatId() == chat.id)
+                                    .findAny();
+                    VBoxChatCell cell = prevCell.orElse(new VBoxChatCell(
                             new JChat(
                                     chat.title,
                                     MessagesUtils.processMessage(chat.lastMessage),
                                     chat.id,
-                                    MessagesUtils.getLastMessageTime(chat.lastMessage)
+                                    MessagesUtils.getLastMessageTime(chat.lastMessage),
+                                    new AtomicInteger(chat.unreadCount)
                             ), chatCellWidth
                     ));
+                    cell.updateLastMessage(
+                            MessagesUtils.processMessage(chat.lastMessage),
+                            MessagesUtils.getLastMessageTime(chat.lastMessage),
+                            chat.unreadCount
+                    );
+                    observableChatList.add(cell);
                 }
         );
         return observableChatList;

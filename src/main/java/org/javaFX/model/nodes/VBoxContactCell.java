@@ -10,20 +10,22 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
 import org.javaFX.model.JSingleContact;
+import org.javaFX.util.JavaFXTableBuilder;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
-    private final String pathToCheckboxNeutralImage = "file:src/main/resources/images/checkboxNeutral.png";
-    private final String pathToCheckboxSelectedImage = "file:src/main/resources/images/checkboxSelected.png";
+    private final String pathToCheckboxNeutralImage = "file:images/checkboxNeutral.png";
+    private final String pathToCheckboxSelectedImage = "file:images/checkboxSelected.png";
     private Label contactNameLabel;
     private Label phoneNumberLabel;
     private ImageView checkBoxImg;
-
     private Separator separatorLine;
 
-
     private final JSingleContact currentContact;
-
 
     public VBoxContactCell(JSingleContact communityMember){
         super(communityMember);
@@ -42,7 +44,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     private void initContactNameLabel(JSingleContact communityMember){
         contactNameLabel = new Label();
-        contactNameLabel.setText(communityMember.getFullName().get());
+        contactNameLabel.setText(communityMember.getFullName());
         contactNameLabel.setLayoutX(0);
         contactNameLabel.setLayoutY(20);
     }
@@ -55,23 +57,11 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     }
 
     private void initCheckBoxImg(){
-        checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage) );
+        checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage));
     }
 
-    //TODO
-    //пока не инициализруется переменная parentWidth не сделано
     private void initSeparatorLine(){
-        separatorLine = new Separator();
-        //!!!
-        separatorLine.setPrefWidth(getRootPane().getPrefWidth());
-        //!!!
-        Shadow effect = new Shadow();
-        effect.setBlurType(BlurType.ONE_PASS_BOX);
-        effect.setColor(Color.GRAY);
-        effect.setHeight(0.0);
-        effect.setRadius(0.0);
-        effect.setWidth(0.0);
-        separatorLine.setEffect(effect);
+        separatorLine = JavaFXTableBuilder.buildSeparatorLine( getRootPane());
     }
 
     @Override
@@ -89,7 +79,6 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     protected void initRootPane(JSingleContact sourceElement) {
         setRootPane(new AnchorPane() );
         getRootPane().setPrefSize(800,60);
-
     }
 
     public JSingleContact getCurrentContact() {
@@ -98,7 +87,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     private String getPreparedTelNumber(JSingleContact communityMember){
         StringBuilder sb = new StringBuilder("+");
-        String tellNumber = communityMember.getPhoneNumber().get();
+        String tellNumber = communityMember.getPhoneNumber();
         if(tellNumber.startsWith("7")){
             sb.append(tellNumber.charAt(0)).append(" ")
             .append(tellNumber, 1, 4).append(" ")
@@ -121,13 +110,17 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     public void changeCheckboxStatus(){
         getRootPane().getChildren().remove(checkBoxImg);
-        if(currentContact.isChosenBoolean()){
-            checkBoxImg = new ImageView(new Image(pathToCheckboxSelectedImage) );
+        if(currentContact.isChosen()){
+            checkBoxImg = new ImageView(new Image(pathToCheckboxSelectedImage));
         }
         else{
-            checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage) );
+            checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage));
         }
         AnchorPane.setRightAnchor(checkBoxImg,20.0);
         getRootPane().getChildren().add(checkBoxImg);
+    }
+
+    public void setSeparatorLineSize(double newSize){
+        separatorLine.setPrefWidth(newSize);
     }
 }

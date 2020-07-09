@@ -9,13 +9,17 @@ public abstract class VBoxCell<T> extends VBox {
 
     private AnchorPane rootPane;
 
+    private T element;
+
     public VBoxCell(T sourceElement){
+        this.element = sourceElement;
         setIsYourMessage(sourceElement);
         initNodes(sourceElement);
         setNodesToRootPane(sourceElement);
     }
 
     public VBoxCell(T sourceElement, double parentWidth){
+        this.element = sourceElement;
         this.parentWidth = parentWidth;
         setIsYourMessage(sourceElement);
         initNodes(sourceElement);
@@ -33,6 +37,8 @@ public abstract class VBoxCell<T> extends VBox {
     public AnchorPane getRootPane() {
         return rootPane;
     }
+
+    public T getElement() {return element;}
 
     public void setRootPane(AnchorPane rootPane) {
         this.rootPane = rootPane;

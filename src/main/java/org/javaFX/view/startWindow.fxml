@@ -25,7 +25,7 @@
          <children>
             <ImageView fx:id="whiteLogo" fitHeight="160.0" fitWidth="300.0" layoutX="150.0" layoutY="120.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="156.0" AnchorPane.rightAnchor="336.6907196044922" AnchorPane.topAnchor="120.0">
                <image>
-                  <Image url="file:src/main/resources/images/whiteBigLogo.png" />
+                  <Image url="@../images/whiteBigLogo.png" />
                </image>
             </ImageView>
          </children>

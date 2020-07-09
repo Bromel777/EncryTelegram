@@ -1,16 +1,12 @@
 package org.javaFX.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JUserState;
 import org.javaFX.util.observers.BasicObserver;
 
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class DataHandler {
@@ -75,7 +71,7 @@ public abstract class DataHandler {
         return this.getClass().toString();
     }
 
-    private void terminateObserver(){
+    protected void terminateObserver(){
         BasicObserver observer = getObserver();
         if( observer != null){
             observer.cancel();

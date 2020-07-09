@@ -1,146 +1,83 @@
 package org.javaFX.model.nodes;
 
-import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import org.drinkless.tdlib.TdApi;
 import org.javaFX.model.JMessage;
-import org.javaFX.util.RandomChooser;
 
 public class VBoxCommonChatTextMessageCell extends VBoxDialogTextMessageCell{
 
-    private int indent = 70;
+    private ImageView smallPhoto;
+    private int indent = 30;
+    private final String pathToImgStub = "file:src/main/resources/images/lightBlueCircle.png";
 
-    private Circle authorCircle ;
-    private Text abbreviationText;
-
-    public VBoxCommonChatTextMessageCell(JMessage jMessage) {
+    public VBoxCommonChatTextMessageCell(JMessage<String> jMessage) {
         super(jMessage);
     }
 
-    public VBoxCommonChatTextMessageCell(JMessage jMessage, int parentWidth) {
+    public VBoxCommonChatTextMessageCell(JMessage<String> jMessage, int parentWidth) {
+        super(jMessage, parentWidth);
+    }
+
+    //TODO It would be perfect if you set somehow small image to one of these constructors.
+    // Then I'll get an opportunity to show them on pages.
+    // When we know that number of members in dialogue is more than 2 we should create these instance
+
+
+    public VBoxCommonChatTextMessageCell(JMessage<String> jMessage, TdApi.File smallPhoto) {
+        super(jMessage);
+    }
+
+    public VBoxCommonChatTextMessageCell(JMessage<String> jMessage, int parentWidth, TdApi.File smallPhoto) {
         super(jMessage, parentWidth);
     }
 
     @Override
     protected void initNodes(JMessage jMessage) {
         super.initNodes(jMessage);
-        if(!jMessage.isMine()){
-            initAuthorCircle(jMessage);
-            initAbbreviationText(jMessage);
-        }
+        initSmallPhoto();
     }
 
     @Override
     protected void setNodesToRootPane(JMessage jMessage) {
-        if(authorCircle != null && abbreviationText!= null){
-            getRootPane().getChildren().add(authorCircle);
-            getRootPane().getChildren().add(abbreviationText);
-        }
+        getRootPane().getChildren().add(smallPhoto);
         super.setNodesToRootPane(jMessage);
     }
 
     @Override
-    protected void initContentNode(JMessage jMessage) {
-         setContentLabel(new Label() );
-        String textContent = jMessage.getContent().toString()
-                .substring(jMessage.getContent().toString().indexOf(":")+2);
-        getContentLabel().setText(textContent);
-        getContentLabel().setWrapText(true);
-        int multiplier =
-                textContent.length()%40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
-        double width = getParentWidth() - (getParentWidth() / 3) ;
-        double height = 27 * multiplier;
+    protected void setLayoutsContentLabel(JMessage jMessage) {
         if( jMessage.isMine() ){
-            getContentLabel().setLayoutX(getParentWidth() / 3 );
+            getContentLabel().setLayoutX(indent +16  + getParentWidth() / 3 );
             getContentLabel().setLayoutY(1);
             getContentLabel().setTextFill(Color.WHITE);
         }
         else{
-            getContentLabel().setLayoutX(1 + indent);
+            getContentLabel().setLayoutX(indent + 5);
             getContentLabel().setLayoutY(1);
             getContentLabel().setTextFill(Color.BLACK);
         }
-        getContentLabel().setPrefSize(width - 10 , height);
-        setContentNode( getContentLabel());
     }
 
     @Override
-    protected void initMessageRectangle(JMessage jMessage) {
-        Rectangle messageRectangle = new Rectangle();
-        messageRectangle.setWidth(getCellWidth() - 13);
-        messageRectangle.setHeight(getCellHeight());
-        messageRectangle.setLayoutY(0);
-        double ownerIndent = getParentWidth()/3;
-        double otherIndent = indent + getCellHeight()/2;
+    protected void setLayoutsBigRectangle(JMessage jMessage, Rectangle messageRectangle) {
+        double ownerIndent = indent+ getParentWidth()/3;
+        double otherIndent = indent ;
         setFigureProperties(jMessage, messageRectangle, ownerIndent, otherIndent);
-        setMessageRectangle(messageRectangle);
     }
-
-
-
-    protected Circle initOuterCircle(JMessage jMessage, double layoutY){
-        Circle outerCircle = new Circle();
-        outerCircle.setRadius(13);
-        outerCircle.setLayoutY(layoutY);
-        double ownerIndent = getParentWidth()/3;
-        double otherIndent =  getCellWidth() + 1 + indent;
-        setFigureProperties(jMessage, outerCircle, ownerIndent, otherIndent );
-        return outerCircle;
-    }
-
-
 
     @Override
-    protected void initAngleRectangle(JMessage jMessage) {
-        Rectangle miniRectangle = new Rectangle();
-        miniRectangle.setWidth(13);
-        miniRectangle.setHeight(getCellHeight()-13);
-        miniRectangle.setLayoutY(getCellHeight()/2);
-        double ownerIndent = getParentWidth() - getCellHeight()/2;
-        double otherIndent =  indent ;
+    protected void setLayoutsAngleRectangle(JMessage jMessage, Rectangle miniRectangle) {
+        double ownerIndent = indent + getParentWidth() - 13;
+        double otherIndent = indent ;
         setFigureProperties(jMessage, miniRectangle, ownerIndent, otherIndent );
-        setAngleRectangle(miniRectangle);
     }
 
-    protected void setFigureProperties(JMessage jMessage, Shape shape, double ownerIndent, double otherIndent){
-        if(jMessage.isMine()){
-            shape.setFill(Color.valueOf(getYouMessagesBackgroundColor()));
-            shape.setLayoutX(ownerIndent);
-        }
-        else{
-            shape.setFill(Color.valueOf(getOtherMessageBackgroundColor()));
-            shape.setLayoutX(otherIndent);
-        }
+    private void initSmallPhoto(){
+        smallPhoto = new ImageView(new Image(pathToImgStub) );
+        smallPhoto.setSmooth(true);
+        smallPhoto.setFitHeight(26);
+        smallPhoto.setFitWidth(26);
     }
-
-    private void initAuthorCircle(JMessage jMessage){
-        authorCircle = new Circle();
-        authorCircle.setRadius(13);
-        authorCircle.setLayoutY(13);
-        authorCircle.setFill(RandomChooser.getRandomColor());
-        authorCircle.setLayoutX(30);
-    }
-
-    private void initAbbreviationText(JMessage jMessage){
-        abbreviationText = new Text();
-        abbreviationText.setLayoutX(38);
-        abbreviationText.setLayoutY(16);
-        String [] strings = jMessage.getAuthor().split(" ");
-        String result = " ";
-        if(strings.length > 1){
-            result = ""+strings[0].charAt(0)+ strings[1].charAt(0);
-        }
-        else {
-            result += ""+strings[0].charAt(0);
-        }
-        abbreviationText.setText(result.toUpperCase());
-        abbreviationText.setFont(Font.font("Times New Roman", FontWeight.BOLD ,16) );
-        abbreviationText.setFill(Color.WHITE);
-    }
-
 }

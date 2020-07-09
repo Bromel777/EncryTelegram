@@ -24,6 +24,8 @@ object RunApp extends App {
   implicit val shift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
   implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
 
+  val a = IO.delay("test")
+
   System.loadLibrary("tdjni")
 
   def program(db: Database[IO],

@@ -11,10 +11,12 @@ import org.encryfoundation.sectionSeven.SectionSeven
 import org.encryfoundation.tg.community.{CommunityUser, PrivateCommunity}
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.userState.{ConferencesNames, UserState}
+import org.javaFX.model.JLocalCommunity
 import scorex.crypto.hash.Blake2b256
 
 trait PrivateConferenceService[F[_]] {
   def createConference(name: String, users: List[String]): F[Unit]
+  def deleteConference(name: String): F[Unit]
   def addUserToConf(conf: String, userName: String): F[Unit]
   def sendInvite(conf: String, userName: String): F[Unit]
   def findConf(conf: String): F[PrivateCommunity]
@@ -28,7 +30,7 @@ object PrivateConferenceService {
   val conferencesKey = Blake2b256("Conferences")
 
   private class Live[F[_]: Sync: Logger](db: Database[F],
-                                                userStateRef: Ref[F, UserState[F]]) extends PrivateConferenceService[F] {
+                                         userStateRef: Ref[F, UserState[F]]) extends PrivateConferenceService[F] {
 
     override def createConference(name: String, users: List[String]): F[Unit] =
       for {
@@ -45,7 +47,7 @@ object PrivateConferenceService {
         }.pure[F]
         community <- PrivateCommunity(name, usersIds, generatorG1, generatorG2, generatorZr, usersInfo._2).pure[F]
         _ <- Logger[F].info(s"Create private community with name: ${name}. com: ${jState.communities}. And users: ${usersIds.map(_.userTelegramLogin)}")
-        _ <- Sync[F].delay(jState.communities.add(name))
+        _ <- Sync[F].delay(jState.communities.add(new JLocalCommunity(name, community.users.length)))
         _ <- db.put(
           conferencesKey,
           ConferencesNames.toBytes(ConferencesNames(state.privateCommunities.map(_.name) :+ name))
@@ -75,6 +77,8 @@ object PrivateConferenceService {
       possibleBytes <- OptionT(db.get(confInfo(confName)))
       possibleConf <- OptionT.fromOption[F](PrivateCommunity.parseBytes(possibleBytes).toOption)
     } yield possibleConf).value
+
+    override def deleteConference(name: String): F[Unit] = db.remove(confInfo(name))
   }
 
   def confInfo(confName: String) = Blake2b256(s"ConfInfo${confName}")

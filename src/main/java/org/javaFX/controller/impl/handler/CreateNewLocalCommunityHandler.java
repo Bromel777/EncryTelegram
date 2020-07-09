@@ -4,28 +4,24 @@ import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import org.drinkless.tdlib.TdApi;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.javaFX.EncryWindow;
-import org.javaFX.controller.DataHandler;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JSingleContact;
 import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
-
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class CreateNewLocalCommunityHandler extends DataHandler {
+public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     @FXML
     private ListView<VBoxContactCell> contactsListView;
@@ -39,28 +35,26 @@ public class CreateNewLocalCommunityHandler extends DataHandler {
     @FXML
     private Label communityNameLabel;
 
-    private ScheduledExecutorService service;
-
-    private void runDelayedInitialization(){
-        service = Executors.newSingleThreadScheduledExecutor();
-        service.schedule(() -> updateEncryWindow(getEncryWindow()), 1, TimeUnit.SECONDS);
-    }
+    @FXML
+    private Separator blueSeparator;
 
     public CreateNewLocalCommunityHandler() {
-        runDelayedInitialization();
+        super();
     }
 
     @Override
     public void updateEncryWindow(EncryWindow encryWindow) {
-        super.setEncryWindow(encryWindow);
-        initChatsTable();
+        for(VBoxContactCell cell : contactsListView.getItems()){
+            cell.setSeparatorLineSize(blueSeparator.getWidth()- 40);
+        }
+        super.updateEncryWindow(encryWindow);
     }
 
     private ObservableList<VBoxContactCell> getObservableUserList(){
         ObservableList<VBoxContactCell> observableChatList = FXCollections.observableArrayList();
         for(Long jUserId: getUserStateRef().get().getUsersMap().keySet()){
             TdApi.User user = getUserStateRef().get().getUsersMap().get(jUserId);
-            if(!user.lastName.isEmpty())
+            if(!user.phoneNumber.isEmpty())
                 observableChatList.add(
                         new VBoxContactCell(
                                 new JSingleContact(user.firstName, user.lastName, user.phoneNumber, (long)user.id)));
@@ -68,17 +62,19 @@ public class CreateNewLocalCommunityHandler extends DataHandler {
         return observableChatList;
     }
 
-    private void initChatsTable(){
-        contactsListView.setItems(getObservableUserList());
-        service.shutdown();
+    @Override
+    protected void initChatsTable(){
+        ObservableList<VBoxContactCell> t = getObservableUserList();
+        contactsListView.setItems(t);
+        shutDownScheduledService();
     }
 
     @FXML
     private void changeCheckBoxValue() {
         JSingleContact communityMember = contactsListView.getSelectionModel().getSelectedItem().getCurrentContact();
         if(communityMember.getUserId() > 0L ){
-            boolean isChosen = communityMember.isChosenBoolean();
-            communityMember.setBooleanChosen(!isChosen);
+            boolean isChosen = communityMember.isChosen();
+            communityMember.setChosen(!isChosen);
             contactsListView.getSelectionModel().getSelectedItem().changeCheckboxStatus();
         }
     }
@@ -99,7 +95,7 @@ public class CreateNewLocalCommunityHandler extends DataHandler {
     private void findContact(){
         final String searchingStr = searchContactTextField.getText().trim();
         contactsListView.getItems().stream()
-                .filter(item -> item.getCurrentContact().getFullName().getValueSafe().toLowerCase().contains(searchingStr.toLowerCase()) )
+                .filter(item -> item.getCurrentContact().getFullName().toLowerCase().contains(searchingStr.toLowerCase()) )
                 .findAny()
                 .ifPresent(item -> {
                     contactsListView.getSelectionModel().select(item);
@@ -111,7 +107,7 @@ public class CreateNewLocalCommunityHandler extends DataHandler {
     private void createCommunity(){
         if(!newCommunityNameTextField.getText().isEmpty()){
             JLocalCommunity localCommunity = new JLocalCommunity();
-            contactsListView.getItems().filtered(contactCell -> contactCell.getCurrentContact().isChosenBoolean()).
+            contactsListView.getItems().filtered(contactCell -> contactCell.getCurrentContact().isChosen()).
                     forEach(contact -> localCommunity.addContactToCommunity(contact.getCurrentContact()));
             if(localCommunity.getCommunitySize().get() != 0){
                 toCommunitiesWindow(localCommunity);
@@ -128,7 +124,7 @@ public class CreateNewLocalCommunityHandler extends DataHandler {
         InfoContainer.addCommunity(localCommunity);
         List<String> members = localCommunity.getCommunityMembers()
                 .stream()
-                .map(elem -> elem.getPhoneNumber().getValue())
+                .map(elem -> elem.getPhoneNumber())
                 .collect(Collectors.toList());
         JavaInterMsg msg = new JavaInterMsg.CreateCommunityJava(
                 localCommunity.getCommunityName(),
@@ -146,5 +142,7 @@ public class CreateNewLocalCommunityHandler extends DataHandler {
     private void toChatsWindow(){
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
     }
+
+
 
 }

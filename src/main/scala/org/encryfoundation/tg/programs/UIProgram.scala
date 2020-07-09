@@ -13,12 +13,13 @@ import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.AuthRequestHandler
 import org.encryfoundation.tg.crypto.AESEncryption
-import org.encryfoundation.tg.handlers.{AccumulatorHandler, PrivateGroupChatCreationHandler, ValueHandler}
+import org.encryfoundation.tg.handlers.{AccumulatorHandler, EmptyHandler, PrivateGroupChatCreationHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, SendToChat, SetActiveChat, SetPass, SetPhone, SetVCCode}
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, DeleteCommunity, Logout, SendToChat, SetActiveChat, SetPass, SetPhone, SetVCCode}
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
+import org.encryfoundation.tg.utils.MessagesUtils
 import org.javaFX.model.{JDialog, JMessage}
 import org.javaFX.model.nodes.{VBoxDialogTextMessageCell, VBoxMessageCell}
 import scorex.crypto.encode.Base64
@@ -41,41 +42,45 @@ object UIProgram {
                                                       jDialogRef: MVar[F, JDialog]) extends UIProgram[F] {
 
     def processLastMessage(msg: TdApi.Message, state: UserState[F]): F[VBoxMessageCell] =
-      userStateService.getPrivateGroupChat(msg.chatId).map {
-        case Some(privateGroupChat) =>
-          msg.content match {
-            case text: MessageText =>
-              val aes = AESEncryption(privateGroupChat.password.getBytes())
-              val msgText = Try(state.users.get(msg.senderUserId)
+      MessagesUtils.getSender(msg, userStateService).flatMap( sender =>
+        userStateService.getPrivateGroupChat(msg.chatId).map {
+          case Some(privateGroupChat) =>
+            msg.content match {
+              case text: MessageText =>
+                val aes = AESEncryption(privateGroupChat.password.getBytes())
+                val msgText = Try(state.users.get(msg.senderUserId)
                   .map(_.phoneNumber)
                   .getOrElse("Unknown sender") + ": " +
                   aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
-            case _ =>
-              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
-          }
-        case None =>
-          msg.content match {
-            case text: MessageText =>
-              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + text.text.text
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
-            case _: MessagePhoto =>
-              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "photo"
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
-            case _: MessageVideo =>
-              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "video"
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
-            case _ =>
-              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString))
-          }
-      }
+                new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
+              case _ =>
+                val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
+                new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
+            }
+          case None =>
+            msg.content match {
+              case text: MessageText =>
+                val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + text.text.text
+                new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
+              case _: MessagePhoto =>
+                val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "photo"
+                new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
+              case _: MessageVideo =>
+                val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "video"
+                new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
+              case _ =>
+                val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
+                new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
+            }
+        }
+      )
 
     def processMsg(msg: JavaInterMsg): F[Unit] = msg match {
       case _@SetActiveChat(chatId) =>
         for {
           state <- userStateRef.get
+          _ <- state.client.send(new TdApi.CloseChat(state.activeChat), EmptyHandler[F]())
+          _ <- state.client.send(new TdApi.OpenChat(chatId), EmptyHandler[F]())
           _ <- Sync[F].delay(state.javaState.get().messagesListView.setItems(FXCollections.observableArrayList[VBoxMessageCell]()))
           javaState <- state.javaState.get().pure[F]
           msgsMVar <- MVar.empty[F, List[VBoxMessageCell]]
@@ -89,12 +94,11 @@ object UIProgram {
           )
           _ <- userStateRef.update(_.copy(activeChat = chatId))
           msgs <- msgsMVar.read
-          _ <- Logger[F].info(s"msgs: ${msgs}")
+          _ <- state.client.send(new TdApi.ViewMessages(chatId, msgs.map(_.getElement.getId).toArray, false), EmptyHandler[F]())
           _ <- Sync[F].delay {
             val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
             msgs.foreach(observList.add)
             javaState.messagesListView.setItems(observList)
-            println("update after:" + javaState.messagesListView.getItems.toString)
           }
         } yield ()
       case _@SendToChat(msg) =>
@@ -129,6 +133,12 @@ object UIProgram {
         userStateRef.get.flatMap(state =>
           state.client.send(new TdApi.CheckAuthenticationCode(vcCode), AuthRequestHandler(userStateRef))
         ) >> Logger[F].info(s"Set code ${vcCode}")
+      case _@DeleteCommunity(name) =>
+        privateConfService.deleteConference(name) >> userStateService.deleteCommunity(name)
+      case _@Logout() =>
+        userStateRef.get.flatMap(state =>
+          state.client.send(new TdApi.LogOut, EmptyHandler[F]())
+        ) >> Logger[F].info("Logout")
     }
 
     private def createGroup(groupname: String,

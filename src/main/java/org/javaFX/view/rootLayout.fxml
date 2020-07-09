@@ -12,6 +12,7 @@
             <menus>
             <Menu mnemonicParsing="false" text="Actions">
               <items>
+                  <MenuItem fx:id="logOut" onAction="#logOut" mnemonicParsing="false" text="Log out" />
                   <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="Close" />
               </items>
             </Menu>

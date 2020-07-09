@@ -28,7 +28,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
 
     public MainWindowBasicHandler() {
         chatListObserve(this);
-        /*dialogTextArea.setBackground(new Background(new BackgroundImage(new Image("file:src/main/resources/images/back.jpg"),
+        /*dialogTextArea.setBackground(new Background(new BackgroundImage(new Image("@../images/back.jpg"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT)));*/
     }

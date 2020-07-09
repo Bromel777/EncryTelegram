@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.encryfoundation.tg.utils.ChatUtils;
 import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;

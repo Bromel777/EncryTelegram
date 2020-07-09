@@ -22,6 +22,7 @@ trait UserStateService[F[_]] {
   def addChat(chat: TdApi.Chat): F[Unit]
   def updateChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit]
   def getChatById(chatId: Long): F[Option[TdApi.Chat]]
+  def updateUnreadMsgsCount(chatId: Long, newCount: Int): F[Unit]
   //secret chats
   def addSecretChat(chat: TdApi.SecretChat): F[Unit]
   def removeSecretChat(chat: TdApi.SecretChat): F[Unit]
@@ -224,6 +225,18 @@ object UserStateService {
           prevState.javaState.get().communities.asScala.filter(_.getCommunityName != communityName).asJava
         prevState.copy(
           privateCommunities = prevState.privateCommunities.filter(_.name == communityName)
+        )
+      }
+
+    override def updateUnreadMsgsCount(chatId: Long, newCount: Int): F[Unit] =
+      userState.get.map { prevState =>
+        prevState.javaState.get().setChatList(
+          prevState.chatList.map {
+            case chat if chat.id == chatId =>
+              chat.unreadCount = newCount
+              chat
+            case chat => chat
+          }.reverse.asJava
         )
       }
   }

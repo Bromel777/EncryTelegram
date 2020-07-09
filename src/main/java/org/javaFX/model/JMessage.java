@@ -7,6 +7,7 @@ public class JMessage<T> {
     private String time;
     private String author;
     private boolean isPreviousSameAuthor;
+    private long id;
 
     public JMessage(boolean isMine, T content, String time) {
         this.isMine = isMine;
@@ -22,12 +23,13 @@ public class JMessage<T> {
 
     //TODO please, use this constructor to create JMessage objects in your code if you want to see author properly
     // when we know the author of last message we can type the text in a more beautiful way
-    public JMessage(boolean isMine, T content, String time, String author, boolean isPreviousSameAuthor) {
+    public JMessage(boolean isMine, T content, String time, String author, boolean isPreviousSameAuthor, long id) {
         this.isMine = isMine;
         this.content = content;
         this.time = time;
         this.author = author;
         this.isPreviousSameAuthor = isPreviousSameAuthor;
+        this.id = id;
     }
 
     public boolean isMine() {
@@ -53,6 +55,8 @@ public class JMessage<T> {
     public void setTime(String time) {
         this.time = time;
     }
+
+    public long getId() { return id; }
 
     public String getAuthor() {
         return author;

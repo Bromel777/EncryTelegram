@@ -204,7 +204,7 @@ object UserStateService {
       } >> setCurrentStep(ChatsStep)
 
     override def setCurrentStep(step: Step): F[Unit] =
-      userState.update { prevState =>
+      Logger[F].info(s"Switch current step to ${step}") >> userState.update { prevState =>
         prevState.copy(currentStep = step)
       }
 

@@ -152,18 +152,16 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         client.send(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F](userStateRef))
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>
         for {
-          _ <- Sync[F].delay(println(s"Get ${a}"))
+          _ <- Logger[F].info(s"Get ${a}")
         } yield ()
       case a: TdApi.AuthorizationStateWaitCode =>
         for {
           state <- userStateRef.get
-          _ <- Sync[F].delay(println(s"Get ${a}"))
           _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadVCWindow))
         } yield ()
       case a: TdApi.AuthorizationStateWaitPassword =>
         for {
           state <- userStateRef.get
-          _ <- Sync[F].delay(println(s"Get ${a}"))
           _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadPassWindow))
         } yield ()
       case _: TdApi.AuthorizationStateReady =>
@@ -179,7 +177,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case  _: TdApi.AuthorizationStateLoggingOut =>
         userStateService.logout()
       case _: TdApi.AuthorizationStateClosed =>
-        Logger[F].info("AuthorizationStateClosed")
+        userStateService.setCurrentStep(AuthStep)
       case _ =>
         Logger[F].info(s"Got unknown event in auth. ${authEvent}")
     }

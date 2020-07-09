@@ -13,9 +13,6 @@ public class RootLayoutHandler extends DataHandler {
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToCreateNewCommunityWindowFXML);
     }
 
-    //TODO If I got it right You told me to send some kind of this message to the queue, but i couldn't find
-    // appropriate method to invoke
-
     @FXML
     private void logOut(){
         JavaInterMsg msg = new JavaInterMsg.Logout();
@@ -25,6 +22,10 @@ public class RootLayoutHandler extends DataHandler {
             e.printStackTrace();
         }
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
+        if(getRootLayout().getTop().isVisible()) {
+            getRootLayout().getTop().setDisable(true);
+            getRootLayout().getTop().setVisible(false);
+        }
     }
 
     @FXML

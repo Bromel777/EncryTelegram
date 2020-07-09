@@ -9,6 +9,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import org.javaFX.model.JChat;
 import org.javaFX.util.RandomChooser;
 import org.javaFX.util.TimeParser;
@@ -137,11 +138,12 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     private void initSmallCircleText(String unreadMessagedNumberStr){
         unreadMsgsNumberText = new Text();
-        unreadMsgsNumberText.setFont(new Font(14));
+        unreadMsgsNumberText.setFont(new Font(10));
         int smallCircleTextIndent = 24;
         unreadMsgsNumberText.setLayoutX(getParentWidth()-smallCircleTextIndent);
         unreadMsgsNumberText.setLayoutY(52);
         unreadMsgsNumberText.setText(unreadMessagedNumberStr);
+        unreadMsgsNumberText.setTextAlignment(TextAlignment.CENTER);
         unreadMsgsNumberText.setFill(Color.WHITE);
     }
 
@@ -174,6 +176,5 @@ public class VBoxChatCell extends VBoxCell<JChat>{
                 smallCircle.setVisible(false);
             }
         }
-        //unreadMsgsNumberText.setText(unreadCount.toString());
     }
 }

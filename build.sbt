@@ -35,6 +35,8 @@ libraryDependencies ++= Seq(
   "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
   "org.slf4j" % "slf4j-simple" % "1.7.26",
   "ru.tinkoff" %% "tofu" % "0.7.7",
+  "org.apache.commons" % "commons-lang3" % "3.10",
+  "org.apache.commons" % "commons-text" % "1.8",
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
   "com.github.julien-truffaut" %%  "monocle-core"  % monocleVersion,
   "com.github.julien-truffaut" %%  "monocle-macro" % monocleVersion,

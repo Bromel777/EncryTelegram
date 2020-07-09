@@ -156,4 +156,9 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     public String getChatTitle(){
         return chatTitleLabel.getText();
     }
+
+    public void updateLastMessage(String newText, Long newTime) {
+        lastMessageLabel.setText(newText);
+        timeLabel.setText(TimeParser.parseDataString (newTime.toString()));
+    }
 }

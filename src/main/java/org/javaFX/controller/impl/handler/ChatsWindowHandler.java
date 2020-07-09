@@ -20,6 +20,7 @@ import org.javaFX.model.nodes.VBoxChatCell;
 import org.javaFX.model.nodes.VBoxMessageCell;
 import org.javaFX.util.KeyboardHandler;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChatsWindowHandler extends MainWindowBasicHandler {
@@ -78,7 +79,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             initializeDialogArea();
         }
         enableMenuBar();
-
     }
 
     @FXML
@@ -90,7 +90,11 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                         : leftPane.getPrefWidth();
         getUserStateRef().get().getChatList().forEach(
                 chat -> {
-                    observableChatList.add(new VBoxChatCell(
+                    Optional<VBoxChatCell> prevCell =
+                            chatsListView.getItems().stream()
+                                    .filter(elem -> elem.getChatId() == chat.id)
+                                    .findAny();
+                    VBoxChatCell cell = prevCell.orElse(new VBoxChatCell(
                             new JChat(
                                     chat.title,
                                     MessagesUtils.processMessage(chat.lastMessage),
@@ -98,6 +102,11 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                                     MessagesUtils.getLastMessageTime(chat.lastMessage)
                             ), chatCellWidth
                     ));
+                    cell.updateLastMessage(
+                            MessagesUtils.processMessage(chat.lastMessage),
+                            MessagesUtils.getLastMessageTime(chat.lastMessage)
+                    );
+                    observableChatList.add(cell);
                 }
         );
         return observableChatList;

@@ -11,8 +11,22 @@ import org.encryfoundation.tg.services.UserStateService
 import org.javaFX.model.JMessage
 import org.javaFX.model.nodes.VBoxDialogTextMessageCell
 import cats.implicits._
+import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndPipeline, StartPipeline}
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
+import org.encryfoundation.tg.pipelines.groupVerification.{ProverFirstStep, ProverThirdStep, VerifierSecondStep}
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.EndPipelineMsgSerializer._
+import scorex.crypto.encode.Base64
 
 object MessagesUtils {
+
+  val pipelinesStartMsg: List[String] =
+    List(ProverFirstStep.pipelineName, ProverThirdStep.pipelineName, VerifierSecondStep.pipeLineName)
+      .map(name => Base64.encode(StepMsgSerializer.toBytes(StartPipeline(name))))
+
+  val pipelinesEndMsg: List[String] =
+    List(ProverFirstStep.pipelineName, ProverThirdStep.pipelineName, VerifierSecondStep.pipeLineName)
+      .map(name => Base64.encode(StepMsgSerializer.toBytes(EndPipeline(name))))
 
   def processMessage(msg: TdApi.Message): String =
     if (msg == null) "No message"

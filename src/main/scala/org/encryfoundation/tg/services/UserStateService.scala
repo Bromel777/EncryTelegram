@@ -8,8 +8,10 @@ import org.encryfoundation.tg.pipelines.Pipeline
 import org.encryfoundation.tg.userState.{PrivateGroupChat, PrivateGroupChats, UserState}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
+import org.encryfoundation.tg.pipelines.groupVerification.{ProverFirstStep, ProverForthStep, ProverThirdStep, VerifierSecondStep}
 import org.encryfoundation.tg.steps.Step
 import org.encryfoundation.tg.steps.Step.ChatsStep
+import org.encryfoundation.tg.utils.MessagesUtils
 
 import collection.JavaConverters._
 
@@ -151,12 +153,13 @@ object UserStateService {
 
     override def updateChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit] = {
 
-//      def checkForPipelineMsg(chat: TdApi.Chat): Boolean =
-//        chat.lastMessage.
+      def checkForPipelineMsg(chat: TdApi.Chat): Boolean =
+        (MessagesUtils.pipelinesStartMsg ++ MessagesUtils.pipelinesEndMsg)
+          .contains(MessagesUtils.processMessage(chat.lastMessage))
 
       def isPipeline(chatForChat: TdApi.Chat, state: UserState[F]): Boolean =
         state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) ||
-          state.pipelineSecretChats.contains(chat.id)
+          state.pipelineSecretChats.contains(chat.id) || checkForPipelineMsg(chatForChat)
 
       userState.get.flatMap { state =>
         if (!state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) &&

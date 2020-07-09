@@ -22,6 +22,7 @@ import org.javaFX.util.KeyboardHandler;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatsWindowHandler extends MainWindowBasicHandler {
 
@@ -99,12 +100,14 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                                     chat.title,
                                     MessagesUtils.processMessage(chat.lastMessage),
                                     chat.id,
-                                    MessagesUtils.getLastMessageTime(chat.lastMessage)
+                                    MessagesUtils.getLastMessageTime(chat.lastMessage),
+                                    new AtomicInteger(chat.unreadCount)
                             ), chatCellWidth
                     ));
                     cell.updateLastMessage(
                             MessagesUtils.processMessage(chat.lastMessage),
-                            MessagesUtils.getLastMessageTime(chat.lastMessage)
+                            MessagesUtils.getLastMessageTime(chat.lastMessage),
+                            chat.unreadCount
                     );
                     observableChatList.add(cell);
                 }

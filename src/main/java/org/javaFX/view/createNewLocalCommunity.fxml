@@ -42,7 +42,7 @@
         </AnchorPane>
         <AnchorPane layoutY="136.0" minHeight="40.0" minWidth="85.0" prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">
          <children>
-            <Separator fx:id="blueSeparator" prefWidth="200.0" style="-fx-background-color: RED; -fx-border-color: RED;" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="0.0">
+            <Separator fx:id="blueSeparator" prefWidth="200.0" style="-fx-background-color: RED; -fx-border-color: RED;" visible="false" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="0.0">
                <effect>
                   <Shadow blurType="ONE_PASS_BOX" color="#00b7ff" height="0.0" radius="0.0" width="0.0" />
                </effect>

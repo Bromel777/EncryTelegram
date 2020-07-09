@@ -159,7 +159,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     public void updateLastMessage(String newText, Long newTime, Integer unreadCount) {
         lastMessageLabel.setText(newText);
-        timeLabel.setText(TimeParser.parseDataString (newTime.toString()));
-        unreadMsgsNumberText.setText(unreadCount.toString());
+        timeLabel.setText(TimeParser.parseDataString (newTime.toString() ) );
+        //unreadMsgsNumberText.setText(unreadCount.toString());
     }
 }

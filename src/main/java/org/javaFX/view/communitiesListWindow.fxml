@@ -16,11 +16,15 @@
     <children>
         <AnchorPane prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Label layoutX="364.0" layoutY="14.0" prefHeight="32.0" prefWidth="175.0" text="Communities List" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="364.0" AnchorPane.rightAnchor="364.0" AnchorPane.topAnchor="14.0">
-                    <font>
-                        <Font name="Calibri Bold" size="22.0" />
-                    </font>
-                </Label>
+            <StackPane prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                      <Label prefHeight="32.0" prefWidth="175.0" text="Communities List">
+                          <font>
+                              <Font name="Calibri Bold" size="22.0" />
+                          </font>
+                      </Label>
+               </children>
+            </StackPane>
             </children>
         </AnchorPane>
         <AnchorPane layoutY="160.0" prefHeight="360.0" prefWidth="903.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">

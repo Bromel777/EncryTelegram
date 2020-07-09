@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -43,7 +44,10 @@
             </MenuButton>
             <Label fx:id="enterPhoneNumberLabel" layoutX="170.0" layoutY="106.0" prefHeight="21.0" prefWidth="264.0" text="Enter Phone Number" textFill="#00b6ff" underline="true" visible="false" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="136.0" />
             <Label fx:id="countryCodeLabel" layoutX="136.0" layoutY="75.0" prefHeight="33.0" prefWidth="58.0" text="+" visible="false" />
-            <Label fx:id="error" layoutX="136.0" layoutY="119.0" prefHeight="17.0" prefWidth="328.0" />
+            <Label fx:id="error" layoutX="136.0" layoutY="119.0" prefHeight="17.0" prefWidth="328.0" textFill="#dd0000">
+               <font>
+                  <Font name="Times New Roman" size="15.0" />
+               </font></Label>
          </children>
       </AnchorPane>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="470.0">

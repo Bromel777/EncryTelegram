@@ -169,8 +169,10 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         {
             if (unreadCount > 0) {
                 if (!smallCircle.isVisible()) {
-                    smallCircle.setVisible(true);
                     unreadMsgsNumberText.setVisible(true);
+                    smallCircle.setVisible(true);
+                    getRootPane().getChildren().add(smallCircle);
+                    getRootPane().getChildren().add(unreadMsgsNumberText);
                 }
                 unreadMsgsNumberText.setText(unreadCount.toString());
             }

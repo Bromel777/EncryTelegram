@@ -15,4 +15,5 @@ object JavaInterMsg {
   case class SetVCCode(vcCode: String) extends JavaInterMsg
   case class SetPhone(phone: String) extends JavaInterMsg
   case class SetPass(pass: String) extends JavaInterMsg
+  case class Logout() extends JavaInterMsg
 }

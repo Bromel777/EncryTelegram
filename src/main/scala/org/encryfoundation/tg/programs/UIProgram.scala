@@ -13,9 +13,9 @@ import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.AuthRequestHandler
 import org.encryfoundation.tg.crypto.AESEncryption
-import org.encryfoundation.tg.handlers.{AccumulatorHandler, PrivateGroupChatCreationHandler, ValueHandler}
+import org.encryfoundation.tg.handlers.{AccumulatorHandler, EmptyHandler, PrivateGroupChatCreationHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, SendToChat, SetActiveChat, SetPass, SetPhone, SetVCCode}
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, Logout, SendToChat, SetActiveChat, SetPass, SetPhone, SetVCCode}
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
@@ -131,6 +131,10 @@ object UIProgram {
         userStateRef.get.flatMap(state =>
           state.client.send(new TdApi.CheckAuthenticationCode(vcCode), AuthRequestHandler(userStateRef))
         ) >> Logger[F].info(s"Set code ${vcCode}")
+      case _@Logout() =>
+        userStateRef.get.flatMap(state =>
+          state.client.send(new TdApi.LogOut, EmptyHandler[F]())
+        ) >> Logger[F].info("Logout")
     }
 
     private def createGroup(groupname: String,

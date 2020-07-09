@@ -23,7 +23,8 @@ object MessagesUtils {
       case _ => "Unknown msg type"
     }
 
-  def getLastMessageTime(msg: TdApi.Message): Long = msg.date.toLong
+  def getLastMessageTime(msg: TdApi.Message): Long =
+    if (msg == null) 0L else msg.date.toLong
 
   def getSender[F[_]: Sync](msg: TdApi.Message, userStateService: UserStateService[F]): F[String] =
     if (!msg.isOutgoing) {

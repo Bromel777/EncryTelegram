@@ -166,7 +166,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           _ <- Sync[F].delay(println(s"Get ${a}"))
           _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadPassWindow))
         } yield ()
-      case a: TdApi.AuthorizationStateReady =>
+      case _: TdApi.AuthorizationStateReady =>
         for {
           _ <- userStateService.setAuth()
           state <- userStateRef.get
@@ -176,8 +176,12 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
             EmptyHandler[F]()
           )
         } yield ()
+      case  _: TdApi.AuthorizationStateLoggingOut =>
+        userStateService.logout()
+      case _: TdApi.AuthorizationStateClosed =>
+        Logger[F].info("AuthorizationStateClosed")
       case _ =>
-        println(s"Got unknown event in auth. ${authEvent}").pure[F]
+        Logger[F].info(s"Got unknown event in auth. ${authEvent}")
     }
   }
 

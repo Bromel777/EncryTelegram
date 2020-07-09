@@ -18,9 +18,12 @@ public class RootLayoutHandler extends DataHandler {
 
     @FXML
     private void logOut(){
-        /*
-        getUserStateRef().get().msgsQueue.put(new JavaInterMsg.logOut());
-        */
+        JavaInterMsg msg = new JavaInterMsg.Logout();
+        try {
+            getUserStateRef().get().msgsQueue.put(msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
     }
 

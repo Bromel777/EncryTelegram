@@ -16,6 +16,7 @@ import collection.JavaConverters._
 trait UserStateService[F[_]] {
   //common ops
   def setAuth(): F[Unit]
+  def logout(): F[Unit]
   //basic chats ops
   def addChat(chat: TdApi.Chat): F[Unit]
   def updateChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit]
@@ -148,6 +149,9 @@ object UserStateService {
 
     override def updateChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit] = {
 
+//      def checkForPipelineMsg(chat: TdApi.Chat): Boolean =
+//        chat.lastMessage.
+
       def isPipeline(chatForChat: TdApi.Chat, state: UserState[F]): Boolean =
         state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) ||
           state.pipelineSecretChats.contains(chat.id)
@@ -206,6 +210,9 @@ object UserStateService {
 
     override def getUserById(userId: Int): F[Option[TdApi.User]] =
       userState.get.map(_.users.get(userId))
+
+    override def logout(): F[Unit] =
+      userState.update(_.copy(isAuth = false))
   }
 
   def apply[F[_]: Sync: Logger](userState: Ref[F, UserState[F]],

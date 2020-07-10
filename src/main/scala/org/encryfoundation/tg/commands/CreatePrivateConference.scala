@@ -14,11 +14,9 @@ import org.encryfoundation.tg.community.{CommunityUser, PrivateCommunity}
 import org.encryfoundation.tg.community.CommunityOps.ops._
 import org.encryfoundation.tg.services.PrivateConferenceService
 
-case class CreatePrivateConference[F[_]: Sync: Logger](client: Client[F],
-                                                       userStateRef: Ref[F, UserState[F]],
+case class CreatePrivateConference[F[_]: Sync: Logger](userStateRef: Ref[F, UserState[F]],
                                                        db: Database[F])(
-                                                       privateConfService: PrivateConferenceService[F]
-                                                       ) extends Command[F]{
+                                                       privateConfService: PrivateConferenceService[F]) extends Command[F]{
 
   val pairing: Pairing = PairingFactory.getPairing("src/main/resources/properties/a.properties")
 

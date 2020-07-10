@@ -18,7 +18,7 @@ case class Client[F[_]: Concurrent: Timer] private(readLock: Semaphore[F],
   private var events = new Array[TdApi.Object](MAX_EVENTS)
   private var stopFlag = false
 
-  val nativeClientId = createNativeClient()
+  var nativeClientId = createNativeClient()
 
   def execute(query: TdApi.Function): F[TdApi.Object] = nativeClientExecute(query).pure[F]
 

@@ -9,7 +9,7 @@ import org.drinkless.tdlib.Client
 import org.encryfoundation.tg.commands.Command
 import org.encryfoundation.tg.errors.TdError
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
+import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 import tofu.Raise
 import tofu.common.Console
@@ -24,7 +24,7 @@ trait ConsoleProgram[F[_]] {
 
 object ConsoleProgram {
 
-  private class Live[F[_]: Concurrent: Logger: Timer](client: Client[F],
+  private class Live[F[_]: Concurrent: Logger: Timer](clientService: ClientService[F],
                                                       userStateRef: Ref[F, UserState[F]],
                                                       confService: PrivateConferenceService[F],
                                                       userStateService: UserStateService[F],
@@ -39,7 +39,7 @@ object ConsoleProgram {
           println(s"Your command: ${command}.")
           command
         }
-        _ <- Command.getCommands(client, userStateRef, db)(confService, userStateService).find(_.name == command.split(" ").head)
+        _ <- Command.getCommands(userStateRef, db)(confService, userStateService, clientService).find(_.name == command.split(" ").head)
           .traverse(_.run(command.split(" ").tail.toList))
         _ <- onlyForReg
       } yield ()
@@ -54,10 +54,10 @@ object ConsoleProgram {
   }
 
   def apply[F[_]: Concurrent: Logger: Timer:
-                  Raise[*[_], TdError]: Console](client: Client[F],
+                  Raise[*[_], TdError]: Console](clientService: ClientService[F],
                                                  userStateRef: Ref[F, UserState[F]],
                                                  confService: PrivateConferenceService[F],
                                                  userStateService: UserStateService[F],
                                                  db: Database[F]): F[ConsoleProgram[F]] =
-    Applicative[F].pure(new Live(client, userStateRef, confService, userStateService, db))
+    Applicative[F].pure(new Live(clientService, userStateRef, confService, userStateService, db))
 }

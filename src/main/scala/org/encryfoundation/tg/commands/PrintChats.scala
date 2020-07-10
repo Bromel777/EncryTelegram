@@ -9,8 +9,7 @@ import org.drinkless.tdlib.TdApi.{ChatTypeSecret, MessagePhoto, MessageText, Mes
 import org.encryfoundation.tg.ResultWithValueHandler
 import org.encryfoundation.tg.leveldb.Database
 
-case class PrintChats[F[_]: Concurrent: Timer](client: Client[F],
-                                               userStateRef: Ref[F, UserState[F]],
+case class PrintChats[F[_]: Concurrent: Timer](userStateRef: Ref[F, UserState[F]],
                                                db: Database[F]) extends Command[F] {
 
   override val name: String = "showChats"

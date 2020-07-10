@@ -1,30 +1,29 @@
 package org.encryfoundation.tg.programs
 
-import cats.Applicative
-import cats.effect.{Concurrent, Sync, Timer}
 import cats.effect.concurrent.{MVar, Ref}
+import cats.effect.{Concurrent, Sync, Timer}
+import cats.implicits._
 import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
-import org.encryfoundation.tg.userState.UserState
-import cats.implicits._
 import javafx.collections.{FXCollections, ObservableList}
-import javafx.scene.control.{ListView, TextArea}
-import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
+import javafx.scene.control.TextArea
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
+import org.drinkless.tdlib.{ClientUtils, TdApi}
 import org.encryfoundation.tg.AuthRequestHandler
-import org.encryfoundation.tg.crypto.AESEncryption
-import org.encryfoundation.tg.handlers.{AccumulatorHandler, EmptyHandler, PrivateGroupChatCreationHandler, ValueHandler}
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg.{CreateCommunityJava, CreatePrivateGroupChat, DeleteCommunity, Logout, SendToChat, SetActiveChat, SetPass, SetPhone, SetVCCode}
 import org.encryfoundation.tg.community.PrivateCommunity
+import org.encryfoundation.tg.crypto.AESEncryption
+import org.encryfoundation.tg.handlers.{EmptyHandler, PrivateGroupChatCreationHandler, ValueHandler}
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg
+import org.encryfoundation.tg.javaIntegration.JavaInterMsg._
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
+import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
+import org.encryfoundation.tg.userState.UserState
 import org.encryfoundation.tg.utils.MessagesUtils
-import org.javaFX.model.{JDialog, JMessage}
 import org.javaFX.model.nodes.{VBoxDialogTextMessageCell, VBoxMessageCell}
+import org.javaFX.model.{JDialog, JMessage}
 import scorex.crypto.encode.Base64
 
-import collection.JavaConverters._
+import scala.collection.JavaConverters._
 import scala.util.{Random, Try}
 
 trait UIProgram[F[_]] {
@@ -37,7 +36,7 @@ object UIProgram {
   private class Live[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                                       privateConfService: PrivateConferenceService[F],
                                                       userStateService: UserStateService[F],
-                                                      client: Client[F],
+                                                      clientService: ClientService[F],
                                                       dialogAreaRef: MVar[F, TextArea],
                                                       jDialogRef: MVar[F, JDialog]) extends UIProgram[F] {
 
@@ -79,12 +78,12 @@ object UIProgram {
       case _@SetActiveChat(chatId) =>
         for {
           state <- userStateRef.get
-          _ <- state.client.send(new TdApi.CloseChat(state.activeChat), EmptyHandler[F]())
-          _ <- state.client.send(new TdApi.OpenChat(chatId), EmptyHandler[F]())
+          _ <- clientService.sendRequest(new TdApi.CloseChat(state.activeChat), EmptyHandler[F]())
+          _ <- clientService.sendRequest(new TdApi.OpenChat(chatId), EmptyHandler[F]())
           _ <- Sync[F].delay(state.javaState.get().messagesListView.setItems(FXCollections.observableArrayList[VBoxMessageCell]()))
           javaState <- state.javaState.get().pure[F]
           msgsMVar <- MVar.empty[F, List[VBoxMessageCell]]
-          _ <- state.client.send(
+          _ <- clientService.sendRequest(
             new TdApi.GetChatHistory(chatId, 0, 0, 20, false),
             ValueHandler(
               userStateRef,
@@ -94,7 +93,7 @@ object UIProgram {
           )
           _ <- userStateRef.update(_.copy(activeChat = chatId))
           msgs <- msgsMVar.read
-          _ <- state.client.send(new TdApi.ViewMessages(chatId, msgs.map(_.getElement.getId).toArray, false), EmptyHandler[F]())
+          _ <- clientService.sendRequest(new TdApi.ViewMessages(chatId, msgs.map(_.getElement.getId).toArray, false), EmptyHandler[F]())
           _ <- Sync[F].delay {
             val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
             msgs.foreach(observList.add)
@@ -102,7 +101,9 @@ object UIProgram {
           }
         } yield ()
       case _@SendToChat(msg) =>
-        userStateRef.get.flatMap( state => ClientUtils.sendMsg(state.chatList.find(_.id == state.activeChat).get, msg, userStateRef))
+        userStateRef.get.flatMap( state =>
+          ClientUtils.sendMsg(state.chatList.find(_.id == state.activeChat).get, msg, userStateRef, clientService)
+        )
       case _@CreateCommunityJava(name, usersJava) =>
         privateConfService.createConference(name, "me" :: usersJava.asScala.toList)
       case _@CreatePrivateGroupChat(name) =>
@@ -123,21 +124,21 @@ object UIProgram {
         } yield ()
       case _@SetPhone(phone) =>
         userStateRef.get.flatMap(state =>
-          state.client.send(new TdApi.SetAuthenticationPhoneNumber(phone, null), AuthRequestHandler(userStateRef))
+          clientService.sendRequest(new TdApi.SetAuthenticationPhoneNumber(phone, null), AuthRequestHandler(userStateRef))
         ) >> Logger[F].info("Set phone")
       case _@SetPass(pass) =>
         userStateRef.get.flatMap(state =>
-          state.client.send(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler(userStateRef))
+          clientService.sendRequest(new TdApi.CheckAuthenticationPassword(pass), AuthRequestHandler(userStateRef))
         ) >> Logger[F].info("Set pass")
       case _@SetVCCode(vcCode) =>
         userStateRef.get.flatMap(state =>
-          state.client.send(new TdApi.CheckAuthenticationCode(vcCode), AuthRequestHandler(userStateRef))
+          clientService.sendRequest(new TdApi.CheckAuthenticationCode(vcCode), AuthRequestHandler(userStateRef))
         ) >> Logger[F].info(s"Set code ${vcCode}")
       case _@DeleteCommunity(name) =>
         privateConfService.deleteConference(name) >> userStateService.deleteCommunity(name)
       case _@Logout() =>
         userStateRef.get.flatMap(state =>
-          state.client.send(new TdApi.LogOut, EmptyHandler[F]())
+          clientService.sendRequest(new TdApi.LogOut, EmptyHandler[F]())
         ) >> Logger[F].info("Logout")
     }
 
@@ -154,17 +155,16 @@ object UIProgram {
           s"and users(${users}):")
         confInfo <- privateConfService.findConf(conferenceName)
 
-        _ <- client.send(
+        _ <- clientService.sendRequest(
           new TdApi.CreateNewBasicGroupChat(userIds.map(_._1).toArray, groupname),
           PrivateGroupChatCreationHandler[F](
             userStateRef,
-            client,
             confInfo,
             groupname,
             userIds.map(_._2),
             confInfo.users.head.userTelegramLogin,
             password
-          )(privateConfService, userStateService)
+          )(privateConfService, userStateService, clientService)
         )
         _ <- state.db.put(Database.privateGroupChatsKey, groupname.getBytes())
         _ <- state.db.put(groupname.getBytes(), password.getBytes())
@@ -182,9 +182,9 @@ object UIProgram {
   def apply[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                              privateConfService: PrivateConferenceService[F],
                                              userStateService: UserStateService[F],
-                                             client: Client[F]): F[UIProgram[F]] =
+                                             clientService: ClientService[F]): F[UIProgram[F]] =
     for {
       dialogAreaMVar <- MVar.empty[F, TextArea]
       jDialogMVar <- MVar.empty[F, JDialog]
-    } yield new Live(userStateRef, privateConfService, userStateService, client, dialogAreaMVar, jDialogMVar)
+    } yield new Live(userStateRef, privateConfService, userStateService, clientService, dialogAreaMVar, jDialogMVar)
 }

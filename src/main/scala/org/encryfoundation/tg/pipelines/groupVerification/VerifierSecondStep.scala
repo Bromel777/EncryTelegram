@@ -19,14 +19,14 @@ import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndP
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.EndPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
-import org.encryfoundation.tg.services.UserStateService
+import org.encryfoundation.tg.services.{ClientService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 
 case class VerifierSecondStep[F[_]: Concurrent: Timer: Logger](proverMsg: MVar[F, ProverFirstStepMsg],
                                                                verifierVar: MVar[F, Verifier],
                                                                state: Ref[F, UserState[F]],
                                                                chatId: Long,
-                                                               client: Client[F],
+                                                               clientService: ClientService[F],
                                                                userStateService: UserStateService[F]) extends Pipeline[F] {
 
   private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] = for {
@@ -34,7 +34,7 @@ case class VerifierSecondStep[F[_]: Concurrent: Timer: Logger](proverMsg: MVar[F
     _ <- ClientUtils.sendMessage(
       chatId,
       Base64.encode(StepMsgSerializer.toBytes(msg)),
-      client
+      clientService
     )
   } yield ()
 
@@ -68,10 +68,9 @@ case class VerifierSecondStep[F[_]: Concurrent: Timer: Logger](proverMsg: MVar[F
     msg.firstStep,
     secondStep,
     emptyMVar,
-    client,
     state,
     chatId
-  )(userStateService)
+  )(userStateService, clientService)
 
   //todo errors
   def processStepInput(input: StepMsg): F[Pipeline[F]] = input match {
@@ -94,7 +93,7 @@ case class VerifierSecondStep[F[_]: Concurrent: Timer: Logger](proverMsg: MVar[F
 object VerifierSecondStep {
 
   def companion[F[_]: Concurrent: Timer: Logger]: HeadPipelineCompanion[F, VerifierSecondStep[F]] =
-    (userStateRef: Ref[F, UserState[F]], userStateService: UserStateService[F], chatId: Long, client: Client[F], msgBytes: Array[Byte]) =>
+    (userStateRef: Ref[F, UserState[F]], userStateService: UserStateService[F], chatId: Long, clientService: ClientService[F], msgBytes: Array[Byte]) =>
       for {
         state <- userStateRef.get
         proverMsgEmpty <- MVar.empty[F, ProverFirstStepMsg]
@@ -104,7 +103,7 @@ object VerifierSecondStep {
           verifierEmpty,
           userStateRef,
           chatId,
-          client,
+          clientService,
           userStateService
         ).pure[F]
         newPipeline <- pipeline.processInput(msgBytes)

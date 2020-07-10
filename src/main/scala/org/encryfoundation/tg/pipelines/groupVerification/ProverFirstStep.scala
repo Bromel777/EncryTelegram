@@ -21,7 +21,7 @@ import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.St
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.EndPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.ProverFirstMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
-import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
+import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 
 class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
                                                                community: PrivateCommunity,
@@ -30,7 +30,7 @@ class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
                                                                chatPass: String,
                                                                userState: Ref[F, UserState[F]],
                                                                userStateService: UserStateService[F],
-                                                               client: Client[F],
+                                                               clientService: ClientService[F],
                                                                chat: TdApi.Chat,
                                                                chatId: Long) extends Pipeline[F] {
 
@@ -39,7 +39,7 @@ class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
     _ <- ClientUtils.sendMessage(
       chatId,
       Base64.encode(StepMsgSerializer.toBytes(msg)),
-      client
+      clientService
     )
   } yield ()
 
@@ -57,13 +57,12 @@ class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
     recipientLogin,
     chatPass,
     userState,
-    client,
     chat,
     chatId,
     msg.firstStep,
     privateGroupChat,
     emptyMvar
-  )(userStateService)
+  )(userStateService, clientService)
 
   private def getFirstMsg: ProverFirstStepMsg =
     ProverFirstStepMsg(
@@ -79,8 +78,7 @@ class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,
 
 object ProverFirstStep {
 
-  def apply[F[_]: Concurrent: Timer: Logger](client: Client[F],
-                                             userState: Ref[F, UserState[F]],
+  def apply[F[_]: Concurrent: Timer: Logger](userState: Ref[F, UserState[F]],
                                              privateGroupChat: PrivateGroupChat,
                                              confName: String,
                                              recipientLogin: String,
@@ -89,6 +87,7 @@ object ProverFirstStep {
                                              chatId: Long)(
                                              privConfService: PrivateConferenceService[F],
                                              userStateService: UserStateService[F],
+                                             clientService: ClientService[F]
                                              ): F[ProverFirstStep[F]] =
     for {
       pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
@@ -111,7 +110,7 @@ object ProverFirstStep {
       chatPass,
       userState,
       userStateService,
-      client,
+      clientService,
       chat,
       chatId
     )

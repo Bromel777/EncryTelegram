@@ -8,20 +8,20 @@ import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.handlers.{PrivateGroupChatCreationHandler, SecretGroupPrivateChatCreationHandler}
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
+import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 
-case class CreatePrivateGroupChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
-                                                                   userStateRef: Ref[F, UserState[F]],
+case class CreatePrivateGroupChat[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                                                    db: Database[F])(
                                                                    privateConferenceService: PrivateConferenceService[F],
-                                                                   userStateService: UserStateService[F]) extends Command[F] {
+                                                                   userStateService: UserStateService[F],
+                                                                   clientService: ClientService[F]) extends Command[F] {
 
   override val name: String = "createPrivateGroupChat"
 
   override def run(args: List[String]): F[Unit] = for {
     _ <- createGroup(
       userStateRef,
-      client,
+      clientService,
       args.head,
       args.tail.head,
       args.drop(2).head,
@@ -30,7 +30,7 @@ case class CreatePrivateGroupChat[F[_]: Concurrent: Timer: Logger](client: Clien
   } yield ()
 
   def createGroup(stateRef: Ref[F, UserState[F]],
-                  client: Client[F],
+                  clientService: ClientService[F],
                   groupname: String,
                   conferenceName: String,
                   password: String,
@@ -43,17 +43,16 @@ case class CreatePrivateGroupChat[F[_]: Concurrent: Timer: Logger](client: Clien
       _ <- Logger[F].info(s"Create private group chat for conference ${conferenceName} with next group: ${groupname} " +
         s"and users(${users}):")
       confInfo <- privateConferenceService.findConf(conferenceName)
-      _ <- client.send(
+      _ <- clientService.sendRequest(
         new TdApi.CreateNewBasicGroupChat(userIds.map(_._1).toArray, groupname),
         PrivateGroupChatCreationHandler[F](
           stateRef,
-          client,
           confInfo,
           groupname,
           userIds.map(_._2),
           confInfo.users.head.userTelegramLogin,
           password
-        )(privateConferenceService, userStateService)
+        )(privateConferenceService, userStateService, clientService)
       )
       _ <- db.put(Database.privateGroupChatsKey, groupname.getBytes())
       _ <- db.put(groupname.getBytes(), password.getBytes())

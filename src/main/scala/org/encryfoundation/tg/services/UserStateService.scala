@@ -234,6 +234,7 @@ object UserStateService {
       } >> ().pure[F]
   }
 
-  def apply[F[_]: Sync: Logger](userState: Ref[F, UserState[F]],
-                               db: Database[F]): F[UserStateService[F]] = Sync[F].delay(new Live[F](userState, db))
+  def apply[F[_]: Sync: Logger](db: Database[F],
+                                userState: Ref[F, UserState[F]]): F[UserStateService[F]] =
+    Sync[F].delay(new Live[F](userState, db))
 }

@@ -9,11 +9,9 @@ import cats.implicits._
 import org.encryfoundation.tg.services.PrivateConferenceService
 import scorex.crypto.encode.Base16
 
-case class ShowPrivateConferences[F[_]: Sync](client: Client[F],
-                                              userStateRef: Ref[F, UserState[F]],
+case class ShowPrivateConferences[F[_]: Sync](userStateRef: Ref[F, UserState[F]],
                                               db: Database[F]) (
-                                              privateConfService: PrivateConferenceService[F]
-                                              ) extends Command[F]{
+                                              privateConfService: PrivateConferenceService[F]) extends Command[F]{
 
   override val name: String = "showConferences"
 

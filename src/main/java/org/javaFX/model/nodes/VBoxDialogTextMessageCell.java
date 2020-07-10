@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import org.javaFX.model.JMessage;
+import org.javaFX.util.StringHandler;
 
 public class VBoxDialogTextMessageCell extends VBoxMessageCell{
 
@@ -28,13 +29,10 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
     private Label createContentLabel(JMessage jMessage){
         Label contentLabel = new Label();
         String textContent = jMessage.getContent().toString()
-                .substring(jMessage.getContent().toString().indexOf(":")+2);
+                .substring(jMessage.getContent().toString().indexOf(":")+2).trim();
         contentLabel.setText(jMessage.getAuthor()+"\n"+textContent);
-        contentLabel.setWrapText(true);
-        int multiplier =
-                textContent.length() % 40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
         double width = getParentWidth() - getParentWidth() / 3;
-        double height = 27 * (multiplier +1);
+        double height = getCellHeight();
         contentLabel.setPrefSize(width - 5 , height);
         return contentLabel;
     }

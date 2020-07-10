@@ -77,8 +77,11 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     public void updateEncryWindow(EncryWindow encryWindow) {
         super.setEncryWindow(encryWindow);
         initializeTable();
-        if( messagesListView != null && messagesListView.getItems().size() != 0){
+        if( messagesListView != null && messagesListView.getItems().size() != 0 ) {
             initializeDialogArea();
+        }
+        if(messagesListView.getItems().size() == 0 ){
+            showStartMessagingArea();
         }
         enableMenuBar();
     }
@@ -122,7 +125,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     }
 
     @FXML
-    private ObservableList<VBoxMessageCell>getObservableJMessageList(){
+    private ObservableList<VBoxMessageCell> getObservableJMessageList(){
         ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
         getUserStateRef().get().messagesListView.getItems().forEach (
                 message -> observableMessageList.add(message)
@@ -192,12 +195,16 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     }
 
     private void flushDialogArea(){
-        messagesListView = new ListView<>();
-        getUserStateRef().get().setActiveDialog(messagesListView);
+        getUserStateRef().get().setActiveDialog(new ListView<>());
     }
 
     @FXML
     private void findContentInDialog(){
+    }
+
+
+    private void showStartMessagingArea(){
+        selectChatLabel.setText("There is no messages in this dialogue");
     }
 
 }

@@ -9,6 +9,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JMessage;
+import org.javaFX.util.StringHandler;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -91,9 +92,11 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     protected void initRootPane(JMessage jMessage) {
         AnchorPane pane = new AnchorPane();
         String textContent = jMessage.getContent().toString()
-                .substring(jMessage.getContent().toString().indexOf(":")+2);
+                .substring(jMessage.getContent().toString().indexOf(":")+2).trim();
         int multiplier =
                 textContent.length()%40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
+        int numberOfNewLines = StringHandler.countCharactersInStr(textContent,'\n');
+        multiplier += numberOfNewLines;
         cellWidth = getParentWidth() - getParentWidth() / 3;
         cellHeight = 27 * (multiplier +1);
         if (jMessage.isMine()) {

@@ -1,8 +1,6 @@
 package org.javaFX.controller.impl.handler;
 
-import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.util.Duration;
@@ -13,7 +11,6 @@ import org.javaFX.util.observers.JWindowObserver;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class StartWindowHandler extends DataHandler {
-
 
     @FXML
     private Label progressLabel;

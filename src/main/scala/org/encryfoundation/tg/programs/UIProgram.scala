@@ -86,7 +86,6 @@ object UIProgram {
           _ <- clientService.sendRequest(
             new TdApi.GetChatHistory(chatId, 0, 0, 20, false),
             ValueHandler(
-              userStateRef,
               msgsMVar,
               (msg: TdApi.Messages) =>
                 msg.messages.toList.traverse(processLastMessage(_, state)).map(_.reverse))

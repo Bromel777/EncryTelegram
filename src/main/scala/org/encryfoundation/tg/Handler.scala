@@ -180,7 +180,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case  _: TdApi.AuthorizationStateLoggingOut =>
         userStateService.logout()
       case _: TdApi.AuthorizationStateClosed =>
-        userStateService.setCurrentStep(AuthStep)
+        userStateService.setCurrentStep(AuthStep) >> clientService.logout() >> Logger[F].info("Complete logout")
       case _ =>
         Logger[F].info(s"Got unknown event in auth. ${authEvent}")
     }

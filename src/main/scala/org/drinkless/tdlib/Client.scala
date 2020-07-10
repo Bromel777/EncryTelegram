@@ -1,17 +1,19 @@
 package org.drinkless.tdlib
 
-import cats.effect.concurrent.{Ref, Semaphore}
+import cats.effect.concurrent.{MVar, Ref, Semaphore}
 import cats.effect.{Concurrent, Fiber, Sync, Timer}
 import cats.implicits._
 import fs2.Stream
+import io.chrisdavenport.log4cats.Logger
+import org.encryfoundation.tg.handlers.{EmptyHandler, ValueHandler}
 
 import scala.concurrent.duration._
 
-case class Client[F[_]: Concurrent: Timer] private(readLock: Semaphore[F],
-                                                   writeLock: Semaphore[F],
-                                                   isClientDestroyed: Ref[F, Boolean],
-                                                   currentQueryId: Ref[F, Long],
-                                                   handlersRef: Ref[F, Map[Long, Handler[F]]]) {
+case class Client[F[_]: Concurrent: Logger: Timer] private(readLock: Semaphore[F],
+                                                           writeLock: Semaphore[F],
+                                                           isClientDestroyed: Ref[F, Boolean],
+                                                           currentQueryId: Ref[F, Long],
+                                                           handlersRef: Ref[F, Map[Long, Handler[F]]]) {
 
   private val MAX_EVENTS = 1000
   private var eventIds = new Array[Long](MAX_EVENTS)
@@ -39,18 +41,13 @@ case class Client[F[_]: Concurrent: Timer] private(readLock: Semaphore[F],
     _ <- handlersRef.tryUpdate(prev => prev.updated(0L, Handler[F](updatesHandler, exceptionHandler)))
   } yield ()
 
-  def receiveQueries(timeout: Double): Stream[F, Unit] = {
-    Stream(())
-      .covary[F]
-      .repeat
-      .evalMap { _ =>
-        (0 until nativeClientReceive(nativeClientId, eventIds, events, timeout)).toList.traverse(i =>
-          if (!stopFlag) {
-            processResult(eventIds(i), events(i)).flatMap(_ => Sync[F].delay({
-              events(i) = null
-            }))
-          } else ().pure[F]) >> ().pure[F]
-      }
+  def receiveQueries(timeout: Double): F[Unit] = {
+    (0 until nativeClientReceive(nativeClientId, eventIds, events, timeout)).toList.traverse(i =>
+      if (!stopFlag) {
+        processResult(eventIds(i), events(i)).flatMap(_ => Sync[F].delay({
+          events(i) = null
+        }))
+      } else ().pure[F]) >> ().pure[F]
   }
 
   private def processResult(id: Long, obj: TdApi.Object): F[Unit] = for {
@@ -67,6 +64,14 @@ case class Client[F[_]: Concurrent: Timer] private(readLock: Semaphore[F],
         .flatMap(_ => newHandler.map(handler => handleResult(obj, handler)).getOrElse(().pure[F]))
     }
   } yield ()
+
+  def close(): F[Unit] =
+    for {
+      checkClose <- MVar.empty[F, Boolean]
+      _ <- send(new TdApi.Close(), ValueHandler(checkClose, (msg: TdApi.Ok) => true.pure[F]))
+      _ <- checkClose.read
+    } yield ()
+
 
   //todo: Add exception handling
   private def handleResult(obj: TdApi.Object,
@@ -89,13 +94,11 @@ case class Client[F[_]: Concurrent: Timer] private(readLock: Semaphore[F],
 
   @native
   private def destroyNativeClient(nativeClientId: Long): Unit
-
-  def run(): Stream[F, Unit] = receiveQueries(300)
 }
 
 object Client {
 
-  def apply[F[_]: Concurrent: Timer](requestHandler: ResultHandler[F]): F[Client[F]] = for {
+  def apply[F[_]: Concurrent: Timer: Logger](requestHandler: ResultHandler[F]): F[Client[F]] = for {
     readLockSem <- Semaphore[F](1)
     writeLockSem <- Semaphore[F](1)
     isClientDestroyed <- Ref.of[F, Boolean](false)

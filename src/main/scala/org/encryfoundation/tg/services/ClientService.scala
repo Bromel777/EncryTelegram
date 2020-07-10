@@ -11,6 +11,7 @@ import org.drinkless.tdlib.Client._
 import org.encryfoundation.tg.Handler
 import org.encryfoundation.tg.userState.UserState
 import fs2.Stream
+import org.encryfoundation.tg.services.ClientService.ClientStep.{Logout, Normal}
 import org.encryfoundation.tg.services.ClientService.Live
 
 trait ClientService[F[_]] {
@@ -23,10 +24,17 @@ trait ClientService[F[_]] {
 
 object ClientService {
 
-  final private class Live[F[_]: Concurrent: Timer: Logger](privateConferenceService: PrivateConferenceService[F],
-                                                            userStateService: UserStateService[F],
-                                                            userStateRef: Ref[F, UserState[F]],
-                                                            clientRef: MVar[F, Client[F]]) extends ClientService[F] {
+  sealed trait ClientStep
+  object ClientStep {
+    case object Logout extends ClientStep
+    case object Normal extends ClientStep
+  }
+
+  final private class Live[F[_]: ConcurrentEffect: Timer: Logger](privateConferenceService: PrivateConferenceService[F],
+                                                                  userStateService: UserStateService[F],
+                                                                  userStateRef: Ref[F, UserState[F]],
+                                                                  currentStep: Ref[F, ClientStep],
+                                                                  clientRef: MVar[F, Client[F]]) extends ClientService[F] {
 
     override def sendRequest(func: TdApi.Function, handler: ResultHandler[F]): F[Unit] =
       clientRef.isEmpty.flatMap { isEmpty =>
@@ -38,12 +46,33 @@ object ClientService {
 
     override def updateClient(client: Client[F]): F[Unit] = clientRef.put(client)
 
-    override def logout(): F[Unit] = clientRef.tryTake >> ().pure[F]
+    override def logout(): F[Unit] = currentStep.set(Logout)
 
-    override def runClient: Stream[F, Unit] = for {
-      client <- Stream.eval(clientRef.read)
-      stream <- client.run()
-    } yield stream
+    override def runClient: Stream[F, Unit] =
+      Stream.eval(currentStep.get)
+        .repeat
+        .flatMap {
+          case ClientStep.Logout =>
+            for {
+              _ <- Stream.eval(createClient)
+              _ <- Stream.eval(currentStep.set(Normal))
+            } yield ()
+          case ClientStep.Normal =>
+            for {
+              client <- Stream.eval(clientRef.read)
+              _ <- Stream.eval(client.receiveQueries(300))
+            } yield ()
+        }
+
+    private def createClient: F[Unit] =
+      for {
+        client <- Client[F](EmptyHandler[F])
+        handler <- Handler[F](userStateRef, privateConferenceService, userStateService, this)
+        _ <- client.setUpdatesHandler(handler)
+        _ <- client.execute(new TdApi.SetLogVerbosityLevel(0))
+        _ <- clientRef.tryTake
+        _ <- clientRef.put(client)
+      } yield ()
 
   }
 
@@ -53,7 +82,8 @@ object ClientService {
     for {
       client <- Client[F](EmptyHandler[F])
       clientMvar <- MVar.of(client)
-      live <- Applicative[F].pure(new Live(privateConferenceService, userStateService, userStateRef, clientMvar))
+      step <- Ref.of[F, ClientStep](Normal)
+      live <- Applicative[F].pure(new Live(privateConferenceService, userStateService, userStateRef, step, clientMvar))
       handler <- Handler[F](userStateRef, privateConferenceService, userStateService, live)
       _ <- client.setUpdatesHandler(handler)
       _ <- client.execute(new TdApi.SetLogVerbosityLevel(0))

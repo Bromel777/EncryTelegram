@@ -16,7 +16,7 @@ import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
 import org.encryfoundation.tg.javaIntegration.AuthMsg.{LoadChatsWindow, LoadPassWindow, LoadVCWindow}
 import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
-import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
+import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.steps.Step.AuthStep
 import org.encryfoundation.tg.userState.UserState
 import org.encryfoundation.tg.utils.{MessagesUtils, UserStateUtils}
@@ -30,7 +30,7 @@ import scala.util.{Failure, Success, Try}
 case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                                           privateConferenceService: PrivateConferenceService[F],
                                                           userStateService: UserStateService[F],
-                                                          client: Client[F]) extends ResultHandler[F] {
+                                                          clientService: ClientService[F]) extends ResultHandler[F] {
 
   /**
    * Callback called on result of query to TDLib or incoming update from TDLib.
@@ -40,7 +40,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
 
   override def onResult(obj: TdApi.Object): F[Unit] = obj match {
       case authEvent: TdApi.UpdateAuthorizationState =>
-        authHandler(authEvent, client)
+        authHandler(authEvent)
       case updateNewChat: TdApi.UpdateNewChat =>
         for {
           _ <- Logger[F].info(s"Receive update new chat with chat id: ${updateNewChat.chat}")
@@ -78,7 +78,8 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           case _: TdApi.SecretChatStatePending if !secretChat.secretChat.isOutbound =>
             for {
               _ <- Logger[F].info(s"Accept secret chat: ${secretChat}")
-              _ <- client.send(new TdApi.OpenChat(secretChat.secretChat.id), SecretChatCreationHandler[F](userStateRef))
+              state <- userStateRef.get
+              _ <- clientService.sendRequest(new TdApi.OpenChat(secretChat.secretChat.id), SecretChatCreationHandler[F](userStateRef))
               _ <- userStateService.addSecretChat(secretChat.secretChat)
             } yield ()
           case _: TdApi.SecretChatStateReady =>
@@ -118,7 +119,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
                           userStateRef,
                           userStateService,
                           msg.message.chatId,
-                          client,
+                          clientService,
                           stepMsg
                         )
                       }
@@ -133,7 +134,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case _ => Logger[F].info(s"Receive unkown elem3: ${obj}")
     }
 
-  def authHandler(authEvent: TdApi.UpdateAuthorizationState, client: Client[F]): F[Unit] = {
+  def authHandler(authEvent: TdApi.UpdateAuthorizationState): F[Unit] = {
     authEvent.authorizationState match {
       case a: TdApi.AuthorizationStateWaitTdlibParameters =>
         val parameters = new TdApi.TdlibParameters
@@ -147,11 +148,11 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         parameters.systemVersion = "Unknown"
         parameters.applicationVersion = "0.1"
         parameters.enableStorageOptimizer = true
-        Logger[F].info("Setting td-lib settings") >> client.send(
+        Logger[F].info("Setting td-lib settings") >> clientService.sendRequest(
           new TdApi.SetTdlibParameters(parameters), AuthRequestHandler[F](userStateRef)
         ) >> userStateService.setCurrentStep(AuthStep)
       case a: TdApi.AuthorizationStateWaitEncryptionKey =>
-        client.send(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F](userStateRef))
+        clientService.sendRequest(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F](userStateRef))
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>
         for {
           _ <- Logger[F].info(s"Get ${a}")
@@ -171,7 +172,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           _ <- userStateService.setAuth()
           state <- userStateRef.get
           _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadChatsWindow))
-          _ <- client.send(
+          _ <- clientService.sendRequest(
             new TdApi.GetChats(new TdApi.ChatListMain(), Long.MaxValue, 0, 20),
             EmptyHandler[F]()
           )
@@ -179,7 +180,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case  _: TdApi.AuthorizationStateLoggingOut =>
         userStateService.logout()
       case _: TdApi.AuthorizationStateClosed =>
-        userStateService.setCurrentStep(AuthStep)
+        userStateService.setCurrentStep(AuthStep) >> clientService.logout() >> Logger[F].info("Complete logout")
       case _ =>
         Logger[F].info(s"Got unknown event in auth. ${authEvent}")
     }
@@ -236,16 +237,8 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
 
 object Handler {
   def apply[F[_]: ConcurrentEffect: Timer: Logger](stateRef: Ref[F, UserState[F]],
-                                                   queueRef: Ref[F, List[TdApi.Object]],
                                                    privateConferenceService: PrivateConferenceService[F],
                                                    userStateService: UserStateService[F],
-                                                   client: Client[F]): F[Handler[F]] = {
-    val handler = new Handler(stateRef, privateConferenceService, userStateService, client)
-    for {
-      list <- queueRef.get
-      _ <- Sync[F].delay(list)
-      _ <- list.foreach(elem => Sync[F].delay(println(s"Send: ${elem.getConstructor}. ${list}")) >> handler.onResult(elem)).pure[F]
-      handlerExp <- handler.pure[F]
-    } yield handlerExp
-  }
+                                                   clientService: ClientService[F]): F[Handler[F]] =
+   Sync[F].delay(new Handler(stateRef, privateConferenceService, userStateService, clientService))
 }

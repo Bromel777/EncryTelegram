@@ -5,19 +5,19 @@ import cats.effect.concurrent.Ref
 import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.community.PrivateCommunity
-import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
+import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.{PrivateGroupChat, UserState}
 import cats.implicits._
 
 case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Timer: Logger](stateRef: Ref[F, UserState[F]],
-                                                                            client: Client[F],
                                                                             confInfo: PrivateCommunity,
                                                                             groupName: String,
                                                                             users: List[TdApi.User],
                                                                             myLogin: String,
                                                                             password: String)
                                                                            (privConfServ: PrivateConferenceService[F],
-                                                                            userStateService: UserStateService[F]) extends ResultHandler[F] {
+                                                                            userStateService: UserStateService[F],
+                                                                            clientService: ClientService[F]) extends ResultHandler[F] {
 
   override def onResult(obj: TdApi.Object): F[Unit] = obj.getConstructor match {
     case TdApi.Chat.CONSTRUCTOR =>
@@ -28,7 +28,7 @@ case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Timer: Logger](stat
           PrivateGroupChat(newChat.id, confInfo.name, groupName, password)
         )
         _ <- users.traverse { user =>
-          client.send(
+          clientService.sendRequest(
             new TdApi.CreateNewSecretChat(user.id),
             SecretGroupPrivateChatCreationHandler[F](
               stateRef,
@@ -36,8 +36,7 @@ case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Timer: Logger](stat
               confInfo.name,
               password,
               user,
-              newChat.id,
-              client)(privConfServ, userStateService)
+              newChat.id)(privConfServ, userStateService, clientService)
           )
         }
       } yield ()

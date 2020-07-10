@@ -7,12 +7,12 @@ import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import org.encryfoundation.tg.handlers.MessagesHandler
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.services.UserStateService
+import org.encryfoundation.tg.services.{ClientService, UserStateService}
 
-case class ReadChat[F[_]: Concurrent: Timer](client: Client[F],
-                                             userStateRef: Ref[F, UserState[F]],
+case class ReadChat[F[_]: Concurrent: Timer](userStateRef: Ref[F, UserState[F]],
                                              db: Database[F])
-                                            (userStateService: UserStateService[F]) extends Command[F] {
+                                            (userStateService: UserStateService[F],
+                                             clientService: ClientService[F]) extends Command[F] {
 
   override val name: String = "read"
 
@@ -21,7 +21,7 @@ case class ReadChat[F[_]: Concurrent: Timer](client: Client[F],
     chat <- state.mainChatList.find(_._2.title == args.last).get._2.pure[F]
     dbPass <- db.get(args.last.getBytes())
     groupInfo <- userStateService.getPrivateGroupChat(chat.id)
-    _ <- client.send(
+    _ <- clientService.sendRequest(
       new TdApi.GetChatHistory(chat.id, 0, 0, 20, false),
       MessagesHandler[F](
         groupInfo.map(_.password).orElse(dbPass.map(_.map(_.toChar).mkString)))

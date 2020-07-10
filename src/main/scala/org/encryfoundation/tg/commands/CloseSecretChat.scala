@@ -8,16 +8,17 @@ import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import org.encryfoundation.tg.handlers.{CloseChatHandler, EmptyHandler}
+import org.encryfoundation.tg.services.ClientService
 
-case class CloseSecretChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
+case class CloseSecretChat[F[_]: Concurrent: Timer: Logger](clientService: ClientService[F],
                                                             userStateRef: Ref[F, UserState[F]],
                                                             db: Database[F]) extends Command[F] {
   override val name: String = "closeSecretChat"
 
   override def run(args: List[String]): F[Unit] = for {
-    _ <- client.send(
+    _ <- clientService.sendRequest(
       new TdApi.CloseSecretChat(args.head.toInt),
-      CloseChatHandler[F](userStateRef, client, args.last.toLong)
+      CloseChatHandler[F](userStateRef, args.last.toLong)
     )
   } yield ()
 }

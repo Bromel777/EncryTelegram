@@ -7,10 +7,11 @@ import org.drinkless.tdlib.{Client, ClientUtils, TdApi}
 import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
+import org.encryfoundation.tg.services.ClientService
 import org.encryfoundation.tg.utils.UserStateUtils
 
-case class SendToChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
-                                                       userStateRef: Ref[F, UserState[F]]) extends Command[F]{
+case class SendToChat[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
+                                                       clientService: ClientService[F]) extends Command[F]{
 
   override val name: String = "sendToChat"
 
@@ -19,7 +20,8 @@ case class SendToChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
       case Some(chat) => ClientUtils.sendMsg(
         chat,
         args.last,
-        userStateRef
+        userStateRef,
+        clientService
       )
       case None => Logger[F].warn(s"Chat with identifier: ${args.head} doesn't exist")
     }

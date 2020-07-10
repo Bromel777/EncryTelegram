@@ -6,7 +6,7 @@ import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.Client
 import org.encryfoundation.tg.errors.TdError
 import org.encryfoundation.tg.leveldb.Database
-import org.encryfoundation.tg.services.{PrivateConferenceService, UserStateService}
+import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 import tofu.Raise
 
@@ -18,21 +18,21 @@ trait Command[F[_]] {
 }
 
 object Command {
-  def getCommands[F[_]: Concurrent: Timer: Logger: Raise[*[_], TdError]](client: Client[F],
-                                                                         userStateRef: Ref[F, UserState[F]],
+  def getCommands[F[_]: Concurrent: Timer: Logger: Raise[*[_], TdError]](userStateRef: Ref[F, UserState[F]],
                                                                          db: Database[F])(
                                                                          confService: PrivateConferenceService[F],
-                                                                         userStateService: UserStateService[F]
+                                                                         userStateService: UserStateService[F],
+                                                                         clientService: ClientService[F]
                                                                          ): List[Command[F]] = List(
-    CreatePrivateGroupChat[F](client, userStateRef, db)(confService, userStateService),
-    PrintChats[F](client, userStateRef, db),
-    ReadChat[F](client, userStateRef, db)(userStateService),
-    SendToChat[F](client, userStateRef),
-    CreatePrivateConference[F](client, userStateRef, db)(confService),
-    ShowPrivateConferences[F](client, userStateRef, db)(confService),
-    CreatePrivateChat[F](client, userStateRef),
-    Logout[F](client, userStateRef, db),
-    CloseChat[F](client, userStateRef, db),
-    CloseSecretChat[F](client, userStateRef, db)
+    CreatePrivateGroupChat[F](userStateRef, db)(confService, userStateService, clientService),
+    PrintChats[F](userStateRef, db),
+    ReadChat[F](userStateRef, db)(userStateService, clientService),
+    SendToChat[F](userStateRef, clientService),
+    CreatePrivateConference[F](userStateRef, db)(confService),
+    ShowPrivateConferences[F](userStateRef, db)(confService),
+    CreatePrivateChat[F](clientService, userStateRef),
+    Logout[F](clientService, userStateRef, db),
+    CloseChat[F](userStateRef, db)(clientService),
+    CloseSecretChat[F](clientService, userStateRef, db)
   )
 }

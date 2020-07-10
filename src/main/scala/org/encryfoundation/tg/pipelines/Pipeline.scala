@@ -10,7 +10,7 @@ import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
 import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.StartPipeline
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
-import org.encryfoundation.tg.services.UserStateService
+import org.encryfoundation.tg.services.{ClientService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 
 trait Pipeline[F[_]] {
@@ -22,7 +22,7 @@ trait HeadPipelineCompanion[F[_], T <: Pipeline[F]] {
   def startPipeline(state: Ref[F, UserState[F]],
                     userStateService: UserStateService[F],
                     chatId: Long,
-                    client: Client[F],
+                    clientService: ClientService[F],
                     msgBytes: Array[Byte]): F[Unit]
 }
 
@@ -30,14 +30,14 @@ object Pipelines {
   def findStart[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
                                                  userStateService: UserStateService[F],
                                                  chatId: Long,
-                                                 client: Client[F],
+                                                 clientService: ClientService[F],
                                                  msg: StepMsg): F[Unit] = msg match {
     case start@StartPipeline(pipelineName) if pipelineName == ProverFirstStep.pipelineName =>
       VerifierSecondStep.companion[F].startPipeline(
         userStateRef,
         userStateService,
         chatId,
-        client,
+        clientService,
         StepMsgSerializer.toBytes(start)
       )
     case _ => Applicative[F].pure(())

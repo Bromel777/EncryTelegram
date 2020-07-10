@@ -9,12 +9,11 @@ import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 
 case class ValueHandler[F[_]: Concurrent: Timer: Logger, RT,
-                        M <: TdApi.Object](stateRef: Ref[F, UserState[F]],
-                                           returnMVar: MVar[F, RT],
+                        M <: TdApi.Object](returnMVar: MVar[F, RT],
                                            valueParser: M => F[RT]) extends ResultHandler[F] {
 
   override def onResult(obj: TdApi.Object): F[Unit] = obj match {
     case m: M => valueParser(m).flatMap(value => returnMVar.put(value))
-    case _ => Applicative[F].pure(())
+    case t => Logger[F].info(s"Receive ${t} on value handler")
   }
 }

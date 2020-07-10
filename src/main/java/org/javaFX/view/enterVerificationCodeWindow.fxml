@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -23,12 +24,12 @@
         </AnchorPane>
         <AnchorPane layoutX="14.0" layoutY="179.0" prefHeight="103.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="179.0">
             <children>
-                <Label layoutX="136.0" layoutY="3.0" prefHeight="66.0" prefWidth="328.0" text="Please enter the code you've just received via SMS" wrapText="true" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="3.0">
+                <Label layoutX="136.0" layoutY="49.0" prefHeight="54.0" prefWidth="328.0" text="Please enter the code you've just received via SMS" textFill="#707070" wrapText="true" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="49.0">
                     <font>
                         <Font name="Times New Roman" size="20.0" />
                     </font>
                 </Label>
-            <Label fx:id="phoneNumberLabel" layoutX="170.0" layoutY="4.0" prefHeight="66.0" prefWidth="328.0" textFill="TRANSPARENT" wrapText="true" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0">
+            <Label fx:id="phoneNumberLabel" layoutX="136.0" layoutY="-2.0" prefHeight="54.0" prefWidth="328.0" textFill="TRANSPARENT" wrapText="true" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0">
                <font>
                   <Font name="Times New Roman Bold" size="22.0" />
                </font>
@@ -36,7 +37,7 @@
             </children></AnchorPane>
         <AnchorPane layoutY="289.0" prefHeight="179.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="289.0">
             <children>
-            <Label layoutX="136.0" layoutY="63.0" prefHeight="73.0" prefWidth="328.0" text="We have sent you a code via SMS. Please enter it above." wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0">
+            <Label layoutX="136.0" layoutY="63.0" prefHeight="73.0" prefWidth="328.0" text="We have sent you a code via SMS. Please enter it above." textFill="#707070" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0">
                <font>
                   <Font name="Times New Roman" size="20.0" />
                </font>

@@ -19,7 +19,7 @@
       </AnchorPane>
       <AnchorPane layoutX="14.0" layoutY="161.0" prefHeight="130.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="161.0">
          <children>
-            <Label layoutX="136.0" layoutY="54.0" prefHeight="73.0" prefWidth="311.0" text="Please confirm your country code and enter your mobile" wrapText="true" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="153.0" AnchorPane.topAnchor="54.0">
+            <Label layoutX="136.0" layoutY="54.0" prefHeight="73.0" prefWidth="311.0" text="Please confirm your country code and enter your mobile" textFill="#707070" wrapText="true" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="153.0" AnchorPane.topAnchor="54.0">
                <font>
                   <Font name="Times New Roman" size="20.0" />
                </font>

@@ -18,7 +18,7 @@ import org.encryfoundation.tg.javaIntegration.JavaInterMsg._
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
-import org.encryfoundation.tg.utils.MessagesUtils
+import org.encryfoundation.tg.utils.{ChatUtils, MessagesUtils}
 import org.javaFX.model.nodes.{VBoxDialogTextMessageCell, VBoxMessageCell}
 import org.javaFX.model.{JDialog, JMessage}
 import scorex.crypto.encode.Base64
@@ -78,20 +78,12 @@ object UIProgram {
       case _@SetActiveChat(chatId) =>
         for {
           state <- userStateRef.get
-          _ <- clientService.sendRequest(new TdApi.CloseChat(state.activeChat), EmptyHandler[F]())
-          _ <- clientService.sendRequest(new TdApi.OpenChat(chatId), EmptyHandler[F]())
+          _ <- clientService.sendRequest(new TdApi.CloseChat(state.activeChat))
+          _ <- clientService.sendRequest(new TdApi.OpenChat(chatId))
           _ <- Sync[F].delay(state.javaState.get().messagesListView.setItems(FXCollections.observableArrayList[VBoxMessageCell]()))
           javaState <- state.javaState.get().pure[F]
-          msgsMVar <- MVar.empty[F, List[VBoxMessageCell]]
-          _ <- clientService.sendRequest(
-            new TdApi.GetChatHistory(chatId, 0, 0, 20, false),
-            ValueHandler(
-              msgsMVar,
-              (msg: TdApi.Messages) =>
-                msg.messages.toList.traverse(processLastMessage(_, state)).map(_.reverse))
-          )
+          msgs <- ChatUtils.getMsgs(chatId, 20, clientService, state, userStateService)
           _ <- userStateRef.update(_.copy(activeChat = chatId))
-          msgs <- msgsMVar.read
           _ <- clientService.sendRequest(new TdApi.ViewMessages(chatId, msgs.map(_.getElement.getId).toArray, false), EmptyHandler[F]())
           _ <- Sync[F].delay {
             val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()

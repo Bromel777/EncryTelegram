@@ -6,7 +6,7 @@ import cats.effect.{Concurrent, ConcurrentEffect, IO, Timer}
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
-import org.encryfoundation.tg.handlers.EmptyHandler
+import org.encryfoundation.tg.handlers.{EmptyHandler, SuccessHandler}
 import org.drinkless.tdlib.Client._
 import org.encryfoundation.tg.Handler
 import org.encryfoundation.tg.userState.UserState
@@ -42,7 +42,10 @@ object ClientService {
         else clientRef.read.flatMap(_.send(func, handler))
       }
 
-    override def sendRequest(func: TdApi.Function): F[Unit] = sendRequest(func, EmptyHandler[F]())
+    override def sendRequest(func: TdApi.Function): F[Unit] = func match {
+      case _: TdApi.OpenChat => checkForSuccess(func)
+      case _ => sendRequest(func, EmptyHandler[F]())
+    }
 
     override def updateClient(client: Client[F]): F[Unit] = clientRef.put(client)
 
@@ -74,6 +77,12 @@ object ClientService {
         _ <- clientRef.put(client)
       } yield ()
 
+    private def checkForSuccess(func: TdApi.Function): F[Unit] =
+      for {
+        checkMVar <- MVar.empty[F, Boolean]
+        _ <- sendRequest(func, SuccessHandler(checkMVar))
+        _ <- checkMVar.read
+      } yield ()
   }
 
   def apply[F[_]: ConcurrentEffect: Timer: Logger](privateConferenceService: PrivateConferenceService[F],

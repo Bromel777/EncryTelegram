@@ -60,25 +60,33 @@ public class EnterPhoneNumberHandler extends DataHandler {
     @FXML
     private void handleConfirmNumberAction(){
         String phoneNumberStr = phoneNumberTextField.getCharacters().toString();
-        if (selectCountryMenu.getText().equals(russianFederationMenuItem.getText())){
-            phoneNumberStr = "7"+phoneNumberStr;
-        }
-        else if(selectCountryMenu.getText().equals(belarusMenuItem.getText())){
-            phoneNumberStr = "375"+phoneNumberStr;
-        }
-        getUserStateRef().get().setPhoneNumber(phoneNumberStr);
-        try {
-            getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetPhone(phoneNumberStr));
-            AuthMsg nextStep = getUserStateRef().get().authQueue.take();
-            if (nextStep.code() == AuthMsg.loadVC().code()) {
-                getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
-                ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController() )
-                        .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber());
-            } else if (nextStep.code() == AuthMsg.err().code()) {
-                error.setText("Oops! Error");
+        if (phoneNumberStr.isEmpty()) error.setText("Empty phone field :( Please enter it!");
+        else {
+            if (selectCountryMenu.getText().equals(russianFederationMenuItem.getText())) {
+                phoneNumberStr = "7" + phoneNumberStr;
+            } else if (selectCountryMenu.getText().equals(belarusMenuItem.getText())) {
+                phoneNumberStr = "375" + phoneNumberStr;
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            getUserStateRef().get().setPhoneNumber(phoneNumberStr);
+            try {
+                getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetPhone(phoneNumberStr));
+                AuthMsg nextStep = getUserStateRef().get().authQueue.take();
+                if (nextStep.code() == AuthMsg.loadPass().code()) {
+                    getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
+                } else if (nextStep.code() == AuthMsg.loadVC().code()) {
+                    getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
+                    ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController())
+                            .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber());
+                } else if (nextStep.code() == AuthMsg.loadChats().code()) {
+                    getEncryWindow().launchWindowByPathToFXML(
+                            EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
+                    );
+                } else if (nextStep.code() == AuthMsg.err().code()) {
+                    error.setText("Oops error!");
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

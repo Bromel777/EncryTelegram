@@ -40,18 +40,22 @@ public class EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private void handleConfirmVCAction() {
         String verificationCodeStr = verificationCodeTextField.getCharacters().toString();
-        try {
+        if (verificationCodeStr.isEmpty()) error.setText("Empty vc code :( Please enter it!");
+        else try {
             getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetVCCode(verificationCodeStr));
             AuthMsg nextStep = getUserStateRef().get().authQueue.take();
             if (nextStep.code() == AuthMsg.loadPass().code()) {
                 getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
+            } else if (nextStep.code() == AuthMsg.loadVC().code()) {
+                getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
+                ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController())
+                        .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber());
+            } else if (nextStep.code() == AuthMsg.loadChats().code()) {
+                getEncryWindow().launchWindowByPathToFXML(
+                        EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
+                );
             } else if (nextStep.code() == AuthMsg.err().code()) {
                 error.setText("Incorrect vc code");
-            }
-            else {
-                getEncryWindow().launchWindowByPathToFXML(
-                        EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
-                );
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

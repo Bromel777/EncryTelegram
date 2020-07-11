@@ -34,14 +34,21 @@ public class EnterPasswordHandler extends DataHandler {
     @FXML
     private void handleConfirmPasswordAction(){
         String passwordStr = passwordField.getCharacters().toString();
-        try {
+        if (passwordStr.isEmpty()) error.setText("Empty password :( Please enter it!");
+        else try {
             getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetPass(passwordStr));
             AuthMsg nextStep = getUserStateRef().get().authQueue.take();
-            if (nextStep.code() == AuthMsg.loadChats().code())
+            if (nextStep.code() == AuthMsg.loadPass().code()) {
+                getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
+            } else if (nextStep.code() == AuthMsg.loadVC().code()) {
+                getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
+                ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController())
+                        .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber());
+            } else if (nextStep.code() == AuthMsg.loadChats().code()) {
                 getEncryWindow().launchWindowByPathToFXML(
-                        EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
+                        EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
                 );
-            else if (nextStep.code() == AuthMsg.err().code()) {
+            } else if (nextStep.code() == AuthMsg.err().code()) {
                 error.setText("Incorrect password");
             }
         } catch (InterruptedException e) {

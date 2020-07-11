@@ -44,6 +44,7 @@ object ClientService {
 
     override def sendRequest(func: TdApi.Function): F[Unit] = func match {
       case _: TdApi.OpenChat => checkForSuccess(func)
+      case _: TdApi.LogOut => checkForSuccess(func)
       case _ => sendRequest(func, EmptyHandler[F]())
     }
 

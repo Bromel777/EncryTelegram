@@ -15,7 +15,7 @@ import org.drinkless.tdlib.{Client, TdApi}
 import org.encryfoundation.mitmImun.Verifier
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.CloseChatHandler
-import org.encryfoundation.tg.services.UserStateService
+import org.encryfoundation.tg.services.{ClientService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
@@ -24,14 +24,15 @@ case class VerifierForthStep[F[_]: Concurrent: Timer: Logger](verifier: Verifier
                                                               firstStep: Element,
                                                               secondStep: Element,
                                                               thirdStep: MVar[F, ProverThirdStepMsg],
-                                                              client: Client[F],
                                                               stateRef: Ref[F, UserState[F]],
                                                               chatId: Long)
-                                                             (userStateService: UserStateService[F]) extends Pipeline[F] {
+                                                             (userStateService: UserStateService[F],
+                                                              clientService: ClientService[F]) extends Pipeline[F] {
 
   def processPreviousStepStart: F[Pipeline[F]] = Applicative[F].pure(this)
 
   def processPreviousStepEnd: F[Pipeline[F]] = for {
+    state <- stateRef.get
     thirdStepMsg <- thirdStep.read
     result <- verifier.forthStep(
       firstStep,
@@ -55,7 +56,7 @@ case class VerifierForthStep[F[_]: Concurrent: Timer: Logger](verifier: Verifier
         _ <- userStateService.persistPrivateGroupChat(decypherdGroup)
       } yield ()
     } else ().pure[F]
-    _ <- client.send(new TdApi.CloseChat(chatId), CloseChatHandler[F](stateRef, client, chatId))
+    _ <- clientService.sendRequest(new TdApi.CloseChat(chatId), CloseChatHandler[F](stateRef, chatId))
   } yield this
 
   def processStepInput(input: StepMsg): F[Pipeline[F]] = input match {

@@ -32,7 +32,6 @@ case class UserState[F[_]: Sync](chatList: List[TdApi.Chat] = List.empty,
                                  secretChats: Map[Int, TdApi.SecretChat] = Map.empty,
                                  privateCommunities: List[PrivateCommunity] = List.empty,
                                  isAuth: Boolean = false,
-                                 client: Client[F],
                                  activeChat: Long = 0,
                                  currentStep: Step = InitStep,
                                  javaState: AtomicReference[JUserState],
@@ -43,8 +42,7 @@ object UserState {
   def privateGroupChatKey(chatId: Long): Array[Byte] = Blake2b256.hash(chatId + "privateChat")
   val privateChatsKey = Blake2b256.hash("privatechats")
 
-  private def recoverState[F[_]: Sync](client: Client[F],
-                                       javaState: AtomicReference[JUserState],
+  private def recoverState[F[_]: Sync](javaState: AtomicReference[JUserState],
                                        db: Database[F]): F[UserState[F]] = for {
     privateConfs <- recoverCommunities(db)
     privateGroupChats <- recoverPrivateGroupChats(db)
@@ -53,7 +51,6 @@ object UserState {
       javaState.get().communities.add(new JLocalCommunity(community.name, community.users.length))
     )
     UserState[F](
-      client = client,
       javaState = javaState,
       db = db,
       privateCommunities = privateConfs,
@@ -81,7 +78,6 @@ object UserState {
       ).value
     )
 
-  def recoverOrCreate[F[_]: Sync](client: Client[F],
-                                  javaState: AtomicReference[JUserState],
-                                  db: Database[F]): F[UserState[F]] = recoverState(client, javaState, db)
+  def recoverOrCreate[F[_]: Sync](javaState: AtomicReference[JUserState],
+                                  db: Database[F]): F[UserState[F]] = recoverState(javaState, db)
 }

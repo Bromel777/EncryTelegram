@@ -19,7 +19,7 @@ import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.En
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.ProverThirdMsgSerializer._
-import org.encryfoundation.tg.services.UserStateService
+import org.encryfoundation.tg.services.{ClientService, UserStateService}
 import org.encryfoundation.tg.userState.{PrivateGroupChat, UserState}
 import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
@@ -29,25 +29,26 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
                                                             recipientLogin: String,
                                                             chatPass: String,
                                                             userState: Ref[F, UserState[F]],
-                                                            client: Client[F],
                                                             secretChat: TdApi.Chat,
                                                             chatId: Long,
                                                             firstStep: Element,
                                                             privateGroupChat: PrivateGroupChat,
                                                             verifierSecondStepMsg: MVar[F, VerifierSecondStepMsg])(
-                                                            userStateService: UserStateService[F]
+                                                            userStateService: UserStateService[F],
+                                                            clientService: ClientService[F]
                                                             ) extends Pipeline[F] {
 
   private def send2Chat[M <: StepMsg](msg: M)(implicit s: StepMsgSerializer[M]): F[Unit] =
     ClientUtils.sendMessage(
       chatId,
       Base64.encode(StepMsgSerializer.toBytes(msg)),
-      client
+      clientService
     )
 
   def processPreviousStepStart: F[Pipeline[F]] = Applicative[F].pure(this)
 
   def processPreviousStepEnd: F[Pipeline[F]] = for {
+    state <- userState.get
     _ <- send2Chat(StartPipeline(ProverThirdStep.pipelineName))
     secondStep <- verifierSecondStepMsg.read
     thirdStep <- prover.thirdStep(secondStep.secondStep).pure[F]
@@ -67,7 +68,7 @@ case class ProverThirdStep[F[_]: Concurrent: Timer: Logger](prover: Prover,
       )
     )
     _ <- send2Chat(EndPipeline(ProverThirdStep.pipelineName))
-    _ <- client.send(new TdApi.CloseChat(chatId), CloseChatHandler[F](userState, client, chatId))
+    _ <- clientService.sendRequest(new TdApi.CloseChat(chatId), CloseChatHandler[F](userState, chatId))
   } yield this
 
   def processStepInput(input: StepMsg): F[Pipeline[F]] = input match {

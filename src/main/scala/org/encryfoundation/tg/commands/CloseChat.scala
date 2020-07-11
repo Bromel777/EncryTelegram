@@ -9,17 +9,18 @@ import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import org.encryfoundation.tg.handlers.{CloseChatHandler, EmptyHandler}
 import cats.implicits._
+import org.encryfoundation.tg.services.ClientService
 
-case class CloseChat[F[_]: Concurrent: Timer: Logger](client: Client[F],
-                                                      userStateRef: Ref[F, UserState[F]],
-                                                      db: Database[F]) extends Command[F] {
+case class CloseChat[F[_]: Concurrent: Timer: Logger](userStateRef: Ref[F, UserState[F]],
+                                                      db: Database[F])
+                                                     (clientService: ClientService[F]) extends Command[F] {
   override val name: String = "closeChat"
 
   override def run(args: List[String]): F[Unit] = for {
     _ <- Sync[F].delay(println(s"Close chat. ${args.head.toLong}"))
-    _ <- client.send(
+    _ <- clientService.sendRequest(
       new TdApi.CloseChat(args.head.toLong),
-      CloseChatHandler[F](userStateRef, client, args.head.toLong)
+      CloseChatHandler[F](userStateRef, args.head.toLong)
     )
   } yield ()
 }

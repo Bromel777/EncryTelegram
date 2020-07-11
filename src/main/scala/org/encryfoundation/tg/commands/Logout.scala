@@ -8,14 +8,15 @@ import org.encryfoundation.tg.userState.UserState
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.handlers.EmptyHandler
+import org.encryfoundation.tg.services.ClientService
 
-case class Logout[F[_]: Concurrent: Timer: Logger](client: Client[F],
+case class Logout[F[_]: Concurrent: Timer: Logger](clientService: ClientService[F],
                                                    userStateRef: Ref[F, UserState[F]],
                                                    db: Database[F]) extends Command[F] {
 
   override val name: String = "logout"
 
   override def run(args: List[String]): F[Unit] = for {
-    _ <- client.send(new TdApi.LogOut, EmptyHandler[F]())
+    _ <- clientService.sendRequest(new TdApi.LogOut, EmptyHandler[F]())
   } yield ()
 }

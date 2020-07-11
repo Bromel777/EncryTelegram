@@ -129,7 +129,7 @@ object UIProgram {
         privateConfService.deleteConference(name) >> userStateService.deleteCommunity(name)
       case _@Logout() =>
         userStateRef.get.flatMap(state =>
-          clientService.sendRequest(new TdApi.LogOut, EmptyHandler[F]())
+          clientService.sendRequest(new TdApi.LogOut)
         ) >> Logger[F].info("Logout")
     }
 

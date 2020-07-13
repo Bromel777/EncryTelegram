@@ -75,16 +75,22 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
 
     @Override
     protected void initAngleRectangle(JMessage jMessage) {
-        Rectangle miniRectangle = initAngleRectangle();
+        Rectangle miniRectangle ;
+        if(jMessage.isMine()){
+            miniRectangle = createAngleRectangle(13);
+        }
+        else {
+            miniRectangle = createAngleRectangle(0);
+        }
         setLayoutsAngleRectangle(jMessage, miniRectangle);
         setAngleRectangle(miniRectangle);
     }
 
-    private Rectangle initAngleRectangle (){
+    private Rectangle createAngleRectangle (int layoutY){
         Rectangle miniRectangle = new Rectangle();
         miniRectangle.setWidth(18);
         miniRectangle.setHeight(getCellHeight()-13);
-        miniRectangle.setLayoutY(13);
+        miniRectangle.setLayoutY(layoutY);
         return miniRectangle;
     }
 

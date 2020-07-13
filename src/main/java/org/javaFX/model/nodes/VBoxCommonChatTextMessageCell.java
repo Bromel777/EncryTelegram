@@ -25,7 +25,6 @@ public class VBoxCommonChatTextMessageCell extends VBoxDialogTextMessageCell{
     // Then I'll get an opportunity to show them on pages.
     // When we know that number of members in dialogue is more than 2 we should create these instance
 
-
     public VBoxCommonChatTextMessageCell(JMessage<String> jMessage, TdApi.File smallPhoto) {
         super(jMessage);
     }

@@ -25,6 +25,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     private Text abbreviationText;
     private Color circleColor;
     private LongProperty chatId;
+    private final String smallCircleColorStr = "#637079";
 
     public VBoxChatCell(JChat jChat, double parentWidth) {
         super(jChat, parentWidth);
@@ -48,13 +49,16 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     @Override
     protected void setNodesToRootPane(JChat sourceElement){
+
         getRootPane().getChildren().add(chatTitleLabel);
         getRootPane().getChildren().add(lastMessageLabel);
         getRootPane().getChildren().add(timeLabel);
-        AnchorPane.setRightAnchor(timeLabel,10.0);
+        AnchorPane.setRightAnchor(timeLabel, 5.0);
         if(smallCircle != null){
             getRootPane().getChildren().add(smallCircle);
+            AnchorPane.setRightAnchor(smallCircle, getSmallCircleRightIndent());
             getRootPane().getChildren().add(unreadMsgsNumberText);
+            AnchorPane.setRightAnchor(unreadMsgsNumberText, getSmallCircleTextRightIndent());
         }
         getRootPane().getChildren().add(bigCircle);
         getRootPane().getChildren().add(abbreviationText);
@@ -99,7 +103,6 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         timeLabel = new Label();
         timeLabel.setText(TimeParser.parseDataString (jChat.getLastMessageTime().getValue().toString()));
         timeLabel.setPrefSize(44,31);
-
     }
 
     private void initBigCircle(JChat jChat){
@@ -133,7 +136,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         smallCircle.setLayoutX(getParentWidth()-smallCircleIndent);
         smallCircle.setLayoutY(47);
         smallCircle.setRadius(16);
-        smallCircle.setFill(Color.GRAY);
+        smallCircle.setFill(Color.valueOf(smallCircleColorStr));
     }
 
     private void initSmallCircleText(String unreadMessagedNumberStr){
@@ -168,10 +171,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
                 if (!smallCircle.isVisible()) {
                     unreadMsgsNumberText.setVisible(true);
                     smallCircle.setVisible(true);
-                    getRootPane().getChildren().remove(smallCircle);
-                    getRootPane().getChildren().remove(unreadMsgsNumberText);
-                    getRootPane().getChildren().add(smallCircle);
-                    getRootPane().getChildren().add(unreadMsgsNumberText);
+                    updateMessageCircle();
                 }
                 unreadMsgsNumberText.setText(unreadCount.toString());
             }
@@ -183,5 +183,14 @@ public class VBoxChatCell extends VBoxCell<JChat>{
             initSmallCircle();
             initSmallCircleText(unreadCount.toString());
         }
+    }
+
+    private void updateMessageCircle(){
+        getRootPane().getChildren().remove(smallCircle);
+        getRootPane().getChildren().remove(unreadMsgsNumberText);
+        getRootPane().getChildren().add(smallCircle);
+        AnchorPane.setRightAnchor(smallCircle, getSmallCircleRightIndent() );
+        getRootPane().getChildren().add(unreadMsgsNumberText);
+        AnchorPane.setRightAnchor(unreadMsgsNumberText, getSmallCircleTextRightIndent() );
     }
 }

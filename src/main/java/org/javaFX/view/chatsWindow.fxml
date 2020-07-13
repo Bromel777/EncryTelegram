@@ -47,7 +47,7 @@
                   </AnchorPane>
                   <AnchorPane fx:id="rightMiddleAnchorPane" layoutY="63.0" minHeight="0.0" prefHeight="491.0" prefWidth="590.0" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="63.0">
                      <children>
-                        <ListView fx:id="messagesListView" minHeight="0.0" minWidth="0.0" prefHeight="505.0" prefWidth="590.0" style="-fx-background-color: #FBFBFB;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0" />
+                        <ListView fx:id="messagesListView" minHeight="0.0" minWidth="0.0" prefHeight="505.0" prefWidth="590.0" stylesheets="@../styles/dialogBackStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0" />
                         <Label fx:id="selectChatLabel" alignment="CENTER" contentDisplay="CENTER" layoutY="179.0" minHeight="0.0" minWidth="0.0" prefHeight="63.0" prefWidth="490.0" text="Please select a chat to start messaging" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <font>
                               <Font name="Times New Roman" size="21.0" />

@@ -6,13 +6,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
-import org.encryfoundation.tg.utils.ChatUtils;
 import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
@@ -80,9 +78,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         if( messagesListView != null && messagesListView.getItems().size() != 0 ) {
             initializeDialogArea();
         }
-        if(messagesListView.getItems().size() == 0 ){
-            showStartMessagingArea();
-        }
         enableMenuBar();
     }
 
@@ -128,7 +123,8 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private ObservableList<VBoxMessageCell> getObservableJMessageList(){
         ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
         getUserStateRef().get().messagesListView.getItems().forEach (
-                message -> observableMessageList.add(message)
+                message ->
+                observableMessageList.add(message)
         );
         return observableMessageList;
     }
@@ -156,7 +152,14 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     protected void clickItem() {
+        flushDialogArea();
+        /*
+        messagesListView.getItems().clear();
+        */
         getUserStateRef().get().setActiveDialog(messagesListView);
+        if(messagesListView.getItems().size() == 0 ){
+            showStartMessagingArea();
+        }
         JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
                 chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );

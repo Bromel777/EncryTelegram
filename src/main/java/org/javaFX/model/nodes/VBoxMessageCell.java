@@ -3,7 +3,6 @@ package org.javaFX.model.nodes;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -19,8 +18,8 @@ import java.util.Date;
 public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     private final String youMessagesBackgroundColor = "#4988C1";
-    private final String otherMessageBackgroundColor = "#a4f3c5";
-    private final String backGroundStyle = "-fx-background-color: #fbfbfb";
+    private final String otherMessageBackgroundColor = "#FFFFFF";
+    private final String backGroundStyle = "-fx-background-color: #FbFbFb;";
 
     private Rectangle messageRectangle;
     private Rectangle angleRectangle;
@@ -32,8 +31,13 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     public VBoxMessageCell(JMessage jMessage, int parentWidth) {
         super(jMessage, parentWidth);
+        setStyle();
     }
-
+    
+    private void setStyle(){
+        setStyle("-fx-padding: 0px");
+    }
+    
     @Override
     protected void setIsYourMessage(JMessage jMessage) {
         if(jMessage.getContent().toString().length() <12){

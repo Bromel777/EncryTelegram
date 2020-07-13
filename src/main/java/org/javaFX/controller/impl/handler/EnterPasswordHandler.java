@@ -25,6 +25,9 @@ public class EnterPasswordHandler extends DataHandler {
     @FXML
     private Label error;
 
+    @FXML
+    private Label passwordHint;
+
     public EnterPasswordHandler() {
 //        String phoneNumber = getUserStateRef().get().getPhoneNumber();
 //        System.out.println("Phone: " + phoneNumber);
@@ -43,6 +46,9 @@ public class EnterPasswordHandler extends DataHandler {
                 );
             else if (nextStep.code() == AuthMsg.err().code()) {
                 error.setText("Incorrect password");
+                //TODO
+                // insert password hint
+                // passwordHint.setText();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

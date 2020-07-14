@@ -71,17 +71,17 @@ public class EnterPhoneNumberHandler extends DataHandler {
             try {
                 getUserStateRef().get().outQueue.put(new BackMsg.SetPhone(phoneNumberStr));
                 FrontMsg nextStep = getUserStateRef().get().inQueue.take();
-                if (nextStep.code() == FrontMsg.loadPass().code()) {
+                if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadPass()) {
                     getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
-                } else if (nextStep.code() == FrontMsg.loadVC().code()) {
+                } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadVc()) {
                     getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
                     ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController())
                             .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber());
-                } else if (nextStep.code() == FrontMsg.loadChats().code()) {
+                } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadChats()) {
                     getEncryWindow().launchWindowByPathToFXML(
                             EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
                     );
-                } else if (nextStep.code() == FrontMsg.err().code()) {
+                } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.error()) {
                     error.setText("Oops error!");
                 }
             } catch (InterruptedException e) {

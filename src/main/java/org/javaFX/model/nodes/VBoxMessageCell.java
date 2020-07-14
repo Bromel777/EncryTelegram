@@ -19,7 +19,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     private final String youMessagesBackgroundColor = "#4988C1";
     private final String otherMessageBackgroundColor = "#FFFFFF";
-    private final String backGroundStyle = "-fx-background-color: #FbFbFb;";
+    private final String backGroundStyle = "-fx-background-color: #FBFBFB;";
 
     private Rectangle messageRectangle;
     private Rectangle angleRectangle;
@@ -40,7 +40,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     
     @Override
     protected void setIsYourMessage(JMessage jMessage) {
-        if(jMessage.getContent().toString().length() <12){
+        if(jMessage.getContent().toString().length() < 12){
             return;
         }
         String messagePhoneNumber = jMessage.getContent().toString().substring(0, 12);

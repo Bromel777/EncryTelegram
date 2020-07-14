@@ -34,6 +34,10 @@ public class JUserState {
 
     public void setActiveDialog(ListView<VBoxMessageCell> messagesListView) { this.messagesListView = messagesListView; }
 
+    public ListView<VBoxMessageCell> getActiveDialog(){
+        return messagesListView;
+    }
+
     public List<TdApi.Chat> getChatList() {
         return chatList;
     }

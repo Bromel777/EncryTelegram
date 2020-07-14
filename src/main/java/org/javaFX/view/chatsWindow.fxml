@@ -14,7 +14,7 @@
     <children>
         <SplitPane dividerPositions="0.45" focusTraversable="false" minWidth="600.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
-                <AnchorPane fx:id="leftPane" maxWidth="600.0" prefWidth="360.0">
+                <AnchorPane fx:id="leftPane" maxWidth="600.0" minWidth="340.0" prefWidth="360.0">
                     <children>
                   <AnchorPane layoutY="63.0" prefHeight="535.0" prefWidth="360.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="63.0">
                      <children>
@@ -28,7 +28,7 @@
                   </AnchorPane>
                     </children>
                 </AnchorPane>
-                <AnchorPane fx:id="rightPane" prefHeight="598.0" prefWidth="579.0">
+                <AnchorPane fx:id="rightPane" minWidth="300.0" prefHeight="598.0" prefWidth="579.0">
                     <children>
                         <AnchorPane fx:id="rightTopAnchorPane" prefHeight="63.0" prefWidth="590.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>

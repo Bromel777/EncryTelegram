@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class MainWindowBasicHandler extends DataHandler{
 
-    private final int delayDuration = 3;
+    private Duration duration = Duration.millis(5);
 
     @FXML
     protected TextArea searchMessageTextArea;
@@ -28,9 +28,6 @@ public abstract class MainWindowBasicHandler extends DataHandler{
 
     public MainWindowBasicHandler() {
         chatListObserve(this);
-        /*dialogTextArea.setBackground(new Background(new BackgroundImage(new Image("@../images/back.jpg"),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT)));*/
     }
 
     protected void terminateObserver(){
@@ -49,7 +46,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
 
     public void chatListObserve(DataHandler controller){
         setObserver(new JWindowObserver(controller));
-        getObserver().setPeriod(Duration.seconds(delayDuration));
+        getObserver().setPeriod(duration);
         getObserver().start();
     }
 
@@ -102,7 +99,6 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     }
 
     public void findMessage(){
-
     }
 
 }

@@ -49,7 +49,6 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     @Override
     protected void setNodesToRootPane(JChat sourceElement){
-
         getRootPane().getChildren().add(chatTitleLabel);
         getRootPane().getChildren().add(lastMessageLabel);
         getRootPane().getChildren().add(timeLabel);
@@ -93,10 +92,14 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         }
         lastMessageLabel.setText(lastMessageStr);
         int lastMessageIndent = 115;
-        lastMessageLabel.setPrefSize(getParentWidth() - lastMessageIndent,31);
+        lastMessageLabel.setPrefSize(getParentWidth() - lastMessageIndent ,31);
         lastMessageLabel.setLayoutX(70);
         lastMessageLabel.setLayoutY(31);
-        lastMessageLabel.setWrapText(false);
+        lastMessageLabel.setWrapText(true);
+    }
+
+    public void updateLastMessageLabel(double length){
+        lastMessageLabel.setPrefSize(length - 115,31);
     }
 
     private void initTimeLabel(JChat jChat){

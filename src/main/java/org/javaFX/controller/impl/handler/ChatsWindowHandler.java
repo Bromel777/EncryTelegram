@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import org.drinkless.tdlib.TdApi;
 import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
 import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.EncryWindow;
@@ -85,33 +86,38 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private ObservableList<VBoxChatCell> getObservableJChatList(){
         ObservableList<VBoxChatCell> observableChatList = FXCollections.observableArrayList();
         final double chatCellWidth =
-                (leftPane == null)
+                (leftPane == null || leftPane.getWidth() == 0)
                         ? 300
-                        : leftPane.getPrefWidth();
+                        : leftPane.getWidth();
         getUserStateRef().get().getChatList().forEach(
                 chat -> {
-                    Optional<VBoxChatCell> prevCell =
-                            chatsListView.getItems().stream()
-                                    .filter(elem -> elem.getChatId() == chat.id)
-                                    .findAny();
-                    VBoxChatCell cell = prevCell.orElse(new VBoxChatCell(
-                            new JChat(
-                                    chat.title,
-                                    MessagesUtils.processMessage(chat.lastMessage),
-                                    chat.id,
-                                    MessagesUtils.getLastMessageTime(chat.lastMessage),
-                                    new AtomicInteger(chat.unreadCount)
-                            ), chatCellWidth
-                    ));
-                    cell.updateLastMessage(
-                            MessagesUtils.processMessage(chat.lastMessage),
-                            MessagesUtils.getLastMessageTime(chat.lastMessage),
-                            chat.unreadCount
-                    );
-                    observableChatList.add(cell);
+                    initChatCell(observableChatList, chat, chatCellWidth);
                 }
         );
         return observableChatList;
+    }
+
+    private void initChatCell(ObservableList<VBoxChatCell> observableChatList, TdApi.Chat chat, double chatCellWidth){
+        Optional<VBoxChatCell> prevCell =
+                chatsListView.getItems().stream()
+                        .filter(elem -> elem.getChatId() == chat.id)
+                        .findAny();
+        VBoxChatCell cell = prevCell.orElse(new VBoxChatCell(
+                new JChat(
+                        chat.title,
+                        MessagesUtils.processMessage(chat.lastMessage),
+                        chat.id,
+                        MessagesUtils.getLastMessageTime(chat.lastMessage),
+                        new AtomicInteger(chat.unreadCount)
+                ), chatCellWidth
+        ));
+        cell.updateLastMessage(
+                MessagesUtils.processMessage(chat.lastMessage),
+                MessagesUtils.getLastMessageTime(chat.lastMessage),
+                chat.unreadCount
+        );
+        cell.updateLastMessageLabel(chatCellWidth);
+        observableChatList.add(cell);
     }
 
     @FXML
@@ -126,6 +132,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 message ->
                 observableMessageList.add(message)
         );
+        forceListRefreshOn();
         return observableMessageList;
     }
 
@@ -152,24 +159,25 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     protected void clickItem() {
-        flushDialogArea();
-        /*
-        messagesListView.getItems().clear();
-        */
         getUserStateRef().get().setActiveDialog(messagesListView);
-        if(messagesListView.getItems().size() == 0 ){
+        if( messagesListView.getItems().size() == 0 ){
             showStartMessagingArea();
         }
         JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
                 chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );
-        initializeDialogArea();
         try {
             getUserStateRef().get().msgsQueue.put(msg);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         showLeftPane();
+    }
+
+    private void forceListRefreshOn() {
+        ObservableList<VBoxMessageCell> items = messagesListView.getItems();
+        messagesListView.getItems().clear();
+        messagesListView.setItems(items);
     }
 
     @FXML
@@ -185,7 +193,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         }.start();
     }
 
-
     private void findContentInChatsTable(){
         final String searchingStr = searchThroughChatsTextField.getText().trim();
         chatsListView.getItems().stream()
@@ -197,14 +204,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 });
     }
 
-    private void flushDialogArea(){
-        getUserStateRef().get().setActiveDialog(new ListView<>());
-    }
-
     @FXML
     private void findContentInDialog(){
     }
-
 
     private void showStartMessagingArea(){
         selectChatLabel.setText("There is no messages in this dialogue");

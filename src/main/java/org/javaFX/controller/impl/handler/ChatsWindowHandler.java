@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.encryfoundation.tg.javaIntegration.BackMsg;
+import org.encryfoundation.tg.javaIntegration.FrontMsg;
 import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
@@ -75,10 +76,12 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     public void updateEncryWindow(EncryWindow encryWindow) {
         super.setEncryWindow(encryWindow);
         initializeTable();
-        if( messagesListView != null && messagesListView.getItems().size() != 0){
-            initializeDialogArea();
-        }
+//        if( messagesListView != null && messagesListView.getItems().size() != 0){
+//            initializeDialogArea();
+//        }
         enableMenuBar();
+        FrontMsg a = getUserStateRef().get().inQueue.poll();
+
     }
 
     @FXML

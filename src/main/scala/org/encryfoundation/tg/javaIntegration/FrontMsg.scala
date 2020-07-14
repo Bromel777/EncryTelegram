@@ -10,13 +10,13 @@ trait FrontMsg {
 object FrontMsg {
 
   object Codes {
-    val error = -1
-    val loadVc = 0
-    val loadPass = 1
-    val loadChats = 2
-    val newMsgInChat = 3
-    val newChat = 4
-    val updateLastMsg = 5
+    def error = -1
+    def loadVc = 0
+    def loadPass = 1
+    def loadChats = 2
+    def newMsgInChat = 3
+    def newChat = 4
+    def updateLastMsg = 5
   }
 
   object LoadVCWindow extends FrontMsg {

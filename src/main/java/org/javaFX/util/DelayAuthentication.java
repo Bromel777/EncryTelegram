@@ -1,7 +1,10 @@
 package org.javaFX.util;
 
 import javafx.application.Platform;
+import org.encryfoundation.tg.javaIntegration.BackMsg;
+import org.encryfoundation.tg.javaIntegration.FrontMsg;
 import org.javaFX.EncryWindow;
+import org.javaFX.controller.impl.handler.EnterVerificationCodeHandler;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,12 +20,19 @@ public class DelayAuthentication extends Thread{
     @Override
     public void run() {
         Runnable updater = () -> {
-            if (EncryWindow.state.get().isAuth()) {
-                encryWindow.launchWindowByPathToFXML(
-                        EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
-                );
-            } else {
-                encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
+            try {
+                FrontMsg nextStep = EncryWindow.state.get().inQueue.take();
+                if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadPass()) {
+                    encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
+                } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadVc()) {
+                    encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
+                } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadChats()) {
+                    encryWindow.launchWindowByPathToFXML(
+                            EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
+                    );
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         };
         AtomicInteger atomicInteger = new AtomicInteger(0);

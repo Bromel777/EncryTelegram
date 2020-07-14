@@ -1,7 +1,7 @@
 package org.javaFX.controller.impl.handler;
 
 import javafx.fxml.FXML;
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 
@@ -15,9 +15,9 @@ public class RootLayoutHandler extends DataHandler {
 
     @FXML
     private void logOut(){
-        JavaInterMsg msg = new JavaInterMsg.Logout();
+        BackMsg msg = new BackMsg.Logout();
         try {
-            getUserStateRef().get().msgsQueue.put(msg);
+            getUserStateRef().get().outQueue.put(msg);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

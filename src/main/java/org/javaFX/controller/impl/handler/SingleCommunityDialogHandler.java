@@ -2,8 +2,7 @@ package org.javaFX.controller.impl.handler;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DialogController;
 
@@ -21,8 +20,8 @@ public class SingleCommunityDialogHandler extends DialogController {
     @FXML
     private void createSecretChat() throws InterruptedException {
         if(!secretChatName.getText().isEmpty()){
-            JavaInterMsg msg = new JavaInterMsg.CreatePrivateGroupChat(secretChatName.getText());
-            getUserStateRef().get().msgsQueue.put(msg);
+            BackMsg msg = new BackMsg.CreatePrivateGroupChat(secretChatName.getText());
+            getUserStateRef().get().outQueue.put(msg);
             getDialogStage().close();
             getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
         }
@@ -34,9 +33,9 @@ public class SingleCommunityDialogHandler extends DialogController {
 
     @FXML
     private void deleteConference() {
-        JavaInterMsg msg = new JavaInterMsg.DeleteCommunity(secretChatName.getText());
+        BackMsg msg = new BackMsg.DeleteCommunity(secretChatName.getText());
         try {
-            getUserStateRef().get().msgsQueue.put(msg);
+            getUserStateRef().get().outQueue.put(msg);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -1,10 +1,9 @@
 package org.javaFX.model;
 
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import org.drinkless.tdlib.TdApi;
-import org.encryfoundation.tg.javaIntegration.AuthMsg;
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.encryfoundation.tg.javaIntegration.FrontMsg;
+import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.model.nodes.VBoxMessageCell;
 
 import java.util.ArrayList;
@@ -24,8 +23,10 @@ public class JUserState {
     private Map<Long, TdApi.Supergroup> superGroups = new HashMap<>();
     private Map<Long, TdApi.SecretChat> secretChats = new HashMap<>();
     public List<JLocalCommunity> communities = new ArrayList<JLocalCommunity>();
-    public LinkedBlockingQueue<JavaInterMsg> msgsQueue = new LinkedBlockingQueue<JavaInterMsg>(100);
-    public LinkedBlockingQueue<AuthMsg> authQueue = new LinkedBlockingQueue<AuthMsg>(100);
+    //processed by back
+    public LinkedBlockingQueue<BackMsg> outQueue = new LinkedBlockingQueue<BackMsg>(100);
+    //processed by front
+    public LinkedBlockingQueue<FrontMsg> inQueue = new LinkedBlockingQueue<FrontMsg>(100);
     private boolean isAuth = false;
     public ListView<VBoxMessageCell> messagesListView;
 

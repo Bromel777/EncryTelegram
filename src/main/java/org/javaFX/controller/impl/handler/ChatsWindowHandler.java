@@ -59,6 +59,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private ImageView sendMessageImage;
 
+    @FXML
+    private TextField searchMessageTextField;
+
     public ChatsWindowHandler(){
     }
 
@@ -116,7 +119,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 MessagesUtils.getLastMessageTime(chat.lastMessage),
                 chat.unreadCount
         );
-        cell.updateLastMessageLabel(chatCellWidth);
+        cell.updateChatLabels(chatCellWidth);
         observableChatList.add(cell);
     }
 
@@ -196,7 +199,8 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private void findContentInChatsTable(){
         final String searchingStr = searchThroughChatsTextField.getText().trim();
         chatsListView.getItems().stream()
-                .filter(item -> item.getChatTitle().toLowerCase().contains(searchingStr.toLowerCase()) )
+                .filter(item -> item.getChatTitle().toLowerCase().contains(searchingStr.toLowerCase()) ||
+                        item.getLastMessage().toLowerCase().contains(searchingStr.toLowerCase()))
                 .findAny()
                 .ifPresent(item -> {
                     chatsListView.getSelectionModel().select(item);
@@ -206,6 +210,27 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     private void findContentInDialog(){
+        final String searchingStr = searchMessageTextField.getText().trim();
+        messagesListView.getItems().stream()
+                .filter(item -> item.getContentText().toLowerCase().contains(searchingStr.toLowerCase()) )
+                .findAny()
+                .ifPresent(item -> {
+                    messagesListView.getSelectionModel().select(item);
+                    messagesListView.scrollTo(item);
+                });
+    }
+
+    @FXML
+    private void searchMessageByKeyboard(){
+        AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(searchMessageTextField);
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if ( keysPressed.get() ) {
+                    findContentInDialog();
+                }
+            }
+        }.start();
     }
 
     private void showStartMessagingArea(){

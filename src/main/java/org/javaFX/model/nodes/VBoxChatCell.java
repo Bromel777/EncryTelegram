@@ -78,7 +78,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         chatTitleLabel.setPrefSize(getParentWidth() - chatTitleIndent,31);
         chatTitleLabel.setLayoutX(70);
         chatTitleLabel.setLayoutY(0);
-        chatTitleLabel.setWrapText(false);
+        chatTitleLabel.setWrapText(true);
     }
 
     private void initlLastMessageLabel(JChat jChat){
@@ -98,7 +98,8 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         lastMessageLabel.setWrapText(true);
     }
 
-    public void updateLastMessageLabel(double length){
+    public void updateChatLabels(double length){
+        chatTitleLabel.setPrefSize(length - 115,31);
         lastMessageLabel.setPrefSize(length - 115,31);
     }
 
@@ -163,6 +164,10 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     public String getChatTitle(){
         return chatTitleLabel.getText();
+    }
+
+    public String getLastMessage(){
+        return lastMessageLabel.getText();
     }
 
     public void updateLastMessage(String newText, Long newTime, Integer unreadCount) {

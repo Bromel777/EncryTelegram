@@ -1,6 +1,7 @@
 package org.javaFX.model.nodes;
 
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -179,6 +180,10 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     public String getOtherMessageBackgroundColor() {
         return otherMessageBackgroundColor;
+    }
+
+    public String getContentText(){
+        return ((Label)contentNode).getText();
     }
 
 }

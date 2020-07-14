@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="rootAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="600.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.OnboardingTwoHandler">
+    <children>
+      <Label alignment="CENTER" contentDisplay="CENTER" text="Certified" textFill="#222222" AnchorPane.leftAnchor="254.0" AnchorPane.rightAnchor="252.0" AnchorPane.topAnchor="298.0">
+         <font>
+            <Font name="Calibri Bold" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="104.0" layoutY="334.0" prefHeight="22.0" prefWidth="394.0" text="Patented technologies from ENCRY FOUNDATION." AnchorPane.leftAnchor="103.0" AnchorPane.rightAnchor="103.0" AnchorPane.topAnchor="337.0">
+         <font>
+            <Font name="Calibri" size="19.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="nextButtonImg" fitHeight="60.0" fitWidth="328.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#handleNextOnboardingAction" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="502.0">
+         <image>
+            <Image url="@../images/nextButton.png" />
+         </image>
+      </ImageView>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#00b6ff" height="160.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="315.0" AnchorPane.leftAnchor="143.0" AnchorPane.rightAnchor="142.0" AnchorPane.topAnchor="100.0" />
+      <Ellipse fill="WHITE" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.bottomAnchor="210.0" AnchorPane.leftAnchor="264.0" AnchorPane.rightAnchor="329.0" AnchorPane.topAnchor="383.0" />
+      <Ellipse fill="WHITE" layoutX="10.0" layoutY="10.0" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.bottomAnchor="207.0" AnchorPane.leftAnchor="308.0" AnchorPane.rightAnchor="285.0" AnchorPane.topAnchor="383.0" />
+      <Ellipse fill="#00b6ff" layoutX="20.0" layoutY="20.0" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.bottomAnchor="207.0" AnchorPane.leftAnchor="286.0" AnchorPane.rightAnchor="304.0" AnchorPane.topAnchor="383.0" />
+      <Ellipse fill="WHITE" layoutX="30.0" layoutY="30.0" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.leftAnchor="330.0" AnchorPane.rightAnchor="326.0" AnchorPane.topAnchor="383.0" />
+    </children>
+</AnchorPane>

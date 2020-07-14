@@ -27,6 +27,11 @@ public class EncryWindow extends Application {
 
     private final static String pathToRootLayout = "view/rootLayout.fxml";
 
+    public final static String pathToOnboardingOneFXML = "view/onboarding1.fxml";
+    public final static String pathToOnboardingTwoFXML = "view/onboarding2.fxml";
+    public final static String pathToOnboardingThreeFXML = "view/onboarding3.fxml";
+    public final static String pathToOnboardingFourFXML = "view/onboarding4.fxml";
+
     public final static String pathToEnterPhoneNumberWindowFXML = "view/enterPhoneNumberWindow.fxml";
     public final static String pathToEnterVerificationCodeWindowFXML = "view/enterVerificationCodeWindow.fxml";
     public final static String pathToEnterPasswordWindowFXML = "view/enterPasswordWindow.fxml";
@@ -60,8 +65,7 @@ public class EncryWindow extends Application {
     }
 
     public void launchStartWindow(){
-        launchWindowByPathToFXML(pathToStartWindowFXML);
-        new DelayAuthentication(this, 5000).start();
+        launchWindowByPathToFXML(pathToOnboardingOneFXML);
     }
 
     private void initBasicFields(Stage primaryStage){

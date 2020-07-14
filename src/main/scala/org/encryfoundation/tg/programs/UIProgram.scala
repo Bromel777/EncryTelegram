@@ -13,8 +13,8 @@ import org.encryfoundation.tg.AuthRequestHandler
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, PrivateGroupChatCreationHandler, ValueHandler}
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg._
+import org.encryfoundation.tg.javaIntegration.BackMsg
+import org.encryfoundation.tg.javaIntegration.BackMsg._
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
@@ -74,7 +74,7 @@ object UIProgram {
         }
       )
 
-    def processMsg(msg: JavaInterMsg): F[Unit] = msg match {
+    def processMsg(msg: BackMsg): F[Unit] = msg match {
       case _@SetActiveChat(chatId) =>
         for {
           state <- userStateRef.get
@@ -164,7 +164,7 @@ object UIProgram {
 
     override def run: Stream[F, Unit] = (for {
       state <- Stream.eval(userStateRef.get)
-      queue <- Stream.emit(state.javaState.get().msgsQueue)
+      queue <- Stream.emit(state.javaState.get().outQueue)
       elem <- Stream.emit(queue.take())
       _ <- Stream.eval(processMsg(elem))
     } yield ()).repeat

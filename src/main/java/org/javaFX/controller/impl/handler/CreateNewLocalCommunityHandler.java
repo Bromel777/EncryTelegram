@@ -10,7 +10,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import org.drinkless.tdlib.TdApi;
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JSingleContact;
@@ -126,12 +126,12 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
                 .stream()
                 .map(elem -> elem.getPhoneNumber())
                 .collect(Collectors.toList());
-        JavaInterMsg msg = new JavaInterMsg.CreateCommunityJava(
+        BackMsg msg = new BackMsg.CreateCommunityJava(
                 localCommunity.getCommunityName(),
                 members
         );
         try {
-            getUserStateRef().get().msgsQueue.put(msg);
+            getUserStateRef().get().outQueue.put(msg);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

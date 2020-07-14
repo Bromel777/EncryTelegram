@@ -6,8 +6,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.image.ImageView;
-import org.encryfoundation.tg.javaIntegration.AuthMsg;
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.encryfoundation.tg.javaIntegration.FrontMsg;
+import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.util.KeyboardHandler;
@@ -36,19 +36,19 @@ public class EnterPasswordHandler extends DataHandler {
         String passwordStr = passwordField.getCharacters().toString();
         if (passwordStr.isEmpty()) error.setText("Empty password :( Please enter it!");
         else try {
-            getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetPass(passwordStr));
-            AuthMsg nextStep = getUserStateRef().get().authQueue.take();
-            if (nextStep.code() == AuthMsg.loadPass().code()) {
+            getUserStateRef().get().outQueue.put(new BackMsg.SetPass(passwordStr));
+            FrontMsg nextStep = getUserStateRef().get().inQueue.take();
+            if (nextStep.code() == FrontMsg.loadPass().code()) {
                 getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
-            } else if (nextStep.code() == AuthMsg.loadVC().code()) {
+            } else if (nextStep.code() == FrontMsg.loadVC().code()) {
                 getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
                 ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController())
                         .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber());
-            } else if (nextStep.code() == AuthMsg.loadChats().code()) {
+            } else if (nextStep.code() == FrontMsg.loadChats().code()) {
                 getEncryWindow().launchWindowByPathToFXML(
                         EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
                 );
-            } else if (nextStep.code() == AuthMsg.err().code()) {
+            } else if (nextStep.code() == FrontMsg.err().code()) {
                 error.setText("Incorrect password");
             }
         } catch (InterruptedException e) {

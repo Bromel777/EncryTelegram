@@ -13,7 +13,7 @@ import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
-import org.encryfoundation.tg.javaIntegration.AuthMsg.{LoadChatsWindow, LoadPassWindow, LoadVCWindow}
+import org.encryfoundation.tg.javaIntegration.FrontMsg.{LoadChatsWindow, LoadPassWindow, LoadVCWindow}
 import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
@@ -160,18 +160,18 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case a: TdApi.AuthorizationStateWaitCode =>
         for {
           state <- userStateRef.get
-          _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadVCWindow))
+          _ <- Sync[F].delay(state.javaState.get().inQueue.put(LoadVCWindow))
         } yield ()
       case a: TdApi.AuthorizationStateWaitPassword =>
         for {
           state <- userStateRef.get
-          _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadPassWindow))
+          _ <- Sync[F].delay(state.javaState.get().inQueue.put(LoadPassWindow))
         } yield ()
       case _: TdApi.AuthorizationStateReady =>
         for {
           _ <- userStateService.setAuth()
           state <- userStateRef.get
-          _ <- Sync[F].delay(state.javaState.get().authQueue.put(LoadChatsWindow))
+          _ <- Sync[F].delay(state.javaState.get().inQueue.put(LoadChatsWindow))
           _ <- clientService.sendRequest(
             new TdApi.GetChats(new TdApi.ChatListMain(), Long.MaxValue, 0, 20),
             EmptyHandler[F]()

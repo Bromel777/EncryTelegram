@@ -99,7 +99,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     }
 
     public void updateChatLabels(double length){
-        chatTitleLabel.setPrefSize(length - 115,31);
+        chatTitleLabel.setPrefSize(length - 155,31);
         lastMessageLabel.setPrefSize(length - 115,31);
     }
 

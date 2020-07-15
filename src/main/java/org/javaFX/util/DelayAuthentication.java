@@ -22,7 +22,7 @@ public class DelayAuthentication extends Thread{
                         EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth,  EncryWindow.afterInitializationHeight
                 );
             } else {
-                encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
+                encryWindow.launchWindowByPathToFXML(EncryWindow.pathToOnboardingOneFXML);
             }
         };
         AtomicInteger atomicInteger = new AtomicInteger(0);

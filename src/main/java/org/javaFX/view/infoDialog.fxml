@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="265.0" prefWidth="385.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.InfoDialogHandler">
+   <children>
+      <Label text="ENCRY LLC. (c) Telegram client" textFill="#222222" AnchorPane.bottomAnchor="213.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="103.0" AnchorPane.topAnchor="30.0">
+         <font>
+            <Font name="Calibri Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label prefHeight="17.0" prefWidth="81.0" text="version 1.1.10" textFill="#334856" AnchorPane.bottomAnchor="177.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="72.0">
+         <font>
+            <Font name="Calibri" size="14.0" />
+         </font>
+      </Label>
+      <Label prefHeight="20.0" prefWidth="305.0" text="An open source messaging application based on " textFill="#334856" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="108.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="100.0" layoutY="170.0" prefHeight="21.0" prefWidth="153.0" text="by ENCRY Foundation." textFill="#334856">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="30.0" layoutY="128.0" text="Telegram's API" textFill="#00b6ff" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="128.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="30.0" layoutY="170.0" text="algorithms " textFill="#334856" AnchorPane.leftAnchor="30.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="30.0" layoutY="149.0" prefHeight="21.0" prefWidth="319.0" text="for communication using the patented crypto " textFill="#334856" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="36.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="122.0" layoutY="128.0" text=" and providing additional security" textFill="#334856" AnchorPane.topAnchor="128.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="32.0" fitWidth="112.0" onMouseClicked="#closeDialogWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="258.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="218.0">
+         <image>
+            <Image url="@../images/close.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

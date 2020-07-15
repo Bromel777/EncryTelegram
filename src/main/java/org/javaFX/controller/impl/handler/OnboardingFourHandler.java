@@ -9,7 +9,6 @@ public class OnboardingFourHandler extends DataHandler {
 
     @FXML
     private void handleNextOnboardingAction(){
-        new DelayAuthentication(getEncryWindow(), 5000).start();
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToStartWindowFXML);
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
     }
 }

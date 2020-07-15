@@ -10,7 +10,7 @@
     <top>
         <MenuBar fx:id="menuBar" disable="true" prefHeight="32.0" prefWidth="600.0" visible="false">
             <menus>
-            <Menu mnemonicParsing="false" text="Actions">
+            <Menu mnemonicParsing="false" text="Windows">
               <items>
                   <MenuItem fx:id="logOut" mnemonicParsing="false" onAction="#logOut" text="Log out" />
                   <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="Close" />
@@ -27,6 +27,11 @@
                         <MenuItem mnemonicParsing="false" onAction="#showLocalCommunity" text="Show" />
                     </items>
                 </Menu>
+            <Menu mnemonicParsing="false" text="About">
+               <items>
+                  <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#showInfoWindow" text="Info" />
+               </items>
+            </Menu>
             </menus>
         </MenuBar>
     </top>

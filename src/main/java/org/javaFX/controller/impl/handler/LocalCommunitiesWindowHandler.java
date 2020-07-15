@@ -105,6 +105,7 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
         controller.setLocalCommunity(localCommunity);
         controller.setUserStateRef(getUserStateRef());
         controller.setSecretChatNameText(localCommunity.getCommunityName());
+        controller.setParentPageName(EncryWindow.pathToChatsWindowFXML);
         dialogStage.show();
     }
 

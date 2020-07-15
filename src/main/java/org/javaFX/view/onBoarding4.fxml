@@ -23,7 +23,7 @@
          </font>
       </Label>
       <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="nextButtonImg" fitHeight="60.0" fitWidth="328.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#handleNextOnboardingAction" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="502.0">
+      <ImageView fx:id="nextButtonImg" fitHeight="60.0" fitWidth="328.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#handleNextOnboardingAction" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0">
          <image>
             <Image url="@../images/startButton.png" />
          </image>

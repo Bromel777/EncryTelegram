@@ -41,7 +41,7 @@ public class SingleCommunityDialogHandler extends DialogController {
             e.printStackTrace();
         }
         getDialogStage().close();
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
+        getEncryWindow().launchWindowByPathToFXML(getParentPageName());
     }
 
     public void setSecretChatNameText(String secretChatNameStr) {

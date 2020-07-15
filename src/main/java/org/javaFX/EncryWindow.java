@@ -41,8 +41,12 @@ public class EncryWindow extends Application {
     public final static String pathToCommunitiesListWindowFXML = "view/communitiesListWindow.fxml";
 
     public final static String pathToSingleCommunityDialogFXML = "view/singleCommunityDialog.fxml";
+    public final static String pathToInfoDialogFXML = "view/infoDialog.fxml";
 
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
+
+
+    private String currentWindowStr ;
 
     private static String userPhoneNumber;
 
@@ -65,7 +69,9 @@ public class EncryWindow extends Application {
     }
 
     public void launchStartWindow(){
-        launchWindowByPathToFXML(pathToOnboardingOneFXML);
+        new DelayAuthentication(this, 5000).start();
+        this.launchWindowByPathToFXML(EncryWindow.pathToStartWindowFXML);
+
     }
 
     private void initBasicFields(Stage primaryStage){
@@ -96,6 +102,7 @@ public class EncryWindow extends Application {
     public void launchWindowByPathToFXML(String pathToTemplate){
         try{
             FXMLLoader loader = new FXMLLoader();
+            currentWindowStr = pathToTemplate;
             loader.setLocation(EncryWindow.class.getResource(pathToTemplate));
             AnchorPane startOverview = loader.load();
             rootLayout.setCenter(startOverview);
@@ -108,6 +115,7 @@ public class EncryWindow extends Application {
     public void launchWindowByPathToFXML(String pathToTemplate, int newWidth, int newHeight){
         try{
             FXMLLoader loader = new FXMLLoader();
+            currentWindowStr = pathToTemplate;
             loader.setLocation(EncryWindow.class.getResource(pathToTemplate));
             AnchorPane startOverview = loader.load();
             rootLayout.setCenter(startOverview);
@@ -148,4 +156,7 @@ public class EncryWindow extends Application {
         }
     }
 
+    public String getCurrentWindowStr() {
+        return currentWindowStr;
+    }
 }

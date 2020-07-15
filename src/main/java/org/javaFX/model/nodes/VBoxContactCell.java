@@ -2,19 +2,12 @@ package org.javaFX.model.nodes;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.Shadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 
 import org.javaFX.model.JSingleContact;
 import org.javaFX.util.JavaFXTableBuilder;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
@@ -58,10 +51,13 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     private void initCheckBoxImg(){
         checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage));
+        checkBoxImg.setLayoutY(15);
+        checkBoxImg.setFitWidth(24);
+        checkBoxImg.setFitHeight(24);
     }
 
     private void initSeparatorLine(){
-        separatorLine = JavaFXTableBuilder.buildSeparatorLine( getRootPane());
+        separatorLine = JavaFXTableBuilder.buildSeparatorLine( getRootPane() );
     }
 
     @Override
@@ -116,6 +112,9 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         else{
             checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage));
         }
+        checkBoxImg.setFitWidth(24);
+        checkBoxImg.setFitHeight(24);
+        checkBoxImg.setLayoutY(15);
         AnchorPane.setRightAnchor(checkBoxImg,20.0);
         getRootPane().getChildren().add(checkBoxImg);
     }

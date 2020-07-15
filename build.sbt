@@ -1,18 +1,27 @@
 import sbt.Def
 import sbt.Keys.version
+import NativePackagerHelper._
+import com.typesafe.sbt.SbtNativePackager.packageArchetype
 
-val settings: Seq[Def.Setting[String]] = Seq(
-  name := "telegramDragon",
+enablePlugins(JavaAppPackaging, JDKPackagerPlugin)
+
+val settings = Seq(
+  name := "EncryTelegramClient",
   version := "0.0.1",
   organization := "org.encryfoundation",
-  scalaVersion := "2.12.8"
+  scalaVersion := "2.12.8",
+  maintainer := "info@encry.ru",
+  mainClass in Compile := Some("org.encryfoundation.tg.RunApp"),
+  discoveredMainClasses in Compile := Seq()
 )
 
 val monocleVersion = "2.0.0"
 
+fork in run := true
+
 unmanagedResourceDirectories in Compile ++= Seq(
   //baseDirectory.value / "lib",
-  baseDirectory.value / "bin",
+  baseDirectory.value / "tdBin",
   baseDirectory.value / "tdlib",
 )
 
@@ -23,6 +32,7 @@ resolvers ++= Seq(
   "Typesafe maven releases" at "https://repo.typesafe.com/typesafe/maven-releases/"
 )
 
+test in assembly := {}
 
 libraryDependencies ++= Seq(
   "co.fs2" %% "fs2-io" % "2.1.0",
@@ -43,19 +53,11 @@ libraryDependencies ++= Seq(
   "com.github.julien-truffaut" %%  "monocle-law"   % monocleVersion % "test"
 )
 
-fork in run := true
-
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 addCompilerPlugin("org.typelevel"  % "kind-projector" % "0.11.0" cross CrossVersion.full)
 
 val tg = (project in file(".")).settings(settings: _*)
-
-assemblyJarName in assembly := "TGDragon.jar"
-
-mainClass in assembly := Some("org.encryfoundation.tg.RunApp")
-
-test in assembly := {}
 
 assemblyMergeStrategy in assembly := {
   case "logback.xml" => MergeStrategy.first
@@ -67,7 +69,25 @@ assemblyMergeStrategy in assembly := {
   case _ => MergeStrategy.first
 }
 
+bashScriptExtraDefines += "umask 077"
+bashScriptExtraDefines += """addJava "-Djava.library.path=tdBin""""
+
+mappings in Universal ++= directory("tdlib")
+mappings in Universal ++= directory("tdBin")
+mappings in Universal ++= directory("src/main/resources/")
+
+assemblyJarName in assembly := "encryTg.jar"
+
+jdkPackagerType := "installer"
+
+jdkPackagerAppArgs := Seq("-Djava.library.path=/Applications/telegramDragon.app/Contents/Java/tdBin")
+
 PB.targets in Compile := Seq(
   scalapb.gen() -> (sourceManaged in Compile).value / "src/protobuf"
 )
 
+(antPackagerTasks in JDKPackager) := (antPackagerTasks in JDKPackager).value orElse {
+  for {
+    f <- Some(file("/Library/Java/JavaVirtualMachines/jdk1.8.0_251.jdk/Contents/Home/lib/ant-javafx.jar")) if f.exists()
+  } yield f
+}

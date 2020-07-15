@@ -4,7 +4,7 @@ import java.io.File
 import java.util.concurrent.atomic.AtomicReference
 
 import cats.effect.concurrent.Ref
-import cats.effect.{ConcurrentEffect, ContextShift, IO, Sync, Timer}
+import cats.effect.{ConcurrentEffect, ContextShift, IO, Resource, Sync, Timer}
 import fs2.Stream
 import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
@@ -34,7 +34,6 @@ object RunApp extends App {
     queueRef <- Ref.of[IO, List[TdApi.Object]](List.empty)
     implicit0(logger: Logger[IO]) <- Slf4jLogger.create[IO]
     mainState <- UserState.recoverOrCreate(state, db)
-    _ <- Logger[IO].info("State recovered successfully")
     ref <- Ref.of[IO, UserState[IO]](mainState)
     services <- produceServices(db, ref)
   } yield (queueRef, ref, logger, services)

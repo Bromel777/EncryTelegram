@@ -26,10 +26,14 @@ public class DelayAuthentication extends Thread{
                     encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadVc()) {
                     encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
+                } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadPhone()) {
+                    encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadChats()) {
                     encryWindow.launchWindowByPathToFXML(
                             EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
                     );
+                } else {
+                    System.out.println("Receive:" + nextStep);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

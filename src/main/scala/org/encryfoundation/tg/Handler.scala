@@ -13,7 +13,7 @@ import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
-import org.encryfoundation.tg.javaIntegration.FrontMsg.{LoadChatsWindow, LoadPassWindow, LoadVCWindow}
+import org.encryfoundation.tg.javaIntegration.FrontMsg.{LoadChatsWindow, LoadPassWindow, LoadPhoneWindow, LoadVCWindow}
 import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
@@ -155,7 +155,8 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         clientService.sendRequest(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F](userStateRef))
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>
         for {
-          _ <- Logger[F].info(s"Get ${a}")
+          state <- userStateRef.get
+          _ <- Sync[F].delay(state.javaState.get().inQueue.put(LoadPhoneWindow))
         } yield ()
       case a: TdApi.AuthorizationStateWaitCode =>
         for {

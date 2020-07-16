@@ -14,6 +14,7 @@ public abstract class DialogController {
     private JLocalCommunity localCommunity;
     private EncryWindow encryWindow;
     private AtomicReference<JUserState> state;
+    private String parentPageNameStr;
 
     public Stage getDialogStage() {
         return dialogStage;
@@ -47,9 +48,17 @@ public abstract class DialogController {
         this.state = state;
     }
 
+    public void setParentPageName(String parentPage) {
+        this.parentPageNameStr = parentPage;
+    }
+
+    public String getParentPageName() {
+        return parentPageNameStr;
+    }
+
     @FXML
     public void closeDialog(){
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
+        getEncryWindow().launchWindowByPathToFXML(parentPageNameStr);
         getDialogStage().close();
     }
 

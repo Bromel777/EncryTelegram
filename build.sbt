@@ -74,7 +74,7 @@ bashScriptExtraDefines += """addJava "-Djava.library.path=tdBin""""
 
 mappings in Universal ++= directory("tdlib")
 mappings in Universal ++= directory("tdBin")
-mappings in Universal ++= directory("src/main/resources/")
+mappings in Universal ++= contentOf("src/main/resources/")
 
 assemblyJarName in assembly := "encryTg.jar"
 

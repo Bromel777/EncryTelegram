@@ -13,8 +13,6 @@ import javafx.scene.layout.AnchorPane;
 import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.encryfoundation.tg.javaIntegration.FrontMsg;
 import org.drinkless.tdlib.TdApi;
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
-import org.encryfoundation.tg.utils.ChatUtils;
 import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
@@ -85,9 +83,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         if( messagesListView != null && messagesListView.getItems().size() != 0 ) {
             initializeDialogArea();
         }
-//        if( messagesListView != null && messagesListView.getItems().size() != 0){
-//            initializeDialogArea();
-//        }
         enableMenuBar();
         FrontMsg a = getUserStateRef().get().inQueue.poll();
         if (a != null) {
@@ -183,7 +178,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         if( messagesListView.getItems().size() == 0 ){
             showStartMessagingArea();
         }
-        JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
         BackMsg msg = new BackMsg.SetActiveChat(
                 chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );

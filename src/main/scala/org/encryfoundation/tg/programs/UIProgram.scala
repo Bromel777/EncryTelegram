@@ -50,7 +50,7 @@ object UIProgram {
                 val msgText = Try(state.users.get(msg.senderUserId)
                   .map(_.phoneNumber)
                   .getOrElse("Unknown sender") + ": " +
-                  aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
+                  aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unknown msg")
                 new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
               case _ =>
                 val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"

@@ -5,9 +5,6 @@ import javafx.scene.layout.VBox;
 
 public abstract class VBoxCell<T> extends VBox {
 
-    private double smallCircleRightIndent = 9.0;
-    private double smallCircleTextRightIndent = smallCircleRightIndent + 12;
-
     private double parentWidth;
 
     private AnchorPane rootPane;
@@ -51,11 +48,4 @@ public abstract class VBoxCell<T> extends VBox {
         return parentWidth;
     }
 
-    public double getSmallCircleTextRightIndent() {
-        return smallCircleTextRightIndent;
-    }
-
-    public double getSmallCircleRightIndent() {
-        return smallCircleRightIndent;
-    }
 }

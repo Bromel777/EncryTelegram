@@ -107,7 +107,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         ObservableList<VBoxChatCell> observableChatList = FXCollections.observableArrayList();
         final double chatCellWidth =
                 (leftPane == null || leftPane.getWidth() == 0)
-                        ? 300
+                        ? 320
                         : leftPane.getWidth();
         getUserStateRef().get().getChatList().forEach(
                 chat -> {

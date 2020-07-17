@@ -28,6 +28,4 @@ public class InfoDialogHandler extends DialogController {
         aboutMenuItem.setDisable(false);
     }
 
-
-
 }

@@ -14,14 +14,14 @@
     <children>
         <SplitPane dividerPositions="0.45" focusTraversable="false" minWidth="600.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
-                <AnchorPane fx:id="leftPane" maxWidth="600.0" minWidth="360.0" prefWidth="360.0">
+                <AnchorPane fx:id="leftPane" maxWidth="600.0" minWidth="320.0">
                     <children>
-                  <AnchorPane layoutY="63.0" prefHeight="535.0" prefWidth="360.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="63.0">
+                  <AnchorPane layoutY="63.0" minWidth="320.0" prefHeight="535.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="63.0">
                      <children>
-                        <ListView fx:id="chatsListView" onMouseClicked="#clickItem" prefHeight="535.0" prefWidth="260.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <ListView fx:id="chatsListView" minWidth="320.0" onMouseClicked="#clickItem" prefHeight="535.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
-                  <AnchorPane minHeight="65.0" prefHeight="63.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane minHeight="65.0" minWidth="320.0" prefHeight="63.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <TextField fx:id="searchThroughChatsTextField" layoutX="14.0" layoutY="16.0" onKeyPressed="#searchContactByKeyboard" prefHeight="31.0" prefWidth="273.0" promptText="Search for messages or users" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
                      </children>

@@ -27,6 +27,9 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     private LongProperty chatId;
     private final String smallCircleColorStr = "#D4D3D4";
 
+    private double smallCircleRightIndent = 9.0;
+    private double smallCircleTextRightIndent = 21.0;
+
     public VBoxChatCell(JChat jChat, double parentWidth) {
         super(jChat, parentWidth);
         chatId = jChat.chatIdProperty();
@@ -53,12 +56,12 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         getRootPane().getChildren().add(chatTitleLabel);
         getRootPane().getChildren().add(lastMessageLabel);
         getRootPane().getChildren().add(timeLabel);
-        AnchorPane.setRightAnchor(timeLabel, 5.0);
+        AnchorPane.setLeftAnchor(timeLabel, chatTitleLabel.getWidth() + 70);
         if(smallCircle != null){
             getRootPane().getChildren().add(smallCircle);
-            AnchorPane.setRightAnchor(smallCircle, getSmallCircleRightIndent());
+            AnchorPane.setLeftAnchor(smallCircle, 70 + lastMessageLabel.getWidth() -  smallCircleRightIndent);
             getRootPane().getChildren().add(unreadMsgsNumberText);
-            AnchorPane.setRightAnchor(unreadMsgsNumberText, getSmallCircleTextRightIndent());
+            AnchorPane.setLeftAnchor(unreadMsgsNumberText,70 + lastMessageLabel.getWidth()-  smallCircleTextRightIndent);
         }
         getRootPane().getChildren().add(bigCircle);
         getRootPane().getChildren().add(abbreviationText);
@@ -68,7 +71,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     @Override
     protected void initRootPane(JChat source){
         AnchorPane pane = new AnchorPane();
-        pane.setPrefSize(getParentWidth(),62);
+        pane.setMinSize(getParentWidth(),62);
         setRootPane(pane);
     }
 
@@ -101,6 +104,8 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         int indent = 155;
         chatTitleLabel.setPrefSize(length - indent,31);
         lastMessageLabel.setPrefSize(length - indent,31);
+        AnchorPane.setLeftAnchor(timeLabel, chatTitleLabel.getWidth() + 70);
+        updateMessageCircle();
     }
 
     private void initTimeLabel(JChat jChat){
@@ -197,8 +202,9 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         getRootPane().getChildren().remove(smallCircle);
         getRootPane().getChildren().remove(unreadMsgsNumberText);
         getRootPane().getChildren().add(smallCircle);
-        AnchorPane.setRightAnchor(smallCircle, getSmallCircleRightIndent() );
+        AnchorPane.setLeftAnchor(smallCircle, 82 + lastMessageLabel.getWidth()  -  smallCircleRightIndent);
         getRootPane().getChildren().add(unreadMsgsNumberText);
-        AnchorPane.setRightAnchor(unreadMsgsNumberText, getSmallCircleTextRightIndent() );
+        AnchorPane.setLeftAnchor(unreadMsgsNumberText,107 + lastMessageLabel.getWidth()  -  smallCircleTextRightIndent);
     }
+
 }

@@ -52,10 +52,6 @@ public abstract class DialogController {
         this.parentPageNameStr = parentPage;
     }
 
-    public String getParentPageName() {
-        return parentPageNameStr;
-    }
-
     @FXML
     public void closeDialog(){
         getEncryWindow().launchWindowByPathToFXML(parentPageNameStr);

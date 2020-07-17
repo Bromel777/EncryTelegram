@@ -1,13 +1,12 @@
 package org.javaFX.controller.impl.handler;
 
-import javafx.fxml.FXML;
 import org.javaFX.EncryWindow;
-import org.javaFX.controller.DataHandler;
+import org.javaFX.controller.OnboardingHandler;
 
-public class OnboardingTwoHandler extends DataHandler {
+public class OnboardingTwoHandler extends OnboardingHandler {
 
-    @FXML
-    private void handleNextOnboardingAction(){
+    @Override
+    protected void handleNextOnboardingAction(){
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToOnboardingThreeFXML);
     }
 }

@@ -25,7 +25,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     private Text abbreviationText;
     private Color circleColor;
     private LongProperty chatId;
-    private final String smallCircleColorStr = "#637079";
+    private final String smallCircleColorStr = "#D4D3D4";
 
     public VBoxChatCell(JChat jChat, double parentWidth) {
         super(jChat, parentWidth);
@@ -34,9 +34,10 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     @Override
     protected void initNodes(JChat jChat){
+        int labelIndent = 155;
         initRootPane(jChat);
-        initChatTitleLabel(jChat);
-        initlLastMessageLabel(jChat);
+        initChatTitleLabel(jChat, labelIndent);
+        initlLastMessageLabel(jChat, labelIndent);
         initTimeLabel(jChat);
         circleColor = RandomChooser.getRandomColor();
         initBigCircle(jChat);
@@ -71,17 +72,16 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         setRootPane(pane);
     }
 
-    private void initChatTitleLabel(JChat jChat){
+    private void initChatTitleLabel(JChat jChat, int indent ){
         chatTitleLabel = new Label();
         chatTitleLabel.setText(jChat.getTitle().get());
-        int chatTitleIndent = 115;
-        chatTitleLabel.setPrefSize(getParentWidth() - chatTitleIndent,31);
+        chatTitleLabel.setPrefSize(getParentWidth() - indent,31);
         chatTitleLabel.setLayoutX(70);
         chatTitleLabel.setLayoutY(0);
         chatTitleLabel.setWrapText(true);
     }
 
-    private void initlLastMessageLabel(JChat jChat){
+    private void initlLastMessageLabel(JChat jChat, int indent ){
         lastMessageLabel = new Label();
         String lastMessageStr;
         if(jChat.getLastMessage().getValue().indexOf("\n") != -1){
@@ -91,16 +91,16 @@ public class VBoxChatCell extends VBoxCell<JChat>{
             lastMessageStr = jChat.getLastMessage().getValue();
         }
         lastMessageLabel.setText(lastMessageStr);
-        int lastMessageIndent = 115;
-        lastMessageLabel.setPrefSize(getParentWidth() - lastMessageIndent ,31);
+        lastMessageLabel.setPrefSize(getParentWidth() - indent ,31);
         lastMessageLabel.setLayoutX(70);
         lastMessageLabel.setLayoutY(31);
         lastMessageLabel.setWrapText(true);
     }
 
     public void updateChatLabels(double length){
-        chatTitleLabel.setPrefSize(length - 155,31);
-        lastMessageLabel.setPrefSize(length - 115,31);
+        int indent = 155;
+        chatTitleLabel.setPrefSize(length - indent,31);
+        lastMessageLabel.setPrefSize(length - indent,31);
     }
 
     private void initTimeLabel(JChat jChat){

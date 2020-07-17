@@ -1,14 +1,12 @@
 package org.javaFX.controller.impl.handler;
 
-import javafx.fxml.FXML;
 import org.javaFX.EncryWindow;
-import org.javaFX.controller.DataHandler;
-import org.javaFX.util.DelayAuthentication;
+import org.javaFX.controller.OnboardingHandler;
 
-public class OnboardingFourHandler extends DataHandler {
+public class OnboardingFourHandler extends OnboardingHandler {
 
-    @FXML
-    private void handleNextOnboardingAction(){
+    @Override
+    protected void handleNextOnboardingAction() {
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
     }
 }

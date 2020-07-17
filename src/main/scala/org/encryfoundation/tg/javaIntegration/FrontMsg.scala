@@ -16,8 +16,9 @@ object FrontMsg {
     def loadChats = 2
     def loadPhone = 3
     def newMsgInChat = 4
-    def newChat = 5
-    def updateLastMsg = 6
+    def newMsgsInChat = 5
+    def newChat = 6
+    def updateLastMsg = 7
   }
 
   object LoadVCWindow extends FrontMsg {
@@ -35,6 +36,10 @@ object FrontMsg {
 
   case class NewMsgInChat(msg: VBoxMessageCell) extends FrontMsg {
     def code: Int = Codes.newMsgInChat
+  }
+
+  case class NewMsgsInChat(msgs: java.util.List[VBoxMessageCell]) extends FrontMsg {
+    override def code: Int = Codes.newMsgsInChat
   }
 
   case class NewChat(chat: TdApi.Chat) extends FrontMsg {

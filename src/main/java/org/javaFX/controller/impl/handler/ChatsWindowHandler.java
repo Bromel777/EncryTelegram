@@ -81,7 +81,16 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 //        }
         enableMenuBar();
         FrontMsg a = getUserStateRef().get().inQueue.poll();
-
+        if (a != null) {
+            if (a.code() == FrontMsg.Codes$.MODULE$.newMsgsInChat()) {
+                FrontMsg.NewMsgsInChat msg = (FrontMsg.NewMsgsInChat) a;
+                ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
+                msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
+                messagesListView.setItems(observableChatList);
+            } else {
+                System.out.println("Unknown msg");
+            }
+        }
     }
 
     @FXML
@@ -159,6 +168,8 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );
         initializeDialogArea();
+        ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
+        messagesListView.setItems(observableMessageList);
         try {
             getUserStateRef().get().outQueue.put(msg);
         } catch (InterruptedException e) {

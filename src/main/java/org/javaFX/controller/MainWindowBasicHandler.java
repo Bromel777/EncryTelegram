@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class MainWindowBasicHandler extends DataHandler{
 
-    private final int delayDuration = 3;
+    private final int delayDuration = 50;
 
     @FXML
     protected TextArea searchMessageTextArea;
@@ -49,7 +49,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
 
     public void chatListObserve(DataHandler controller){
         setObserver(new JWindowObserver(controller));
-        getObserver().setPeriod(Duration.seconds(delayDuration));
+        getObserver().setPeriod(Duration.millis(delayDuration));
         getObserver().start();
     }
 

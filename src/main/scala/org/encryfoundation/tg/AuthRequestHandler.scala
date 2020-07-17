@@ -5,7 +5,7 @@ import cats.effect.concurrent.Ref
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.{Client123, ResultHandler, TdApi}
-import org.encryfoundation.tg.javaIntegration.AuthMsg
+import org.encryfoundation.tg.javaIntegration.FrontMsg
 import org.encryfoundation.tg.services.UserStateService
 import org.encryfoundation.tg.steps.Step
 import org.encryfoundation.tg.userState.UserState
@@ -21,7 +21,7 @@ case class AuthRequestHandler[F[_]: Sync: Logger](userState: Ref[F, UserState[F]
       userState.get.flatMap { state =>
         state.currentStep match {
           case Step.AuthStep =>
-            Sync[F].delay(state.javaState.get().authQueue.put(AuthMsg.Error)) >> Logger[F].info(s"Error occured at step: ${state.currentStep}. Error: ${obj}")
+            Sync[F].delay(state.javaState.get().inQueue.put(FrontMsg.Error)) >> Logger[F].info(s"Error occured at step: ${state.currentStep}. Error: ${obj}")
           case _ => Logger[F].info(s"Error occured at step: ${state.currentStep}. Error: ${obj}")
         }
       }

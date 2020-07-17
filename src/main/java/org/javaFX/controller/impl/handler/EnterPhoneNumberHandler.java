@@ -11,8 +11,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import org.encryfoundation.tg.javaIntegration.AuthMsg;
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.encryfoundation.tg.javaIntegration.FrontMsg;
+import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.DataHandler;
 import org.javaFX.util.KeyboardHandler;
@@ -69,19 +69,19 @@ public class EnterPhoneNumberHandler extends DataHandler {
             }
             getUserStateRef().get().setPhoneNumber(phoneNumberStr);
             try {
-                getUserStateRef().get().msgsQueue.put(new JavaInterMsg.SetPhone(phoneNumberStr));
-                AuthMsg nextStep = getUserStateRef().get().authQueue.take();
-                if (nextStep.code() == AuthMsg.loadPass().code()) {
+                getUserStateRef().get().outQueue.put(new BackMsg.SetPhone(phoneNumberStr));
+                FrontMsg nextStep = getUserStateRef().get().inQueue.take();
+                if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadPass()) {
                     getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
-                } else if (nextStep.code() == AuthMsg.loadVC().code()) {
+                } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadVc()) {
                     getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
                     ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController())
                             .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber());
-                } else if (nextStep.code() == AuthMsg.loadChats().code()) {
+                } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadChats()) {
                     getEncryWindow().launchWindowByPathToFXML(
                             EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
                     );
-                } else if (nextStep.code() == AuthMsg.err().code()) {
+                } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.error()) {
                     error.setText("Oops error!");
                 }
             } catch (InterruptedException e) {

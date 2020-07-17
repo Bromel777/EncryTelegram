@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.util.Duration;
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
+import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.util.KeyboardHandler;
 import org.javaFX.util.observers.BasicObserver;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class MainWindowBasicHandler extends DataHandler{
 
-    private final int delayDuration = 3;
+    private final int delayDuration = 50;
 
     @FXML
     protected TextArea searchMessageTextArea;
@@ -49,7 +49,7 @@ public abstract class MainWindowBasicHandler extends DataHandler{
 
     public void chatListObserve(DataHandler controller){
         setObserver(new JWindowObserver(controller));
-        getObserver().setPeriod(Duration.seconds(delayDuration));
+        getObserver().setPeriod(Duration.millis(delayDuration));
         getObserver().start();
     }
 
@@ -62,8 +62,8 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     public void sendMessage() throws InterruptedException {
         String messageStr = sendMessageTextArea.getText().trim();
         if(!messageStr.isEmpty()) {
-            JavaInterMsg msg = new JavaInterMsg.SendToChat(messageStr);
-            getUserStateRef().get().msgsQueue.put(msg);
+            BackMsg msg = new BackMsg.SendToChat(messageStr);
+            getUserStateRef().get().outQueue.put(msg);
             sendMessageTextArea.setText("");
         }
     }

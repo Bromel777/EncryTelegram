@@ -14,6 +14,7 @@ import org.encryfoundation.tg.userState.UserState
 import org.javaFX.model.JMessage
 import scorex.crypto.encode.Base64
 
+import scala.concurrent.duration._
 import scala.util.Try
 
 object ChatUtils {
@@ -71,8 +72,8 @@ object ChatUtils {
         msgs <- msgsMVar.read
         resultAccum <-
           if (msgs.length >= limit) msgs.pure[F]
-          else if (attempts == 10) Logger[F].info(s"Attemps: ${attempts}") >> msgs.pure[F]
-          else recurGet(msgs, attempts + 1)
+          else if (attempts == 10) Logger[F].info(s"Attempts: ${attempts}") >> msgs.pure[F]
+          else Timer[F].sleep(100.milliseconds) >> recurGet(msgs, attempts + 1)
       } yield resultAccum
 
     recurGet(List.empty, 0)

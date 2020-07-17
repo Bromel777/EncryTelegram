@@ -13,8 +13,9 @@ import org.encryfoundation.tg.AuthRequestHandler
 import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, PrivateGroupChatCreationHandler, ValueHandler}
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg._
+import org.encryfoundation.tg.javaIntegration.BackMsg
+import org.encryfoundation.tg.javaIntegration.BackMsg._
+import org.encryfoundation.tg.javaIntegration.FrontMsg.NewMsgsInChat
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
@@ -50,7 +51,7 @@ object UIProgram {
                 val msgText = Try(state.users.get(msg.senderUserId)
                   .map(_.phoneNumber)
                   .getOrElse("Unknown sender") + ": " +
-                  aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
+                  aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unknown msg")
                 new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
               case _ =>
                 val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
@@ -74,22 +75,22 @@ object UIProgram {
         }
       )
 
-    def processMsg(msg: JavaInterMsg): F[Unit] = msg match {
+    def processMsg(msg: BackMsg): F[Unit] = msg match {
       case _@SetActiveChat(chatId) =>
         for {
           state <- userStateRef.get
           _ <- clientService.sendRequest(new TdApi.CloseChat(state.activeChat))
           _ <- clientService.sendRequest(new TdApi.OpenChat(chatId))
-          _ <- Sync[F].delay(state.javaState.get().messagesListView.setItems(FXCollections.observableArrayList[VBoxMessageCell]()))
-          javaState <- state.javaState.get().pure[F]
+//          _ <- Sync[F].delay(state.javaState.get().messagesListView.setItems(FXCollections.observableArrayList[VBoxMessageCell]()))
           msgs <- ChatUtils.getMsgs(chatId, 20, clientService, state, userStateService)
           _ <- userStateRef.update(_.copy(activeChat = chatId))
           _ <- clientService.sendRequest(new TdApi.ViewMessages(chatId, msgs.map(_.getElement.getId).toArray, false), EmptyHandler[F]())
-          _ <- Sync[F].delay {
-            val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
-            msgs.foreach(observList.add)
-            javaState.messagesListView.setItems(observList)
-          }
+//          _ <- Sync[F].delay {
+//            val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
+//            msgs.foreach(observList.add)
+//            javaState.messagesListView.setItems(observList)
+//          }
+          _ <- state.javaState.get().inQueue.put(NewMsgsInChat(msgs.asJava)).pure[F]
         } yield ()
       case _@SendToChat(msg) =>
         userStateRef.get.flatMap( state =>
@@ -164,7 +165,7 @@ object UIProgram {
 
     override def run: Stream[F, Unit] = (for {
       state <- Stream.eval(userStateRef.get)
-      queue <- Stream.emit(state.javaState.get().msgsQueue)
+      queue <- Stream.emit(state.javaState.get().outQueue)
       elem <- Stream.emit(queue.take())
       _ <- Stream.eval(processMsg(elem))
     } yield ()).repeat

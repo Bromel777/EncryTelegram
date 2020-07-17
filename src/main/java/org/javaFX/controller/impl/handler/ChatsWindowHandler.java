@@ -6,13 +6,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import org.encryfoundation.tg.javaIntegration.JavaInterMsg;
-import org.encryfoundation.tg.utils.ChatUtils;
+import org.encryfoundation.tg.javaIntegration.BackMsg;
+import org.encryfoundation.tg.javaIntegration.FrontMsg;
 import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
@@ -77,10 +76,21 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     public void updateEncryWindow(EncryWindow encryWindow) {
         super.setEncryWindow(encryWindow);
         initializeTable();
-        if( messagesListView != null && messagesListView.getItems().size() != 0){
-            initializeDialogArea();
-        }
+//        if( messagesListView != null && messagesListView.getItems().size() != 0){
+//            initializeDialogArea();
+//        }
         enableMenuBar();
+        FrontMsg a = getUserStateRef().get().inQueue.poll();
+        if (a != null) {
+            if (a.code() == FrontMsg.Codes$.MODULE$.newMsgsInChat()) {
+                FrontMsg.NewMsgsInChat msg = (FrontMsg.NewMsgsInChat) a;
+                ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
+                msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
+                messagesListView.setItems(observableChatList);
+            } else {
+                System.out.println("Unknown msg");
+            }
+        }
     }
 
     @FXML
@@ -154,12 +164,14 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     protected void clickItem() {
         getUserStateRef().get().setActiveDialog(messagesListView);
-        JavaInterMsg msg = new JavaInterMsg.SetActiveChat(
+        BackMsg msg = new BackMsg.SetActiveChat(
                 chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );
         initializeDialogArea();
+        ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
+        messagesListView.setItems(observableMessageList);
         try {
-            getUserStateRef().get().msgsQueue.put(msg);
+            getUserStateRef().get().outQueue.put(msg);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

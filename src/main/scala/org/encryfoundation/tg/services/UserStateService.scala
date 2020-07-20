@@ -157,9 +157,11 @@ object UserStateService {
         (MessagesUtils.pipelinesStartMsg ++ MessagesUtils.pipelinesEndMsg)
           .contains(MessagesUtils.processMessage(chat.lastMessage))
 
-      def isPipeline(chatForChat: TdApi.Chat, state: UserState[F]): Boolean =
+      def isPipeline(chatForChat: TdApi.Chat, state: UserState[F]): Boolean = {
         state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) ||
+          state.pendingSecretChatsForInvite.exists(_._1 == chat.id) ||
           state.pipelineSecretChats.contains(chat.id) || checkForPipelineMsg(chatForChat)
+      }
 
       userState.get.flatMap { state =>
         if (!state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) &&
@@ -174,7 +176,7 @@ object UserStateService {
             _ <- userState.update(prevState =>
               if (newOrder != 0 && !isPipeline(chat, prevState)) {
                 prevState.javaState.get().setChatList(
-                  (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20).reverse.asJava
+                  (chat :: prevState.chatList.filterNot(el => el.id == chat.id || isPipeline(el, prevState))).sortBy(_.order).takeRight(20).reverse.asJava
                 )
                 prevState.copy(
                   chatList = (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20),

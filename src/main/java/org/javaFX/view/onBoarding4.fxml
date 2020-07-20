@@ -22,13 +22,15 @@
             <Font name="Calibri" size="19.0" />
          </font>
       </Label>
-      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fitHeight="212.0" fitWidth="316.0" layoutX="153.0" layoutY="69.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/svg-pic-onboarding-4@2x.png" />
+         </image></ImageView>
       <ImageView fx:id="nextButtonImg" fitHeight="60.0" fitWidth="328.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#handleNextOnboardingAction" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0">
          <image>
             <Image url="@../images/startButton.png" />
          </image>
       </ImageView>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#00b6ff" height="160.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="315.0" AnchorPane.leftAnchor="143.0" AnchorPane.rightAnchor="142.0" AnchorPane.topAnchor="100.0" />
       <Ellipse fill="WHITE" onMouseClicked="#toOnboarding1" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.bottomAnchor="210.0" AnchorPane.leftAnchor="264.0" AnchorPane.rightAnchor="329.0" AnchorPane.topAnchor="383.0" />
       <Ellipse fill="WHITE" layoutX="10.0" layoutY="10.0" onMouseClicked="#toOnboarding3" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.bottomAnchor="207.0" AnchorPane.leftAnchor="308.0" AnchorPane.rightAnchor="285.0" AnchorPane.topAnchor="383.0" />
       <Ellipse fill="WHITE" layoutX="20.0" layoutY="20.0" onMouseClicked="#toOnboarding2" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.bottomAnchor="207.0" AnchorPane.leftAnchor="286.0" AnchorPane.rightAnchor="304.0" AnchorPane.topAnchor="383.0" />

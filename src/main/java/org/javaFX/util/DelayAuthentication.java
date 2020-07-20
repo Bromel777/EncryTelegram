@@ -8,7 +8,7 @@ import org.javaFX.controller.impl.handler.EnterVerificationCodeHandler;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DelayAuthentication extends Thread{
+public class DelayAuthentication extends Thread {
     private final long delayMilliseconds ;
     private final EncryWindow encryWindow;
 

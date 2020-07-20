@@ -28,7 +28,7 @@ object ProverFirstMsgSerializer {
     //todo: add exception check
     private def fromProto(msg: StepMsgProto): Either[StepMsgSerializationError, ProverFirstStepMsg] = {
       val protoMsg = msg.getVerification.getProFir
-      val pairing = PairingFactory.getPairing("src/main/resources/properties/a.properties")
+      val pairing = PairingFactory.getPairing("properties/a.properties")
       val firstStepBytes = pairing.getG1.newElementFromBytes(protoMsg.firstStep.toByteArray).getImmutable
       val g1Gen = pairing.getG1.newElementFromBytes(protoMsg.g1Gen.toByteArray).getImmutable
       val g2Gen = pairing.getG2.newElementFromBytes(protoMsg.g2Gen.toByteArray).getImmutable

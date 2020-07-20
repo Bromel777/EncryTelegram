@@ -44,7 +44,7 @@ case class VerifierSecondStep[F[_]: Concurrent: Timer: Logger](proverMsg: MVar[F
 
   def processPreviousStepEnd: F[Pipeline[F]] = for {
     _ <- Logger[F].info("Process processPreviousStepEnd on VerifierSecondStep")
-    pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
+    pairing <- Sync[F].delay(PairingFactory.getPairing("properties/a.properties"))
     msg <- proverMsg.read
     verifier <- Verifier(
       msg.g1Gen,

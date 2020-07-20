@@ -26,9 +26,6 @@ public class EnterPasswordHandler extends DataHandler {
     private Label error;
 
     public EnterPasswordHandler() {
-//        String phoneNumber = getUserStateRef().get().getPhoneNumber();
-//        System.out.println("Phone: " + phoneNumber);
-//        EncryWindow.setUserPhoneNumber(getUserStateRef().get().getPhoneNumber());
     }
 
     @FXML

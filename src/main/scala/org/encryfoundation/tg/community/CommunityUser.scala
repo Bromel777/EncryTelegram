@@ -34,7 +34,7 @@ object CommunityUser {
 
   def fromProto(cu: CommunityUserProtoMessage): CommunityUser = {
     val login = cu.userTelegramLogin
-    val pairing: Pairing = PairingFactory.getPairing("src/main/resources/properties/a.properties")
+    val pairing: Pairing = PairingFactory.getPairing("properties/a.properties")
     val g1Gen = pairing.getG1.newElementFromBytes(cu.g1Gen.toByteArray)
     val g2Gen = pairing.getG2.newElementFromBytes(cu.g2Gen.toByteArray)
     val zRGen = pairing.getZr.newElementFromBytes(cu.zrGen.toByteArray)

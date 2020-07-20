@@ -27,6 +27,11 @@ public class EncryWindow extends Application {
 
     private final static String pathToRootLayout = "view/rootLayout.fxml";
 
+    public final static String pathToOnboardingOneFXML = "view/onBoarding1.fxml";
+    public final static String pathToOnboardingTwoFXML = "view/onBoarding2.fxml";
+    public final static String pathToOnboardingThreeFXML = "view/onBoarding3.fxml";
+    public final static String pathToOnboardingFourFXML = "view/onBoarding4.fxml";
+
     public final static String pathToEnterPhoneNumberWindowFXML = "view/enterPhoneNumberWindow.fxml";
     public final static String pathToEnterVerificationCodeWindowFXML = "view/enterVerificationCodeWindow.fxml";
     public final static String pathToEnterPasswordWindowFXML = "view/enterPasswordWindow.fxml";
@@ -36,8 +41,12 @@ public class EncryWindow extends Application {
     public final static String pathToCommunitiesListWindowFXML = "view/communitiesListWindow.fxml";
 
     public final static String pathToSingleCommunityDialogFXML = "view/singleCommunityDialog.fxml";
+    public final static String pathToInfoDialogFXML = "view/infoDialog.fxml";
 
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
+
+
+    private String currentWindowStr ;
 
     private static String userPhoneNumber;
 
@@ -60,8 +69,9 @@ public class EncryWindow extends Application {
     }
 
     public void launchStartWindow(){
-        launchWindowByPathToFXML(pathToStartWindowFXML);
         new DelayAuthentication(this, 5000).start();
+        this.launchWindowByPathToFXML(EncryWindow.pathToStartWindowFXML);
+
     }
 
     private void initBasicFields(Stage primaryStage){
@@ -92,6 +102,7 @@ public class EncryWindow extends Application {
     public void launchWindowByPathToFXML(String pathToTemplate){
         try{
             FXMLLoader loader = new FXMLLoader();
+            currentWindowStr = pathToTemplate;
             loader.setLocation(EncryWindow.class.getResource(pathToTemplate));
             AnchorPane startOverview = loader.load();
             rootLayout.setCenter(startOverview);
@@ -104,6 +115,7 @@ public class EncryWindow extends Application {
     public void launchWindowByPathToFXML(String pathToTemplate, int newWidth, int newHeight){
         try{
             FXMLLoader loader = new FXMLLoader();
+            currentWindowStr = pathToTemplate;
             loader.setLocation(EncryWindow.class.getResource(pathToTemplate));
             AnchorPane startOverview = loader.load();
             rootLayout.setCenter(startOverview);
@@ -144,4 +156,7 @@ public class EncryWindow extends Application {
         }
     }
 
+    public String getCurrentWindowStr() {
+        return currentWindowStr;
+    }
 }

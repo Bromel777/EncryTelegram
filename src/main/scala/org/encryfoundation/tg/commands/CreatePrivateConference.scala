@@ -18,7 +18,7 @@ case class CreatePrivateConference[F[_]: Sync: Logger](userStateRef: Ref[F, User
                                                        db: Database[F])(
                                                        privateConfService: PrivateConferenceService[F]) extends Command[F]{
 
-  val pairing: Pairing = PairingFactory.getPairing("src/main/resources/properties/a.properties")
+  val pairing: Pairing = PairingFactory.getPairing("properties/a.properties")
 
   val generatorG1: Element = pairing.getG1.newRandomElement().getImmutable
 

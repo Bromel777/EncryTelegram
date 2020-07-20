@@ -1,14 +1,15 @@
 package org.javaFX.model.nodes;
 
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JMessage;
+import org.javaFX.util.StringHandler;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -18,8 +19,8 @@ import java.util.Date;
 public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     private final String youMessagesBackgroundColor = "#4988C1";
-    private final String otherMessageBackgroundColor = "#a4f3c5";
-    private final String backGroundStyle = "-fx-background-color: #fbfbfb";
+    private final String otherMessageBackgroundColor = "#FFFFFF";
+    private final String backGroundStyle = "-fx-background-color: #FBFBFB;";
 
     private Rectangle messageRectangle;
     private Rectangle angleRectangle;
@@ -31,11 +32,16 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     public VBoxMessageCell(JMessage jMessage, int parentWidth) {
         super(jMessage, parentWidth);
+        setStyle();
     }
-
+    
+    private void setStyle(){
+        setStyle("-fx-padding: 0px");
+    }
+    
     @Override
     protected void setIsYourMessage(JMessage jMessage) {
-        if(jMessage.getContent().toString().length() <12){
+        if(jMessage.getContent().toString().length() < 12){
             return;
         }
         String messagePhoneNumber = jMessage.getContent().toString().substring(0, 12);
@@ -91,9 +97,11 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     protected void initRootPane(JMessage jMessage) {
         AnchorPane pane = new AnchorPane();
         String textContent = jMessage.getContent().toString()
-                .substring(jMessage.getContent().toString().indexOf(":")+2);
+                .substring(jMessage.getContent().toString().indexOf(":")+2).trim();
         int multiplier =
                 textContent.length()%40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
+        int numberOfNewLines = StringHandler.countCharactersInStr(textContent,'\n');
+        multiplier += numberOfNewLines;
         cellWidth = getParentWidth() - getParentWidth() / 3;
         cellHeight = 27 * (multiplier +1);
         if (jMessage.isMine()) {
@@ -172,6 +180,10 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     public String getOtherMessageBackgroundColor() {
         return otherMessageBackgroundColor;
+    }
+
+    public String getContentText(){
+        return ((Label)contentNode).getText();
     }
 
 }

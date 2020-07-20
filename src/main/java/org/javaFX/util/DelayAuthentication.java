@@ -27,7 +27,7 @@ public class DelayAuthentication extends Thread{
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadVc()) {
                     encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadPhone()) {
-                    encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
+                    encryWindow.launchWindowByPathToFXML(EncryWindow.pathToOnboardingOneFXML);
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadChats()) {
                     encryWindow.launchWindowByPathToFXML(
                             EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight

@@ -31,7 +31,7 @@ object PrivateCommunity {
   def fromProto(pc: PrivateCommunityProtoMessage): PrivateCommunity = {
     val name = pc.name
     val users = pc.users.toList.map(CommunityUser.fromProto)
-    val pairing: Pairing = PairingFactory.getPairing("src/main/resources/properties/a.properties")
+    val pairing: Pairing = PairingFactory.getPairing("properties/a.properties")
     val g1Gen = pairing.getG1.newElementFromBytes(pc.g1Gen.toByteArray)
     val g2Gen = pairing.getG1.newElementFromBytes(pc.g2Gen.toByteArray)
     val zRGen = pairing.getZr.newElementFromBytes(pc.zrGen.toByteArray)

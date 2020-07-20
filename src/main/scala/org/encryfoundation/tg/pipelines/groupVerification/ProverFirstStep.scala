@@ -90,7 +90,7 @@ object ProverFirstStep {
                                              clientService: ClientService[F]
                                              ): F[ProverFirstStep[F]] =
     for {
-      pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
+      pairing <- Sync[F].delay(PairingFactory.getPairing("properties/a.properties"))
       groupInfo <- privConfService.findConf(confName)
       prover <- Prover(
         groupInfo.G1Gen,

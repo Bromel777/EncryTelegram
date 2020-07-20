@@ -27,10 +27,10 @@ public class EncryWindow extends Application {
 
     private final static String pathToRootLayout = "view/rootLayout.fxml";
 
-    public final static String pathToOnboardingOneFXML = "view/onboarding1.fxml";
-    public final static String pathToOnboardingTwoFXML = "view/onboarding2.fxml";
-    public final static String pathToOnboardingThreeFXML = "view/onboarding3.fxml";
-    public final static String pathToOnboardingFourFXML = "view/onboarding4.fxml";
+    public final static String pathToOnboardingOneFXML = "view/onBoarding1.fxml";
+    public final static String pathToOnboardingTwoFXML = "view/onBoarding2.fxml";
+    public final static String pathToOnboardingThreeFXML = "view/onBoarding3.fxml";
+    public final static String pathToOnboardingFourFXML = "view/onBoarding4.fxml";
 
     public final static String pathToEnterPhoneNumberWindowFXML = "view/enterPhoneNumberWindow.fxml";
     public final static String pathToEnterVerificationCodeWindowFXML = "view/enterVerificationCodeWindow.fxml";

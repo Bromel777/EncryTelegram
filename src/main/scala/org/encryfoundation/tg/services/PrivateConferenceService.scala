@@ -36,7 +36,7 @@ object PrivateConferenceService {
       for {
         state <- userStateRef.get
         jState <- Sync[F].delay(state.javaState.get())
-        pairing <- Sync[F].delay(PairingFactory.getPairing("src/main/resources/properties/a.properties"))
+        pairing <- Sync[F].delay(PairingFactory.getPairing("properties/a.properties"))
         generatorG1 <- Sync[F].delay(pairing.getG1.newRandomElement().getImmutable)
         generatorG2 <- Sync[F].delay(generatorG1.getImmutable)
         generatorZr <- Sync[F].delay(pairing.getZr.newRandomElement().getImmutable)

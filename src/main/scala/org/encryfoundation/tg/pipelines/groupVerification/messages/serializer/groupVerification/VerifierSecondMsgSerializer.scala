@@ -23,7 +23,7 @@ object VerifierSecondMsgSerializer {
 
     private def parseProto(protoMsg: StepMsgProto): Either[StepMsgSerializationError, VerifierSecondStepMsg] = {
       val proto = protoMsg.getVerification.getVerSec
-      val pairing = PairingFactory.getPairing("src/main/resources/properties/a.properties")
+      val pairing = PairingFactory.getPairing("properties/a.properties")
       val secondStep = pairing.getG1.newElementFromBytes(proto.secondStep.toByteArray).getImmutable
       val verifierPublicKey1 = pairing.getGT.newElementFromBytes(proto.verifierPubKey.toByteArray).getImmutable
       Right[StepMsgSerializationError, VerifierSecondStepMsg](VerifierSecondStepMsg(verifierPublicKey1, secondStep))

@@ -10,10 +10,10 @@ import org.encryfoundation.tg.services.{ClientService, UserStateService}
 import scorex.crypto.encode.Base64
 import cats.implicits._
 
-class WelcomeInitPipe[F[_]: Concurrent: Timer: Logger](chatId: Long,
-                                                       mainPipeline: Pipeline[F])
-                                                      (userStateService: UserStateService[F],
-                                                       clientService: ClientService[F]) extends Pipeline[F] {
+case class WelcomeInitPipe[F[_]: Concurrent: Timer: Logger](chatId: Long,
+                                                            mainPipeline: Pipeline[F])
+                                                           (userStateService: UserStateService[F],
+                                                            clientService: ClientService[F]) extends Pipeline[F] {
 
   override def processInput(input: Array[Byte]): F[Pipeline[F]] =
     ClientUtils.sendMessage(chatId, WelcomeInitPipe.welcomeMsgText, clientService).map(_ =>

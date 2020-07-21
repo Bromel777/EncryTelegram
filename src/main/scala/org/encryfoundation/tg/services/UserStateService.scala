@@ -155,7 +155,7 @@ object UserStateService {
 
       def checkForPipelineMsg(chat: TdApi.Chat): Boolean =
         (MessagesUtils.pipelinesStartMsg ++ MessagesUtils.pipelinesEndMsg)
-          .contains(MessagesUtils.processMessage(chat.lastMessage))
+          .contains(MessagesUtils.tdMsg2String(chat.lastMessage))
 
       def isPipeline(chatForChat: TdApi.Chat, state: UserState[F]): Boolean = {
         state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) ||

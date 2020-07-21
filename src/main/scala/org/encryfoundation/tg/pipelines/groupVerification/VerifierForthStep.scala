@@ -4,10 +4,10 @@ import cats.Applicative
 import cats.effect.concurrent.{MVar, Ref}
 import cats.effect.{Concurrent, Timer}
 import org.encryfoundation.tg.pipelines.Pipeline
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverThirdStepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndPipeline, StartPipeline}
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
+import org.encryfoundation.tg.pipelines.messages.StepMsg
+import org.encryfoundation.tg.pipelines.messages.StepMsg.GroupVerificationStepMsg.ProverThirdStepMsg
+import org.encryfoundation.tg.pipelines.messages.StepMsg.{EndPipeline, StartPipeline}
+import org.encryfoundation.tg.pipelines.messages.serializer.StepMsgSerializer
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import it.unisa.dia.gas.jpbc.Element

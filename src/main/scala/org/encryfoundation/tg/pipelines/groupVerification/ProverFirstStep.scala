@@ -14,13 +14,13 @@ import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
 import org.encryfoundation.tg.community.PrivateCommunity
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.{ProverFirstStepMsg, VerifierSecondStepMsg}
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndPipeline, StartPipeline}
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.EndPipelineMsgSerializer._
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.ProverFirstMsgSerializer._
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
+import org.encryfoundation.tg.pipelines.messages.StepMsg
+import org.encryfoundation.tg.pipelines.messages.StepMsg.GroupVerificationStepMsg.{ProverFirstStepMsg, VerifierSecondStepMsg}
+import org.encryfoundation.tg.pipelines.messages.StepMsg.{EndPipeline, StartPipeline}
+import org.encryfoundation.tg.pipelines.messages.serializer.StartPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.messages.serializer.EndPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.messages.serializer.groupVerification.ProverFirstMsgSerializer._
+import org.encryfoundation.tg.pipelines.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 
 class ProverFirstStep[F[_]: Concurrent: Timer: Logger] private(prover: Prover,

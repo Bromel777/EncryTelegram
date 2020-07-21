@@ -23,6 +23,7 @@ object ClientUtils {
     clientService.sendRequest(new TdApi.SendMessage(chatId, 0, null, replyMarkup, content), EmptyHandler[F]())
   }
 
+  @Deprecated
   def sendMsg[F[_]: Concurrent: Logger](chat: TdApi.Chat,
                                         msg: String,
                                         stateRef: Ref[F, UserState[F]],

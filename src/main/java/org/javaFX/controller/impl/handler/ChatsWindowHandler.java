@@ -120,14 +120,14 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         VBoxChatCell cell = prevCell.orElse(new VBoxChatCell(
                 new JChat(
                         chat.title,
-                        MessagesUtils.processMessage(chat.lastMessage),
+                        MessagesUtils.tdMsg2String(chat.lastMessage),
                         chat.id,
                         MessagesUtils.getLastMessageTime(chat.lastMessage),
                         new AtomicInteger(chat.unreadCount)
                 ), chatCellWidth
         ));
         cell.updateLastMessage(
-                MessagesUtils.processMessage(chat.lastMessage),
+                MessagesUtils.tdMsg2String(chat.lastMessage),
                 MessagesUtils.getLastMessageTime(chat.lastMessage),
                 chat.unreadCount
         );

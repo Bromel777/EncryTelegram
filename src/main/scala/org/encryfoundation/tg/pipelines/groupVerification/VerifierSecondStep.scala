@@ -12,13 +12,13 @@ import scorex.crypto.encode.Base64
 import scorex.crypto.hash.Blake2b256
 import cats.implicits._
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.{ProverFirstStepMsg, ProverThirdStepMsg, VerifierSecondStepMsg}
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.VerifierSecondMsgSerializer._
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndPipeline, StartPipeline}
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.EndPipelineMsgSerializer._
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
+import org.encryfoundation.tg.pipelines.messages.StepMsg
+import org.encryfoundation.tg.pipelines.messages.StepMsg.GroupVerificationStepMsg.{ProverFirstStepMsg, ProverThirdStepMsg, VerifierSecondStepMsg}
+import org.encryfoundation.tg.pipelines.messages.serializer.groupVerification.VerifierSecondMsgSerializer._
+import org.encryfoundation.tg.pipelines.messages.StepMsg.{EndPipeline, StartPipeline}
+import org.encryfoundation.tg.pipelines.messages.serializer.StartPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.messages.serializer.EndPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.{ClientService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 

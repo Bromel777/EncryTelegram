@@ -1,4 +1,4 @@
-package org.encryfoundation.tg.pipelines.groupVerification.messages
+package org.encryfoundation.tg.pipelines.messages
 
 import it.unisa.dia.gas.jpbc.Element
 import org.encryfoundation.tg.userState.PrivateGroupChat
@@ -25,5 +25,10 @@ object StepMsg {
                                   chatId: Long,
                                   name: String,
                                   privateGroupChat: PrivateGroupChat) extends GroupVerificationStepMsg
+  }
+
+  sealed trait WelcomeMsg extends StepMsg
+  object WelcomeMsg {
+    case class WelcomeResponseMsg(msgHash: Array[Byte]) extends WelcomeMsg
   }
 }

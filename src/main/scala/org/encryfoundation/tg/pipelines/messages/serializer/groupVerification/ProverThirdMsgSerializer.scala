@@ -1,18 +1,18 @@
-package org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification
+package org.encryfoundation.tg.pipelines.messages.serializer.groupVerification
 
 import GroupVerificationProto.GroupVerificationProtoMsg
 import ProverThirdStepProto.ProverThirdStepProtoMsg
 import StepProto.StepMsgProto
 import com.google.protobuf.ByteString
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverThirdStepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.{StepMsgSerializationError, StepMsgSerializer}
+import org.encryfoundation.tg.pipelines.messages.StepMsg.GroupVerificationStepMsg.ProverThirdStepMsg
+import org.encryfoundation.tg.pipelines.messages.serializer.{StepMsgSerializationError, StepMsgSerializer}
 import org.encryfoundation.tg.userState.PrivateGroupChat
 
 object ProverThirdMsgSerializer {
 
   implicit val serializer: StepMsgSerializer[ProverThirdStepMsg] = new StepMsgSerializer[ProverThirdStepMsg] {
 
-    private def toProto(msg: ProverThirdStepMsg): StepMsgProto =
+    def toProto(msg: ProverThirdStepMsg): StepMsgProto =
       StepMsgProto()
           .withVerification(
             GroupVerificationProtoMsg()
@@ -26,7 +26,7 @@ object ProverThirdMsgSerializer {
           )
 
     //todo: check for errs
-    private def parseProto(protoMsg: StepMsgProto): Either[StepMsgSerializationError, ProverThirdStepMsg] = {
+    def parseProto(protoMsg: StepMsgProto): Either[StepMsgSerializationError, ProverThirdStepMsg] = {
       val proto = protoMsg.getVerification.getProThi
       Right[StepMsgSerializationError, ProverThirdStepMsg](
         ProverThirdStepMsg(
@@ -37,10 +37,5 @@ object ProverThirdMsgSerializer {
         )
       )
     }
-
-    override def toBytes(msg: ProverThirdStepMsg): Array[Byte] = toProto(msg).toByteArray
-
-    override def parseBytes(bytes: Array[Byte]): Either[StepMsgSerializationError, ProverThirdStepMsg] =
-      parseProto(StepMsgProto.parseFrom(bytes))
   }
 }

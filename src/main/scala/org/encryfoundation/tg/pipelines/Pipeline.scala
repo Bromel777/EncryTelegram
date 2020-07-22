@@ -6,10 +6,10 @@ import cats.effect.concurrent.Ref
 import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.Client
 import org.encryfoundation.tg.pipelines.groupVerification.{ProverFirstStep, VerifierSecondStep}
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.StartPipeline
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
+import org.encryfoundation.tg.pipelines.messages.StepMsg
+import org.encryfoundation.tg.pipelines.messages.StepMsg.StartPipeline
+import org.encryfoundation.tg.pipelines.messages.serializer.StartPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.{ClientService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
 

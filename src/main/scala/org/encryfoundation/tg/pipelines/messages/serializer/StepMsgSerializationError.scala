@@ -1,4 +1,4 @@
-package org.encryfoundation.tg.pipelines.groupVerification.messages.serializer
+package org.encryfoundation.tg.pipelines.messages.serializer
 
 trait StepMsgSerializationError
 object StepMsgSerializationError {

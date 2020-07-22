@@ -15,7 +15,7 @@ import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
 import org.encryfoundation.tg.javaIntegration.FrontMsg.{LoadChatsWindow, LoadPassWindow, LoadPhoneWindow, LoadVCWindow}
 import org.encryfoundation.tg.pipelines.Pipelines
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
+import org.encryfoundation.tg.pipelines.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.steps.Step.AuthStep
 import org.encryfoundation.tg.userState.UserState
@@ -53,7 +53,6 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           _ <- userStateService.addChat(updateNewChat.chat)
           _ <- userStateService.updateChatOrder(chatWithOrder._1, chatWithOrder._2)
         } yield ()
-        //userStateService.addChat(updateNewChat.chat) >> userStateService.updateChatOrder(updateNewChat.chat, updateNewChat.chat.order)
       case updateUser: TdApi.UpdateUser => userStateService.updateUser(updateUser.user)
       case updateChatOrder: TdApi.UpdateChatOrder =>
         OptionT(userStateService.getChatById(updateChatOrder.chatId)).flatMap { chat =>
@@ -87,7 +86,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
             userStateService.getPipelineChatIdBySecChat(secretChat.secretChat.id).flatMap {
               case Some(chatId) =>
                 for {
-                  possiblePipeline <- userStateService.getPipeline(chatId)
+                  possiblePipeline <- userStateService.getPendingPipeline(chatId)
                   _ <- Logger[F].info(s"pipeline: ${possiblePipeline}. Chatid: ${chatId}")
                   _ <- possiblePipeline match {
                     case Some(pipeline) =>
@@ -103,34 +102,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
           case res => Logger[F].info(s"Receive for secret chat: ${secretChat}")
         }
       case msg: TdApi.UpdateNewMessage =>
-        for {
-          _ <- msg.message.content match {
-            case a: MessageText =>
-              Base64.decode(a.text.text) match {
-                case Success(value) =>
-                  StepMsgSerializer.parseBytes(value) match {
-                    case Right(stepMsg) if !msg.message.isOutgoing =>
-                      userStateService.getPipeline(msg.message.chatId) flatMap {
-                        case Some(pipeline) => for {
-                          newPipeLine <- pipeline.processInput(value)
-                          _ <- userStateService.updatePipelineChat(msg.message.chatId, newPipeLine)
-                        } yield ()
-                        case None => Pipelines.findStart(
-                          userStateRef,
-                          userStateService,
-                          msg.message.chatId,
-                          clientService,
-                          stepMsg
-                        )
-                      }
-                    case Right(_) => processLastMessage(msg.message)
-                    case Left(_) => processLastMessage(msg.message)
-                  }
-                case Failure(err) => processLastMessage(msg.message)
-              }
-            case _ => processLastMessage(msg.message)
-          }
-        } yield ()
+        MessagesUtils.processTdMsg(msg.message, userStateRef)(userStateService, clientService)
       case _ => Logger[F].info(s"Receive unkown elem3: ${obj}")
     }
 
@@ -198,7 +170,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
               val msgText = Try(state.users.get(msg.senderUserId)
                 .map(_.phoneNumber)
                 .getOrElse("Unknown sender") + ": " +
-                aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
+                aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unknown msg")
               new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
             case _ =>
               val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"

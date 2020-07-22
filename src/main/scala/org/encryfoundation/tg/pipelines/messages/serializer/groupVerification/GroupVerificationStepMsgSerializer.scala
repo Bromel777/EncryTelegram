@@ -1,10 +1,10 @@
-package org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification
+package org.encryfoundation.tg.pipelines.messages.serializer.groupVerification
 
 import GroupVerificationProto.GroupVerificationProtoMsg
 import StepProto.StepMsgProto
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.{StepMsgSerializationError, StepMsgSerializer}
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializationError.CorruptedBytes
+import org.encryfoundation.tg.pipelines.messages.StepMsg.GroupVerificationStepMsg
+import org.encryfoundation.tg.pipelines.messages.serializer.{StepMsgSerializationError, StepMsgSerializer}
+import org.encryfoundation.tg.pipelines.messages.serializer.StepMsgSerializationError.CorruptedBytes
 
 object GroupVerificationStepMsgSerializer {
 

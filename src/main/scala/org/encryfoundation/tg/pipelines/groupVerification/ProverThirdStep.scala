@@ -12,13 +12,13 @@ import org.encryfoundation.tg.community.PrivateCommunity
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.CloseChatHandler
 import org.encryfoundation.tg.pipelines.Pipeline
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.{ProverThirdStepMsg, VerifierSecondStepMsg}
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.{EndPipeline, StartPipeline}
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.EndPipelineMsgSerializer._
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StartPipelineMsgSerializer._
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.StepMsgSerializer
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification.ProverThirdMsgSerializer._
+import org.encryfoundation.tg.pipelines.messages.StepMsg
+import org.encryfoundation.tg.pipelines.messages.StepMsg.GroupVerificationStepMsg.{ProverThirdStepMsg, VerifierSecondStepMsg}
+import org.encryfoundation.tg.pipelines.messages.StepMsg.{EndPipeline, StartPipeline}
+import org.encryfoundation.tg.pipelines.messages.serializer.EndPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.messages.serializer.StartPipelineMsgSerializer._
+import org.encryfoundation.tg.pipelines.messages.serializer.StepMsgSerializer
+import org.encryfoundation.tg.pipelines.messages.serializer.groupVerification.ProverThirdMsgSerializer._
 import org.encryfoundation.tg.services.{ClientService, UserStateService}
 import org.encryfoundation.tg.userState.{PrivateGroupChat, UserState}
 import scorex.crypto.encode.Base64

@@ -1,17 +1,18 @@
-package org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.groupVerification
+package org.encryfoundation.tg.pipelines.messages.serializer.groupVerification
 
 import GroupVerificationProto.GroupVerificationProtoMsg
 import ProverFistStepProto.ProverFirstStepProtoMsg
 import StepProto.StepMsgProto
 import com.google.protobuf.ByteString
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory
-import org.encryfoundation.tg.pipelines.groupVerification.messages.StepMsg.GroupVerificationStepMsg.ProverFirstStepMsg
-import org.encryfoundation.tg.pipelines.groupVerification.messages.serializer.{StepMsgSerializationError, StepMsgSerializer}
+import org.encryfoundation.tg.pipelines.messages.StepMsg.GroupVerificationStepMsg.ProverFirstStepMsg
+import org.encryfoundation.tg.pipelines.messages.serializer.{StepMsgSerializationError, StepMsgSerializer}
 
 object ProverFirstMsgSerializer {
 
   implicit val serializerProverFirst: StepMsgSerializer[ProverFirstStepMsg] = new StepMsgSerializer[ProverFirstStepMsg] {
-    private def toProto(msg: ProverFirstStepMsg): StepMsgProto =
+
+    def toProto(msg: ProverFirstStepMsg): StepMsgProto =
       StepMsgProto()
           .withVerification(
             GroupVerificationProtoMsg()
@@ -26,7 +27,7 @@ object ProverFirstMsgSerializer {
           )
 
     //todo: add exception check
-    private def fromProto(msg: StepMsgProto): Either[StepMsgSerializationError, ProverFirstStepMsg] = {
+    def parseProto(msg: StepMsgProto): Either[StepMsgSerializationError, ProverFirstStepMsg] = {
       val protoMsg = msg.getVerification.getProFir
       val pairing = PairingFactory.getPairing("properties/a.properties")
       val firstStepBytes = pairing.getG1.newElementFromBytes(protoMsg.firstStep.toByteArray).getImmutable
@@ -48,9 +49,5 @@ object ProverFirstMsgSerializer {
         )
       )
     }
-
-    def toBytes(msg: ProverFirstStepMsg): Array[Byte] = toProto(msg).toByteArray
-    def parseBytes(bytes: Array[Byte]): Either[StepMsgSerializationError, ProverFirstStepMsg] =
-      fromProto(StepMsgProto.parseFrom(bytes))
   }
 }

@@ -236,11 +236,8 @@ object UserStateService {
     override def getUserById(userId: Int): F[Option[TdApi.User]] =
       userState.get.map(_.users.get(userId))
 
-    override def logout(): F[Unit] = for {
-      _ <- userState.update(_.copy(isAuth = false))
-      keys <- db.getAllKeys()
-      _ <- keys.traverse(db.remove)
-    } yield ()
+    override def logout(): F[Unit] =
+      userState.update(_.copy(isAuth = false))
 
     override def deleteCommunity(communityName: String): F[Unit] =
       userState.update { prevState =>

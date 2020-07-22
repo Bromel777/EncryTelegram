@@ -8,6 +8,7 @@ import org.encryfoundation.tg.pipelines.Pipeline
 import org.encryfoundation.tg.userState.{PrivateGroupChat, PrivateGroupChats, UserState}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
+import org.encryfoundation.tg.pipelines.utilPipes.EmptyPipeline
 import org.encryfoundation.tg.steps.Step
 import org.encryfoundation.tg.steps.Step.ChatsStep
 import org.encryfoundation.tg.utils.MessagesUtils
@@ -38,6 +39,7 @@ trait UserStateService[F[_]] {
   def addPendingPipelineChat(chat: TdApi.Chat, newPipeline: Pipeline[F]): F[Unit]
   def getPipelineChatIdBySecChat(secretChatId: Int): F[Option[Long]]
   def getPipeline(chatId: Long): F[Option[Pipeline[F]]]
+  def getPendingPipeline(chatId: Long): F[Option[Pipeline[F]]]
   //users
   def updateUser(user: TdApi.User): F[Unit]
   def getUserById(userId: Int): F[Option[TdApi.User]]
@@ -95,33 +97,49 @@ object UserStateService {
         )
       }
 
-    override def updatePipelineChat(chatId: Long, newPipeline: Pipeline[F]): F[Unit] = for {
-      state <- userState.get
-      pending <- state.pendingSecretChatsForInvite.get(chatId).pure[F]
-      _ <- if (pending.nonEmpty) userState.update { prevState =>
-        prevState.javaState.get().setChatList(
-          prevState.chatList.filterNot(_.id == chatId).sortBy(_.order).takeRight(20).reverse.asJava
-        )
-        prevState.copy(
-          pendingSecretChatsForInvite = prevState.pendingSecretChatsForInvite - chatId,
-          pipelineSecretChats = state.pipelineSecretChats + (pending.get._1.id -> newPipeline)
-        )
-      } else userState.update { prevState =>
-        prevState.javaState.get().setChatList(
-          prevState.chatList.filterNot(_.id == chatId).sortBy(_.order).takeRight(20).reverse.asJava
-        )
-        prevState.copy(
-          pipelineSecretChats = state.pipelineSecretChats + (chatId -> newPipeline)
-        )
+    override def updatePipelineChat(chatId: Long, newPipeline: Pipeline[F]): F[Unit] =
+      newPipeline match {
+        case EmptyPipeline(chatId) =>
+            userState.update { prevState =>
+              prevState.copy(
+                pendingSecretChatsForInvite = prevState.pendingSecretChatsForInvite - chatId,
+                pipelineSecretChats = prevState.pipelineSecretChats - chatId
+              )
+            }
+        case _ =>
+          for {
+            state <- userState.get
+            pending <- state.pendingSecretChatsForInvite.get(chatId).pure[F]
+            _ <- if (pending.nonEmpty) userState.update { prevState =>
+              prevState.javaState.get().setChatList(
+                prevState.chatList.filterNot(_.id == chatId).sortBy(_.order).takeRight(20).reverse.asJava
+              )
+              prevState.copy(
+                pendingSecretChatsForInvite = prevState.pendingSecretChatsForInvite - chatId,
+                pipelineSecretChats = state.pipelineSecretChats + (pending.get._1.id -> newPipeline)
+              )
+            } else userState.update { prevState =>
+              prevState.javaState.get().setChatList(
+                prevState.chatList.filterNot(_.id == chatId).sortBy(_.order).takeRight(20).reverse.asJava
+              )
+              prevState.copy(
+                pipelineSecretChats = state.pipelineSecretChats + (chatId -> newPipeline)
+              )
+            }
+          } yield ()
       }
-    } yield ()
 
     override def getPipeline(secretChatId: Long): F[Option[Pipeline[F]]] = for {
       state <- userState.get
-      _ <- Logger[F].info(s"pipelines: ${state.pendingSecretChatsForInvite}")
+      _ <- Logger[F].info(s"pipelines: ${state.pendingSecretChatsForInvite}. ${state.pipelineSecretChats}")
       pendingPipeLine <- state.pendingSecretChatsForInvite.find(_._1 == secretChatId).map(_._2._2).pure[F]
-      privatePipeline <- userState.get.map(_.pipelineSecretChats.get(secretChatId))
+      privatePipeline <- state.pipelineSecretChats.find(_._1 == secretChatId).map(_._2).pure[F]
     } yield pendingPipeLine.orElse(privatePipeline)
+
+    override def getPendingPipeline(secretChatId: Long): F[Option[Pipeline[F]]] =
+      userState.get.flatMap { state =>
+        state.pendingSecretChatsForInvite.find(_._1 == secretChatId).map(_._2._2).pure[F]
+      }
 
     override def getPrivateGroupChat(chatId: Long): F[Option[PrivateGroupChat]] =
       userState.get.map(_.privateGroups.find(_.chatId == chatId))

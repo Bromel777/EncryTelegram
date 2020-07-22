@@ -20,7 +20,7 @@ import org.encryfoundation.tg.pipelines.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.pipelines.groupVerification.{ProverFirstStep, ProverThirdStep, VerifierSecondStep}
 import org.encryfoundation.tg.pipelines.messages.serializer.StartPipelineMsgSerializer._
 import org.encryfoundation.tg.pipelines.messages.serializer.EndPipelineMsgSerializer._
-import org.encryfoundation.tg.pipelines.utilPipes.{WelcomeInitPipe, WelcomeProcessPipe}
+import org.encryfoundation.tg.pipelines.utilPipes.{EmptyPipeline, WelcomeInitPipe, WelcomeProcessPipe}
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
 
@@ -30,7 +30,7 @@ object MessagesUtils {
 
   val pipelinesStartMsg: List[String] =
     List(ProverFirstStep.pipelineName, ProverThirdStep.pipelineName, VerifierSecondStep.pipeLineName)
-      .map(name => Base64.encode(StepMsgSerializer.toBytes(StartPipeline(name))))
+      .map(name => Base64.encode(StepMsgSerializer.toBytes(StartPipeline(name)))) :+ WelcomeInitPipe.welcomeMsgText
 
   val pipelinesEndMsg: List[String] =
     List(ProverFirstStep.pipelineName, ProverThirdStep.pipelineName, VerifierSecondStep.pipeLineName)
@@ -79,7 +79,13 @@ object MessagesUtils {
                                                    (userStateService: UserStateService[F],
                                                     clientService: ClientService[F]): F[Unit] =
     if (isPipelineMsg(msg)) processPipelineMsg(msg, userStateRef)(userStateService, clientService)
-    else for {
+    else processNotPipelineMsg(msg, userStateRef)(userStateService, clientService)
+
+  def processNotPipelineMsg[F[_]: Concurrent: Timer: Logger](msg: TdApi.Message,
+                                                             userStateRef: Ref[F, UserState[F]])
+                                                            (userStateService: UserStateService[F],
+                                                             clientService: ClientService[F]): F[Unit] =
+    for {
       state <- userStateRef.get
       sender <- MessagesUtils.getSender(msg, userStateService)
       newmsg <- msg2VBox(msg, sender, state)(userStateService)
@@ -115,22 +121,29 @@ object MessagesUtils {
                     newPipeLine <- pipeline.processInput(value)
                     _ <- userStateService.updatePipelineChat(msg.chatId, newPipeLine)
                   } yield ()
-                  case None => Pipelines.findStart(
+                  case _ => Pipelines.findStart(
                     userState,
                     userStateService,
                     msg.chatId,
                     clientService,
                     stepMsg
-                  )
+                  ) >> Logger[F].info(s"No pipelines for msg: ${stepMsg}")
                 }
-              case Right(_) => processTdMsg(msg, userState)(userStateService, clientService)
-              case Left(_) => processTdMsg(msg, userState)(userStateService, clientService)
+              case Right(_) if a.text.text == WelcomeInitPipe.welcomeMsgText && !msg.isOutgoing =>
+                //todo: Change input of hash func
+                WelcomeProcessPipe.startPipeline(msg.chatId)(userStateService, clientService)
+              case Left(_) if a.text.text == WelcomeInitPipe.welcomeMsgText && !msg.isOutgoing =>
+                //todo: Change input of hash func
+                WelcomeProcessPipe.startPipeline(msg.chatId)(userStateService, clientService)
+              case Right(_) => processNotPipelineMsg(msg, userState)(userStateService, clientService)
+              case Left(_) => processNotPipelineMsg(msg, userState)(userStateService, clientService)
             }
-          case Failure(err) if a.text.text == WelcomeInitPipe.welcomeMsgText =>
+          case Failure(err) if a.text.text == WelcomeInitPipe.welcomeMsgText && !msg.isOutgoing =>
+            //todo: Change input of hash func
             WelcomeProcessPipe.startPipeline(msg.chatId)(userStateService, clientService)
-          case Failure(err) => processTdMsg(msg, userState)(userStateService, clientService)
+          case Failure(err) => processNotPipelineMsg(msg, userState)(userStateService, clientService)
         }
-      case _ => processTdMsg(msg, userState)(userStateService, clientService)
+      case _ => processNotPipelineMsg(msg, userState)(userStateService, clientService)
     }
 
   def getLastMessageTime(msg: TdApi.Message): Long =

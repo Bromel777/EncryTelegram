@@ -16,10 +16,11 @@ case class WelcomeInitPipe[F[_]: Concurrent: Timer: Logger](chatId: Long,
                                                             clientService: ClientService[F]) extends Pipeline[F] {
 
   override def processInput(input: Array[Byte]): F[Pipeline[F]] =
-    ClientUtils.sendMessage(chatId, WelcomeInitPipe.welcomeMsgText, clientService).map(_ =>
-      WelcomeEndPipe(chatId, mainPipeline)(userStateService, clientService)
-    )
-
+    for {
+      _ <- ClientUtils.sendMessage(chatId, WelcomeInitPipe.welcomeMsgText, clientService)
+      newPipeline <- WelcomeEndPipe(chatId, mainPipeline)(userStateService, clientService).pure[F]
+      _ <- userStateService.updatePipelineChat(chatId, newPipeline)
+    } yield newPipeline
 }
 
 object WelcomeInitPipe {

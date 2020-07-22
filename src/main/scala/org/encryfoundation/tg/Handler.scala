@@ -86,7 +86,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
             userStateService.getPipelineChatIdBySecChat(secretChat.secretChat.id).flatMap {
               case Some(chatId) =>
                 for {
-                  possiblePipeline <- userStateService.getPipeline(chatId)
+                  possiblePipeline <- userStateService.getPendingPipeline(chatId)
                   _ <- Logger[F].info(s"pipeline: ${possiblePipeline}. Chatid: ${chatId}")
                   _ <- possiblePipeline match {
                     case Some(pipeline) =>

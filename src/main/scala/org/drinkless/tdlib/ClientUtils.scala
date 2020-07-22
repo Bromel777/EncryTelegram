@@ -20,7 +20,7 @@ object ClientUtils {
     )
     val replyMarkup: TdApi.ReplyMarkup = new TdApi.ReplyMarkupInlineKeyboard(Array(row, row, row))
     val content: TdApi.InputMessageContent = new TdApi.InputMessageText(new TdApi.FormattedText(msg, null), false, true)
-    clientService.sendRequest(new TdApi.SendMessage(chatId, 0, null, replyMarkup, content), EmptyHandler[F]())
+    Logger[F].info(s"Send to chat: ${msg}") >> clientService.sendRequest(new TdApi.SendMessage(chatId, 0, null, replyMarkup, content), EmptyHandler[F]())
   }
 
   @Deprecated

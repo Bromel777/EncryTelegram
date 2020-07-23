@@ -1,5 +1,6 @@
 package org.encryfoundation.tg.utils
 
+import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 
 import cats.Applicative
@@ -55,7 +56,7 @@ object MessagesUtils {
             val msgText = Try(state.users.get(msg.senderUserId)
               .map(_.phoneNumber)
               .getOrElse("Unknown sender") + ": " +
-              aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unknown msg")
+              new String(aes.decrypt(Base64.decode(text.text.text).get), StandardCharsets.UTF_8)).getOrElse("Unknown msg")
             val newText = text
             newText.text.text = msgText
             msg.content = newText

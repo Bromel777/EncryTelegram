@@ -13,7 +13,7 @@ import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.drinkless.tdlib.{Client, ResultHandler, TdApi}
 import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, SecretChatCreationHandler}
-import org.encryfoundation.tg.javaIntegration.FrontMsg.{LoadChatsWindow, LoadPassWindow, LoadPhoneWindow, LoadVCWindow}
+import org.encryfoundation.tg.javaIntegration.FrontMsg.{LoadChatsWindow, LoadPassWindow, LoadPhoneWindow, LoadUnboardings, LoadVCWindow}
 import org.encryfoundation.tg.pipelines.Pipelines
 import org.encryfoundation.tg.pipelines.messages.serializer.StepMsgSerializer
 import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
@@ -40,7 +40,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
 
   override def onResult(obj: TdApi.Object): F[Unit] = obj match {
       case authEvent: TdApi.UpdateAuthorizationState =>
-        authHandler(authEvent)
+        Logger[F].info(s"Receive auth event: ${authEvent}") >> authHandler(authEvent)
       case updateNewChat: TdApi.UpdateNewChat =>
         for {
           _ <- Logger[F].info(s"Receive update new chat with chat id: ${updateNewChat.chat}")
@@ -120,9 +120,15 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
         parameters.systemVersion = "Unknown"
         parameters.applicationVersion = "0.1"
         parameters.enableStorageOptimizer = true
-        Logger[F].info("Setting td-lib settings") >> clientService.sendRequest(
-          new TdApi.SetTdlibParameters(parameters), AuthRequestHandler[F](userStateRef)
-        ) >> userStateService.setCurrentStep(AuthStep)
+        for {
+          state <- userStateRef.get
+          _ <- Logger[F].info("Setting td-lib settings")
+          _ <- clientService.sendRequest(
+            new TdApi.SetTdlibParameters(parameters), AuthRequestHandler[F](userStateRef)
+          )
+          _ <- userStateService.setCurrentStep(AuthStep)
+          _ <- Sync[F].delay(state.javaState.get().inQueue.put(LoadUnboardings))
+        } yield ()
       case a: TdApi.AuthorizationStateWaitEncryptionKey =>
         clientService.sendRequest(new TdApi.CheckDatabaseEncryptionKey(), AuthRequestHandler[F](userStateRef))
       case a: TdApi.AuthorizationStateWaitPhoneNumber =>
@@ -153,7 +159,7 @@ case class Handler[F[_]: ConcurrentEffect: Timer: Logger](userStateRef: Ref[F, U
       case  _: TdApi.AuthorizationStateLoggingOut =>
         userStateService.logout()
       case _: TdApi.AuthorizationStateClosed =>
-        userStateService.setCurrentStep(AuthStep) >> clientService.logout() >> Logger[F].info("Complete logout")
+        userStateService.setCurrentStep(AuthStep) >> clientService.logout() >> userStateService.logout() >> Logger[F].info("Complete logout")
       case _ =>
         Logger[F].info(s"Got unknown event in auth. ${authEvent}")
     }

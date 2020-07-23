@@ -240,6 +240,7 @@ object UserStateService {
       _ <- userState.update(_.copy(isAuth = false))
       keys <- db.getAllKeys()
       _ <- keys.traverse(db.remove)
+      _ <- userState.get.map(_.javaState.get().inQueue.clear())
     } yield ()
 
     override def deleteCommunity(communityName: String): F[Unit] =

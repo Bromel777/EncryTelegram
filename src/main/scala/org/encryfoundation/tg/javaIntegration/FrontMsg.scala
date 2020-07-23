@@ -15,10 +15,11 @@ object FrontMsg {
     def loadPass = 1
     def loadChats = 2
     def loadPhone = 3
-    def newMsgInChat = 4
-    def newMsgsInChat = 5
-    def newChat = 6
-    def updateLastMsg = 7
+    def loadUnboarding = 4
+    def newMsgInChat = 5
+    def newMsgsInChat = 6
+    def newChat = 7
+    def updateLastMsg = 8
   }
 
   object LoadVCWindow extends FrontMsg {
@@ -32,6 +33,10 @@ object FrontMsg {
   }
   object LoadPhoneWindow extends FrontMsg {
     def code: Int = Codes.loadPhone
+  }
+
+  object LoadUnboardings extends FrontMsg {
+    def code: Int = Codes.loadUnboarding
   }
 
   case class NewMsgInChat(msg: VBoxMessageCell) extends FrontMsg {

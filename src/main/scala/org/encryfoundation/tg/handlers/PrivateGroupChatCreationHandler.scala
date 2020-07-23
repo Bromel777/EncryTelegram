@@ -23,7 +23,6 @@ case class PrivateGroupChatCreationHandler[F[_]: Concurrent: Timer: Logger](stat
     case TdApi.Chat.CONSTRUCTOR =>
       val newChat = obj.asInstanceOf[TdApi.Chat]
       for {
-        _ <- Sync[F].delay(println("New chat created!"))
         _ <- userStateService.persistPrivateGroupChat(
           PrivateGroupChat(newChat.id, confInfo.name, groupName, password)
         )

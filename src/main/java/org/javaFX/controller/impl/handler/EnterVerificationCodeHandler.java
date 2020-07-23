@@ -51,7 +51,6 @@ public class EnterVerificationCodeHandler extends DataHandler {
                 ((EnterVerificationCodeHandler) getEncryWindow().getCurrentController())
                         .setPhoneNumberLabelText(getUserStateRef().get().getPreparedPhoneNumber());
             } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadChats()) {
-                System.out.println("here3");
                 getEncryWindow().launchWindowByPathToFXML(
                         EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
                 );

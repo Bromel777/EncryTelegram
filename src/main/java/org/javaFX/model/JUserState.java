@@ -133,5 +133,15 @@ public class JUserState {
         isAuth = auth;
     }
 
-
+    public void logout() {
+        chatList = new ArrayList<>();
+        chatsMap = new HashMap<>();
+        privateGroupsMap = new HashMap<>();
+        usersMap =  new HashMap<>();
+        userInfo = new AtomicReferenceArray(3);
+        basicGroups = new HashMap<>();
+        superGroups = new HashMap<>();
+        secretChats = new HashMap<>();
+        communities = new ArrayList<JLocalCommunity>();
+    }
 }

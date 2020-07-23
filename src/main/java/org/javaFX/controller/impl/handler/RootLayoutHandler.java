@@ -30,7 +30,7 @@ public class RootLayoutHandler extends DataHandler {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
+        getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToOnboardingOneFXML);
         if(getRootLayout().getTop().isVisible()) {
             getRootLayout().getTop().setDisable(true);
             getRootLayout().getTop().setVisible(false);

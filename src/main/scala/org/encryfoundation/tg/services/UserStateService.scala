@@ -1,5 +1,8 @@
 package org.encryfoundation.tg.services
 
+import java.nio.charset.StandardCharsets
+
+import cats.Applicative
 import cats.effect.Sync
 import cats.effect.concurrent.Ref
 import org.drinkless.tdlib.TdApi
@@ -8,12 +11,16 @@ import org.encryfoundation.tg.pipelines.Pipeline
 import org.encryfoundation.tg.userState.{PrivateGroupChat, PrivateGroupChats, UserState}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
+import org.drinkless.tdlib.TdApi.MessageText
+import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.pipelines.utilPipes.EmptyPipeline
 import org.encryfoundation.tg.steps.Step
 import org.encryfoundation.tg.steps.Step.ChatsStep
-import org.encryfoundation.tg.utils.MessagesUtils
+import org.encryfoundation.tg.utils.{ChatUtils, MessagesUtils}
+import scorex.crypto.encode.Base64
 
 import collection.JavaConverters._
+import scala.util.Try
 
 trait UserStateService[F[_]] {
   //common ops
@@ -52,7 +59,7 @@ trait UserStateService[F[_]] {
 object UserStateService {
 
   private final class Live[F[_]: Sync: Logger](userState: Ref[F, UserState[F]],
-                                               db: Database[F]) extends UserStateService[F] {
+                                               db: Database[F]) extends UserStateService[F] { self =>
 
     override def addChat(chat: TdApi.Chat): F[Unit] =
       userState.update { prevState =>
@@ -190,7 +197,26 @@ object UserStateService {
                 chatList = prevState.mainChatList.takeRight(20).values.toList
               ) else prevState
             )
-            _ <- Sync[F].delay(chat.order = newOrder)
+            isSecretGroupChat <- Applicative[F].pure(state.privateGroups.find(_.chatId == chat.id))
+            decryptedMsg <- Applicative[F].pure(
+              if (chat.lastMessage != null) isSecretGroupChat match {
+              case Some(privateGroupChat) =>
+                chat.lastMessage.content match {
+                  case text: MessageText =>
+                    val aes = AESEncryption(privateGroupChat.password.getBytes())
+                    val msgText = Try(new String(aes.decrypt(Base64.decode(text.text.text).get), StandardCharsets.UTF_8)).getOrElse("Unknown msg")
+                    val newText = text
+                    newText.text.text = msgText
+                    chat.lastMessage.content = newText
+                    chat.lastMessage
+                  case _ => chat.lastMessage
+                }
+              case None => chat.lastMessage
+            } else chat.lastMessage )
+            _ <- Sync[F].delay {
+              chat.order = newOrder
+              chat.lastMessage = decryptedMsg
+            }
             _ <- userState.update(prevState =>
               if (newOrder != 0 && !isPipeline(chat, prevState)) {
                 prevState.javaState.get().setChatList(

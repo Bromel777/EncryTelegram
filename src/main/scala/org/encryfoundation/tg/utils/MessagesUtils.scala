@@ -49,7 +49,6 @@ object MessagesUtils {
 
   def decryptMsg[F[_]: Sync](msg: TdApi.Message, state: UserState[F])
                             (userStateService: UserStateService[F]): F[TdApi.Message] =
-    //Sync[F].delay(println(s"Trying to decrypt msg: ${msg.content}")) >>
     userStateService.getPrivateGroupChat(msg.chatId).map {
       case Some(privateGroupChat) =>
         msg.content match {

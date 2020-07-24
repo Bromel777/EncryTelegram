@@ -81,15 +81,9 @@ object UIProgram {
           state <- userStateRef.get
           _ <- clientService.sendRequest(new TdApi.CloseChat(state.activeChat))
           _ <- clientService.sendRequest(new TdApi.OpenChat(chatId))
-//          _ <- Sync[F].delay(state.javaState.get().messagesListView.setItems(FXCollections.observableArrayList[VBoxMessageCell]()))
           msgs <- ChatUtils.getMsgs(chatId, 20, clientService, state, userStateService)
           _ <- userStateRef.update(_.copy(activeChat = chatId))
           _ <- clientService.sendRequest(new TdApi.ViewMessages(chatId, msgs.map(_.getElement.getId).toArray, false), EmptyHandler[F]())
-//          _ <- Sync[F].delay {
-//            val observList: ObservableList[VBoxMessageCell] = FXCollections.observableArrayList[VBoxMessageCell]()
-//            msgs.foreach(observList.add)
-//            javaState.messagesListView.setItems(observList)
-//          }
           _ <- state.javaState.get().inQueue.put(NewMsgsInChat(msgs.asJava)).pure[F]
         } yield ()
       case _@SendToChat(msg) =>

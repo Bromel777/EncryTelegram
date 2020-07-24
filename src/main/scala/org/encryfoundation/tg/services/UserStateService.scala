@@ -11,7 +11,7 @@ import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.pipelines.utilPipes.EmptyPipeline
 import org.encryfoundation.tg.steps.Step
 import org.encryfoundation.tg.steps.Step.ChatsStep
-import org.encryfoundation.tg.utils.MessagesUtils
+import org.encryfoundation.tg.utils.{ChatUtils, MessagesUtils}
 
 import collection.JavaConverters._
 
@@ -191,6 +191,7 @@ object UserStateService {
               ) else prevState
             )
             _ <- Sync[F].delay(chat.order = newOrder)
+            //_ <- ChatUtils.decryptLastMessage(chat, state,this)
             _ <- userState.update(prevState =>
               if (newOrder != 0 && !isPipeline(chat, prevState)) {
                 prevState.javaState.get().setChatList(

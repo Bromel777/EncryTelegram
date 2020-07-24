@@ -29,6 +29,13 @@ object ChatUtils {
 
   def getUnreadMsgsCount(chat: TdApi.Chat): Int = if (chat.unreadCount == null) 0 else chat.unreadCount
 
+  def decryptLastMessage[F[_]: Sync](chat: TdApi.Chat,
+                                     state: UserState[F],
+                                     userStateService: UserStateService[F]): F[Unit] = for {
+    lastMsg <- MessagesUtils.decryptMsg(chat.lastMessage, state)(userStateService)
+    _ <- Sync[F].delay(chat.lastMessage = lastMsg)
+  } yield ()
+
   def getMsgs[F[_]: Concurrent: Timer: Logger](chatId: Long, limit: Int,
                                                clientService: ClientService[F],
                                                userState: UserState[F],

@@ -11,7 +11,7 @@ import org.drinkless.tdlib.TdApi
 import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.services.{ClientService, UserStateService}
 import org.javaFX.model.JMessage
-import org.javaFX.model.nodes.VBoxDialogTextMessageCell
+import org.javaFX.model.nodes.{VBoxDialogTextMessageCell, VBoxMessageCell}
 import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import org.encryfoundation.tg.crypto.AESEncryption
@@ -48,6 +48,7 @@ object MessagesUtils {
 
   def decryptMsg[F[_]: Sync](msg: TdApi.Message, state: UserState[F])
                             (userStateService: UserStateService[F]): F[TdApi.Message] =
+    //Sync[F].delay(println(s"Trying to decrypt msg: ${msg.content}")) >>
     userStateService.getPrivateGroupChat(msg.chatId).map {
       case Some(privateGroupChat) =>
         msg.content match {
@@ -66,13 +67,15 @@ object MessagesUtils {
       case None => msg
     }
 
-  def msg2VBox[F[_]: Sync](msg: TdApi.Message, sender: String, state: UserState[F])
-                          (userStateService: UserStateService[F]): F[VBoxDialogTextMessageCell] =
-    decryptMsg(msg, state)(userStateService).map { decryptedMsg =>
-      val msgText = tdMsg2String(decryptedMsg)
-      new VBoxDialogTextMessageCell(
-        new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id)
-      )
+  def msg2VBox[F[_]: Sync](msg: TdApi.Message, state: UserState[F])
+                          (userStateService: UserStateService[F]): F[VBoxMessageCell] =
+    decryptMsg(msg, state)(userStateService).flatMap { decryptedMsg =>
+      MessagesUtils.getSender(msg, userStateService).map { sender =>
+        val msgText = tdMsg2String(decryptedMsg)
+        new VBoxDialogTextMessageCell(
+          new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id)
+        )
+      }
     }
 
   def processTdMsg[F[_]: Concurrent: Timer: Logger](msg: TdApi.Message,
@@ -88,8 +91,7 @@ object MessagesUtils {
                                                              clientService: ClientService[F]): F[Unit] =
     for {
       state <- userStateRef.get
-      sender <- MessagesUtils.getSender(msg, userStateService)
-      newmsg <- msg2VBox(msg, sender, state)(userStateService)
+      newmsg <- msg2VBox(msg, state)(userStateService)
       _ <- if (msg.chatId == state.activeChat) Sync[F].delay {
         val javaState = state.javaState.get()
         val localDialogHistory = javaState.messagesListView

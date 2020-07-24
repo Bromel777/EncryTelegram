@@ -41,7 +41,7 @@ object ChatUtils {
           ValueHandler(
             msgsMVar,
             (msg: TdApi.Messages) =>
-              msg.messages.toList.traverse(processLastMessage(_, userState, userStateService)).map(_.reverse))
+              msg.messages.toList.traverse(MessagesUtils.msg2VBox(_, userState)(userStateService)).map(_.reverse))
         )
         msgs <- msgsMVar.read
         resultAccum <-

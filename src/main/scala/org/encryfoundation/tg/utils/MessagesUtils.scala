@@ -8,7 +8,7 @@ import cats.data.OptionT
 import cats.effect.{Concurrent, Sync, Timer}
 import cats.effect.concurrent.Ref
 import org.drinkless.tdlib.TdApi
-import org.drinkless.tdlib.TdApi.{MessagePhoto, MessageText, MessageVideo}
+import org.drinkless.tdlib.TdApi.{MessageBasicGroupChatCreate, MessagePhoto, MessageText, MessageVideo}
 import org.encryfoundation.tg.services.{ClientService, UserStateService}
 import org.javaFX.model.JMessage
 import org.javaFX.model.nodes.{VBoxDialogTextMessageCell, VBoxMessageCell}
@@ -43,7 +43,8 @@ object MessagesUtils {
       case text: MessageText => text.text.text
       case _: MessagePhoto => "Unsupported msg type: Photo"
       case _: MessageVideo => "Unsupported msg type: Video"
-      case _ => "Unknown msg type"
+      case groupChatCreation: MessageBasicGroupChatCreate => s"created the group ${groupChatCreation.title}"
+      case msg => s"Unknown msg type."
     }
 
   def decryptMsg[F[_]: Sync](msg: TdApi.Message, state: UserState[F])

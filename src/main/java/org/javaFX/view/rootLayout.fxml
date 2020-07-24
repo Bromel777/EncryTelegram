@@ -32,6 +32,17 @@
                   <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#showInfoWindow" text="Info" />
                </items>
             </Menu>
+            <Menu mnemonicParsing="false" text="Settings">
+              <items>
+                  <Menu mnemonicParsing="false" text="Language">
+                    <items>
+                        <CheckMenuItem fx:id="englishCheckItem" mnemonicParsing="false" onAction="#chooseEnglishLanguage" text="English" />
+                        <CheckMenuItem fx:id="russianCheckItem" mnemonicParsing="false" onAction="#chooseRussianLanguage" text="Russian" />
+                    </items>
+                  </Menu>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+              </items>
+            </Menu>
             </menus>
         </MenuBar>
     </top>

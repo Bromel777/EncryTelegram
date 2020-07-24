@@ -8,6 +8,7 @@ import org.encryfoundation.tg.handlers.EmptyHandler
 import org.encryfoundation.tg.userState.UserState
 import scorex.crypto.encode.Base64
 import cats.implicits._
+import com.google.common.base.Charsets
 import org.encryfoundation.tg.services.ClientService
 
 object ClientUtils {
@@ -32,7 +33,7 @@ object ClientUtils {
     stateRef.get.flatMap(state =>
       state.privateGroups.find(_.chatId == chat.id).map { privGroup =>
         val aes = AESEncryption(privGroup.password.getBytes())
-        sendMessage(chat.id, Base64.encode(aes.encrypt(msg.getBytes)), clientService)
+        sendMessage(chat.id, Base64.encode(aes.encrypt(msg.getBytes(Charsets.UTF_8))), clientService)
       }.getOrElse(sendMessage(chat.id, msg, clientService))
     )
   }

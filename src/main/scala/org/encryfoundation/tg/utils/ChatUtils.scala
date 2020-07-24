@@ -21,35 +21,9 @@ object ChatUtils {
 
   def processLastMessage[F[_]: Sync](msg: TdApi.Message, state: UserState[F], userStateService: UserStateService[F]): F[VBoxMessageCell] =
     MessagesUtils.getSender(msg, userStateService).flatMap( sender =>
-      userStateService.getPrivateGroupChat(msg.chatId).map {
-        case Some(privateGroupChat) =>
-          msg.content match {
-            case text: MessageText =>
-              val aes = AESEncryption(privateGroupChat.password.getBytes())
-              val msgText = Try(state.users.get(msg.senderUserId)
-                .map(_.phoneNumber)
-                .getOrElse("Unknown sender") + ": " +
-                aes.decrypt(Base64.decode(text.text.text).get).map(_.toChar).mkString).getOrElse("Unkown msg")
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
-            case _ =>
-              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
-          }
-        case None =>
-          msg.content match {
-            case text: MessageText =>
-              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + text.text.text
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
-            case _: MessagePhoto =>
-              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "photo"
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
-            case _: MessageVideo =>
-              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": " + "video"
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
-            case _ =>
-              val msgText = state.users.get(msg.senderUserId).map(_.phoneNumber).getOrElse("Unknown sender") + ": Unknown msg type"
-              new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
-          }
+      MessagesUtils.decryptMsg(msg, state)(userStateService).map { msg =>
+        val msgText = MessagesUtils.tdMsg2String(msg)
+        new VBoxDialogTextMessageCell(new JMessage[String](msg.isOutgoing, msgText, msg.date.toString, sender, false, msg.id))
       }
     )
 
@@ -67,7 +41,7 @@ object ChatUtils {
           ValueHandler(
             msgsMVar,
             (msg: TdApi.Messages) =>
-              msg.messages.toList.traverse(processLastMessage(_, userState, userStateService)).map(_.reverse))
+              msg.messages.toList.traverse(MessagesUtils.msg2VBox(_, userState)(userStateService)).map(_.reverse))
         )
         msgs <- msgsMVar.read
         resultAccum <-

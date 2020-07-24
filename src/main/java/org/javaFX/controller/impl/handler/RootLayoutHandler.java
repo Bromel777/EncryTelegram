@@ -3,6 +3,7 @@ package org.javaFX.controller.impl.handler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -15,6 +16,12 @@ public class RootLayoutHandler extends DataHandler {
 
     @FXML
     private MenuItem aboutMenuItem;
+
+    @FXML
+    private CheckMenuItem englishCheckItem;
+
+    @FXML
+    private CheckMenuItem russianCheckItem;
 
     @FXML
     private void createLocalCommunity(){
@@ -64,6 +71,16 @@ public class RootLayoutHandler extends DataHandler {
     private void showInfoWindow(){
         launchDialog();
         aboutMenuItem.setDisable(true);
+    }
+    //TODO activate one menuItem and set unselected others + change the whole page view
+    @FXML
+    private void chooseRussianLanguage(){
+
+    }
+    //TODO activate one menuItem and set unselected others + change the whole page view
+    @FXML
+    private void chooseEnglishLanguage(){
+
     }
 
     private void launchDialog(){

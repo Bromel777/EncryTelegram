@@ -13,6 +13,7 @@ import cats.implicits._
 import io.chrisdavenport.log4cats.Logger
 import org.drinkless.tdlib.TdApi.MessageText
 import org.encryfoundation.tg.crypto.AESEncryption
+import org.encryfoundation.tg.handlers.EmptyHandler
 import org.encryfoundation.tg.pipelines.utilPipes.EmptyPipeline
 import org.encryfoundation.tg.steps.Step
 import org.encryfoundation.tg.steps.Step.ChatsStep
@@ -31,6 +32,7 @@ trait UserStateService[F[_]] {
   def updateChatOrder(chat: TdApi.Chat, newOrder: Long): F[Unit]
   def getChatById(chatId: Long): F[Option[TdApi.Chat]]
   def updateUnreadMsgsCount(chatId: Long, newCount: Int): F[Unit]
+  def increaseChatLimit(newValue: Int): F[Unit]
   //secret chats
   def addSecretChat(chat: TdApi.SecretChat): F[Unit]
   def removeSecretChat(chat: TdApi.SecretChat): F[Unit]
@@ -59,7 +61,8 @@ trait UserStateService[F[_]] {
 object UserStateService {
 
   private final class Live[F[_]: Sync: Logger](userState: Ref[F, UserState[F]],
-                                               db: Database[F]) extends UserStateService[F] { self =>
+                                               chatLimitRef: Ref[F, Int],
+                                               db: Database[F]) extends UserStateService[F] {
 
     override def addChat(chat: TdApi.Chat): F[Unit] =
       userState.update { prevState =>
@@ -95,13 +98,15 @@ object UserStateService {
       ) >> Logger[F].info(s"Persist private group chat: ${privateGroupChat}")
 
     override def addPipelineChat(chat: TdApi.Chat, pipeline: Pipeline[F]): F[Unit] =
-      userState.update { prevState =>
-        prevState.javaState.get().setChatList(
-          prevState.chatList.filterNot(_.id == chat.id).sortBy(_.order).takeRight(20).reverse.asJava
-        )
-        prevState.copy(
-          pipelineSecretChats = prevState.pipelineSecretChats + (chat.id -> pipeline)
-        )
+      chatLimitRef.get.flatMap { chatLimit =>
+        userState.update { prevState =>
+          prevState.javaState.get().setChatList(
+            prevState.chatList.filterNot(_.id == chat.id).sortBy(_.order).takeRight(chatLimit).reverse.asJava
+          )
+          prevState.copy(
+            pipelineSecretChats = prevState.pipelineSecretChats + (chat.id -> pipeline)
+          )
+        }
       }
 
     override def updatePipelineChat(chatId: Long, newPipeline: Pipeline[F]): F[Unit] =
@@ -117,9 +122,10 @@ object UserStateService {
           for {
             state <- userState.get
             pending <- state.pendingSecretChatsForInvite.get(chatId).pure[F]
+            chatLimit <- chatLimitRef.get
             _ <- if (pending.nonEmpty) userState.update { prevState =>
               prevState.javaState.get().setChatList(
-                prevState.chatList.filterNot(_.id == chatId).sortBy(_.order).takeRight(20).reverse.asJava
+                prevState.chatList.filterNot(_.id == chatId).sortBy(_.order).takeRight(chatLimit).reverse.asJava
               )
               prevState.copy(
                 pendingSecretChatsForInvite = prevState.pendingSecretChatsForInvite - chatId,
@@ -127,7 +133,7 @@ object UserStateService {
               )
             } else userState.update { prevState =>
               prevState.javaState.get().setChatList(
-                prevState.chatList.filterNot(_.id == chatId).sortBy(_.order).takeRight(20).reverse.asJava
+                prevState.chatList.filterNot(_.id == chatId).sortBy(_.order).takeRight(chatLimit).reverse.asJava
               )
               prevState.copy(
                 pipelineSecretChats = state.pipelineSecretChats + (chatId -> newPipeline)
@@ -154,16 +160,19 @@ object UserStateService {
     override def addPendingPipelineChat(chat: TdApi.Chat,
                                         newPipeline: Pipeline[F]): F[Unit] = chat.`type` match {
       case secret: TdApi.ChatTypeSecret =>
-        Logger[F].info(s"Add chat with id: ${chat.id} and secret chat id: ${secret.secretChatId}") >>
-        userState.update { prevState =>
-          prevState.javaState.get().setChatList(
-            prevState.chatList.filterNot(_.id == chat.id).sortBy(_.order).takeRight(20).reverse.asJava
-          )
-          prevState.copy(
-            pendingSecretChatsForInvite = prevState.pendingSecretChatsForInvite + (chat.id -> (chat, newPipeline)),
-            pipelineSecretChatInfo = prevState.pipelineSecretChatInfo + (secret.secretChatId -> chat.id)
-          )
-        }
+        for {
+          _ <- Logger[F].info(s"Add chat with id: ${chat.id} and secret chat id: ${secret.secretChatId}")
+          chatLimit <- chatLimitRef.get
+          _ <- userState.update { prevState =>
+            prevState.javaState.get().setChatList(
+              prevState.chatList.filterNot(_.id == chat.id).sortBy(_.order).takeRight(chatLimit).reverse.asJava
+            )
+            prevState.copy(
+              pendingSecretChatsForInvite = prevState.pendingSecretChatsForInvite + (chat.id -> (chat, newPipeline)),
+              pipelineSecretChatInfo = prevState.pipelineSecretChatInfo + (secret.secretChatId -> chat.id)
+            )
+          }
+        } yield ()
       case _ =>  ().pure[F]
     }
 
@@ -192,9 +201,10 @@ object UserStateService {
         if (!state.pendingSecretChatsForInvite.exists(_._2._1.id == chat.id) &&
           !state.pipelineSecretChats.contains(chat.id))
           for {
+            chatLimit <- chatLimitRef.get
             _ <- userState.update(prevState =>
-              if (prevState.chatList.length < 20) prevState.copy(
-                chatList = prevState.mainChatList.takeRight(20).values.toList
+              if (prevState.chatList.length < chatLimit) prevState.copy(
+                chatList = prevState.mainChatList.takeRight(chatLimit).values.toList
               ) else prevState
             )
             isSecretGroupChat <- Applicative[F].pure(state.privateGroups.find(_.chatId == chat.id))
@@ -220,10 +230,10 @@ object UserStateService {
             _ <- userState.update(prevState =>
               if (newOrder != 0 && !isPipeline(chat, prevState)) {
                 prevState.javaState.get().setChatList(
-                  (chat :: prevState.chatList.filterNot(el => el.id == chat.id || isPipeline(el, prevState))).sortBy(_.order).takeRight(20).reverse.asJava
+                  (chat :: prevState.chatList.filterNot(el => el.id == chat.id || isPipeline(el, prevState))).sortBy(_.order).takeRight(chatLimit).reverse.asJava
                 )
                 prevState.copy(
-                  chatList = (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order).takeRight(20),
+                  chatList = (chat :: prevState.chatList.filterNot(_.id == chat.id)).sortBy(_.order),
                   mainChatList = (prevState.mainChatList.filterNot(_._2.id == chat.id) + (newOrder -> chat))
                 )
               } else prevState
@@ -285,9 +295,21 @@ object UserStateService {
       userState.get.map { prevState =>
         prevState.mainChatList.find(_._2.id == chatId).map(_._2.unreadCount = newCount)
       } >> ().pure[F]
+
+    override def increaseChatLimit(newValue: Int): F[Unit] =
+      chatLimitRef.set(newValue) >> userState.update { prevState =>
+        prevState.javaState.get().setChatList(
+          prevState.chatList.sortBy(_.order).takeRight(newValue).reverse.asJava
+        )
+        prevState.copy(
+          chatList = prevState.mainChatList.values.toList.takeRight(newValue)
+        )
+      }
   }
 
   def apply[F[_]: Sync: Logger](db: Database[F],
                                 userState: Ref[F, UserState[F]]): F[UserStateService[F]] =
-    Sync[F].delay(new Live[F](userState, db))
+    Ref.of[F, Int](20).map { chatLimit =>
+      new Live[F](userState, chatLimit,  db)
+    }
 }

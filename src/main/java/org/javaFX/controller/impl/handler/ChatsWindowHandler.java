@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -63,6 +64,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private TextField searchMessageTextField;
 
+    //todo: remove after updating chat by front msg
+    private int chatsLimit = 20;
+
     public ChatsWindowHandler(){
     }
 
@@ -90,7 +94,16 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 FrontMsg.NewMsgsInChat msg = (FrontMsg.NewMsgsInChat) a;
                 ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
                 msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
+                messagesListView.scrollTo(1);
                 messagesListView.setItems(observableChatList);
+            } else if (a.code() == FrontMsg.Codes$.MODULE$.historyMsgs()) {
+                FrontMsg.HistoryMsgs msg = (FrontMsg.HistoryMsgs) a;
+                ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
+                msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
+                VBoxMessageCell prevLastCell = messagesListView.getItems().get(0);
+                messagesListView.getItems().forEach(cell -> observableChatList.add(cell));
+                messagesListView.setItems(observableChatList);
+                messagesListView.scrollTo(prevLastCell);
             } else {
                 System.out.println("Unknown msg");
             }
@@ -110,6 +123,32 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 }
         );
         return observableChatList;
+    }
+
+    @FXML
+    private void scrollChats(){
+        ScrollBar bar = (ScrollBar) chatsListView.lookup(".scroll-bar");
+        if (bar.getValue() == bar.getMax()) {
+            BackMsg msg = new BackMsg.LoadNextChatsChunk(chatsListView.getItems().size());
+            try {
+                getUserStateRef().get().outQueue.put(msg);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    private void scrollMsgs(){
+        ScrollBar bar = (ScrollBar) messagesListView.lookup(".scroll-bar");
+        if (bar.getValue() == bar.getMin()) {
+            BackMsg msg = new BackMsg.LoadNextMsgsChunk(messagesListView.getItems().size());
+            try {
+                getUserStateRef().get().outQueue.put(msg);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void initChatCell(ObservableList<VBoxChatCell> observableChatList, TdApi.Chat chat, double chatCellWidth){
@@ -137,7 +176,18 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     protected void initializeTable() {
-        chatsListView.setItems(getObservableJChatList());
+        ObservableList<VBoxChatCell> newChats = getObservableJChatList();
+        boolean scrollFlag = newChats.size() > chatsLimit;
+        VBoxChatCell scrollPoint;
+        //todo: refactor
+        if (scrollFlag) {
+            scrollPoint = chatsListView.getItems().get(chatsLimit - 1);
+            chatsListView.setItems(newChats);
+            chatsListView.scrollTo(scrollPoint);
+            chatsLimit = newChats.size();
+        } else {
+            chatsListView.setItems(newChats);
+        }
     }
 
     @FXML

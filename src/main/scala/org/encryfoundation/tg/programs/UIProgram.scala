@@ -15,7 +15,7 @@ import org.encryfoundation.tg.crypto.AESEncryption
 import org.encryfoundation.tg.handlers.{EmptyHandler, PrivateGroupChatCreationHandler, ValueHandler}
 import org.encryfoundation.tg.javaIntegration.BackMsg
 import org.encryfoundation.tg.javaIntegration.BackMsg._
-import org.encryfoundation.tg.javaIntegration.FrontMsg.NewMsgsInChat
+import org.encryfoundation.tg.javaIntegration.FrontMsg.{HistoryMsgs, NewMsgsInChat}
 import org.encryfoundation.tg.leveldb.Database
 import org.encryfoundation.tg.services.{ClientService, PrivateConferenceService, UserStateService}
 import org.encryfoundation.tg.userState.UserState
@@ -126,6 +126,18 @@ object UIProgram {
         userStateRef.get.flatMap(state =>
           clientService.sendRequest(new TdApi.LogOut)
         ) >> Logger[F].info("Logout")
+      case _@LoadNextChatsChunk(qty) =>
+        clientService.sendRequest(
+          new TdApi.GetChats(new TdApi.ChatListMain(), Long.MaxValue, 0, qty + 20),
+          EmptyHandler[F]()
+        ) >> userStateService.increaseChatLimit(qty + 20)
+      case _@LoadNextMsgsChunk(currentQty) =>
+        for {
+          state <- userStateRef.get
+          msgs <- ChatUtils.getMsgs(state.activeChat, currentQty + 20, clientService, state, userStateService)
+          _ <- clientService.sendRequest(new TdApi.ViewMessages(state.activeChat, msgs.map(_.getElement.getId).toArray, false), EmptyHandler[F]())
+          _ <- state.javaState.get().inQueue.put(HistoryMsgs(msgs.asJava)).pure[F]
+        } yield ()
     }
 
     private def createGroup(groupname: String,

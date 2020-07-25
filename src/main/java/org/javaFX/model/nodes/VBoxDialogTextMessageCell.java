@@ -27,8 +27,7 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
 
     private Label createContentLabel(JMessage jMessage){
         Label contentLabel = new Label();
-        String textContent = jMessage.getContent().toString()
-                .substring(jMessage.getContent().toString().indexOf(":")+2);
+        String textContent = jMessage.getContent().toString();
         contentLabel.setText(jMessage.getAuthor()+"\n"+textContent);
         contentLabel.setWrapText(true);
         int multiplier =

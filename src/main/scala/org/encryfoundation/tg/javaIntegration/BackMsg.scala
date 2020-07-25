@@ -15,4 +15,5 @@ object BackMsg {
   case class SetPhone(phone: String) extends BackMsg
   case class SetPass(pass: String) extends BackMsg
   case class Logout() extends BackMsg
+  case class LoadNextChatsChunk(currentQty: Int) extends BackMsg
 }

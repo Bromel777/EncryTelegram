@@ -18,7 +18,7 @@
                     <children>
                   <AnchorPane layoutY="63.0" minWidth="320.0" prefHeight="535.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="63.0">
                      <children>
-                        <ListView fx:id="chatsListView" minWidth="320.0" onMouseClicked="#clickItem" prefHeight="535.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <ListView fx:id="chatsListView" minWidth="320.0" onMouseClicked="#clickItem" prefHeight="535.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" onScroll="#scroll"/>
                      </children>
                   </AnchorPane>
                   <AnchorPane minHeight="65.0" minWidth="320.0" prefHeight="63.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

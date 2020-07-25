@@ -96,8 +96,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     @Override
     protected void initRootPane(JMessage jMessage) {
         AnchorPane pane = new AnchorPane();
-        String textContent = jMessage.getContent().toString()
-                .substring(jMessage.getContent().toString().indexOf(":")+2).trim();
+        String textContent = jMessage.getContent().toString().trim();
         int multiplier =
                 textContent.length()%40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
         int numberOfNewLines = StringHandler.countCharactersInStr(textContent,'\n');

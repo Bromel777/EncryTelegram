@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -110,6 +111,19 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 }
         );
         return observableChatList;
+    }
+
+    @FXML
+    private void scroll(){
+        ScrollBar bar = (ScrollBar) chatsListView.lookup(".scroll-bar");
+        if (bar.getValue() == bar.getMax()) {
+            BackMsg msg = new BackMsg.LoadNextChatsChunk(chatsListView.getItems().size());
+            try {
+                getUserStateRef().get().outQueue.put(msg);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void initChatCell(ObservableList<VBoxChatCell> observableChatList, TdApi.Chat chat, double chatCellWidth){

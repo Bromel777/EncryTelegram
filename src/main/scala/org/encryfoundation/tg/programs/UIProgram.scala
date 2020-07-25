@@ -126,6 +126,11 @@ object UIProgram {
         userStateRef.get.flatMap(state =>
           clientService.sendRequest(new TdApi.LogOut)
         ) >> Logger[F].info("Logout")
+      case _@LoadNextChatsChunk(qty) =>
+        clientService.sendRequest(
+          new TdApi.GetChats(new TdApi.ChatListMain(), Long.MaxValue, 0, qty + 20),
+          EmptyHandler[F]()
+        ) >> userStateService.increaseChatLimit(qty + 20)
     }
 
     private def createGroup(groupname: String,

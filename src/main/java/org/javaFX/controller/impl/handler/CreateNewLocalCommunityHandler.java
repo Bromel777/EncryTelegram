@@ -46,6 +46,9 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     @FXML
     private Label nobodyChosenErrorLabel;
 
+    @FXML
+    private Label chooseTitleLabel;
+
     public CreateNewLocalCommunityHandler() {
         super();
     }

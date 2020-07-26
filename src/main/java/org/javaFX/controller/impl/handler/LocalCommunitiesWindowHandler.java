@@ -14,8 +14,6 @@ import org.javaFX.EncryWindow;
 
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.nodes.VBoxCommunityCell;
-import org.javaFX.model.nodes.VBoxContactCell;
-import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
 
 import java.io.IOException;

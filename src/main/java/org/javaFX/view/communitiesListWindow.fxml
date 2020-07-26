@@ -12,7 +12,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.LocalCommunitiesWindowHandler">
+<AnchorPane prefHeight="600.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.LocalCommunitiesWindowHandler">
     <children>
         <AnchorPane prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
@@ -27,19 +27,18 @@
             </StackPane>
             </children>
         </AnchorPane>
-        <AnchorPane layoutY="160.0" prefHeight="360.0" prefWidth="903.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
+        <AnchorPane prefHeight="341.0" prefWidth="524.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
             <children>
-                <ListView fx:id="communitiesListView" onMouseClicked="#onClick" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
+                <ListView fx:id="communitiesListView" onMouseClicked="#onClick" prefHeight="279.0" prefWidth="470.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
                     <cursor>
                         <Cursor fx:constant="HAND" />
                     </cursor>
                 </ListView>
-                <AnchorPane prefHeight="62.0" prefWidth="846.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0">
+                <AnchorPane prefHeight="62.0" prefWidth="470.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="20.0">
                     <children>
                         <Label text="ID" textFill="#787878" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
                         <Label text="Community name" textFill="#787878" AnchorPane.leftAnchor="180.0" AnchorPane.topAnchor="20.0" />
-                        <Label prefHeight="21.0" prefWidth="149.0" text="Number of members" textFill="#787878" AnchorPane.leftAnchor="380.0" AnchorPane.topAnchor="20.0" />
-                        <Line endX="846.0" stroke="#787878" strokeWidth="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                        <Label prefHeight="21.0" prefWidth="149.0" text="Number of members" textFill="#787878" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
                     </children>
                 </AnchorPane>
             <Label fx:id="notFoundInfoLabel" layoutX="42.0" layoutY="62.0" prefHeight="52.0" prefWidth="212.0" text="Not found " textFill="#787878" visible="false" />
@@ -57,7 +56,7 @@
         </AnchorPane>
         <AnchorPane prefHeight="80.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <children>
-                <ImageView fx:id="cancelButtonImage" fitHeight="45.0" fitWidth="137.0" layoutX="731.0" layoutY="18.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="30.0">
+                <ImageView fx:id="cancelButtonImage" fitHeight="45.0" fitWidth="137.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="23.0">
                     <image>
                         <Image url="@../images/cancel.png" />
                     </image>
@@ -69,7 +68,7 @@
       <AnchorPane prefHeight="60.0" prefWidth="903.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0">
          <children>
             <Label fx:id="descriptionLabel" layoutX="26.0" layoutY="4.0" prefHeight="21.0" prefWidth="442.0" text="Enter name and choose community  to create a private chat" textFill="#787878" AnchorPane.leftAnchor="26.0" AnchorPane.topAnchor="4.0" />
-            <TextField fx:id="privateChatNameTestField" layoutX="-10.0" layoutY="22.0" onKeyPressed="#searchContactByKeyboard" onKeyTyped="#handlePrivateChatKeyTyped" prefHeight="31.0" prefWidth="410.0" promptText="Private chat name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" />
+            <TextField fx:id="privateChatNameTestField" onKeyPressed="#searchContactByKeyboard" onKeyTyped="#handlePrivateChatKeyTyped" prefHeight="31.0" prefWidth="410.0" promptText="Private chat name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" />
          </children>
       </AnchorPane>
     </children>

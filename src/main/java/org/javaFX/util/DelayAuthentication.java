@@ -30,6 +30,7 @@ public class DelayAuthentication extends Thread {
                     encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadUnboarding()) {
                     encryWindow.launchWindowByPathToFXML(EncryWindow.pathToOnboardingOneFXML);
+                    encryWindow.getPrimaryStage().setResizable(false);
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadChats()) {
                     encryWindow.launchWindowByPathToFXML(
                             EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight

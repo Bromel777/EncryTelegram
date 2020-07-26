@@ -49,7 +49,6 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
     private void initNumberOfMembersLabel(JLocalCommunity sourceElement) {
         numberOfMembersLabel = new Label();
         numberOfMembersLabel.setText(sourceElement.getCommunitySize().get()+"");
-        numberOfMembersLabel.setLayoutX(400);
         numberOfMembersLabel.setLayoutY(20);
     }
 
@@ -64,6 +63,7 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
         getRootPane().getChildren().add(communityIDLabel);
         getRootPane().getChildren().add(communityNameLabel);
         getRootPane().getChildren().add(numberOfMembersLabel);
+        AnchorPane.setRightAnchor(numberOfMembersLabel,45.0);
         getRootPane().getChildren().add(separatorLine);
         AnchorPane.setBottomAnchor(separatorLine,0.0);
         this.getChildren().add(getRootPane());
@@ -72,7 +72,7 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
     @Override
     protected void initRootPane(JLocalCommunity sourceElement){
         setRootPane(new AnchorPane() );
-        getRootPane().setPrefSize(800,60);
+        getRootPane().setPrefHeight(60);
     }
 
     public JLocalCommunity getCurrentCommunity() {

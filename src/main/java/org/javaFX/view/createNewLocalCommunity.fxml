@@ -12,20 +12,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.CreateNewLocalCommunityHandler">
+<AnchorPane prefHeight="600.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.CreateNewLocalCommunityHandler">
     <children>
       <AnchorPane prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label layoutX="341.0" layoutY="20.0" text="Create New Community" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="341.0" AnchorPane.rightAnchor="340.0" AnchorPane.topAnchor="20.0">
+            <Label layoutX="200.0" layoutY="14.0" prefHeight="32.0" prefWidth="219.0" text="Create New Community" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="14.0">
                <font>
                   <Font name="Calibri Bold" size="22.0" />
                </font>
             </Label>
          </children>
       </AnchorPane>
-        <AnchorPane layoutY="217.0" prefHeight="418.0" prefWidth="900.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
+        <AnchorPane layoutY="217.0" minWidth="400.0" prefHeight="418.0" prefWidth="900.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
          <children>
-            <ListView fx:id="contactsListView" onMouseClicked="#changeCheckBoxValue" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
+            <ListView fx:id="contactsListView" minWidth="400.0" onMouseClicked="#changeCheckBoxValue" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -34,9 +34,15 @@
                <children>
                   <Label text="Contact" textFill="#787878" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
                   <Label text="Phone Number" textFill="#787878" AnchorPane.leftAnchor="310.0" AnchorPane.topAnchor="20.0" />
-                  <Label text="Choose" textFill="#787878" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="20.0" />
+                  <Label fx:id="chooseTitleLabel" text="Choose" textFill="#787878" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="20.0" />
                   <Line endX="846.0" stroke="#787878" strokeWidth="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets top="2.0" />
+               </padding>
             </AnchorPane>
             <Label fx:id="notFoundInfoLabel" layoutX="52.0" layoutY="72.0" prefHeight="52.0" prefWidth="212.0" text="Not found " textFill="#787878" visible="false" />
          </children>
@@ -60,14 +66,14 @@
       </AnchorPane>
       <AnchorPane prefHeight="80.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <ImageView fx:id="cancelButtonImage" fitHeight="45.0" fitWidth="137.0" layoutX="731.0" layoutY="18.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="30.0">
+            <ImageView fx:id="cancelButtonImage" fitHeight="45.0" fitWidth="137.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="30.0">
                <image>
                   <Image url="@../images/cancel.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></ImageView>
-            <ImageView fx:id="createButtonImage" fitHeight="45.0" fitWidth="137.0" layoutX="570.0" layoutY="18.0" onMouseClicked="#createCommunity" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="200.0">
+            <ImageView fx:id="createButtonImage" fitHeight="45.0" fitWidth="137.0" onMouseClicked="#createCommunity" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="200.0">
                <image>
                   <Image url="@../images/create.png" />
                </image>

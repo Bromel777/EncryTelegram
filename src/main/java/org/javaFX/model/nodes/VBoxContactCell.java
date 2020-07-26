@@ -9,12 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import org.javaFX.model.JSingleContact;
 import org.javaFX.util.JavaFXTableBuilder;
 
-
-
 public class VBoxContactCell extends VBoxCell<JSingleContact> {
-
-    /*private final String pathToCheckboxNeutralImage = "file:images/checkboxNeutral.png";
-    private final String pathToCheckboxSelectedImage = "file:images/checkboxSelected.png";*/
 
     private final String pathToCheckboxNeutralImage = "file:images/checkboxNeutralSmall.png";
     private final String pathToCheckboxSelectedImage = "file:images/checkboxSelectedSmall.png";
@@ -77,7 +72,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     @Override
     protected void initRootPane(JSingleContact sourceElement) {
         setRootPane(new AnchorPane() );
-        getRootPane().setPrefSize(800,60);
+        getRootPane().setPrefHeight(60);
     }
 
     public JSingleContact getCurrentContact() {
@@ -123,4 +118,5 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     public void setSeparatorLineSize(double newSize){
         separatorLine.setPrefWidth(newSize);
     }
+
 }

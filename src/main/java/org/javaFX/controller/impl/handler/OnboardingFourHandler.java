@@ -26,6 +26,7 @@ public class OnboardingFourHandler extends OnboardingHandler {
             else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadUnboarding()) {
                 handleNextOnboardingAction();
             }
+            getEncryWindow().getPrimaryStage().setResizable(true);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -71,13 +71,14 @@ public class EncryWindow extends Application {
     public void launchStartWindow(){
         new DelayAuthentication(this, 5000).start();
         this.launchWindowByPathToFXML(EncryWindow.pathToStartWindowFXML);
-
     }
 
     private void initBasicFields(Stage primaryStage){
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle(windowTitle);
         this.primaryStage.getIcons().add(new Image(pathToLogoImage));
+        this.primaryStage.setMinWidth(620);
+        this.primaryStage.setMinHeight(500);
     }
 
     private void initRootLayout() {

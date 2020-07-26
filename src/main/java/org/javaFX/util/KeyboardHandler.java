@@ -1,7 +1,10 @@
 package org.javaFX.util;
 
+import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -49,6 +52,15 @@ public class KeyboardHandler {
             }
         });
         return keyPressed;
+    }
+
+    public static EventHandler<KeyEvent> maxLengthHandler(final Integer i) {
+        return arg0 -> {
+            TextField tx = (TextField) arg0.getSource();
+            if (tx.getText().length() >= i) {
+                arg0.consume();
+            }
+        };
     }
 
 }

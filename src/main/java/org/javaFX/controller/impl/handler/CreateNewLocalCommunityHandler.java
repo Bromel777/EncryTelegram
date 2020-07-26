@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import org.drinkless.tdlib.TdApi;
 import org.encryfoundation.tg.javaIntegration.BackMsg;
@@ -143,6 +144,16 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
     }
 
+
+    @FXML
+    private void handleSearchContactKeyTyped(){
+        searchContactTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+    }
+
+    @FXML
+    private void handleСomNameKeyTyped(){
+        newCommunityNameTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+    }
 
 
 }

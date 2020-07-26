@@ -50,10 +50,10 @@ public class EnterPhoneNumberHandler extends DataHandler {
     @FXML
     private void handleKeyTyped(){
         if (selectCountryMenu.getText().equals(russianFederationMenuItem.getText())){
-            phoneNumberTextField.addEventFilter(KeyEvent.KEY_TYPED, maxLength(10));
+            phoneNumberTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(10));
         }
         else if(selectCountryMenu.getText().equals(belarusMenuItem.getText())){
-            phoneNumberTextField.addEventFilter(KeyEvent.KEY_TYPED, maxLength(9));
+            phoneNumberTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(9));
         }
     }
 
@@ -137,12 +137,5 @@ public class EnterPhoneNumberHandler extends DataHandler {
         setCountryMenuItem(belarusMenuItem.getText(), "+375", "-- --- -- --");
     }
 
-    private EventHandler<KeyEvent> maxLength(final Integer i) {
-        return arg0 -> {
-            TextField tx = (TextField) arg0.getSource();
-            if (tx.getText().length() >= i) {
-                arg0.consume();
-            }
-        };
-    }
+
 }

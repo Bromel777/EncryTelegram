@@ -43,6 +43,9 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     @FXML
     private Label notFoundInfoLabel;
 
+    @FXML
+    private Label nobodyChosenErrorLabel;
+
     public CreateNewLocalCommunityHandler() {
         super();
     }
@@ -126,6 +129,9 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
                     forEach(contact -> localCommunity.addContactToCommunity(contact.getCurrentContact()));
             if(localCommunity.getCommunitySize().get() != 0){
                 toCommunitiesWindow(localCommunity);
+            }
+            else {
+                nobodyChosenErrorLabel.setVisible(true);
             }
         }
         else{

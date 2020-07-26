@@ -12,6 +12,7 @@ import org.javaFX.util.observers.BasicObserver;
 import org.javaFX.util.observers.JWindowObserver;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class MainWindowBasicHandler extends DataHandler{
 
@@ -77,12 +78,15 @@ public abstract class MainWindowBasicHandler extends DataHandler{
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (keysPressed[0].get() && keysPressed[1].get()) {
+                if (keysPressed[0].get() && !keysPressed[1].get()) {
                     try {
                         sendMessage();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                }
+                if(keysPressed[0].get() && keysPressed[1].get()){
+                    sendMessageTextArea.appendText("\n");
                 }
             }
         }.start();

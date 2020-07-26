@@ -9,7 +9,7 @@ import javafx.scene.input.KeyEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class KeyboardHandler {
-    public static AtomicBoolean[] handleShiftEnterPressed(Node element ){
+    public static AtomicBoolean[] handleShiftEnterPressed( Node element ){
         AtomicBoolean[] keysPressed = new AtomicBoolean[2];
         keysPressed[0] = new AtomicBoolean(false);
         keysPressed[1] = new AtomicBoolean(false);
@@ -23,7 +23,6 @@ public class KeyboardHandler {
                     break;
             }
         });
-
         element.setOnKeyReleased(keyEvent -> {
             switch (keyEvent.getCode()) {
                 case ENTER:
@@ -45,7 +44,6 @@ public class KeyboardHandler {
                 keyPressed.set(true);
             }
         });
-
         element.setOnKeyReleased(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 keyPressed.set(false);

@@ -38,6 +38,7 @@
                   <Line endX="846.0" stroke="#787878" strokeWidth="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
+            <Label fx:id="notFoundInfoLabel" layoutX="52.0" layoutY="72.0" prefHeight="52.0" prefWidth="212.0" text="Not found " textFill="#787878" visible="false" />
          </children>
         </AnchorPane>
         <AnchorPane layoutY="136.0" minHeight="40.0" minWidth="85.0" prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">

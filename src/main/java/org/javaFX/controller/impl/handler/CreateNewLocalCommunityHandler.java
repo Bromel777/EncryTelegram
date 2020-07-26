@@ -15,6 +15,7 @@ import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JSingleContact;
+import org.javaFX.model.nodes.VBoxCommunityCell;
 import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
@@ -39,6 +40,9 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     @FXML
     private Separator blueSeparator;
 
+    @FXML
+    private Label notFoundInfoLabel;
+
     public CreateNewLocalCommunityHandler() {
         super();
     }
@@ -52,15 +56,10 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     }
 
     private ObservableList<VBoxContactCell> getObservableUserList(){
-        ObservableList<VBoxContactCell> observableChatList = FXCollections.observableArrayList();
-        for(Long jUserId: getUserStateRef().get().getUsersMap().keySet()){
-            TdApi.User user = getUserStateRef().get().getUsersMap().get(jUserId);
-            if(!user.phoneNumber.isEmpty())
-                observableChatList.add(
-                        new VBoxContactCell(
-                                new JSingleContact(user.firstName, user.lastName, user.phoneNumber, (long)user.id)));
-        }
-        return observableChatList;
+        final String searchingStr = searchContactTextField.getText().trim();
+        ObservableList<VBoxContactCell> observableList = initTableBySubstr(searchingStr);
+
+        return observableList;
     }
 
     @Override
@@ -95,13 +94,28 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     private void findContact(){
         final String searchingStr = searchContactTextField.getText().trim();
-        contactsListView.getItems().stream()
-                .filter(item -> item.getCurrentContact().getFullName().toLowerCase().contains(searchingStr.toLowerCase()) )
-                .findAny()
-                .ifPresent(item -> {
-                    contactsListView.getSelectionModel().select(item);
-                    contactsListView.scrollTo(item);
-                });
+        contactsListView.setItems(initTableBySubstr(searchingStr));
+    }
+
+    private ObservableList<VBoxContactCell> initTableBySubstr(String searchingStr){
+        ObservableList<VBoxContactCell> observableList = FXCollections.observableArrayList();
+        for(Long jUserId: getUserStateRef().get().getUsersMap().keySet()){
+            TdApi.User user = getUserStateRef().get().getUsersMap().get(jUserId);
+            if(!user.phoneNumber.isEmpty() && isUserNameOrSurnameContainsStr(user, searchingStr))
+                observableList.add(
+                        new VBoxContactCell(
+                                new JSingleContact(user.firstName, user.lastName, user.phoneNumber, (long)user.id)));
+        }
+        if(observableList.size() == 0 ){
+            notFoundInfoLabel.setVisible(true);
+        }
+        return observableList;
+    }
+
+    private boolean isUserNameOrSurnameContainsStr(TdApi.User user, String searchingStr){
+        return user.lastName.toLowerCase().contains(searchingStr.toLowerCase()) ||
+                user.firstName.toLowerCase().contains(searchingStr.toLowerCase()) ||
+                user.phoneNumber.toLowerCase().contains(searchingStr.toLowerCase()) ;
     }
 
     @FXML

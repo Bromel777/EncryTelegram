@@ -40,7 +40,6 @@
                         <CheckMenuItem fx:id="russianCheckItem" mnemonicParsing="false" onAction="#chooseRussianLanguage" text="Russian" />
                     </items>
                   </Menu>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
               </items>
             </Menu>
             </menus>

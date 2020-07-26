@@ -7,12 +7,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.nodes.VBoxCommunityCell;
+import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
 
@@ -36,6 +38,9 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
     @FXML
     private Separator blueSeparator;
 
+    @FXML
+    private Label notFoundInfoLabel;
+
     public LocalCommunitiesWindowHandler() {
         super();
     }
@@ -49,13 +54,13 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
     }
 
     private ObservableList<VBoxCommunityCell> getObservableCommunityList(){
-        ObservableList<VBoxCommunityCell> observableList = FXCollections.observableArrayList();
         final String searchingStr = searchCommunityTextField.getText().trim();
-        getUserStateRef().get().communities
-                .stream()
-                .filter(item -> item.getCommunityName().toLowerCase().contains(searchingStr.toLowerCase()) )
-                .forEach(community -> observableList.add(new VBoxCommunityCell(community)));
+        ObservableList<VBoxCommunityCell> observableList = initTableBySubstr(searchingStr);
+        if(observableList.size() == 0 ){
+            notFoundInfoLabel.setVisible(true);
+        }
         return observableList;
+
     }
 
     @Override
@@ -91,19 +96,20 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
 
     private void findContact(){
         final String searchingStr = searchCommunityTextField.getText().trim();
-        findByCommunityName(searchingStr);
+        communitiesListView.setItems(initTableBySubstr(searchingStr));
     }
 
-    private void findByCommunityName(String searchingStr){
+    private ObservableList<VBoxCommunityCell> initTableBySubstr(String searchingStr){
         ObservableList<VBoxCommunityCell> observableList = FXCollections.observableArrayList();
         getUserStateRef().get().communities
                 .stream()
                 .filter(item -> item.getCommunityName().toLowerCase().contains(searchingStr.toLowerCase()) )
                 .forEach(community -> observableList.add(new VBoxCommunityCell(community)));
-        communitiesListView.setItems(getObservableCommunityList());
+        if(observableList.size() == 0 ){
+            notFoundInfoLabel.setVisible(true);
+        }
+        return observableList;
     }
-
-
 
     private void launchDialog(JLocalCommunity localCommunity){
         FXMLLoader loader = new FXMLLoader();
@@ -131,5 +137,15 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
         return dialogStage;
     }
 
+
+    @FXML
+    private void handleSearchCommunityKeyTyped(){
+        searchCommunityTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+    }
+
+    @FXML
+    private void handlePrivateChatKeyTyped(){
+        privateChatNameTestField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+    }
 
 }

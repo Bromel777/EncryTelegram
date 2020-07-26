@@ -42,11 +42,12 @@
                         <Line endX="846.0" stroke="#787878" strokeWidth="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                     </children>
                 </AnchorPane>
+            <Label fx:id="notFoundInfoLabel" layoutX="42.0" layoutY="62.0" prefHeight="52.0" prefWidth="212.0" text="Not found " textFill="#787878" visible="false" />
             </children>
         </AnchorPane>
         <AnchorPane layoutY="78.0" maxHeight="60.0" minHeight="40.0" minWidth="85.0" prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
             <children>
-                <TextField fx:id="searchCommunityTextField" layoutX="27.0" layoutY="15.0" onKeyPressed="#searchContactByKeyboard" prefHeight="31.0" prefWidth="410.0" promptText="Search for community" AnchorPane.leftAnchor="27.0" />
+                <TextField fx:id="searchCommunityTextField" layoutX="27.0" layoutY="15.0" onKeyPressed="#searchContactByKeyboard" onKeyTyped="#handleSearchCommunityKeyTyped" prefHeight="31.0" prefWidth="410.0" promptText="Search for community" AnchorPane.leftAnchor="27.0" />
             <Separator fx:id="blueSeparator" layoutX="10.0" layoutY="10.0" prefWidth="200.0" style="-fx-background-color: RED; -fx-border-color: RED;" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="0.0">
                <effect>
                   <Shadow blurType="ONE_PASS_BOX" color="#00b7ff" height="0.0" radius="0.0" width="0.0" />
@@ -68,7 +69,7 @@
       <AnchorPane prefHeight="60.0" prefWidth="903.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0">
          <children>
             <Label fx:id="descriptionLabel" layoutX="26.0" layoutY="4.0" prefHeight="21.0" prefWidth="442.0" text="Enter name and choose community  to create a private chat" textFill="#787878" AnchorPane.leftAnchor="26.0" AnchorPane.topAnchor="4.0" />
-            <TextField fx:id="privateChatNameTestField" layoutX="-10.0" layoutY="22.0" onKeyPressed="#searchContactByKeyboard" prefHeight="31.0" prefWidth="410.0" promptText="Private chat name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" />
+            <TextField fx:id="privateChatNameTestField" layoutX="-10.0" layoutY="22.0" onKeyPressed="#searchContactByKeyboard" onKeyTyped="#handlePrivateChatKeyTyped" prefHeight="31.0" prefWidth="410.0" promptText="Private chat name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" />
          </children>
       </AnchorPane>
     </children>

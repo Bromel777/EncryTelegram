@@ -50,7 +50,11 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
 
     private ObservableList<VBoxCommunityCell> getObservableCommunityList(){
         ObservableList<VBoxCommunityCell> observableList = FXCollections.observableArrayList();
-        getUserStateRef().get().communities.forEach(community -> observableList.add(new VBoxCommunityCell(community)));
+        final String searchingStr = searchCommunityTextField.getText().trim();
+        getUserStateRef().get().communities
+                .stream()
+                .filter(item -> item.getCommunityName().toLowerCase().contains(searchingStr.toLowerCase()) )
+                .forEach(community -> observableList.add(new VBoxCommunityCell(community)));
         return observableList;
     }
 
@@ -87,14 +91,19 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
 
     private void findContact(){
         final String searchingStr = searchCommunityTextField.getText().trim();
-        communitiesListView.getItems().stream()
-                .filter(item -> item.getCurrentCommunity().getCommunityName().toLowerCase().contains(searchingStr.toLowerCase()) )
-                .findAny()
-                .ifPresent(item -> {
-                    communitiesListView.getSelectionModel().select(item);
-                    communitiesListView.scrollTo(item);
-                });
+        findByCommunityName(searchingStr);
     }
+
+    private void findByCommunityName(String searchingStr){
+        ObservableList<VBoxCommunityCell> observableList = FXCollections.observableArrayList();
+        getUserStateRef().get().communities
+                .stream()
+                .filter(item -> item.getCommunityName().toLowerCase().contains(searchingStr.toLowerCase()) )
+                .forEach(community -> observableList.add(new VBoxCommunityCell(community)));
+        communitiesListView.setItems(getObservableCommunityList());
+    }
+
+
 
     private void launchDialog(JLocalCommunity localCommunity){
         FXMLLoader loader = new FXMLLoader();

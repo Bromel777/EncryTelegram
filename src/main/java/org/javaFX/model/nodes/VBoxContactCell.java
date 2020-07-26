@@ -2,24 +2,22 @@ package org.javaFX.model.nodes;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.Shadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 
 import org.javaFX.model.JSingleContact;
 import org.javaFX.util.JavaFXTableBuilder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 
 public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
-    private final String pathToCheckboxNeutralImage = "file:images/checkboxNeutral.png";
-    private final String pathToCheckboxSelectedImage = "file:images/checkboxSelected.png";
+    /*private final String pathToCheckboxNeutralImage = "file:images/checkboxNeutral.png";
+    private final String pathToCheckboxSelectedImage = "file:images/checkboxSelected.png";*/
+
+    private final String pathToCheckboxNeutralImage = "file:images/checkboxNeutralSmall.png";
+    private final String pathToCheckboxSelectedImage = "file:images/checkboxSelectedSmall.png";
     private Label contactNameLabel;
     private Label phoneNumberLabel;
     private ImageView checkBoxImg;
@@ -58,6 +56,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     private void initCheckBoxImg(){
         checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage));
+        checkBoxImg.setLayoutY(15);
     }
 
     private void initSeparatorLine(){
@@ -69,7 +68,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         getRootPane().getChildren().add(contactNameLabel);
         getRootPane().getChildren().add(phoneNumberLabel);
         getRootPane().getChildren().add(checkBoxImg);
-        AnchorPane.setRightAnchor(checkBoxImg,20.0);
+        AnchorPane.setRightAnchor(checkBoxImg,45.0);
         getRootPane().getChildren().add(separatorLine);
         AnchorPane.setBottomAnchor(separatorLine,0.0);
         this.getChildren().add(getRootPane());
@@ -116,7 +115,8 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         else{
             checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage));
         }
-        AnchorPane.setRightAnchor(checkBoxImg,20.0);
+        checkBoxImg.setLayoutY(15);
+        AnchorPane.setRightAnchor(checkBoxImg,45.0);
         getRootPane().getChildren().add(checkBoxImg);
     }
 

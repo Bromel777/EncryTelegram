@@ -18,7 +18,8 @@
                     <children>
                   <AnchorPane layoutY="63.0" minWidth="320.0" prefHeight="535.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="63.0">
                      <children>
-                        <ListView fx:id="chatsListView" minWidth="320.0" onMouseClicked="#clickItem" prefHeight="535.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" onScroll="#scrollChats"/>
+                        <ListView fx:id="chatsListView" minWidth="320.0" onMouseClicked="#clickItem" onScroll="#scrollChats" prefHeight="535.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <Label fx:id="notFoundChatLabel" layoutX="14.0" layoutY="14.0" prefHeight="39.0" prefWidth="270.0" text="Not found" visible="false" />
                      </children>
                   </AnchorPane>
                   <AnchorPane minHeight="65.0" minWidth="320.0" prefHeight="63.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -46,14 +47,14 @@
                               </AnchorPane>
                               <AnchorPane prefHeight="63.0" prefWidth="422.0">
                                  <children>
-                                    <TextField fx:id="searchMessageTextField" onKeyPressed="#searchMessageByKeyboard" prefHeight="31.0" promptText="Search for dialog content" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                    <TextField fx:id="searchMessageTextField" disable="true" onKeyPressed="#searchMessageByKeyboard" prefHeight="31.0" promptText="Search for dialog content" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                                  </children>
                               </AnchorPane>
                            </children>
                         </HBox>
                         <AnchorPane prefHeight="63.0" prefWidth="63.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <ImageView fx:id="findContentImage" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#findContentInDialog" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="15.0">
+                              <ImageView fx:id="findContentImage" disable="true" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#findContentInDialog" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="15.0">
                                  <image>
                                     <Image url="@../images/findContent.png" />
                                  </image>
@@ -64,7 +65,7 @@
                   </AnchorPane>
                   <AnchorPane fx:id="rightMiddleAnchorPane" layoutY="63.0" minHeight="0.0" prefHeight="491.0" prefWidth="590.0" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="63.0">
                      <children>
-                        <ListView fx:id="messagesListView" minHeight="0.0" minWidth="0.0" prefHeight="505.0" prefWidth="590.0" stylesheets="@../styles/dialogBackStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0" onScroll="#scrollMsgs"/>
+                        <ListView fx:id="messagesListView" minHeight="0.0" minWidth="0.0" onScroll="#scrollMsgs" prefHeight="505.0" prefWidth="590.0" stylesheets="@../styles/dialogBackStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0" />
                         <Label fx:id="selectChatLabel" alignment="CENTER" contentDisplay="CENTER" layoutY="179.0" minHeight="0.0" minWidth="0.0" prefHeight="63.0" prefWidth="490.0" text="Please select a chat to start messaging" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <font>
                               <Font name="Times New Roman" size="21.0" />

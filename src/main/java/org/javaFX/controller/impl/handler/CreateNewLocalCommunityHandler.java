@@ -61,7 +61,6 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     private ObservableList<VBoxContactCell> getObservableUserList(){
         final String searchingStr = searchContactTextField.getText().trim();
         ObservableList<VBoxContactCell> observableList = initTableBySubstr(searchingStr);
-
         return observableList;
     }
 

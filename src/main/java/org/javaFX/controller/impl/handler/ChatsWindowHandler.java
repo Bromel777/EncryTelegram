@@ -18,7 +18,9 @@ import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
 import org.javaFX.model.JChat;
+import org.javaFX.model.JSingleContact;
 import org.javaFX.model.nodes.VBoxChatCell;
+import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.model.nodes.VBoxMessageCell;
 import org.javaFX.util.KeyboardHandler;
 
@@ -63,6 +65,10 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     private TextField searchMessageTextField;
+
+    @FXML
+    private Label notFoundChatLabel;
+
 
     //todo: remove after updating chat by front msg
     private int chatsLimit = 20;
@@ -115,16 +121,8 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     private ObservableList<VBoxChatCell> getObservableJChatList(){
-        ObservableList<VBoxChatCell> observableChatList = FXCollections.observableArrayList();
-        final double chatCellWidth =
-                (leftPane == null || leftPane.getWidth() == 0)
-                        ? 320
-                        : leftPane.getWidth();
-        getUserStateRef().get().getChatList().forEach(
-                chat -> {
-                    initChatCell(observableChatList, chat, chatCellWidth);
-                }
-        );
+        final String searchingStr = searchThroughChatsTextField.getText().trim();
+        ObservableList<VBoxChatCell> observableChatList = initTableBySubstr(searchingStr);
         return observableChatList;
     }
 
@@ -202,6 +200,11 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         );
         forceListRefreshOn();
         return observableMessageList;
+        /*
+        new way of initialization
+        final String searchingStr = searchMessageTextField.getText().trim();
+        ObservableList<VBoxMessageCell> observableMessageList = findMessagesByStr(searchingStr);
+        return observableMessageList;*/
     }
 
     @FXML
@@ -259,34 +262,53 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             @Override
             public void handle(long now) {
                 if ( keysPressed.get() ) {
-                    findContentInChatsTable();
+                    findContact();
                 }
             }
         }.start();
     }
 
-    private void findContentInChatsTable(){
+
+    private void findContact(){
         final String searchingStr = searchThroughChatsTextField.getText().trim();
-        chatsListView.getItems().stream()
-                .filter(item -> item.getChatTitle().toLowerCase().contains(searchingStr.toLowerCase()) ||
-                        item.getLastMessage().toLowerCase().contains(searchingStr.toLowerCase()))
-                .findAny()
-                .ifPresent(item -> {
-                    chatsListView.getSelectionModel().select(item);
-                    chatsListView.scrollTo(item);
-                });
+        chatsListView.setItems(initTableBySubstr(searchingStr));
+    }
+
+    private ObservableList<VBoxChatCell> initTableBySubstr(String searchingStr){
+        ObservableList<VBoxChatCell> observableList = FXCollections.observableArrayList();
+        final double chatCellWidth =
+                (leftPane == null || leftPane.getWidth() == 0)
+                        ? 320
+                        : leftPane.getWidth();
+        getUserStateRef().get().getChatList().stream()
+                .filter(item -> item.title.toLowerCase().contains(searchingStr.toLowerCase()) ||
+                        MessagesUtils.tdMsg2String(item.lastMessage).toLowerCase().contains(searchingStr.toLowerCase()))
+                                .forEach(
+                chat -> {
+                    initChatCell(observableList, chat, chatCellWidth);
+                }
+        );
+        notFoundChatLabel.setVisible((observableList.size() == 0 ));
+        return observableList;
     }
 
     @FXML
     private void findContentInDialog(){
         final String searchingStr = searchMessageTextField.getText().trim();
-        messagesListView.getItems().stream()
-                .filter(item -> item.getContentText().toLowerCase().contains(searchingStr.toLowerCase()) )
-                .findAny()
-                .ifPresent(item -> {
-                    messagesListView.getSelectionModel().select(item);
-                    messagesListView.scrollTo(item);
-                });
+        findMessagesByStr(searchingStr);
+
+    }
+
+    private ObservableList<VBoxMessageCell> findMessagesByStr(String searchingStr){
+        ObservableList<org.javaFX.model.nodes.VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
+        getUserStateRef().get().messagesListView.getItems()
+                .filtered(message->message.getContentText().contains(searchingStr))
+                .forEach (
+                message ->
+                        observableMessageList.add(message)
+        );
+        forceListRefreshOn();
+        return observableMessageList;
     }
 
     @FXML

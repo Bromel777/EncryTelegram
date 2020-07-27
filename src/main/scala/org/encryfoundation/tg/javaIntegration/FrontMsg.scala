@@ -48,7 +48,7 @@ object FrontMsg {
     override def code: Int = Codes.newMsgsInChat
   }
 
-  case class HistoryMsgs(msgs: java.util.List[VBoxMessageCell]) extends FrontMsg {
+  case class HistoryMsgs(msgs: java.util.List[VBoxMessageCell], chatId: Long) extends FrontMsg {
     override def code: Int = Codes.historyMsgs
   }
 

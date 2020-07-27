@@ -66,14 +66,14 @@
       </AnchorPane>
       <AnchorPane prefHeight="80.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <ImageView fx:id="cancelButtonImage" fitHeight="45.0" fitWidth="137.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="30.0">
+            <ImageView fx:id="cancelButtonImage" fitHeight="45.0" fitWidth="137.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="200.0">
                <image>
                   <Image url="@../images/cancel.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></ImageView>
-            <ImageView fx:id="createButtonImage" fitHeight="45.0" fitWidth="137.0" onMouseClicked="#createCommunity" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="200.0">
+            <ImageView fx:id="createButtonImage" fitHeight="45.0" fitWidth="137.0" onMouseClicked="#createCommunity" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="30.0">
                <image>
                   <Image url="@../images/create.png" />
                </image>

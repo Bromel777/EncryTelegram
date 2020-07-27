@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -38,6 +39,9 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
 
     @FXML
     private Label notFoundInfoLabel;
+
+    @FXML
+    private ImageView searchImg;
 
     public LocalCommunitiesWindowHandler() {
         super();
@@ -144,6 +148,18 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
     @FXML
     private void handlePrivateChatKeyTyped(){
         privateChatNameTestField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+    }
+
+    @FXML
+    private void handleSearchImg(){
+        searchImg.setVisible(false);
+        searchCommunityTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue) {
+                if(searchCommunityTextField.getText().length() == 0){
+                    searchImg.setVisible(true);
+                }
+            }
+        });
     }
 
 }

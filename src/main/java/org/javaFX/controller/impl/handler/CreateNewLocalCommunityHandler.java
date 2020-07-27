@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import org.drinkless.tdlib.TdApi;
@@ -15,10 +16,10 @@ import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JSingleContact;
-import org.javaFX.model.nodes.VBoxCommunityCell;
 import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -48,6 +49,9 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     @FXML
     private Label chooseTitleLabel;
+
+    @FXML
+    private ImageView searchImg;
 
     public CreateNewLocalCommunityHandler() {
         super();
@@ -176,6 +180,19 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     private void handleСomNameKeyTyped(){
         newCommunityNameTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
     }
+
+    @FXML
+    private void handleSearchImg(){
+        searchImg.setVisible(false);
+        searchContactTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue) {
+                if(searchContactTextField.getText().length() == 0){
+                    searchImg.setVisible(true);
+                }
+            }
+        });
+    }
+
 
 
 }

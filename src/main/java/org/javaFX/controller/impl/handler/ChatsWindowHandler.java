@@ -69,6 +69,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private Label notFoundChatLabel;
 
+    @FXML
+    private ImageView searchImg;
+
 
     //todo: remove after updating chat by front msg
     private int chatsLimit = 20;
@@ -327,6 +330,18 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     private void showStartMessagingArea(){
         selectChatLabel.setText("There is no messages in this dialogue");
+    }
+
+    @FXML
+    private void handleSearchImg(){
+        searchImg.setVisible(false);
+        searchThroughChatsTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue) {
+                if(searchThroughChatsTextField.getText().length() == 0){
+                    searchImg.setVisible(true);
+                }
+            }
+        });
     }
 
 }

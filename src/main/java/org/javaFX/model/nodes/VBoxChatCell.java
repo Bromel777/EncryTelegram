@@ -86,24 +86,19 @@ public class VBoxChatCell extends VBoxCell<JChat>{
 
     private void initlLastMessageLabel(JChat jChat, int indent ){
         lastMessageLabel = new Label();
-        String lastMessageStr;
-        if(jChat.getLastMessage().getValue().indexOf("\n") != -1){
-            lastMessageStr = jChat.getLastMessage().getValue().substring(0,jChat.getLastMessage().getValue().indexOf("\n"));
-        }
-        else{
-            lastMessageStr = jChat.getLastMessage().getValue();
-        }
+        String lastMessageStr = jChat.getLastMessage().getValue().replaceAll("\\s"," ").trim();
         lastMessageLabel.setText(lastMessageStr);
-        lastMessageLabel.setPrefSize(getParentWidth() - indent ,31);
+        lastMessageLabel.setWrapText(true);
         lastMessageLabel.setLayoutX(70);
         lastMessageLabel.setLayoutY(31);
-        lastMessageLabel.setWrapText(true);
+        lastMessageLabel.setPrefSize(getParentWidth() - indent ,31);
     }
 
     public void updateChatLabels(double length){
         int indent = 155;
         chatTitleLabel.setPrefSize(length - indent,31);
         lastMessageLabel.setPrefSize(length - indent,31);
+
         AnchorPane.setLeftAnchor(timeLabel, chatTitleLabel.getWidth() + 70);
         updateMessageCircle();
     }

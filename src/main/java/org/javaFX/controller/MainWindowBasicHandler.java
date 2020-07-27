@@ -24,14 +24,10 @@ public abstract class MainWindowBasicHandler extends DataHandler{
     @FXML
     protected TextArea sendMessageTextArea;
 
-    @FXML
-    protected Button callButton;
 
     public MainWindowBasicHandler() {
         chatListObserve(this);
-        /*dialogTextArea.setBackground(new Background(new BackgroundImage(new Image("@../images/back.jpg"),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT)));*/
+
     }
 
     protected void terminateObserver(){
@@ -87,26 +83,17 @@ public abstract class MainWindowBasicHandler extends DataHandler{
                 }
                 if(keysPressed[0].get() && keysPressed[1].get()){
                     sendMessageTextArea.appendText("\n");
+                    keysPressed[0].set(false);
+                    keysPressed[1].set(false);
                 }
             }
         }.start();
     }
 
     @FXML
-    public void findMessageByKeyboard(){
-        AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(searchMessageTextArea);
-        new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                if ( keysPressed.get() ) {
-                    findMessage();
-                }
-            }
-        }.start();
-    }
+    protected abstract void searchMessageByKeyboard();
 
-    public void findMessage(){
-
-    }
+    @FXML
+    protected abstract void findContentInDialog();
 
 }

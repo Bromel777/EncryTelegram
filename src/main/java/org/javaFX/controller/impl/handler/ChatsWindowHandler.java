@@ -116,6 +116,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             } else {
                 System.out.println("Unknown msg");
             }
+
         }
     }
 
@@ -200,6 +201,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         );
         forceListRefreshOn();
         return observableMessageList;
+
         /*
         new way of initialization
         final String searchingStr = searchMessageTextField.getText().trim();
@@ -293,10 +295,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     }
 
     @FXML
-    private void findContentInDialog(){
+    public void findContentInDialog(){
         final String searchingStr = searchMessageTextField.getText().trim();
         findMessagesByStr(searchingStr);
-
     }
 
     private ObservableList<VBoxMessageCell> findMessagesByStr(String searchingStr){
@@ -312,7 +313,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     }
 
     @FXML
-    private void searchMessageByKeyboard(){
+    public void searchMessageByKeyboard(){
         AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(searchMessageTextField);
         new AnimationTimer() {
             @Override
@@ -327,7 +328,5 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private void showStartMessagingArea(){
         selectChatLabel.setText("There is no messages in this dialogue");
     }
-
-
 
 }

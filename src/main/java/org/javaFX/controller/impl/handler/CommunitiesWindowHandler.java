@@ -15,7 +15,6 @@ public abstract class CommunitiesWindowHandler extends DataHandler {
     private ScheduledExecutorService service;
     private Duration period = Duration.millis(10);
 
-
     public CommunitiesWindowHandler() {
         runDelayedInitialization();
     }

@@ -14,15 +14,6 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.CreateNewLocalCommunityHandler">
     <children>
-      <AnchorPane prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Label layoutX="200.0" layoutY="14.0" prefHeight="32.0" prefWidth="219.0" text="Create New Community" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="14.0">
-               <font>
-                  <Font name="Calibri Bold" size="22.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
         <AnchorPane layoutY="217.0" minWidth="400.0" prefHeight="418.0" prefWidth="900.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
          <children>
             <ListView fx:id="contactsListView" minWidth="400.0" onMouseClicked="#changeCheckBoxValue" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
@@ -90,5 +81,22 @@
                </cursor></ImageView>
          </children>
       </AnchorPane>
+      <StackPane prefHeight="62.0" prefWidth="619.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label prefHeight="32.0" prefWidth="219.0" text="Create New Community">
+               <font>
+                  <Font name="Calibri Bold" size="22.0" />
+               </font>
+            </Label>
+            <Separator fx:id="blueSeparator1" prefWidth="200.0">
+               <effect>
+                  <Blend />
+               </effect>
+               <StackPane.margin>
+                  <Insets left="20.0" right="20.0" top="60.0" />
+               </StackPane.margin>
+            </Separator>
+         </children>
+      </StackPane>
     </children>
 </AnchorPane>

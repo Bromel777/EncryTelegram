@@ -66,6 +66,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     //todo: remove after updating chat by front msg
     private int chatsLimit = 20;
+    private long activeChat;
 
     public ChatsWindowHandler(){
     }
@@ -98,12 +99,14 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 messagesListView.setItems(observableChatList);
             } else if (a.code() == FrontMsg.Codes$.MODULE$.historyMsgs()) {
                 FrontMsg.HistoryMsgs msg = (FrontMsg.HistoryMsgs) a;
-                ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
-                msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
-                VBoxMessageCell prevLastCell = messagesListView.getItems().get(0);
-                messagesListView.getItems().forEach(cell -> observableChatList.add(cell));
-                messagesListView.setItems(observableChatList);
-                messagesListView.scrollTo(prevLastCell);
+                if (msg.chatId() == activeChat) {
+                    ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
+                    msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
+                    VBoxMessageCell prevLastCell = messagesListView.getItems().get(0);
+                    messagesListView.getItems().forEach(cell -> observableChatList.add(cell));
+                    messagesListView.setItems(observableChatList);
+                    messagesListView.scrollTo(prevLastCell);
+                }
             } else {
                 System.out.println("Unknown msg");
             }
@@ -180,7 +183,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         boolean scrollFlag = newChats.size() > chatsLimit;
         VBoxChatCell scrollPoint;
         //todo: refactor
-        if (scrollFlag) {
+        if (scrollFlag && chatsListView.getItems().size() != 0) {
             scrollPoint = chatsListView.getItems().get(chatsLimit - 1);
             chatsListView.setItems(newChats);
             chatsListView.scrollTo(scrollPoint);
@@ -231,6 +234,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         BackMsg msg = new BackMsg.SetActiveChat(
                 chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
         );
+        activeChat = chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get();
         initializeDialogArea();
         ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
         messagesListView.setItems(observableMessageList);

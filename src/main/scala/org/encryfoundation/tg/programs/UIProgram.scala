@@ -136,7 +136,7 @@ object UIProgram {
           state <- userStateRef.get
           msgs <- ChatUtils.getMsgs(state.activeChat, currentQty + 20, clientService, state, userStateService)
           _ <- clientService.sendRequest(new TdApi.ViewMessages(state.activeChat, msgs.map(_.getElement.getId).toArray, false), EmptyHandler[F]())
-          _ <- state.javaState.get().inQueue.put(HistoryMsgs(msgs.asJava)).pure[F]
+          _ <- state.javaState.get().inQueue.put(HistoryMsgs(msgs.asJava, state.activeChat)).pure[F]
         } yield ()
     }
 

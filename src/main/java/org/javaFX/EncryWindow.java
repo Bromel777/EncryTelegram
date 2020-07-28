@@ -78,7 +78,7 @@ public class EncryWindow extends Application {
         this.primaryStage.setTitle(windowTitle);
         this.primaryStage.getIcons().add(new Image(pathToLogoImage));
         this.primaryStage.setMinWidth(620);
-        this.primaryStage.setMinHeight(500);
+        this.primaryStage.setMinHeight(600);
     }
 
     private void initRootLayout() {

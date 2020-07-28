@@ -24,10 +24,13 @@ public class DelayAuthentication extends Thread {
                 FrontMsg nextStep = EncryWindow.state.get().inQueue.take();
                 if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadPass()) {
                     encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
+                    encryWindow.getPrimaryStage().setResizable(false);
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadVc()) {
                     encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterVerificationCodeWindowFXML);
+                    encryWindow.getPrimaryStage().setResizable(false);
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadPhone()) {
                     encryWindow.launchWindowByPathToFXML(EncryWindow.pathToEnterPasswordWindowFXML);
+                    encryWindow.getPrimaryStage().setResizable(false);
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.loadUnboarding()) {
                     encryWindow.launchWindowByPathToFXML(EncryWindow.pathToOnboardingOneFXML);
                     encryWindow.getPrimaryStage().setResizable(false);

@@ -18,9 +18,7 @@ import org.encryfoundation.tg.utils.MessagesUtils;
 import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
 import org.javaFX.model.JChat;
-import org.javaFX.model.JSingleContact;
 import org.javaFX.model.nodes.VBoxChatCell;
-import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.model.nodes.VBoxMessageCell;
 import org.javaFX.util.KeyboardHandler;
 
@@ -75,7 +73,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     //todo: remove after updating chat by front msg
     private int chatsLimit = 20;
-    private long activeChat;
+    private long activeChatId;
 
     public ChatsWindowHandler(){
     }
@@ -108,7 +106,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 messagesListView.setItems(observableChatList);
             } else if (a.code() == FrontMsg.Codes$.MODULE$.historyMsgs()) {
                 FrontMsg.HistoryMsgs msg = (FrontMsg.HistoryMsgs) a;
-                if (msg.chatId() == activeChat) {
+                if (msg.chatId() == activeChatId) {
                     ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
                     msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
                     VBoxMessageCell prevLastCell = messagesListView.getItems().get(0);
@@ -239,10 +237,10 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         if( messagesListView.getItems().size() == 0 ){
             showStartMessagingArea();
         }
-        BackMsg msg = new BackMsg.SetActiveChat(
-                chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
-        );
-        activeChat = chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get();
+        VBoxChatCell activeChat = chatsListView.getSelectionModel().getSelectedItem();
+        refreshColors(activeChat);
+        activeChatId = activeChat.chatIdProperty().get();
+        BackMsg msg = new BackMsg.SetActiveChat(activeChatId);
         initializeDialogArea();
         ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
         messagesListView.setItems(observableMessageList);
@@ -252,6 +250,13 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             e.printStackTrace();
         }
         showLeftPane();
+    }
+
+    private void refreshColors(VBoxChatCell activeChat){
+        for(VBoxChatCell cell: chatsListView.getItems()){
+            cell.resetPaneColor();
+        }
+        activeChat.updatePaneColor();
     }
 
     private void forceListRefreshOn() {

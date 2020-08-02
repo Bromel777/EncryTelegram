@@ -2,9 +2,11 @@ package org.javaFX.model.nodes;
 
 import javafx.beans.property.LongProperty;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.AnchorPane;
 
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -24,8 +26,13 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     private Circle bigCircle;
     private Text abbreviationText;
     private Color circleColor;
+    private Separator separator;
     private LongProperty chatId;
     private final String smallCircleColorStr = "#D4D3D4";
+    private final String backGroundStyle = "-fx-background-color:#FFFFFF;";
+    private final String selectedBackGroundStyle = "-fx-background-color:#D4D3D4;";
+    private final String selectedSmallCircleColorStr = "#4F4F4F";
+
 
     private double smallCircleRightIndent = 9.0;
     private double smallCircleTextRightIndent = 21.0;
@@ -45,6 +52,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         circleColor = RandomChooser.getRandomColor();
         initBigCircle(jChat);
         initBigCircleText(jChat);
+        initSeparator();
         if(jChat.getUnreadMessagesNumber().get() > 0 ){
             initSmallCircle();
             initSmallCircleText((String.valueOf(jChat.getUnreadMessagesNumber().get())));
@@ -65,6 +73,8 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         }
         getRootPane().getChildren().add(bigCircle);
         getRootPane().getChildren().add(abbreviationText);
+        getRootPane().getChildren().add(separator);
+        AnchorPane.setBottomAnchor(separator,0.0);
         this.getChildren().add(getRootPane());
     }
 
@@ -72,6 +82,20 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     protected void initRootPane(JChat source){
         AnchorPane pane = new AnchorPane();
         pane.setMinSize(getParentWidth(),62);
+        pane.setStyle(backGroundStyle);
+        setRootPane(pane);
+    }
+
+    public void resetPaneColor(){
+        AnchorPane pane = getRootPane();
+        pane.setStyle(backGroundStyle);
+        setRootPane(pane);
+    }
+
+    public void updatePaneColor(){
+        AnchorPane pane = getRootPane();
+        pane.setStyle(selectedBackGroundStyle);
+        smallCircle.setFill(Color.valueOf(selectedSmallCircleColorStr));
         setRootPane(pane);
     }
 
@@ -81,6 +105,8 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         chatTitleLabel.setPrefSize(getParentWidth() - indent,31);
         chatTitleLabel.setLayoutX(70);
         chatTitleLabel.setLayoutY(0);
+        chatTitleLabel.setFont(Font.font("System",FontWeight.BOLD,18));
+        chatTitleLabel.setTextFill(Paint.valueOf("#333333"));
         chatTitleLabel.setWrapText(true);
     }
 
@@ -98,9 +124,15 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         int indent = 155;
         chatTitleLabel.setPrefSize(length - indent,31);
         lastMessageLabel.setPrefSize(length - indent,31);
-
         AnchorPane.setLeftAnchor(timeLabel, chatTitleLabel.getWidth() + 70);
         updateMessageCircle();
+    }
+
+    private void initSeparator(){
+        separator = new Separator();
+        separator.setLayoutX(10);
+        separator.setPrefWidth(600);
+        separator.setOpacity(0.25);
     }
 
     private void initTimeLabel(JChat jChat){
@@ -138,7 +170,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         smallCircle = new Circle();
         int smallCircleIndent = 20;
         smallCircle.setLayoutX(getParentWidth()-smallCircleIndent);
-        smallCircle.setLayoutY(47);
+        smallCircle.setLayoutY(42);
         smallCircle.setRadius(16);
         smallCircle.setFill(Color.valueOf(smallCircleColorStr));
     }
@@ -148,7 +180,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         unreadMsgsNumberText.setFont(new Font(10));
         int smallCircleTextIndent = 24;
         unreadMsgsNumberText.setLayoutX(getParentWidth()-smallCircleTextIndent);
-        unreadMsgsNumberText.setLayoutY(52);
+        unreadMsgsNumberText.setLayoutY(47);
         unreadMsgsNumberText.setText(unreadMessagedNumberStr);
         unreadMsgsNumberText.setTextAlignment(TextAlignment.CENTER);
         unreadMsgsNumberText.setFill(Color.WHITE);

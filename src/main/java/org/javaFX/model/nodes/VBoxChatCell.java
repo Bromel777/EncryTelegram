@@ -95,7 +95,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     public void updatePaneColor(){
         AnchorPane pane = getRootPane();
         pane.setStyle(selectedBackGroundStyle);
-        smallCircle.setFill(Color.valueOf(selectedSmallCircleColorStr));
+        //smallCircle.setFill(Color.valueOf(selectedSmallCircleColorStr));
         setRootPane(pane);
     }
 

@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.RootLayoutHandler">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" stylesheets="@../styles/menuBarStyleSheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.RootLayoutHandler">
     <top>
-        <MenuBar fx:id="menuBar" disable="true" prefHeight="32.0" prefWidth="600.0" visible="false">
+        <MenuBar fx:id="menuBar" disable="true" prefHeight="25.0" prefWidth="600.0" stylesheets="@../styles/menuBarStyleSheet.css" visible="false">
             <menus>
-            <Menu mnemonicParsing="false" text="Windows">
+            <Menu fx:id="menuItem" mnemonicParsing="false" style="-fx-text-filll: RED;" text="Windows">
               <items>
                   <MenuItem fx:id="logOut" mnemonicParsing="false" onAction="#logOut" text="Log out" />
                   <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="Close" />
               </items>
             </Menu>
-                <Menu mnemonicParsing="false" text="Chats">
+                <Menu fx:id="menuItem" mnemonicParsing="false" text="Chats">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#launchMainWindow" text="Show" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Local Communities">
+                <Menu fx:id="menuItem" mnemonicParsing="false" text="Local Communities">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#createLocalCommunity" text="Create" />
                         <MenuItem mnemonicParsing="false" onAction="#showLocalCommunity" text="Show" />
                     </items>
                 </Menu>
-            <Menu mnemonicParsing="false" text="About">
+            <Menu fx:id="menuItem" mnemonicParsing="false" text="About">
                <items>
                   <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#showInfoWindow" text="Info" />
                </items>
@@ -43,6 +44,9 @@
               </items>
             </Menu>
             </menus>
+         <effect>
+            <Reflection />
+         </effect>
         </MenuBar>
     </top>
 </BorderPane>

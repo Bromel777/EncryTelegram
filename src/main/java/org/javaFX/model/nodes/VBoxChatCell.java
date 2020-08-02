@@ -28,12 +28,10 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     private Color circleColor;
     private Separator separator;
     private LongProperty chatId;
-    //private final String smallCircleColorStr = "#D4D3D4";
+
     private final String smallCircleColorStr = "#6e8ca0";
     private final String backGroundStyle = "-fx-background-color:#FFFFFF;";
     private final String selectedBackGroundStyle = "-fx-background-color:#D4D3D4;";
-    private final String selectedSmallCircleColorStr = "#4F4F4F";
-
 
     private double smallCircleRightIndent = 9.0;
     private double smallCircleTextRightIndent = 21.0;

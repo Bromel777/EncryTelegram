@@ -33,7 +33,6 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
         initSeparatorLine();
     }
 
-
     private void initCommunityIDLabel(JLocalCommunity sourceElement) {
         communityIDLabel = new Label();
         communityIDLabel.setText(sourceElement.getCommunityID()+"");

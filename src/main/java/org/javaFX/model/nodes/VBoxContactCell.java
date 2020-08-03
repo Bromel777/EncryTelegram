@@ -6,6 +6,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import org.javaFX.model.JSingleContact;
 import org.javaFX.util.JavaFXTableBuilder;
 
@@ -17,6 +19,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     private Label phoneNumberLabel;
     private ImageView checkBoxImg;
     private Separator separatorLine;
+    //private Font labelFont = ;
 
     private final JSingleContact currentContact;
 
@@ -40,6 +43,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         contactNameLabel.setText(communityMember.getFullName());
         contactNameLabel.setLayoutX(0);
         contactNameLabel.setLayoutY(20);
+        contactNameLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
     }
 
     private void initPhoneNumberLabel(JSingleContact communityMember){
@@ -47,6 +51,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         phoneNumberLabel.setText(getPreparedTelNumber(communityMember));
         phoneNumberLabel.setLayoutX(300);
         phoneNumberLabel.setLayoutY(20);
+        phoneNumberLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
     }
 
     private void initCheckBoxImg(){

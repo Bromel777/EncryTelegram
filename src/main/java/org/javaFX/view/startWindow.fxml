@@ -13,7 +13,7 @@
     <children>
       <AnchorPane layoutX="14.0" layoutY="326.0" prefHeight="300.0" prefWidth="623.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <ProgressBar fx:id="progressBar" layoutX="138.0" layoutY="88.0" prefHeight="23.0" prefWidth="348.0" progress="0.0" />
+            <ProgressBar fx:id="progressBar" layoutX="138.0" layoutY="88.0" prefHeight="6.0" prefWidth="348.0" progress="0.0" stylesheets="@../styles/startWindowStyle.css" />
             <Label fx:id="progressLabel" layoutX="254.0" layoutY="41.0" prefHeight="27.0" prefWidth="137.0" text="loading 0%" textFill="WHITE">
                <font>
                   <Font name="Times New Roman" size="23.0" />

@@ -29,7 +29,9 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     private Separator separator;
     private LongProperty chatId;
 
-    private final String smallCircleColorStr = "#6e8ca0";
+
+    private final String chatTitleColorStr = "#334856";
+    private final String innerContentCircleColorStr = "#6e8ca0";
     private final String backGroundStyle = "-fx-background-color:#FFFFFF;";
     private final String selectedBackGroundStyle = "-fx-background-color:#D4D3D4;";
 
@@ -94,7 +96,8 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     public void updatePaneColor(){
         AnchorPane pane = getRootPane();
         pane.setStyle(selectedBackGroundStyle);
-        //smallCircle.setFill(Color.valueOf(selectedSmallCircleColorStr));
+        lastMessageLabel.setTextFill(Paint.valueOf(innerContentCircleColorStr));
+        timeLabel.setTextFill(Paint.valueOf(innerContentCircleColorStr));
         setRootPane(pane);
     }
 
@@ -105,7 +108,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         chatTitleLabel.setLayoutX(70);
         chatTitleLabel.setLayoutY(0);
         chatTitleLabel.setFont(Font.font("System",FontWeight.BOLD,18));
-        chatTitleLabel.setTextFill(Paint.valueOf("#333333"));
+        chatTitleLabel.setTextFill(Paint.valueOf(chatTitleColorStr));
         chatTitleLabel.setWrapText(true);
     }
 
@@ -116,6 +119,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         lastMessageLabel.setWrapText(true);
         lastMessageLabel.setLayoutX(70);
         lastMessageLabel.setLayoutY(31);
+        lastMessageLabel.setTextFill(Paint.valueOf(innerContentCircleColorStr));
         lastMessageLabel.setPrefSize(getParentWidth() - indent ,31);
     }
 
@@ -138,6 +142,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         timeLabel = new Label();
         timeLabel.setText(TimeParser.parseDataString (jChat.getLastMessageTime().getValue().toString()));
         timeLabel.setPrefSize(44,31);
+        timeLabel.setTextFill(Paint.valueOf(innerContentCircleColorStr));
     }
 
     private void initBigCircle(JChat jChat){
@@ -171,7 +176,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         smallCircle.setLayoutX(getParentWidth()-smallCircleIndent);
         smallCircle.setLayoutY(42);
         smallCircle.setRadius(16);
-        smallCircle.setFill(Color.valueOf(smallCircleColorStr));
+        smallCircle.setFill(Color.valueOf(innerContentCircleColorStr));
     }
 
     private void initSmallCircleText(String unreadMessagedNumberStr){

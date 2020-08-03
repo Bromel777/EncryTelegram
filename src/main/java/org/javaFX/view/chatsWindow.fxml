@@ -34,7 +34,7 @@
                   </AnchorPane>
                   <AnchorPane minHeight="65.0" minWidth="320.0" prefHeight="63.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TextField fx:id="searchThroughChatsTextField" layoutX="14.0" layoutY="16.0" onKeyPressed="#searchContactByKeyboard" onMouseClicked="#handleSearchImg" prefHeight="31.0" prefWidth="273.0" promptText="     Search for messages or users" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                        <TextField fx:id="searchThroughChatsTextField" layoutX="14.0" layoutY="16.0" onKeyPressed="#searchContactByKeyboard" onMouseClicked="#handleSearchImg" prefHeight="31.0" prefWidth="273.0" promptText="     Search for messages or users" stylesheets="@../styles/searchTextFieldStyle.css" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
                         <ImageView fx:id="searchImg" fitHeight="15.0" fitWidth="15.0" layoutX="21.0" layoutY="24.0" onMouseClicked="#handleSearchImg" pickOnBounds="true" preserveRatio="true">
                            <cursor>
                               <Cursor fx:constant="HAND" />

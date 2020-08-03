@@ -45,7 +45,7 @@
                   <Shadow blurType="ONE_PASS_BOX" color="#00b7ff" height="0.0" radius="0.0" width="0.0" />
                </effect>
             </Separator>
-            <TextField fx:id="searchContactTextField" layoutX="27.0" layoutY="15.0" onKeyPressed="#searchContactByKeyboard" onKeyTyped="#handleSearchContactKeyTyped" onMouseClicked="#handleSearchImg" prefHeight="31.0" prefWidth="361.0" promptText="     Search for contact" AnchorPane.leftAnchor="27.0" />
+            <TextField fx:id="searchContactTextField" layoutX="27.0" layoutY="15.0" onKeyPressed="#searchContactByKeyboard" onKeyTyped="#handleSearchContactKeyTyped" onMouseClicked="#handleSearchImg" prefHeight="31.0" prefWidth="361.0" promptText="     Search for contact" stylesheets="@../styles/searchTextFieldStyle.css" AnchorPane.leftAnchor="27.0" />
             <ImageView fx:id="searchImg" fitHeight="15.0" fitWidth="15.0" layoutX="33.0" layoutY="23.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true">
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -58,8 +58,8 @@
         </AnchorPane>
       <AnchorPane layoutY="60.0" prefHeight="80.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <TextField fx:id="newCommunityNameTextField" layoutX="27.0" layoutY="31.0" onKeyTyped="#handleСomNameKeyTyped" prefHeight="31.0" prefWidth="361.0" promptText="Enter community name..." AnchorPane.leftAnchor="27.0" />
-            <Label fx:id="communityNameLabel" layoutX="27.0" layoutY="4.0" prefHeight="21.0" prefWidth="219.0" text="Community name" textFill="#00b6ff" />
+            <TextField fx:id="newCommunityNameTextField" layoutX="27.0" layoutY="31.0" onKeyTyped="#handleСomNameKeyTyped" prefHeight="31.0" prefWidth="361.0" promptText="Enter community name..." stylesheets="@../styles/textFieldStyle.css" AnchorPane.leftAnchor="27.0" />
+            <Label fx:id="communityNameLabel" layoutX="37.0" layoutY="4.0" prefHeight="21.0" prefWidth="219.0" text="Community name" textFill="#00b6ff" />
             <Label fx:id="nobodyChosenErrorLabel" layoutX="184.0" layoutY="4.0" text="You should choose at least one contact to create local community" textFill="#eb2700" visible="false" />
          </children>
       </AnchorPane>

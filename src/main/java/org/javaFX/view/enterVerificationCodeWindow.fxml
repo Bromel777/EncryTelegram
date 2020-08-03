@@ -18,7 +18,7 @@
                         <Font name="Times New Roman" size="20.0" />
                      </font>
                   </Label>
-                      <TextField fx:id="verificationCodeTextField" layoutX="136.0" layoutY="28.0" onKeyPressed="#handleVerificationCodeAreaPressed" onKeyTyped="#handleKeyTyped" prefHeight="33.0" prefWidth="264.0" promptText="-----" style="-fx-border-color: blue;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0" />
+                      <TextField fx:id="verificationCodeTextField" layoutX="136.0" layoutY="28.0" onKeyPressed="#handleVerificationCodeAreaPressed" onKeyTyped="#handleKeyTyped" prefHeight="33.0" prefWidth="264.0" promptText="-----" stylesheets="@../styles/textFieldStyle.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0" />
                       <Label layoutX="136.0" layoutY="1.0" prefHeight="21.0" prefWidth="264.0" text="  Code" textFill="#00b6ff" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <font>
                         <Font name="System Bold" size="18.0" />

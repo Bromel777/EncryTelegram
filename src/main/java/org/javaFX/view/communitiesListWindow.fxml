@@ -47,7 +47,7 @@
         <AnchorPane layoutY="78.0" maxHeight="60.0" minHeight="40.0" minWidth="85.0" prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
             <children>
                 <TextField fx:id="searchCommunityTextField" layoutX="27.0" layoutY="15.0" onKeyPressed="#searchContactByKeyboard" onKeyTyped="#handleSearchCommunityKeyTyped" onMouseClicked="#handleSearchImg" prefHeight="31.0" prefWidth="410.0" promptText="     Search for community" AnchorPane.leftAnchor="27.0" />
-            <Separator fx:id="blueSeparator" layoutX="10.0" layoutY="10.0" prefWidth="200.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="0.0">
+            <Separator fx:id="blueSeparator" layoutX="10.0" layoutY="10.0" opacity="0.5" prefWidth="200.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="0.0">
                <effect>
                   <Blend />
                </effect>

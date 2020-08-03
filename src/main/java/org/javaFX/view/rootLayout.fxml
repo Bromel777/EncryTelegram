@@ -44,9 +44,6 @@
               </items>
             </Menu>
             </menus>
-         <effect>
-            <Reflection />
-         </effect>
         </MenuBar>
     </top>
 </BorderPane>

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
@@ -13,7 +20,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.ChatsWindowHandler">
+<AnchorPane minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.ChatsWindowHandler">
     <children>
         <SplitPane dividerPositions="0.45" focusTraversable="false" minWidth="600.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
@@ -27,7 +34,7 @@
                   </AnchorPane>
                   <AnchorPane minHeight="65.0" minWidth="320.0" prefHeight="63.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TextField fx:id="searchThroughChatsTextField" layoutX="14.0" layoutY="16.0" onKeyPressed="#searchContactByKeyboard" onMouseClicked="#handleSearchImg" prefHeight="31.0" prefWidth="273.0" promptText="    Search for messages or users" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                        <TextField fx:id="searchThroughChatsTextField" layoutX="14.0" layoutY="16.0" onKeyPressed="#searchContactByKeyboard" onMouseClicked="#handleSearchImg" prefHeight="31.0" prefWidth="273.0" promptText="     Search for messages or users" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
                         <ImageView fx:id="searchImg" fitHeight="15.0" fitWidth="15.0" layoutX="21.0" layoutY="24.0" onMouseClicked="#handleSearchImg" pickOnBounds="true" preserveRatio="true">
                            <cursor>
                               <Cursor fx:constant="HAND" />

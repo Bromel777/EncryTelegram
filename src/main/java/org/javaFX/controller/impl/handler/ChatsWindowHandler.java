@@ -304,8 +304,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     public void findContentInDialog(){
+
         final String searchingStr = searchMessageTextField.getText().trim();
-        findMessagesByStr(searchingStr);
+     //   findMessagesByStr(searchingStr);
     }
 
     private ObservableList<VBoxMessageCell> findMessagesByStr(String searchingStr){

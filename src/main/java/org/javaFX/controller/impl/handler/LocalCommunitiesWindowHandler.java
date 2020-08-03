@@ -110,6 +110,10 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
         if(observableList.size() == 0 ){
             notFoundInfoLabel.setVisible(true);
         }
+        else {
+            System.out.println("notFoundInfoLabel.setVisible(false);");
+            notFoundInfoLabel.setVisible(false);
+        }
         return observableList;
     }
 

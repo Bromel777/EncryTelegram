@@ -304,7 +304,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     public void findContentInDialog(){
-
         final String searchingStr = searchMessageTextField.getText().trim();
      //   findMessagesByStr(searchingStr);
     }

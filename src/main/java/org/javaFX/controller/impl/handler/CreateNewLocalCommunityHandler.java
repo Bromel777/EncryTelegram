@@ -16,6 +16,7 @@ import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JSingleContact;
+import org.javaFX.model.nodes.VBoxChatCell;
 import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
@@ -80,7 +81,9 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     @FXML
     private void changeCheckBoxValue() {
-        JSingleContact communityMember = contactsListView.getSelectionModel().getSelectedItem().getCurrentContact();
+        VBoxContactCell clickedCell = contactsListView.getSelectionModel().getSelectedItem();
+        JSingleContact communityMember = clickedCell.getCurrentContact();
+        refreshColors(clickedCell);
         if(communityMember.getUserId() > 0L ){
             boolean isChosen = communityMember.isChosen();
             communityMember.setChosen(!isChosen);
@@ -104,6 +107,13 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     private void findContact(){
         final String searchingStr = searchContactTextField.getText().trim();
         contactsListView.setItems(initTableBySubstr(searchingStr));
+    }
+
+    private void refreshColors(VBoxContactCell activeCell){
+        for(VBoxContactCell cell: contactsListView.getItems()){
+            cell.resetPaneColor();
+        }
+        activeCell.updatePaneColor();
     }
 
     private ObservableList<VBoxContactCell> initTableBySubstr(String searchingStr){

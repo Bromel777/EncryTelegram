@@ -29,7 +29,7 @@
         </AnchorPane>
         <AnchorPane prefHeight="341.0" prefWidth="524.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
             <children>
-                <ListView fx:id="communitiesListView" onMouseClicked="#onClick" prefHeight="279.0" prefWidth="470.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
+                <ListView fx:id="communitiesListView" onMouseClicked="#onClick" prefHeight="279.0" prefWidth="470.0" stylesheets="@../styles/communitiesBackStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
                     <cursor>
                         <Cursor fx:constant="HAND" />
                     </cursor>
@@ -37,8 +37,8 @@
                 <AnchorPane prefHeight="62.0" prefWidth="470.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="20.0">
                     <children>
                         <Label text="ID" textFill="#787878" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
-                        <Label text="Community name" textFill="#787878" AnchorPane.leftAnchor="180.0" AnchorPane.topAnchor="20.0" />
-                        <Label prefHeight="21.0" prefWidth="149.0" text="Number of members" textFill="#787878" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+                        <Label text="Community name" textFill="#787878" AnchorPane.leftAnchor="200.0" AnchorPane.topAnchor="20.0" />
+                        <Label prefHeight="21.0" prefWidth="143.0" text="Number of members" textFill="#787878" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
                     </children>
                 </AnchorPane>
             <Label fx:id="notFoundInfoLabel" layoutX="42.0" layoutY="62.0" prefHeight="52.0" prefWidth="212.0" text="Not found " textFill="#787878" visible="false" />

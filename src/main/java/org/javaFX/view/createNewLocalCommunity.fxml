@@ -16,7 +16,7 @@
     <children>
         <AnchorPane layoutY="217.0" minWidth="400.0" prefHeight="418.0" prefWidth="900.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
          <children>
-            <ListView fx:id="contactsListView" minWidth="400.0" onMouseClicked="#changeCheckBoxValue" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
+            <ListView fx:id="contactsListView" minWidth="400.0" onMouseClicked="#changeCheckBoxValue" prefHeight="200.0" prefWidth="200.0" stylesheets="@../styles/communitiesBackStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>

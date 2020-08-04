@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import org.javaFX.model.JSingleContact;
@@ -19,9 +20,11 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     private Label phoneNumberLabel;
     private ImageView checkBoxImg;
     private Separator separatorLine;
-    //private Font labelFont = ;
 
     private final JSingleContact currentContact;
+
+    private final String backGroundStyle = "-fx-background-color:#FFFFFF;";
+    private final String innerContentColorStr = "#000000";
 
     public VBoxContactCell(JSingleContact communityMember){
         super(communityMember);
@@ -40,7 +43,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     private void initContactNameLabel(JSingleContact communityMember){
         contactNameLabel = new Label();
-        contactNameLabel.setText(communityMember.getFullName());
+        contactNameLabel.setText("    " + communityMember.getFullName());
         contactNameLabel.setLayoutX(0);
         contactNameLabel.setLayoutY(20);
         contactNameLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
@@ -78,7 +81,23 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     protected void initRootPane(JSingleContact sourceElement) {
         setRootPane(new AnchorPane() );
         getRootPane().setPrefHeight(60);
+        getRootPane().setStyle(backGroundStyle);
     }
+
+    public void resetPaneColor(){
+        AnchorPane pane = getRootPane();
+        pane.setStyle(backGroundStyle);
+        setRootPane(pane);
+    }
+
+    public void updatePaneColor(){
+        AnchorPane pane = getRootPane();
+        pane.setStyle(backGroundStyle);
+        contactNameLabel.setTextFill(Paint.valueOf(innerContentColorStr));
+        phoneNumberLabel.setTextFill(Paint.valueOf(innerContentColorStr));
+        setRootPane(pane);
+    }
+
 
     public JSingleContact getCurrentContact() {
         return currentContact;

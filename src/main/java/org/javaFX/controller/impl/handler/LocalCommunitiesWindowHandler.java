@@ -15,6 +15,7 @@ import org.javaFX.EncryWindow;
 
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.nodes.VBoxCommunityCell;
+import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.KeyboardHandler;
 
 import java.io.IOException;
@@ -71,12 +72,20 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
         shutDownScheduledService();
     }
 
-    @FXML
-    private void onClick(){
-        JLocalCommunity localCommunity = communitiesListView.getSelectionModel().getSelectedItem().getCurrentCommunity();
-        launchDialog(localCommunity);
+    private void refreshColors(VBoxCommunityCell activeCell){
+        for(VBoxCommunityCell cell: communitiesListView.getItems()){
+            cell.resetPaneColor();
+        }
+        activeCell.updatePaneColor();
     }
 
+    @FXML
+    private void onClick(){
+        VBoxCommunityCell activeCell = communitiesListView.getSelectionModel().getSelectedItem();
+        JLocalCommunity localCommunity = activeCell.getCurrentCommunity();
+        refreshColors(activeCell);
+        launchDialog(localCommunity);
+    }
 
     @FXML
     private void toChatsWindow(){

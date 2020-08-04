@@ -29,7 +29,6 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     private Separator separator;
     private LongProperty chatId;
 
-
     private final String chatTitleColorStr = "#334856";
     private final String innerContentCircleColorStr = "#6e8ca0";
     private final String backGroundStyle = "-fx-background-color:#FFFFFF;";

@@ -63,7 +63,6 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
             notFoundInfoLabel.setVisible(true);
         }
         return observableList;
-
     }
 
     @Override

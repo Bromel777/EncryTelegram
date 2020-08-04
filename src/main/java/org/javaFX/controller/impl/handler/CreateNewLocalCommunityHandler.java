@@ -21,6 +21,7 @@ import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -106,7 +107,13 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     private void findContact(){
         final String searchingStr = searchContactTextField.getText().trim();
-        contactsListView.setItems(initTableBySubstr(searchingStr));
+        contactsListView.setItems(getFilteredList(initTableBySubstr(searchingStr), searchingStr));
+    }
+
+    private ObservableList<VBoxContactCell> getFilteredList(ObservableList<VBoxContactCell> rawList, final String searchString ){
+        rawList.sort( Comparator.comparing(contactCell -> ((VBoxContactCell)contactCell)
+                .getCurrentContact().getFullName().toLowerCase().indexOf(searchString.toLowerCase())));
+        return rawList;
     }
 
     private void refreshColors(VBoxContactCell activeCell){

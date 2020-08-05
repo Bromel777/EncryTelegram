@@ -1,0 +1,15 @@
+.menu-bar{
+    -fx-padding: 0px ;
+}
+
+.menu, .menu-item{
+    -fx-indent: 20px;
+}
+
+.menu-bar .label{
+    -fx-font-weight: 600;
+    -fx-font-size: 12pt;
+    -fx-font-family:"SF Pro Text";
+    -fx-text-fill:#3F3F3F;
+    -fx-opacity:0.9;
+}

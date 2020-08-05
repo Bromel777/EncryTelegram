@@ -27,14 +27,10 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
 
     private Label createContentLabel(JMessage jMessage){
         Label contentLabel = new Label();
-        String textContent = jMessage.getContent().toString();
+        String textContent = jMessage.getContent().toString().trim();
         contentLabel.setText(jMessage.getAuthor()+"\n"+textContent);
         contentLabel.setWrapText(true);
-        int multiplier =
-                textContent.length() % 40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
-        double width = getParentWidth() - getParentWidth() / 3;
-        double height = 27 * (multiplier +1);
-        contentLabel.setPrefSize(width - 5 , height);
+        contentLabel.setPrefSize(getCellWidth() - 5 , getCellHeight());
         return contentLabel;
     }
 

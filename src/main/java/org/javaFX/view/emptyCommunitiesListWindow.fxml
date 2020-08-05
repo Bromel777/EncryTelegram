@@ -49,9 +49,9 @@
                         <Font name="Calibri Bold" size="22.0" />
                     </font>
                 </Label>
-            <Separator fx:id="blueSeparator" prefWidth="200.0" style="-fx-background-color: RED; -fx-border-color: RED;">
+            <Separator fx:id="blueSeparator" prefWidth="200.0">
                <effect>
-                  <Shadow blurType="ONE_PASS_BOX" color="#c6c6c6" height="1.0" radius="0.0" width="0.0" />
+                  <Blend />
                </effect>
                <StackPane.margin>
                   <Insets left="27.0" right="27.0" top="60.0" />

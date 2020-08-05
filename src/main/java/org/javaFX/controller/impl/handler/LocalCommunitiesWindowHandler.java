@@ -7,13 +7,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.javaFX.EncryWindow;
 
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.nodes.VBoxCommunityCell;
-import org.javaFX.util.InfoContainer;
+import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.KeyboardHandler;
 
 import java.io.IOException;
@@ -36,6 +38,12 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
     @FXML
     private Separator blueSeparator;
 
+    @FXML
+    private Label notFoundInfoLabel;
+
+    @FXML
+    private ImageView searchImg;
+
     public LocalCommunitiesWindowHandler() {
         super();
     }
@@ -49,8 +57,11 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
     }
 
     private ObservableList<VBoxCommunityCell> getObservableCommunityList(){
-        ObservableList<VBoxCommunityCell> observableList = FXCollections.observableArrayList();
-        getUserStateRef().get().communities.forEach(community -> observableList.add(new VBoxCommunityCell(community)));
+        final String searchingStr = searchCommunityTextField.getText().trim();
+        ObservableList<VBoxCommunityCell> observableList = initTableBySubstr(searchingStr);
+        if(observableList.size() == 0 ){
+            notFoundInfoLabel.setVisible(true);
+        }
         return observableList;
     }
 
@@ -60,12 +71,20 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
         shutDownScheduledService();
     }
 
-    @FXML
-    private void onClick(){
-        JLocalCommunity localCommunity = communitiesListView.getSelectionModel().getSelectedItem().getCurrentCommunity();
-        launchDialog(localCommunity);
+    private void refreshColors(VBoxCommunityCell activeCell){
+        for(VBoxCommunityCell cell: communitiesListView.getItems()){
+            cell.resetPaneColor();
+        }
+        activeCell.updatePaneColor();
     }
 
+    @FXML
+    private void onClick(){
+        VBoxCommunityCell activeCell = communitiesListView.getSelectionModel().getSelectedItem();
+        JLocalCommunity localCommunity = activeCell.getCurrentCommunity();
+        refreshColors(activeCell);
+        launchDialog(localCommunity);
+    }
 
     @FXML
     private void toChatsWindow(){
@@ -87,13 +106,23 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
 
     private void findContact(){
         final String searchingStr = searchCommunityTextField.getText().trim();
-        communitiesListView.getItems().stream()
-                .filter(item -> item.getCurrentCommunity().getCommunityName().toLowerCase().contains(searchingStr.toLowerCase()) )
-                .findAny()
-                .ifPresent(item -> {
-                    communitiesListView.getSelectionModel().select(item);
-                    communitiesListView.scrollTo(item);
-                });
+        communitiesListView.setItems(initTableBySubstr(searchingStr));
+    }
+
+    private ObservableList<VBoxCommunityCell> initTableBySubstr(String searchingStr){
+        ObservableList<VBoxCommunityCell> observableList = FXCollections.observableArrayList();
+        getUserStateRef().get().communities
+                .stream()
+                .filter(item -> item.getCommunityName().toLowerCase().contains(searchingStr.toLowerCase()) )
+                .forEach(community -> observableList.add(new VBoxCommunityCell(community)));
+        if(observableList.size() == 0 ){
+            notFoundInfoLabel.setVisible(true);
+        }
+        else {
+            System.out.println("notFoundInfoLabel.setVisible(false);");
+            notFoundInfoLabel.setVisible(false);
+        }
+        return observableList;
     }
 
     private void launchDialog(JLocalCommunity localCommunity){
@@ -122,5 +151,27 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
         return dialogStage;
     }
 
+
+    @FXML
+    private void handleSearchCommunityKeyTyped(){
+        searchCommunityTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+    }
+
+    @FXML
+    private void handlePrivateChatKeyTyped(){
+        privateChatNameTestField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+    }
+
+    @FXML
+    private void handleSearchImg(){
+        searchImg.setVisible(false);
+        searchCommunityTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue) {
+                if(searchCommunityTextField.getText().length() == 0){
+                    searchImg.setVisible(true);
+                }
+            }
+        });
+    }
 
 }

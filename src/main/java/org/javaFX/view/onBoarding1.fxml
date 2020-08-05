@@ -12,28 +12,65 @@
 
 <AnchorPane fx:id="rootAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="600.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.OnboardingOneHandler">
     <children>
-      <Label alignment="CENTER" contentDisplay="CENTER" text="Innovation" textFill="#222222" AnchorPane.leftAnchor="254.0" AnchorPane.rightAnchor="252.0" AnchorPane.topAnchor="298.0">
-         <font>
-            <Font name="Calibri Bold" size="20.0" />
-         </font>
-      </Label>
-      <Label alignment="CENTER" layoutX="-1.0" prefHeight="22.0" prefWidth="600.0" text="Improving the usual Telegram services." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="337.0">
-         <font>
-            <Font name="Calibri" size="19.0" />
-         </font>
-      </Label>
-      <ImageView fitHeight="194.0" fitWidth="276.0" layoutX="162.0" layoutY="71.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../images/svg-pic-onboarding-1@2x.png" />
-         </image></ImageView>
-      <ImageView fx:id="nextButtonImg" fitHeight="60.0" fitWidth="328.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#handleNextOnboardingAction" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="136.0" AnchorPane.rightAnchor="136.0">
-         <image>
-            <Image url="@../images/nextButton.png" />
-         </image>
-      </ImageView>
-      <Ellipse fill="#00b6ff" onMouseClicked="#toOnboarding1" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.bottomAnchor="210.0" AnchorPane.leftAnchor="264.0" AnchorPane.rightAnchor="329.0" AnchorPane.topAnchor="383.0" />
-      <Ellipse fill="WHITE" layoutX="10.0" layoutY="10.0" onMouseClicked="#toOnboarding3" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.bottomAnchor="207.0" AnchorPane.leftAnchor="308.0" AnchorPane.rightAnchor="285.0" AnchorPane.topAnchor="383.0" />
-      <Ellipse fill="WHITE" layoutX="20.0" layoutY="20.0" onMouseClicked="#toOnboarding2" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.bottomAnchor="207.0" AnchorPane.leftAnchor="286.0" AnchorPane.rightAnchor="304.0" AnchorPane.topAnchor="383.0" />
-      <Ellipse fill="WHITE" layoutX="30.0" layoutY="30.0" onMouseClicked="#toOnboarding4" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE" AnchorPane.leftAnchor="330.0" AnchorPane.rightAnchor="326.0" AnchorPane.topAnchor="383.0" />
+      <StackPane layoutX="-4.0" layoutY="75.0" prefHeight="207.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="75.0">
+         <children>
+            <ImageView fitHeight="194.0" fitWidth="276.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/svg-pic-onboarding-1@2x.png" />
+               </image>
+            </ImageView>
+         </children>
+      </StackPane>
+      <StackPane layoutY="284.0" prefHeight="48.0" prefWidth="600.0" AnchorPane.bottomAnchor="268.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" text="Innovation" textFill="#222222">
+               <font>
+                  <Font name="Calibri Bold" size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </StackPane>
+      <StackPane layoutY="329.0" prefHeight="37.0" prefWidth="600.0">
+         <children>
+            <Label alignment="CENTER" prefHeight="22.0" prefWidth="600.0" text="Improving the usual Telegram services.">
+               <font>
+                  <Font name="Calibri" size="19.0" />
+               </font>
+            </Label>
+         </children>
+      </StackPane>
+      <StackPane layoutY="366.0" prefHeight="48.0" prefWidth="600.0" AnchorPane.bottomAnchor="186.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <Ellipse fill="#00b6ff" onMouseClicked="#toOnboarding1" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE">
+               <StackPane.margin>
+                  <Insets right="80.0" />
+               </StackPane.margin>
+            </Ellipse>
+            <Ellipse fill="WHITE" onMouseClicked="#toOnboarding2" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE">
+               <StackPane.margin>
+                  <Insets right="30.0" />
+               </StackPane.margin>
+            </Ellipse>
+            <Ellipse fill="WHITE" onMouseClicked="#toOnboarding3" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE">
+               <StackPane.margin>
+                  <Insets left="20.0" />
+               </StackPane.margin>
+            </Ellipse>
+            <Ellipse fill="WHITE" onMouseClicked="#toOnboarding4" radiusX="5.0" radiusY="5.0" stroke="#eaeaea" strokeType="INSIDE">
+               <StackPane.margin>
+                  <Insets left="70.0" />
+               </StackPane.margin>
+            </Ellipse>
+         </children>
+      </StackPane>
+      <StackPane layoutY="406.0" prefHeight="194.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <ImageView fx:id="nextButtonImg" fitHeight="60.0" fitWidth="328.0" onMouseClicked="#handleNextOnboardingAction" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/nextButton.png" />
+               </image>
+            </ImageView>
+         </children>
+      </StackPane>
     </children>
 </AnchorPane>

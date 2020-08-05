@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class CommunitiesWindowHandler extends DataHandler {
 
     private ScheduledExecutorService service;
+    private Duration period = Duration.millis(10);
 
     public CommunitiesWindowHandler() {
         runDelayedInitialization();
@@ -20,13 +21,13 @@ public abstract class CommunitiesWindowHandler extends DataHandler {
 
     private void runDelayedInitialization(){
         service = Executors.newSingleThreadScheduledExecutor();
-        service.schedule(() -> insertDataToView(getEncryWindow()), 100, TimeUnit.MILLISECONDS);
+        service.schedule(() -> insertDataToView(getEncryWindow()), 1000, TimeUnit.MILLISECONDS);
         initObserver();
     }
 
     private void initObserver(){
         setObserver(new JWindowObserver(this));
-        getObserver().setPeriod(Duration.seconds(1));
+        getObserver().setPeriod(period);
         getObserver().start();
     }
 

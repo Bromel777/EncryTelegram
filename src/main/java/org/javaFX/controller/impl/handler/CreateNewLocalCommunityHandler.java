@@ -8,15 +8,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import org.drinkless.tdlib.TdApi;
 import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JSingleContact;
+import org.javaFX.model.nodes.VBoxChatCell;
 import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -38,6 +43,18 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     @FXML
     private Separator blueSeparator;
 
+    @FXML
+    private Label notFoundInfoLabel;
+
+    @FXML
+    private Label nobodyChosenErrorLabel;
+
+    @FXML
+    private Label chooseTitleLabel;
+
+    @FXML
+    private ImageView searchImg;
+
     public CreateNewLocalCommunityHandler() {
         super();
     }
@@ -51,15 +68,9 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     }
 
     private ObservableList<VBoxContactCell> getObservableUserList(){
-        ObservableList<VBoxContactCell> observableChatList = FXCollections.observableArrayList();
-        for(Long jUserId: getUserStateRef().get().getUsersMap().keySet()){
-            TdApi.User user = getUserStateRef().get().getUsersMap().get(jUserId);
-            if(!user.phoneNumber.isEmpty())
-                observableChatList.add(
-                        new VBoxContactCell(
-                                new JSingleContact(user.firstName, user.lastName, user.phoneNumber, (long)user.id)));
-        }
-        return observableChatList;
+        final String searchingStr = searchContactTextField.getText().trim();
+        ObservableList<VBoxContactCell> observableList = initTableBySubstr(searchingStr);
+        return observableList;
     }
 
     @Override
@@ -71,7 +82,9 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     @FXML
     private void changeCheckBoxValue() {
-        JSingleContact communityMember = contactsListView.getSelectionModel().getSelectedItem().getCurrentContact();
+        VBoxContactCell clickedCell = contactsListView.getSelectionModel().getSelectedItem();
+        JSingleContact communityMember = clickedCell.getCurrentContact();
+        refreshColors(clickedCell);
         if(communityMember.getUserId() > 0L ){
             boolean isChosen = communityMember.isChosen();
             communityMember.setChosen(!isChosen);
@@ -94,13 +107,44 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     private void findContact(){
         final String searchingStr = searchContactTextField.getText().trim();
-        contactsListView.getItems().stream()
-                .filter(item -> item.getCurrentContact().getFullName().toLowerCase().contains(searchingStr.toLowerCase()) )
-                .findAny()
-                .ifPresent(item -> {
-                    contactsListView.getSelectionModel().select(item);
-                    contactsListView.scrollTo(item);
-                });
+        contactsListView.setItems(getFilteredList(initTableBySubstr(searchingStr), searchingStr));
+    }
+
+    private ObservableList<VBoxContactCell> getFilteredList(ObservableList<VBoxContactCell> rawList, final String searchString ){
+        rawList.sort( Comparator.comparing(contactCell -> ((VBoxContactCell)contactCell)
+                .getCurrentContact().getFullName().toLowerCase().indexOf(searchString.toLowerCase())));
+        return rawList;
+    }
+
+    private void refreshColors(VBoxContactCell activeCell){
+        for(VBoxContactCell cell: contactsListView.getItems()){
+            cell.resetPaneColor();
+        }
+        activeCell.updatePaneColor();
+    }
+
+    private ObservableList<VBoxContactCell> initTableBySubstr(String searchingStr){
+        ObservableList<VBoxContactCell> observableList = FXCollections.observableArrayList();
+        for(Long jUserId: getUserStateRef().get().getUsersMap().keySet()){
+            TdApi.User user = getUserStateRef().get().getUsersMap().get(jUserId);
+            if(!user.phoneNumber.isEmpty() && isUserNameOrSurnameContainsStr(user, searchingStr))
+                observableList.add(
+                        new VBoxContactCell(
+                                new JSingleContact(user.firstName, user.lastName, user.phoneNumber, (long)user.id)));
+        }
+        if(observableList.size() == 0 ){
+            notFoundInfoLabel.setVisible(true);
+        }
+        else {
+            notFoundInfoLabel.setVisible(false);
+        }
+        return observableList;
+    }
+
+    private boolean isUserNameOrSurnameContainsStr(TdApi.User user, String searchingStr){
+        return user.lastName.toLowerCase().contains(searchingStr.toLowerCase()) ||
+                user.firstName.toLowerCase().contains(searchingStr.toLowerCase()) ||
+                user.phoneNumber.toLowerCase().contains(searchingStr.toLowerCase()) ;
     }
 
     @FXML
@@ -111,6 +155,9 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
                     forEach(contact -> localCommunity.addContactToCommunity(contact.getCurrentContact()));
             if(localCommunity.getCommunitySize().get() != 0){
                 toCommunitiesWindow(localCommunity);
+            }
+            else {
+                nobodyChosenErrorLabel.setVisible(true);
             }
         }
         else{
@@ -141,6 +188,29 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     @FXML
     private void toChatsWindow(){
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
+    }
+
+
+    @FXML
+    private void handleSearchContactKeyTyped(){
+        searchContactTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+    }
+
+    @FXML
+    private void handleСomNameKeyTyped(){
+        newCommunityNameTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+    }
+
+    @FXML
+    private void handleSearchImg(){
+        searchImg.setVisible(false);
+        searchContactTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue) {
+                if(searchContactTextField.getText().length() == 0){
+                    searchImg.setVisible(true);
+                }
+            }
+        });
     }
 
 

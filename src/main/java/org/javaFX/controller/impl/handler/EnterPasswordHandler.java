@@ -25,6 +25,9 @@ public class EnterPasswordHandler extends DataHandler {
     @FXML
     private Label error;
 
+    @FXML
+    private Label promptLabel;
+
     public EnterPasswordHandler() {
     }
 

@@ -1,0 +1,10 @@
+.menu-button {
+    -fx-border-color: rgba(0, 0, 0, 0.11);
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: transparent;
+}
+
+.menu-button .label{
+    -fx-text-fill: #00B6FF;
+}
+

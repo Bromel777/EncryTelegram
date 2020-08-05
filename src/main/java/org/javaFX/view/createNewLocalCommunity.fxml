@@ -12,20 +12,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.CreateNewLocalCommunityHandler">
+<AnchorPane prefHeight="600.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.CreateNewLocalCommunityHandler">
     <children>
-      <AnchorPane prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <AnchorPane layoutY="217.0" minWidth="400.0" prefHeight="418.0" prefWidth="900.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
          <children>
-            <Label layoutX="341.0" layoutY="20.0" text="Create New Community" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="341.0" AnchorPane.rightAnchor="340.0" AnchorPane.topAnchor="20.0">
-               <font>
-                  <Font name="Calibri Bold" size="22.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
-        <AnchorPane layoutY="217.0" prefHeight="418.0" prefWidth="900.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
-         <children>
-            <ListView fx:id="contactsListView" onMouseClicked="#changeCheckBoxValue" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
+            <ListView fx:id="contactsListView" minWidth="400.0" onMouseClicked="#changeCheckBoxValue" prefHeight="200.0" prefWidth="200.0" stylesheets="@../styles/communitiesBackStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="62.0">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -34,10 +25,17 @@
                <children>
                   <Label text="Contact" textFill="#787878" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
                   <Label text="Phone Number" textFill="#787878" AnchorPane.leftAnchor="310.0" AnchorPane.topAnchor="20.0" />
-                  <Label text="Choose" textFill="#787878" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="20.0" />
+                  <Label fx:id="chooseTitleLabel" text="Choose" textFill="#787878" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="20.0" />
                   <Line endX="846.0" stroke="#787878" strokeWidth="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets top="2.0" />
+               </padding>
             </AnchorPane>
+            <Label fx:id="notFoundInfoLabel" layoutX="52.0" layoutY="72.0" prefHeight="52.0" prefWidth="212.0" text="Not found " textFill="#787878" visible="false" />
          </children>
         </AnchorPane>
         <AnchorPane layoutY="136.0" minHeight="40.0" minWidth="85.0" prefHeight="60.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">
@@ -47,25 +45,34 @@
                   <Shadow blurType="ONE_PASS_BOX" color="#00b7ff" height="0.0" radius="0.0" width="0.0" />
                </effect>
             </Separator>
-            <TextField fx:id="searchContactTextField" layoutX="27.0" layoutY="15.0" onKeyPressed="#searchContactByKeyboard" prefHeight="31.0" prefWidth="361.0" promptText="Search for contact" AnchorPane.leftAnchor="27.0" />
+            <TextField fx:id="searchContactTextField" layoutX="27.0" layoutY="15.0" onKeyPressed="#searchContactByKeyboard" onKeyTyped="#handleSearchContactKeyTyped" onMouseClicked="#handleSearchImg" prefHeight="31.0" prefWidth="361.0" promptText="     Search for contact" stylesheets="@../styles/searchTextFieldStyle.css" AnchorPane.leftAnchor="27.0" />
+            <ImageView fx:id="searchImg" fitHeight="15.0" fitWidth="15.0" layoutX="33.0" layoutY="23.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <image>
+                  <Image url="@../images/findContent.png" />
+               </image>
+            </ImageView>
          </children>
         </AnchorPane>
       <AnchorPane layoutY="60.0" prefHeight="80.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <TextField fx:id="newCommunityNameTextField" layoutX="27.0" layoutY="31.0" prefHeight="31.0" prefWidth="361.0" promptText="Enter community name..." AnchorPane.leftAnchor="27.0" />
-            <Label fx:id="communityNameLabel" layoutX="27.0" layoutY="4.0" prefHeight="21.0" prefWidth="219.0" text="Community name" textFill="#00b6ff" />
+            <TextField fx:id="newCommunityNameTextField" layoutX="27.0" layoutY="31.0" onKeyTyped="#handleСomNameKeyTyped" prefHeight="31.0" prefWidth="361.0" promptText="Enter community name..." stylesheets="@../styles/textFieldStyle.css" AnchorPane.leftAnchor="27.0" />
+            <Label fx:id="communityNameLabel" layoutX="37.0" layoutY="4.0" prefHeight="21.0" prefWidth="219.0" text="Community name" textFill="#00b6ff" />
+            <Label fx:id="nobodyChosenErrorLabel" layoutX="184.0" layoutY="4.0" text="You should choose at least one contact to create local community" textFill="#eb2700" visible="false" />
          </children>
       </AnchorPane>
       <AnchorPane prefHeight="80.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <ImageView fx:id="cancelButtonImage" fitHeight="45.0" fitWidth="137.0" layoutX="731.0" layoutY="18.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="30.0">
+            <ImageView fx:id="cancelButtonImage" fitHeight="45.0" fitWidth="137.0" onMouseClicked="#toChatsWindow" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="200.0">
                <image>
                   <Image url="@../images/cancel.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></ImageView>
-            <ImageView fx:id="createButtonImage" fitHeight="45.0" fitWidth="137.0" layoutX="570.0" layoutY="18.0" onMouseClicked="#createCommunity" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="200.0">
+            <ImageView fx:id="createButtonImage" fitHeight="45.0" fitWidth="137.0" onMouseClicked="#createCommunity" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="30.0">
                <image>
                   <Image url="@../images/create.png" />
                </image>
@@ -74,5 +81,22 @@
                </cursor></ImageView>
          </children>
       </AnchorPane>
+      <StackPane prefHeight="62.0" prefWidth="619.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label prefHeight="32.0" prefWidth="219.0" text="Create New Community">
+               <font>
+                  <Font name="Calibri Bold" size="22.0" />
+               </font>
+            </Label>
+            <Separator fx:id="blueSeparator1" opacity="0.5" prefWidth="200.0">
+               <effect>
+                  <Blend />
+               </effect>
+               <StackPane.margin>
+                  <Insets left="20.0" right="20.0" top="60.0" />
+               </StackPane.margin>
+            </Separator>
+         </children>
+      </StackPane>
     </children>
 </AnchorPane>

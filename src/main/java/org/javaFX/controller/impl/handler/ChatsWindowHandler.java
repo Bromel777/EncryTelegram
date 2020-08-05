@@ -64,9 +64,16 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private TextField searchMessageTextField;
 
+    @FXML
+    private Label notFoundChatLabel;
+
+    @FXML
+    private ImageView searchImg;
+
+
     //todo: remove after updating chat by front msg
     private int chatsLimit = 20;
-    private long activeChat;
+    private long activeChatId;
 
     public ChatsWindowHandler(){
     }
@@ -99,7 +106,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 messagesListView.setItems(observableChatList);
             } else if (a.code() == FrontMsg.Codes$.MODULE$.historyMsgs()) {
                 FrontMsg.HistoryMsgs msg = (FrontMsg.HistoryMsgs) a;
-                if (msg.chatId() == activeChat) {
+                if (msg.chatId() == activeChatId) {
                     ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
                     msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
                     VBoxMessageCell prevLastCell = messagesListView.getItems().get(0);
@@ -110,21 +117,14 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             } else {
                 System.out.println("Unknown msg");
             }
+
         }
     }
 
     @FXML
     private ObservableList<VBoxChatCell> getObservableJChatList(){
-        ObservableList<VBoxChatCell> observableChatList = FXCollections.observableArrayList();
-        final double chatCellWidth =
-                (leftPane == null || leftPane.getWidth() == 0)
-                        ? 320
-                        : leftPane.getWidth();
-        getUserStateRef().get().getChatList().forEach(
-                chat -> {
-                    initChatCell(observableChatList, chat, chatCellWidth);
-                }
-        );
+        final String searchingStr = searchThroughChatsTextField.getText().trim();
+        ObservableList<VBoxChatCell> observableChatList = initTableBySubstr(searchingStr);
         return observableChatList;
     }
 
@@ -202,6 +202,12 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         );
         forceListRefreshOn();
         return observableMessageList;
+
+        /*
+        new way of initialization
+        final String searchingStr = searchMessageTextField.getText().trim();
+        ObservableList<VBoxMessageCell> observableMessageList = findMessagesByStr(searchingStr);
+        return observableMessageList;*/
     }
 
     @FXML
@@ -231,10 +237,10 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         if( messagesListView.getItems().size() == 0 ){
             showStartMessagingArea();
         }
-        BackMsg msg = new BackMsg.SetActiveChat(
-                chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get()
-        );
-        activeChat = chatsListView.getSelectionModel().getSelectedItem().chatIdProperty().get();
+        VBoxChatCell activeChat = chatsListView.getSelectionModel().getSelectedItem();
+        refreshColors(activeChat);
+        activeChatId = activeChat.chatIdProperty().get();
+        BackMsg msg = new BackMsg.SetActiveChat(activeChatId);
         initializeDialogArea();
         ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
         messagesListView.setItems(observableMessageList);
@@ -244,6 +250,13 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             e.printStackTrace();
         }
         showLeftPane();
+    }
+
+    private void refreshColors(VBoxChatCell activeChat){
+        for(VBoxChatCell cell: chatsListView.getItems()){
+            cell.resetPaneColor();
+        }
+        activeChat.updatePaneColor();
     }
 
     private void forceListRefreshOn() {
@@ -259,38 +272,56 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             @Override
             public void handle(long now) {
                 if ( keysPressed.get() ) {
-                    findContentInChatsTable();
+                    findContact();
                 }
             }
         }.start();
     }
 
-    private void findContentInChatsTable(){
+
+    private void findContact(){
         final String searchingStr = searchThroughChatsTextField.getText().trim();
-        chatsListView.getItems().stream()
-                .filter(item -> item.getChatTitle().toLowerCase().contains(searchingStr.toLowerCase()) ||
-                        item.getLastMessage().toLowerCase().contains(searchingStr.toLowerCase()))
-                .findAny()
-                .ifPresent(item -> {
-                    chatsListView.getSelectionModel().select(item);
-                    chatsListView.scrollTo(item);
-                });
+        chatsListView.setItems(initTableBySubstr(searchingStr));
+    }
+
+    private ObservableList<VBoxChatCell> initTableBySubstr(String searchingStr){
+        ObservableList<VBoxChatCell> observableList = FXCollections.observableArrayList();
+        final double chatCellWidth =
+                (leftPane == null || leftPane.getWidth() == 0)
+                        ? 320
+                        : leftPane.getWidth();
+        getUserStateRef().get().getChatList().stream()
+                .filter(item -> item.title.toLowerCase().contains(searchingStr.toLowerCase()) ||
+                        MessagesUtils.tdMsg2String(item.lastMessage).toLowerCase().contains(searchingStr.toLowerCase()))
+                                .forEach(
+                chat -> {
+                    initChatCell(observableList, chat, chatCellWidth);
+                }
+        );
+        notFoundChatLabel.setVisible((observableList.size() == 0 ));
+        return observableList;
     }
 
     @FXML
-    private void findContentInDialog(){
+    public void findContentInDialog(){
         final String searchingStr = searchMessageTextField.getText().trim();
-        messagesListView.getItems().stream()
-                .filter(item -> item.getContentText().toLowerCase().contains(searchingStr.toLowerCase()) )
-                .findAny()
-                .ifPresent(item -> {
-                    messagesListView.getSelectionModel().select(item);
-                    messagesListView.scrollTo(item);
-                });
+     //   findMessagesByStr(searchingStr);
+    }
+
+    private ObservableList<VBoxMessageCell> findMessagesByStr(String searchingStr){
+        ObservableList<org.javaFX.model.nodes.VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
+        getUserStateRef().get().messagesListView.getItems()
+                .filtered(message->message.getContentText().contains(searchingStr))
+                .forEach (
+                message ->
+                        observableMessageList.add(message)
+        );
+        forceListRefreshOn();
+        return observableMessageList;
     }
 
     @FXML
-    private void searchMessageByKeyboard(){
+    public void searchMessageByKeyboard(){
         AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(searchMessageTextField);
         new AnimationTimer() {
             @Override
@@ -306,6 +337,16 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         selectChatLabel.setText("There is no messages in this dialogue");
     }
 
-
+    @FXML
+    private void handleSearchImg(){
+        searchImg.setVisible(false);
+        searchThroughChatsTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue) {
+                if(searchThroughChatsTextField.getText().length() == 0){
+                    searchImg.setVisible(true);
+                }
+            }
+        });
+    }
 
 }

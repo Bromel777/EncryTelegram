@@ -2,30 +2,29 @@ package org.javaFX.model.nodes;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.Shadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import org.javaFX.model.JSingleContact;
 import org.javaFX.util.JavaFXTableBuilder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
-    private final String pathToCheckboxNeutralImage = "file:images/checkboxNeutral.png";
-    private final String pathToCheckboxSelectedImage = "file:images/checkboxSelected.png";
+    private final String pathToCheckboxNeutralImage = "file:images/checkboxNeutralSmall.png";
+    private final String pathToCheckboxSelectedImage = "file:images/checkboxSelectedSmall.png";
     private Label contactNameLabel;
     private Label phoneNumberLabel;
     private ImageView checkBoxImg;
     private Separator separatorLine;
 
     private final JSingleContact currentContact;
+
+    private final String backGroundStyle = "-fx-background-color:#FFFFFF;";
+    private final String innerContentColorStr = "#000000";
 
     public VBoxContactCell(JSingleContact communityMember){
         super(communityMember);
@@ -44,9 +43,10 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     private void initContactNameLabel(JSingleContact communityMember){
         contactNameLabel = new Label();
-        contactNameLabel.setText(communityMember.getFullName());
+        contactNameLabel.setText("    " + communityMember.getFullName());
         contactNameLabel.setLayoutX(0);
         contactNameLabel.setLayoutY(20);
+        contactNameLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
     }
 
     private void initPhoneNumberLabel(JSingleContact communityMember){
@@ -54,10 +54,12 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         phoneNumberLabel.setText(getPreparedTelNumber(communityMember));
         phoneNumberLabel.setLayoutX(300);
         phoneNumberLabel.setLayoutY(20);
+        phoneNumberLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
     }
 
     private void initCheckBoxImg(){
         checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage));
+        checkBoxImg.setLayoutY(15);
     }
 
     private void initSeparatorLine(){
@@ -69,7 +71,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         getRootPane().getChildren().add(contactNameLabel);
         getRootPane().getChildren().add(phoneNumberLabel);
         getRootPane().getChildren().add(checkBoxImg);
-        AnchorPane.setRightAnchor(checkBoxImg,20.0);
+        AnchorPane.setRightAnchor(checkBoxImg,45.0);
         getRootPane().getChildren().add(separatorLine);
         AnchorPane.setBottomAnchor(separatorLine,0.0);
         this.getChildren().add(getRootPane());
@@ -78,8 +80,24 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
     @Override
     protected void initRootPane(JSingleContact sourceElement) {
         setRootPane(new AnchorPane() );
-        getRootPane().setPrefSize(800,60);
+        getRootPane().setPrefHeight(60);
+        getRootPane().setStyle(backGroundStyle);
     }
+
+    public void resetPaneColor(){
+        AnchorPane pane = getRootPane();
+        pane.setStyle(backGroundStyle);
+        setRootPane(pane);
+    }
+
+    public void updatePaneColor(){
+        AnchorPane pane = getRootPane();
+        pane.setStyle(backGroundStyle);
+        contactNameLabel.setTextFill(Paint.valueOf(innerContentColorStr));
+        phoneNumberLabel.setTextFill(Paint.valueOf(innerContentColorStr));
+        setRootPane(pane);
+    }
+
 
     public JSingleContact getCurrentContact() {
         return currentContact;
@@ -116,11 +134,13 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         else{
             checkBoxImg = new ImageView(new Image(pathToCheckboxNeutralImage));
         }
-        AnchorPane.setRightAnchor(checkBoxImg,20.0);
+        checkBoxImg.setLayoutY(15);
+        AnchorPane.setRightAnchor(checkBoxImg,45.0);
         getRootPane().getChildren().add(checkBoxImg);
     }
 
     public void setSeparatorLineSize(double newSize){
         separatorLine.setPrefWidth(newSize);
     }
+
 }

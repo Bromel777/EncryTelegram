@@ -10,7 +10,6 @@
     -fx-padding:0;
 }
 
-
 .list-cell {
     -fx-padding: 2px ;
     -fx-background-color: transparent, -fx-background ;
@@ -22,5 +21,3 @@
     -fx-background-color: transparent ;
     -fx-background-insets: 0 ;
 }
-
-

@@ -2,8 +2,6 @@ package org.javaFX.model.nodes;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -78,6 +76,7 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
     protected void initRootPane(JLocalCommunity sourceElement){
         setRootPane(new AnchorPane() );
         getRootPane().setPrefHeight(60);
+        getRootPane().setStyle(backGroundStyle);
     }
 
     public void resetPaneColor(){

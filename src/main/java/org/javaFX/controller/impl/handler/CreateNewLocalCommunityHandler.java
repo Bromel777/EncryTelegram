@@ -16,7 +16,6 @@ import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JSingleContact;
-import org.javaFX.model.nodes.VBoxChatCell;
 import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
@@ -61,6 +60,7 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     @Override
     public void updateEncryWindow(EncryWindow encryWindow) {
+        initChatsTable();
         for(VBoxContactCell cell : contactsListView.getItems()){
             cell.setSeparatorLineSize(blueSeparator.getWidth()- 40);
         }
@@ -69,14 +69,15 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     private ObservableList<VBoxContactCell> getObservableUserList(){
         final String searchingStr = searchContactTextField.getText().trim();
-        ObservableList<VBoxContactCell> observableList = initTableBySubstr(searchingStr);
+        ObservableList<VBoxContactCell> observableList = getFilteredList(initTableBySubstr(searchingStr), searchingStr);
+        contactsListView.setItems(observableList);
         return observableList;
     }
 
     @Override
     protected void initChatsTable(){
-        ObservableList<VBoxContactCell> t = getObservableUserList();
-        contactsListView.setItems(t);
+        ObservableList<VBoxContactCell> observableUserList = getObservableUserList();
+        contactsListView.setItems(observableUserList);
         shutDownScheduledService();
     }
 

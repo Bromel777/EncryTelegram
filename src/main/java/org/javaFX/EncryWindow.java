@@ -45,7 +45,6 @@ public class EncryWindow extends Application {
 
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
 
-
     private String currentWindowStr ;
 
     private static String userPhoneNumber;

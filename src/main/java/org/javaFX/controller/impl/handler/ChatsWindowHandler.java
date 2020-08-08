@@ -70,13 +70,13 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private ImageView searchImg;
 
-
     //todo: remove after updating chat by front msg
     private int chatsLimit = 20;
     private long activeChatId;
 
-    public ChatsWindowHandler(){
-    }
+    private ObservableList<VBoxMessageCell> chatHistoryBackup;
+
+    public ChatsWindowHandler(){}
 
     @FXML
     private void onMouseEntered(){
@@ -96,19 +96,25 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             initializeDialogArea();
         }
         enableMenuBar();
-        FrontMsg a = getUserStateRef().get().inQueue.poll();
-        if (a != null) {
-            if (a.code() == FrontMsg.Codes$.MODULE$.newMsgsInChat()) {
-                FrontMsg.NewMsgsInChat msg = (FrontMsg.NewMsgsInChat) a;
+        updateDialogArea();
+    }
+
+    private void updateDialogArea(){
+        FrontMsg frontMsg = getUserStateRef().get().inQueue.poll();
+        if (frontMsg != null ) {
+            if (frontMsg.code() == FrontMsg.Codes$.MODULE$.newMsgsInChat()) {
+                FrontMsg.NewMsgsInChat msg = (FrontMsg.NewMsgsInChat) frontMsg;
                 ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
                 msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
+                msg.msgs().forEach(msgCell -> chatHistoryBackup.add(msgCell));
                 messagesListView.scrollTo(1);
                 messagesListView.setItems(observableChatList);
-            } else if (a.code() == FrontMsg.Codes$.MODULE$.historyMsgs()) {
-                FrontMsg.HistoryMsgs msg = (FrontMsg.HistoryMsgs) a;
-                if (msg.chatId() == activeChatId) {
+            } else if (frontMsg.code() == FrontMsg.Codes$.MODULE$.historyMsgs()) {
+                FrontMsg.HistoryMsgs msg = (FrontMsg.HistoryMsgs) frontMsg;
+                if (msg.chatId() == activeChatId && messagesListView.getItems().size() > 0) {
                     ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
                     msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
+                    msg.msgs().forEach(msgCell -> chatHistoryBackup.add(msgCell));
                     VBoxMessageCell prevLastCell = messagesListView.getItems().get(0);
                     messagesListView.getItems().forEach(cell -> observableChatList.add(cell));
                     messagesListView.setItems(observableChatList);
@@ -117,7 +123,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             } else {
                 System.out.println("Unknown msg");
             }
-
         }
     }
 
@@ -196,18 +201,13 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private ObservableList<VBoxMessageCell> getObservableJMessageList(){
         ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
-        getUserStateRef().get().messagesListView.getItems().forEach (
-                message ->
-                        observableMessageList.add(message)
-        );
-        forceListRefreshOn();
+        getUserStateRef().get().messagesListView.getItems()
+                .forEach (
+                        message ->
+                                observableMessageList.add(message)
+                );
+        messagesListView.setItems(observableMessageList);
         return observableMessageList;
-
-        /*
-        new way of initialization
-        final String searchingStr = searchMessageTextField.getText().trim();
-        ObservableList<VBoxMessageCell> observableMessageList = findMessagesByStr(searchingStr);
-        return observableMessageList;*/
     }
 
     @FXML
@@ -233,6 +233,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     protected void clickItem() {
+        chatHistoryBackup = FXCollections.observableArrayList();
         getUserStateRef().get().setActiveDialog(messagesListView);
         if( messagesListView.getItems().size() == 0 ){
             showStartMessagingArea();
@@ -242,8 +243,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         activeChatId = activeChat.chatIdProperty().get();
         BackMsg msg = new BackMsg.SetActiveChat(activeChatId);
         initializeDialogArea();
-        ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
-        messagesListView.setItems(observableMessageList);
         try {
             getUserStateRef().get().outQueue.put(msg);
         } catch (InterruptedException e) {
@@ -259,12 +258,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         activeChat.updatePaneColor();
     }
 
-    private void forceListRefreshOn() {
-        ObservableList<VBoxMessageCell> items = messagesListView.getItems();
-        messagesListView.getItems().clear();
-        messagesListView.setItems(items);
-    }
-
     @FXML
     private void searchContactByKeyboard(){
         AtomicBoolean keysPressed = KeyboardHandler.handleEnterPressed(searchThroughChatsTextField);
@@ -277,7 +270,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             }
         }.start();
     }
-
 
     private void findContact(){
         final String searchingStr = searchThroughChatsTextField.getText().trim();
@@ -305,18 +297,17 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     public void findContentInDialog(){
         final String searchingStr = searchMessageTextField.getText().trim();
-     //   findMessagesByStr(searchingStr);
+        messagesListView.setItems( getMessagesByStr(searchingStr) );
     }
 
-    private ObservableList<VBoxMessageCell> findMessagesByStr(String searchingStr){
-        ObservableList<org.javaFX.model.nodes.VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
-        getUserStateRef().get().messagesListView.getItems()
-                .filtered(message->message.getContentText().contains(searchingStr))
+    private ObservableList<VBoxMessageCell> getMessagesByStr(String searchingStr){
+        ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
+        chatHistoryBackup.filtered(message->message.getContentText().toLowerCase().contains(searchingStr.toLowerCase()))
                 .forEach (
                 message ->
                         observableMessageList.add(message)
         );
-        forceListRefreshOn();
+        messagesListView.setItems(observableMessageList);
         return observableMessageList;
     }
 

@@ -6,6 +6,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import org.javaFX.model.JMessage;
 
+import java.util.Objects;
+
 public class VBoxDialogTextMessageCell extends VBoxMessageCell{
 
     private Label contentLabel;
@@ -110,4 +112,18 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
         this.contentLabel = contentLabel;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VBoxDialogTextMessageCell that = (VBoxDialogTextMessageCell) o;
+        return contentLabel.getText().equals(that.contentLabel.getText())
+                && that.getTimeText().getText().equals(getTimeText().getText());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contentLabel);
+    }
 }

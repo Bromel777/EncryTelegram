@@ -72,7 +72,7 @@
                         </HBox>
                         <AnchorPane prefHeight="63.0" prefWidth="63.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <ImageView fx:id="findContentImage" disable="true" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#findContentInDialog" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="15.0">
+                              <ImageView fx:id="findContentImage" disable="true" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#findContentInDialog" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="15.0">
                                  <image>
                                     <Image url="@../images/findContent.png" />
                                  </image>

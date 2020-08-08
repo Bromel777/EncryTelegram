@@ -2,7 +2,6 @@ package org.javaFX.controller;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.util.Duration;
 import org.encryfoundation.tg.javaIntegration.BackMsg;
@@ -12,14 +11,11 @@ import org.javaFX.util.observers.BasicObserver;
 import org.javaFX.util.observers.JWindowObserver;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 public abstract class MainWindowBasicHandler extends DataHandler{
 
     private final Duration duration = Duration.millis(5) ;
-
-    @FXML
-    protected TextArea searchMessageTextArea;
 
     @FXML
     protected TextArea sendMessageTextArea;

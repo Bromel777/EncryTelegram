@@ -222,6 +222,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         rightBottomAnchorPane.setVisible(true);
         selectChatLabel.setVisible(false);
         chatNameLabel.setText(chatsListView.getSelectionModel().getSelectedItem().getChatTitle());
+        searchMessageTextField.setText("");
     }
 
     public void hideLeftPane(){

@@ -13,7 +13,7 @@ public abstract class VBoxCell<T> extends VBox {
 
     public VBoxCell(T sourceElement){
         this.element = sourceElement;
-        setIsYourMessage(sourceElement);
+        setMessageCredentials(sourceElement);
         initNodes(sourceElement);
         setNodesToRootPane(sourceElement);
     }
@@ -21,12 +21,12 @@ public abstract class VBoxCell<T> extends VBox {
     public VBoxCell(T sourceElement, double parentWidth){
         this.element = sourceElement;
         this.parentWidth = parentWidth;
-        setIsYourMessage(sourceElement);
+        setMessageCredentials(sourceElement);
         initNodes(sourceElement);
         setNodesToRootPane(sourceElement);
     }
 
-    protected void setIsYourMessage(T sourceElement){}
+    protected void setMessageCredentials(T sourceElement){}
 
     protected abstract void initNodes(T sourceElement);
 

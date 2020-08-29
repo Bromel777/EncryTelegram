@@ -1,16 +1,19 @@
 package org.javaFX.model.nodes;
 
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import org.javaFX.model.JMessage;
+import org.javaFX.util.StringHandler;
 
 import java.util.Objects;
 
 public class VBoxDialogTextMessageCell extends VBoxMessageCell{
 
     private Label contentLabel;
+    private final String backGroundStyle = "-fx-background-color: #FBFBFB;";
 
     public VBoxDialogTextMessageCell(JMessage<String> jMessage) {
         super(jMessage, 583);
@@ -32,8 +35,43 @@ public class VBoxDialogTextMessageCell extends VBoxMessageCell{
         String textContent = jMessage.getContent().toString().trim();
         contentLabel.setText(jMessage.getAuthor()+"\n"+textContent);
         contentLabel.setWrapText(true);
-        contentLabel.setPrefSize(getCellWidth() - 5 , getCellHeight());
+        contentLabel.setPrefSize(getCellWidth() - 5, getCellHeight());
         return contentLabel;
+    }
+
+    public void recreateMessageCell(){
+        contentLabel.setText(contentLabel.getText().substring(contentLabel.getText().indexOf("\n")));
+        recreateAllNodes(getElement());
+    }
+
+    private void recreateAllNodes(JMessage jMessage){
+        resetRootPane(jMessage);
+        initMessageRectangle(jMessage);
+        initAngleRectangle(jMessage);
+    }
+
+    private void resetRootPane(JMessage jMessage) {
+        AnchorPane pane = new AnchorPane();
+        String textContent = contentLabel.getText().trim();
+        int multiplier =
+                textContent.length() % 40 == 0 ? textContent.length() / 40: (textContent.length()/40) + 1;
+        int numberOfNewLines = StringHandler.countCharactersInStr(textContent,'\n');
+        multiplier += numberOfNewLines;
+        setCellWidth(getParentWidth() - getParentWidth() / 3);
+        if(!jMessage.isPreviousSameAuthor()){
+            ++multiplier;
+        }
+        setCellHeight( 27 * multiplier );
+        if (jMessage.isMine()) {
+            pane.setLayoutX(getParentWidth() / 3);
+        }
+        else {
+            pane.setLayoutX(1);
+        }
+        pane.setPrefSize(getCellWidth(), getCellHeight());
+        pane.setMinSize(getCellWidth(), getCellHeight());
+        pane.setStyle(backGroundStyle);
+        setRootPane(pane);
     }
 
     protected void setLayoutsContentLabel(JMessage jMessage){

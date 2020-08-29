@@ -36,7 +36,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     private final String selectedBackGroundStyle = "-fx-background-color:#D4D3D4;";
 
     private double smallCircleRightIndent = 9.0;
-    private double smallCircleTextRightIndent = 26.0;
+    private double smallCircleTextRightIndent = 27.0;
 
     public VBoxChatCell(JChat jChat, double parentWidth) {
         super(jChat, parentWidth);

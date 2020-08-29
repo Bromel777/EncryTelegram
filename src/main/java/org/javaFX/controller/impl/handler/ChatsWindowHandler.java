@@ -19,6 +19,7 @@ import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
 import org.javaFX.model.JChat;
 import org.javaFX.model.nodes.VBoxChatCell;
+import org.javaFX.model.nodes.VBoxDialogTextMessageCell;
 import org.javaFX.model.nodes.VBoxMessageCell;
 import org.javaFX.util.KeyboardHandler;
 
@@ -201,11 +202,17 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private ObservableList<VBoxMessageCell> getObservableJMessageList(){
         ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
-        getUserStateRef().get().messagesListView.getItems()
-                .forEach (
-                        message ->
-                                observableMessageList.add(message)
-                );
+        String previousMsgAuthor = "";
+        for(VBoxMessageCell messageCell: getUserStateRef().get().messagesListView.getItems() ){
+            String currentMsgAuthor = messageCell.getElement().getAuthor();
+            messageCell.getElement().setPreviousSameAuthor(currentMsgAuthor.equals(previousMsgAuthor));
+            if( currentMsgAuthor.equals(previousMsgAuthor) ){
+                ((VBoxDialogTextMessageCell) messageCell).recreateMessageCell();
+            }
+            previousMsgAuthor = currentMsgAuthor;
+            observableMessageList.add(messageCell);
+        }
+
         messagesListView.setItems(observableMessageList);
         return observableMessageList;
     }

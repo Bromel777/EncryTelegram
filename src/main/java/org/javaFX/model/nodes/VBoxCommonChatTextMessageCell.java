@@ -49,7 +49,7 @@ public class VBoxCommonChatTextMessageCell extends VBoxDialogTextMessageCell{
     @Override
     protected void setLayoutsContentLabel(JMessage jMessage) {
         if( jMessage.isMine() ){
-            getContentLabel().setLayoutX(indent +16  + getParentWidth() / 3 );
+            getContentLabel().setLayoutX(indent + 16  + getParentWidth() / 3 );
             getContentLabel().setLayoutY(1);
             getContentLabel().setTextFill(Color.WHITE);
         }

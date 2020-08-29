@@ -258,6 +258,5 @@ public class VBoxChatCell extends VBoxCell<JChat>{
         getRootPane().getChildren().add(unreadMsgsNumberText);
         AnchorPane.setLeftAnchor(unreadMsgsNumberText,107 + lastMessageLabel.getWidth()  -  smallCircleTextRightIndent);
     }
-
-
+    
 }

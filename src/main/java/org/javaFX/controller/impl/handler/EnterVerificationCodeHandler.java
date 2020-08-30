@@ -30,7 +30,8 @@ public class EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private Label error;
 
-    public EnterVerificationCodeHandler() {}
+    public EnterVerificationCodeHandler() {
+    }
 
     @FXML
     private void handleKeyTyped(){
@@ -91,6 +92,8 @@ public class EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private void backToEnterPhoneNumberPage(){
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToEnterPhoneNumberWindowFXML);
+        ((EnterPhoneNumberHandler) getEncryWindow().getCurrentController())
+                .initFieldsIfNotEmpty();
     }
 
     public void setPhoneNumberLabelText(String text){

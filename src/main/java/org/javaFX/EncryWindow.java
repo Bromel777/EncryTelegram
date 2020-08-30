@@ -48,6 +48,7 @@ public class EncryWindow extends Application {
     private String currentWindowStr ;
 
     private static String userPhoneNumber;
+    private static String userCountry;
 
     private DataHandler rootLayoutHandler;
 
@@ -154,6 +155,14 @@ public class EncryWindow extends Application {
         if(userPhoneNumber == null){
             userPhoneNumber = phoneNumber;
         }
+    }
+
+    public static String getUserCountry(){
+        return userCountry;
+    }
+
+    public static void setUserCountry(String newUserCountry){
+        userCountry = newUserCountry;
     }
 
     public String getCurrentWindowStr() {

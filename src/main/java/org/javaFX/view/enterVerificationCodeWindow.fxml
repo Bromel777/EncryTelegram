@@ -40,6 +40,14 @@
       </StackPane>
       <StackPane prefHeight="150.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
          <children>
+            <Label fx:id="phoneNumberLabel" prefHeight="31.0" prefWidth="328.0" wrapText="true">
+               <font>
+                  <Font name="Times New Roman Bold" size="20.0" />
+               </font>
+               <StackPane.margin>
+                  <Insets bottom="90.0" />
+               </StackPane.margin>
+            </Label>
                 <Label prefHeight="66.0" prefWidth="328.0" text="Please enter the code you've just received via SMS" textFill="#707070" wrapText="true">
                     <font>
                         <Font name="Times New Roman" size="20.0" />

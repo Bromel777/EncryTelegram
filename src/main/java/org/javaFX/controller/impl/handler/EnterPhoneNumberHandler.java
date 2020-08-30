@@ -21,6 +21,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EnterPhoneNumberHandler extends DataHandler {
 
+    private final static String BELARUS_STR = "Belarus";
+    private final static String RUSSIAN_FEDERATION_STR = "Russian Federation";
+
     @FXML
     private TextField phoneNumberTextField;
 
@@ -60,13 +63,18 @@ public class EnterPhoneNumberHandler extends DataHandler {
     @FXML
     private void handleConfirmNumberAction(){
         String phoneNumberStr = phoneNumberTextField.getCharacters().toString();
+        String country = null;
         if (phoneNumberStr.isEmpty()) error.setText("Empty phone field :( Please enter it!");
         else {
             if (selectCountryMenu.getText().equals(russianFederationMenuItem.getText())) {
                 phoneNumberStr = "7" + phoneNumberStr;
+                country = RUSSIAN_FEDERATION_STR;
             } else if (selectCountryMenu.getText().equals(belarusMenuItem.getText())) {
                 phoneNumberStr = "375" + phoneNumberStr;
+                country = BELARUS_STR;
             }
+            EncryWindow.setUserPhoneNumber(phoneNumberStr);
+            EncryWindow.setUserCountry(country);
             getUserStateRef().get().setPhoneNumber(phoneNumberStr);
             try {
                 getUserStateRef().get().outQueue.put(new BackMsg.SetPhone(phoneNumberStr));
@@ -128,14 +136,26 @@ public class EnterPhoneNumberHandler extends DataHandler {
     }
 
     @FXML
-    private void setRussiaDefault(){
+    public void setRussiaDefault(){
         setCountryMenuItem(russianFederationMenuItem.getText(), "+7", "--- --- -- --");
     }
 
     @FXML
-    private void setBelarusDefault(){
+    public void setBelarusDefault(){
         setCountryMenuItem(belarusMenuItem.getText(), "+375", "-- --- -- --");
     }
 
+
+    public void initFieldsIfNotEmpty(){
+        if(!EncryWindow.getUserCountry().isEmpty() && !EncryWindow.getUserPhoneNumber().isEmpty() ){
+            if(EncryWindow.getUserCountry().equals(RUSSIAN_FEDERATION_STR)){
+                setRussiaDefault();
+            }
+            else if(EncryWindow.getUserCountry().equals(BELARUS_STR)){
+                setBelarusDefault();
+            }
+            phoneNumberTextField.setText(EncryWindow.getUserPhoneNumber());
+        }
+    }
 
 }

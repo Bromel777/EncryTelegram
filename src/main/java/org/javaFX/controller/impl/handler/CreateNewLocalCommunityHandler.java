@@ -40,7 +40,7 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     private Label communityNameLabel;
 
     @FXML
-    private Separator blueSeparator;
+    private Separator separator;
 
     @FXML
     private Label notFoundInfoLabel;
@@ -60,9 +60,8 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
 
     @Override
     public void updateEncryWindow(EncryWindow encryWindow) {
-        initChatsTable();
         for(VBoxContactCell cell : contactsListView.getItems()){
-            cell.setSeparatorLineSize(blueSeparator.getWidth()- 40);
+            cell.setSeparatorLineSize(separator.getWidth()- 40);
         }
         super.updateEncryWindow(encryWindow);
     }

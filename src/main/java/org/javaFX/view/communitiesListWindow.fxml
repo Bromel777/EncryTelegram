@@ -75,8 +75,9 @@
         </AnchorPane>
       <AnchorPane prefHeight="60.0" prefWidth="903.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0">
          <children>
-            <Label fx:id="descriptionLabel" layoutX="36.0" layoutY="4.0" prefHeight="21.0" prefWidth="442.0" text="Enter name and choose community  to create a private chat" textFill="#787878" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="4.0" />
-            <TextField fx:id="privateChatNameTestField" onKeyPressed="#searchContactByKeyboard" onKeyTyped="#handlePrivateChatKeyTyped" prefHeight="31.0" prefWidth="410.0" promptText="Private chat name" stylesheets="@../styles/textFieldStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" />
+            <Label fx:id="descriptionLabel" layoutX="36.0" layoutY="4.0" prefHeight="21.0" prefWidth="410.0" text="Enter name and choose community  to create a private chat" textFill="#787878" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="4.0" />
+            <TextField fx:id="privateChatNameTestField" disable="true" onKeyPressed="#searchContactByKeyboard" onKeyTyped="#handlePrivateChatKeyTyped" prefHeight="31.0" prefWidth="410.0" promptText="Private chat name" stylesheets="@../styles/textFieldStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="27.0" />
+            <Label fx:id="descriptionLabel1" layoutX="190.0" layoutY="34.0" prefHeight="21.0" prefWidth="235.0" text="(Feature is not implemented yet)" textFill="#787878" />
          </children>
       </AnchorPane>
     </children>

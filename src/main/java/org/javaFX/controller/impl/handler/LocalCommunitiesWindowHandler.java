@@ -51,7 +51,6 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
 
     @Override
     public void updateEncryWindow(EncryWindow encryWindow) {
-        initChatsTable();
         for(VBoxCommunityCell cell : communitiesListView.getItems()){
             cell.setSeparatorLineSize(blueSeparator.getWidth()- 40);
         }
@@ -140,7 +139,13 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
         controller.setDialogStage(dialogStage);
         controller.setLocalCommunity(localCommunity);
         controller.setUserStateRef(getUserStateRef());
-        controller.setSecretChatNameText(localCommunity.getCommunityName());
+        final String secretChatName = privateChatNameTestField.getText();
+        if(!secretChatName.isEmpty()){
+            controller.setSecretChatNameText(secretChatName);
+        }
+        else{
+            controller.setSecretChatNameText(localCommunity.getCommunityName());
+        }
         dialogStage.show();
     }
 

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="183.0" prefWidth="341.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.SingleCommunityDialogHandler">
+<AnchorPane prefHeight="183.0" prefWidth="341.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javaFX.controller.impl.handler.SingleCommunityDialogHandler">
    <children>
       <Label layoutX="28.0" layoutY="27.0" prefHeight="45.0" prefWidth="206.0" text="Secret chat name:">
          <font>
@@ -21,7 +23,15 @@
             <Font name="Times New Roman" size="26.0" />
          </font>
       </Label>
-      <Button layoutX="16.0" layoutY="123.0" mnemonicParsing="false" onMouseClicked="#createSecretChat" text="Create chat" />
-      <Button layoutX="112.0" layoutY="123.0" mnemonicParsing="false" onMouseClicked="#deleteConference" prefHeight="27.0" prefWidth="128.0" text="Delete community" />
+      <ImageView fitHeight="38.0" fitWidth="142.0" layoutX="53.0" layoutY="116.0" onMouseClicked="#createSecretChat" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/create.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="45.0" fitWidth="133.0" layoutX="255.0" layoutY="116.0" onMouseClicked="#deleteConference" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/delete.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

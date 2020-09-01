@@ -348,4 +348,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         });
     }
 
+    @FXML
+    private void cleanTextField(){
+        searchMessageTextField.setText("");
+        messagesListView.setItems( getMessagesByStr("") );
+    }
 }

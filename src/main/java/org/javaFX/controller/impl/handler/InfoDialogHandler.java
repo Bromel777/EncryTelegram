@@ -13,6 +13,7 @@ public class InfoDialogHandler extends DialogController {
     @Override
     public void setDialogStage(Stage dialogStage) {
         super.setDialogStage(dialogStage);
+
         dialogStage.setOnCloseRequest((WindowEvent we) -> {
             aboutMenuItem.setDisable(false);
         });

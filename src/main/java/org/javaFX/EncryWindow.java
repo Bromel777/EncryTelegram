@@ -1,13 +1,17 @@
 package org.javaFX;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.javaFX.controller.DataHandler;
+import org.javaFX.controller.impl.handler.InfoDialogHandler;
 import org.javaFX.model.JUserState;
 import org.javaFX.util.DelayAuthentication;
 
@@ -66,6 +70,13 @@ public class EncryWindow extends Application {
         initRootLayout();
         launchStartWindow();
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent e) {
+                Platform.exit();
+                System.exit(0);
+            }});
     }
 
     public void launchStartWindow(){
@@ -166,4 +177,5 @@ public class EncryWindow extends Application {
     public String getCurrentWindowStr() {
         return currentWindowStr;
     }
+
 }

@@ -152,9 +152,7 @@ public class EncryWindow extends Application {
     }
 
     public static void setUserPhoneNumber(String phoneNumber){
-        if(userPhoneNumber == null){
-            userPhoneNumber = phoneNumber;
-        }
+        userPhoneNumber = phoneNumber;
     }
 
     public static String getUserCountry(){

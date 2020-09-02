@@ -50,7 +50,7 @@
                 </AnchorPane>
                 <AnchorPane fx:id="rightPane" minWidth="300.0" prefHeight="598.0" prefWidth="579.0">
                     <children>
-                        <AnchorPane fx:id="rightTopAnchorPane" prefHeight="63.0" prefWidth="590.0" style="-fx-background-color: #FBFBFB;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="rightTopAnchorPane" prefHeight="63.0" prefWidth="590.0" style="-fx-background-color: #FBFBFB;" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Separator fx:id="blueSeparator1" opacity="0.5" prefWidth="200.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <effect>

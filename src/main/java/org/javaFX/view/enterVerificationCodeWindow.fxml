@@ -24,7 +24,7 @@
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
-                  <Label fx:id="error" layoutY="65.0" prefHeight="21.0" prefWidth="209.0" />
+                  <Label fx:id="errorLabel" layoutY="65.0" prefHeight="21.0" prefWidth="280.0" text="Empty vc code :( Please enter it!" textFill="RED" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   </children>
               </AnchorPane>
          </children>

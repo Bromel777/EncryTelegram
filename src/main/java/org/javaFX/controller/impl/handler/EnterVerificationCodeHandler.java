@@ -28,7 +28,7 @@ public class EnterVerificationCodeHandler extends DataHandler {
     private Label phoneNumberLabel;
 
     @FXML
-    private Label error;
+    private Label errorLabel;
 
     public EnterVerificationCodeHandler() {
     }
@@ -41,7 +41,9 @@ public class EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private void handleConfirmVCAction() {
         String verificationCodeStr = verificationCodeTextField.getCharacters().toString();
-        if (verificationCodeStr.isEmpty()) error.setText("Empty vc code :( Please enter it!");
+        if (verificationCodeStr.isEmpty()) {
+            errorLabel.setVisible(true);
+        }
         else try {
             getUserStateRef().get().outQueue.put(new BackMsg.SetVCCode(verificationCodeStr));
             FrontMsg nextStep = getUserStateRef().get().inQueue.take();
@@ -56,7 +58,7 @@ public class EnterVerificationCodeHandler extends DataHandler {
                         EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
                 );
             } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.error()) {
-                error.setText("Incorrect vc code");
+                errorLabel.setText("Incorrect vc code");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -66,6 +68,7 @@ public class EnterVerificationCodeHandler extends DataHandler {
     @FXML
     private void handleVerificationCodeAreaPressed(){
         handleVerificationCodeAccepted(nextButtonImg);
+        errorLabel.setVisible(false);
     }
 
     private void handleVerificationCodeAccepted(Node node){

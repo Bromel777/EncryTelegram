@@ -1,7 +1,6 @@
 package org.javaFX.controller.impl.handler;
 
 import javafx.animation.AnimationTimer;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 
@@ -49,7 +48,7 @@ public class EnterPhoneNumberHandler extends DataHandler {
     private MenuItem belarusMenuItem;
 
     @FXML
-    private Label error;
+    private Label errorLabel;
 
     public EnterPhoneNumberHandler() {}
 
@@ -67,7 +66,9 @@ public class EnterPhoneNumberHandler extends DataHandler {
     private void handleConfirmNumberAction(){
         String phoneNumberStr = phoneNumberTextField.getCharacters().toString();
         String country = null;
-        if (phoneNumberStr.isEmpty()) error.setText("Empty phone field :( Please enter it!");
+        if (phoneNumberStr.isEmpty()) {
+            errorLabel.setVisible(true);
+        }
         else {
             if (selectCountryMenu.getText().equals(russianFederationMenuItem.getText())) {
                 phoneNumberStr = "7" + phoneNumberStr;
@@ -93,7 +94,7 @@ public class EnterPhoneNumberHandler extends DataHandler {
                             EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
                     );
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.error()) {
-                    error.setText("Oops error!");
+                    errorLabel.setText("Oops error!");
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -103,6 +104,7 @@ public class EnterPhoneNumberHandler extends DataHandler {
 
     @FXML
     private void handlePhoneNumberAreaPressed(){
+        errorLabel.setVisible(false);
         handleNumberAccepted(nextButtonImg);
     }
 

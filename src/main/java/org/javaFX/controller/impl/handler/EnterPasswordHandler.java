@@ -23,7 +23,7 @@ public class EnterPasswordHandler extends DataHandler {
     private ImageView nextButtonImg;
 
     @FXML
-    private Label error;
+    private Label errorLabel;
 
     @FXML
     private Label promptLabel;
@@ -34,7 +34,9 @@ public class EnterPasswordHandler extends DataHandler {
     @FXML
     private void handleConfirmPasswordAction(){
         String passwordStr = passwordField.getCharacters().toString();
-        if (passwordStr.isEmpty()) error.setText("Empty password :( Please enter it!");
+        if (passwordStr.isEmpty()) {
+            errorLabel.setVisible(true);
+        }
         else try {
             getUserStateRef().get().outQueue.put(new BackMsg.SetPass(passwordStr));
             FrontMsg nextStep = getUserStateRef().get().inQueue.take();
@@ -49,7 +51,7 @@ public class EnterPasswordHandler extends DataHandler {
                         EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
                 );
             } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.error()) {
-                error.setText("Incorrect password");
+                errorLabel.setText("Incorrect password");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -60,6 +62,7 @@ public class EnterPasswordHandler extends DataHandler {
     @FXML
     private void handlePasswordAreaPressed(){
         handlePasswordAccepted(nextButtonImg);
+        errorLabel.setVisible(false);
     }
 
     private void handlePasswordAccepted(Node node){

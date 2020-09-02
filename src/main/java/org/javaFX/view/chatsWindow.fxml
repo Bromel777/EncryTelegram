@@ -69,9 +69,14 @@
                                     <Label fx:id="isOnlineLabel" prefHeight="13.0" prefWidth="68.0" stylesheets="@../styles/headerChatsBackStyle.css" text="Online" textFill="#63707985" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="20.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="63.0" prefWidth="422.0">
+                              <AnchorPane onMouseEntered="#showCrossImg" onMouseExited="#hideCrossImg" prefHeight="63.0" prefWidth="422.0">
                                  <children>
                                     <TextField fx:id="searchMessageTextField" onKeyPressed="#searchMessageByKeyboard" prefHeight="31.0" promptText="Search for dialog content" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                    <ImageView fx:id="crossImg" fitHeight="27.0" fitWidth="34.0" onMouseClicked="#cleanTextField" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="12.0">
+                                       <image>
+                                          <Image url="@../images/cross.png" />
+                                       </image>
+                                    </ImageView>
                                  </children>
                               </AnchorPane>
                            </children>
@@ -85,11 +90,6 @@
                               </ImageView>
                            </children>
                         </AnchorPane>
-                        <ImageView fx:id="crossImg" fitHeight="27.0" fitWidth="34.0" onMouseClicked="#cleanTextField" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="12.0">
-                           <image>
-                              <Image url="@../images/cross.png" />
-                           </image>
-                        </ImageView>
                      </children>
                   </AnchorPane>
                   <AnchorPane fx:id="rightMiddleAnchorPane" layoutY="63.0" minHeight="0.0" prefHeight="491.0" prefWidth="590.0" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="63.0">

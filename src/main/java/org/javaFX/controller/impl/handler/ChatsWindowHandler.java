@@ -71,6 +71,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private ImageView searchImg;
 
+    @FXML
+    private ImageView crossImg;
+
     //todo: remove after updating chat by front msg
     private int chatsLimit = 20;
     private long activeChatId;
@@ -78,6 +81,16 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private ObservableList<VBoxMessageCell> chatHistoryBackup;
 
     public ChatsWindowHandler(){}
+
+    @FXML
+    private void showCrossImg(){
+        crossImg.setVisible(true);
+    }
+
+    @FXML
+    private void hideCrossImg(){
+        crossImg.setVisible(false);
+    }
 
     @FXML
     private void onMouseEntered(){

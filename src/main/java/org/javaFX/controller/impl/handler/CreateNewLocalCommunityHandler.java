@@ -69,7 +69,13 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     private ObservableList<VBoxContactCell> getObservableUserList(){
         final String searchingStr = searchContactTextField.getText().trim();
         ObservableList<VBoxContactCell> observableList = getFilteredList(initTableBySubstr(searchingStr), searchingStr);
-        contactsListView.setItems(observableList);
+        observableList.sort(new Comparator<VBoxContactCell>() {
+            @Override
+            public int compare(VBoxContactCell o1, VBoxContactCell o2) {
+                return o1.getCurrentContact().getFullName()
+                        .compareTo(o2.getCurrentContact().getFullName());
+            }
+        });
         return observableList;
     }
 
@@ -190,7 +196,6 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
     }
 
-
     @FXML
     private void handleSearchContactKeyTyped(){
         searchContactTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
@@ -212,7 +217,5 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
             }
         });
     }
-
-
 
 }

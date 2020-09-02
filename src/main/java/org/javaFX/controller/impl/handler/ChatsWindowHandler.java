@@ -241,7 +241,11 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         messagesListView.setVisible(true);
         rightBottomAnchorPane.setVisible(true);
         selectChatLabel.setVisible(false);
-        chatNameLabel.setText(chatsListView.getSelectionModel().getSelectedItem().getChatTitle());
+        String chatTitleStr = chatsListView.getSelectionModel().getSelectedItem().getChatTitle();
+        if(chatTitleStr.length() > 30 ){
+            chatTitleStr = chatTitleStr.substring(0, 27)+"...";
+        }
+        chatNameLabel.setText( chatTitleStr );
         searchMessageTextField.setText("");
     }
 

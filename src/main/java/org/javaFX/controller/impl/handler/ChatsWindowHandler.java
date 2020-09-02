@@ -268,6 +268,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         activeChatId = activeChat.chatIdProperty().get();
         BackMsg msg = new BackMsg.SetActiveChat(activeChatId);
         initializeDialogArea();
+        sendMessageTextArea.setText("");
         try {
             getUserStateRef().get().outQueue.put(msg);
         } catch (InterruptedException e) {

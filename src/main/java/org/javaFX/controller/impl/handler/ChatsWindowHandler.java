@@ -300,6 +300,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private void findContact(){
         final String searchingStr = searchThroughChatsTextField.getText().trim();
         chatsListView.setItems(initTableBySubstr(searchingStr));
+        notFoundChatLabel.setVisible((chatsListView.getItems().size() == 0 ));
     }
 
     private ObservableList<VBoxChatCell> initTableBySubstr(String searchingStr){
@@ -316,7 +317,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                     initChatCell(observableList, chat, chatCellWidth);
                 }
         );
-        notFoundChatLabel.setVisible((observableList.size() == 0 ));
         return observableList;
     }
 

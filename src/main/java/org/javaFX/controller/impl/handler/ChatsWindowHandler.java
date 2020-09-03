@@ -1,6 +1,8 @@
 package org.javaFX.controller.impl.handler;
 
 import javafx.animation.AnimationTimer;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -81,16 +83,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private ObservableList<VBoxMessageCell> chatHistoryBackup;
 
     public ChatsWindowHandler(){}
-
-    @FXML
-    private void showCrossImg(){
-        crossImg.setVisible(true);
-    }
-
-    @FXML
-    private void hideCrossImg(){
-        crossImg.setVisible(false);
-    }
 
     @FXML
     private void onMouseEntered(){
@@ -350,6 +342,25 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         }.start();
     }
 
+
+    @FXML
+    private void onKeyTypedSearchMessage(){
+        searchMessageTextField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                                String oldValue, String newValue) {
+                String searchingStr = searchMessageTextField.getText().trim();
+                if(searchingStr.isEmpty()){
+                    crossImg.setVisible(false);
+                }
+                else {
+                    crossImg.setVisible(true);
+                }
+            }
+        });
+
+    }
+
     private void showStartMessagingArea(){
         selectChatLabel.setText("There is no messages in this dialogue");
     }
@@ -370,5 +381,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     private void cleanTextField(){
         searchMessageTextField.setText("");
         messagesListView.setItems( getMessagesByStr("") );
+        crossImg.setVisible(false);
     }
 }

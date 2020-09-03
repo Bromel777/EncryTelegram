@@ -43,10 +43,24 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
 
     private void initContactNameLabel(JSingleContact communityMember){
         contactNameLabel = new Label();
-        contactNameLabel.setText("    " + communityMember.getFullName());
+        String preparedFullName = cutNameIfNecessary(communityMember.getFullName());
+        contactNameLabel.setText("    " + preparedFullName);
         contactNameLabel.setLayoutX(0);
         contactNameLabel.setLayoutY(20);
         contactNameLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
+    }
+
+    private String cutNameIfNecessary(String communityMemberName){
+        String[] nameWords = communityMemberName.split(" ");
+        StringBuilder sb = new StringBuilder();
+        for( String partOFName: nameWords){
+            if(partOFName.length() > 15){
+                partOFName = partOFName.substring(0,5)+".";
+            }
+            sb.append(partOFName);
+            sb.append(" ");
+        }
+        return sb.toString().trim();
     }
 
     private void initPhoneNumberLabel(JSingleContact communityMember){

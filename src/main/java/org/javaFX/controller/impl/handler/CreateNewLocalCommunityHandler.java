@@ -204,6 +204,7 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     @FXML
     private void handleСomNameKeyTyped(){
         newCommunityNameTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+        communityNameLabel.setTextFill(Color.valueOf("#00b6ff"));
     }
 
     @FXML

@@ -13,6 +13,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import org.javaFX.EncryWindow;
 import org.javaFX.model.JChat;
 import org.javaFX.util.RandomChooser;
 import org.javaFX.util.TimeParser;
@@ -219,6 +220,7 @@ public class VBoxChatCell extends VBoxCell<JChat>{
     }
 
     public String getChatTitle(){
+        //if (chatTitleLabel.getText().equals(EncryWindow.state.get().))
         return chatTitleLabel.getText();
     }
 

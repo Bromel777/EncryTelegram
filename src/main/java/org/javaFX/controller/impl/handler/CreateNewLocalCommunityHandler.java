@@ -91,6 +91,7 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
         VBoxContactCell clickedCell = contactsListView.getSelectionModel().getSelectedItem();
         JSingleContact communityMember = clickedCell.getCurrentContact();
         refreshColors(clickedCell);
+        nobodyChosenErrorLabel.setVisible(false);
         if(communityMember.getUserId() > 0L ){
             boolean isChosen = communityMember.isChosen();
             communityMember.setChosen(!isChosen);

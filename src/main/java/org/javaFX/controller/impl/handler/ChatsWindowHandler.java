@@ -91,7 +91,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     private void onMouseExited(){
-        sendMessageImage.setImage(new Image(pathToGreyButton));
+        if(sendMessageTextArea.getText().isEmpty()){
+            sendMessageImage.setImage(new Image(pathToGreyButton));
+        }
     }
 
     @Override
@@ -217,7 +219,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             previousMsgAuthor = currentMsgAuthor;
             observableMessageList.add(messageCell);
         }
-
         messagesListView.setItems(observableMessageList);
         return observableMessageList;
     }
@@ -259,14 +260,19 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         refreshColors(activeChat);
         activeChatId = activeChat.chatIdProperty().get();
         BackMsg msg = new BackMsg.SetActiveChat(activeChatId);
-        initializeDialogArea();
-        sendMessageTextArea.setText("");
+        refreshBasicElements();
         try {
             getUserStateRef().get().outQueue.put(msg);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         showLeftPane();
+    }
+
+    private void refreshBasicElements(){
+        initializeDialogArea();
+        sendMessageTextArea.setText("");
+        sendMessageImage.setImage(new Image(pathToGreyButton));
     }
 
     private void refreshColors(VBoxChatCell activeChat){
@@ -382,5 +388,17 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         searchMessageTextField.setText("");
         messagesListView.setItems( getMessagesByStr("") );
         crossImg.setVisible(false);
+    }
+
+
+    @FXML
+    public void onSendTextKeyTyped() {
+        String inputText = sendMessageTextArea.getText();
+        if(!inputText.isEmpty()){
+            sendMessageImage.setImage(new Image(pathToBlueButton));
+        }
+        else {
+            sendMessageImage.setImage(new Image(pathToGreyButton));
+        }
     }
 }

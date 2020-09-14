@@ -3,6 +3,7 @@ package org.javaFX.controller;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.util.Duration;
 import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;

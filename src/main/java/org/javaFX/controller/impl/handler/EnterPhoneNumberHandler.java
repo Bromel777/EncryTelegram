@@ -68,6 +68,7 @@ public class EnterPhoneNumberHandler extends DataHandler {
         String country = null;
         if (phoneNumberStr.isEmpty()) {
             errorLabel.setVisible(true);
+            phoneNumberTextField.setStyle("-fx-border-color: Red;");
         }
         else {
             if (selectCountryMenu.getText().equals(russianFederationMenuItem.getText())) {
@@ -105,6 +106,7 @@ public class EnterPhoneNumberHandler extends DataHandler {
     @FXML
     private void handlePhoneNumberAreaPressed(){
         errorLabel.setVisible(false);
+        phoneNumberTextField.setStyle("-fx-border-color: #00B6FF;");
         handleNumberAccepted(nextButtonImg);
     }
 

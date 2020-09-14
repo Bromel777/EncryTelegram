@@ -104,7 +104,7 @@
                   </AnchorPane>
                         <AnchorPane fx:id="rightBottomAnchorPane" minHeight="44.0" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="44.0" prefWidth="362.0" style="-fx-background-color: #FBFBFB;" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                             <children>
-                                <TextArea fx:id="sendMessageTextArea" maxHeight="44.0" minHeight="44.0" onKeyPressed="#sendMessageByKeyboard" prefHeight="44.0" prefWidth="293.0" promptText="Write a message..." wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="0.0">
+                                <TextArea fx:id="sendMessageTextArea" maxHeight="44.0" minHeight="44.0" onKeyPressed="#sendMessageByKeyboard" onKeyTyped="#onSendTextKeyTyped" prefHeight="44.0" prefWidth="293.0" promptText="Write a message..." wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="0.0">
                                     <font>
                                         <Font name="Centaur" size="14.0" />
                                     </font>

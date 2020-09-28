@@ -37,8 +37,8 @@
               <items>
                   <Menu mnemonicParsing="false" text="Language">
                     <items>
-                        <CheckMenuItem fx:id="englishCheckItem" mnemonicParsing="false" onAction="#chooseEnglishLanguage" text="English" />
-                        <CheckMenuItem fx:id="russianCheckItem" mnemonicParsing="false" onAction="#chooseRussianLanguage" text="Russian" />
+                        <CheckMenuItem fx:id="englishCheckItem" mnemonicParsing="false" onAction="#chooseEnglishLanguage" selected="true" text="English" />
+                        <CheckMenuItem fx:id="russianCheckItem" disable="true" mnemonicParsing="false" onAction="#chooseRussianLanguage" text="Russian" />
                     </items>
                   </Menu>
               </items>

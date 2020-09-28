@@ -1,13 +1,17 @@
 package org.javaFX;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.javaFX.controller.DataHandler;
+import org.javaFX.controller.impl.handler.InfoDialogHandler;
 import org.javaFX.model.JUserState;
 import org.javaFX.util.DelayAuthentication;
 
@@ -23,7 +27,7 @@ public class EncryWindow extends Application {
     private BorderPane rootLayout;
 
     private final String windowTitle = "ENCRY Telegram Client";
-    private final String pathToLogoImage = "file:/images/logo.png";
+    private final String pathToLogoImage = "images/logo.png";
 
     private final static String pathToRootLayout = "view/rootLayout.fxml";
 
@@ -45,10 +49,10 @@ public class EncryWindow extends Application {
 
     public final static String pathToStartWindowFXML = "view/startWindow.fxml";
 
-
     private String currentWindowStr ;
 
     private static String userPhoneNumber;
+    private static String userCountry;
 
     private DataHandler rootLayoutHandler;
 
@@ -66,6 +70,13 @@ public class EncryWindow extends Application {
         initRootLayout();
         launchStartWindow();
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent e) {
+                Platform.exit();
+                System.exit(0);
+            }});
     }
 
     public void launchStartWindow(){
@@ -152,12 +163,19 @@ public class EncryWindow extends Application {
     }
 
     public static void setUserPhoneNumber(String phoneNumber){
-        if(userPhoneNumber == null){
-            userPhoneNumber = phoneNumber;
-        }
+        userPhoneNumber = phoneNumber;
+    }
+
+    public static String getUserCountry(){
+        return userCountry;
+    }
+
+    public static void setUserCountry(String newUserCountry){
+        userCountry = newUserCountry;
     }
 
     public String getCurrentWindowStr() {
         return currentWindowStr;
     }
+
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.*?>
@@ -32,7 +33,7 @@
                         <Label fx:id="notFoundChatLabel" layoutX="14.0" layoutY="14.0" prefHeight="39.0" prefWidth="270.0" text="Not found" visible="false" />
                      </children>
                   </AnchorPane>
-                  <AnchorPane minHeight="65.0" minWidth="320.0" prefHeight="63.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane minHeight="65.0" minWidth="320.0" prefHeight="63.0" style="-fx-background-color: #FBFBFB;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <TextField fx:id="searchThroughChatsTextField" layoutX="14.0" layoutY="16.0" onKeyPressed="#searchContactByKeyboard" onMouseClicked="#handleSearchImg" prefHeight="31.0" prefWidth="273.0" promptText="     Search for messages or users" stylesheets="@../styles/searchTextFieldStyle.css" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
                         <ImageView fx:id="searchImg" fitHeight="15.0" fitWidth="15.0" layoutX="21.0" layoutY="24.0" onMouseClicked="#handleSearchImg" pickOnBounds="true" preserveRatio="true">
@@ -49,8 +50,13 @@
                 </AnchorPane>
                 <AnchorPane fx:id="rightPane" minWidth="300.0" prefHeight="598.0" prefWidth="579.0">
                     <children>
-                        <AnchorPane fx:id="rightTopAnchorPane" prefHeight="63.0" prefWidth="590.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="rightTopAnchorPane" prefHeight="63.0" prefWidth="590.0" style="-fx-background-color: #FBFBFB;" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
+                        <Separator fx:id="blueSeparator1" opacity="0.5" prefWidth="200.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                           <effect>
+                              <Blend />
+                           </effect>
+                        </Separator>
                         <HBox prefHeight="63.0" prefWidth="490.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="63.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane prefHeight="63.0" prefWidth="164.0">
@@ -60,19 +66,24 @@
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="isOnlineLabel" prefHeight="13.0" prefWidth="68.0" text="Online" textFill="#94909085" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" />
+                                    <Label fx:id="isOnlineLabel" prefHeight="13.0" prefWidth="68.0" stylesheets="@../styles/headerChatsBackStyle.css" text="Online" textFill="#637079" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="20.0" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="63.0" prefWidth="422.0">
                                  <children>
-                                    <TextField fx:id="searchMessageTextField" onKeyPressed="#searchMessageByKeyboard" prefHeight="31.0" promptText="Search for dialog content" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                    <TextField fx:id="searchMessageTextField" onKeyPressed="#searchMessageByKeyboard" onKeyTyped="#onKeyTypedSearchMessage" prefHeight="31.0" promptText="Search for dialog content" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                    <ImageView fx:id="crossImg" fitHeight="27.0" fitWidth="34.0" onMouseClicked="#cleanTextField" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="12.0">
+                                       <image>
+                                          <Image url="@../images/cross.png" />
+                                       </image>
+                                    </ImageView>
                                  </children>
                               </AnchorPane>
                            </children>
                         </HBox>
-                        <AnchorPane prefHeight="63.0" prefWidth="63.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane prefHeight="63.0" prefWidth="68.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <ImageView fx:id="findContentImage" disable="true" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#findContentInDialog" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="15.0">
+                              <ImageView fx:id="findContentImage" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#findContentInDialog" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="15.0">
                                  <image>
                                     <Image url="@../images/findContent.png" />
                                  </image>
@@ -91,9 +102,9 @@
                         </Label>
                      </children>
                   </AnchorPane>
-                        <AnchorPane fx:id="rightBottomAnchorPane" minHeight="44.0" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="44.0" prefWidth="362.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        <AnchorPane fx:id="rightBottomAnchorPane" minHeight="44.0" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="44.0" prefWidth="362.0" style="-fx-background-color: #FBFBFB;" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                             <children>
-                                <TextArea fx:id="sendMessageTextArea" maxHeight="44.0" minHeight="44.0" onKeyPressed="#sendMessageByKeyboard" prefHeight="44.0" prefWidth="293.0" promptText="Write a message..." wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="0.0">
+                                <TextArea fx:id="sendMessageTextArea" maxHeight="44.0" minHeight="44.0" onKeyPressed="#sendMessageByKeyboard" onKeyTyped="#onSendTextKeyTyped" prefHeight="44.0" prefWidth="293.0" promptText="Write a message..." wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="0.0">
                                     <font>
                                         <Font name="Centaur" size="14.0" />
                                     </font>

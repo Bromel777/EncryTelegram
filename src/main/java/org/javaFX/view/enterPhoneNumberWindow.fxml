@@ -53,7 +53,7 @@
                      </font>
                   </MenuButton>
                   <Label fx:id="countryCodeLabel" layoutX="136.0" layoutY="75.0" prefHeight="33.0" prefWidth="58.0" stylesheets="@../styles/dropDownMenuStyle.css" text="+" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="75.0" />
-                  <Label fx:id="error" layoutX="136.0" layoutY="119.0" prefHeight="17.0" prefWidth="328.0" textFill="#dd0000" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="-0.0">
+                  <Label fx:id="errorLabel" layoutX="136.0" layoutY="119.0" prefHeight="17.0" prefWidth="328.0" text="Enter Phone Number" textFill="#dd0000" visible="false" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="-0.0">
                      <font>
                         <Font name="Times New Roman" size="15.0" />
                      </font>

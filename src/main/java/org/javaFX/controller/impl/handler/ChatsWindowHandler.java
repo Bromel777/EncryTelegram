@@ -1,6 +1,8 @@
 package org.javaFX.controller.impl.handler;
 
 import javafx.animation.AnimationTimer;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,6 +21,7 @@ import org.javaFX.EncryWindow;
 import org.javaFX.controller.MainWindowBasicHandler;
 import org.javaFX.model.JChat;
 import org.javaFX.model.nodes.VBoxChatCell;
+import org.javaFX.model.nodes.VBoxDialogTextMessageCell;
 import org.javaFX.model.nodes.VBoxMessageCell;
 import org.javaFX.util.KeyboardHandler;
 
@@ -28,8 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatsWindowHandler extends MainWindowBasicHandler {
 
-    private final String pathToBlueButton = "file:images/sendMessageBlue.png";
-    private final String pathToGreyButton ="file:images/sendMessage.png";
+    private final String pathToBlueButton = "images/sendMessageBlue.png";
+    private final String pathToGreyButton ="images/sendMessage.png";
 
     @FXML
     private ListView<VBoxChatCell> chatsListView;
@@ -70,13 +73,16 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private ImageView searchImg;
 
+    @FXML
+    private ImageView crossImg;
 
     //todo: remove after updating chat by front msg
     private int chatsLimit = 20;
     private long activeChatId;
 
-    public ChatsWindowHandler(){
-    }
+    private ObservableList<VBoxMessageCell> chatHistoryBackup;
+
+    public ChatsWindowHandler(){}
 
     @FXML
     private void onMouseEntered(){
@@ -85,7 +91,9 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     private void onMouseExited(){
-        sendMessageImage.setImage(new Image(pathToGreyButton));
+        if(sendMessageTextArea.getText().isEmpty()){
+            sendMessageImage.setImage(new Image(pathToGreyButton));
+        }
     }
 
     @Override
@@ -96,19 +104,25 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             initializeDialogArea();
         }
         enableMenuBar();
-        FrontMsg a = getUserStateRef().get().inQueue.poll();
-        if (a != null) {
-            if (a.code() == FrontMsg.Codes$.MODULE$.newMsgsInChat()) {
-                FrontMsg.NewMsgsInChat msg = (FrontMsg.NewMsgsInChat) a;
+        updateDialogArea();
+    }
+
+    private void updateDialogArea(){
+        FrontMsg frontMsg = getUserStateRef().get().inQueue.poll();
+        if (frontMsg != null ) {
+            if (frontMsg.code() == FrontMsg.Codes$.MODULE$.newMsgsInChat()) {
+                FrontMsg.NewMsgsInChat msg = (FrontMsg.NewMsgsInChat) frontMsg;
                 ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
                 msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
+                msg.msgs().forEach(msgCell -> chatHistoryBackup.add(msgCell));
                 messagesListView.scrollTo(1);
                 messagesListView.setItems(observableChatList);
-            } else if (a.code() == FrontMsg.Codes$.MODULE$.historyMsgs()) {
-                FrontMsg.HistoryMsgs msg = (FrontMsg.HistoryMsgs) a;
-                if (msg.chatId() == activeChatId) {
+            } else if (frontMsg.code() == FrontMsg.Codes$.MODULE$.historyMsgs()) {
+                FrontMsg.HistoryMsgs msg = (FrontMsg.HistoryMsgs) frontMsg;
+                if (msg.chatId() == activeChatId && messagesListView.getItems().size() > 0) {
                     ObservableList<VBoxMessageCell> observableChatList = FXCollections.observableArrayList();
                     msg.msgs().forEach(msgCell -> observableChatList.add(msgCell));
+                    msg.msgs().forEach(msgCell -> chatHistoryBackup.add(msgCell));
                     VBoxMessageCell prevLastCell = messagesListView.getItems().get(0);
                     messagesListView.getItems().forEach(cell -> observableChatList.add(cell));
                     messagesListView.setItems(observableChatList);
@@ -117,7 +131,6 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
             } else {
                 System.out.println("Unknown msg");
             }
-
         }
     }
 
@@ -196,18 +209,18 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
     @FXML
     private ObservableList<VBoxMessageCell> getObservableJMessageList(){
         ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
-        getUserStateRef().get().messagesListView.getItems().forEach (
-                message ->
-                        observableMessageList.add(message)
-        );
-        forceListRefreshOn();
+        String previousMsgAuthor = "";
+        for(VBoxMessageCell messageCell: getUserStateRef().get().messagesListView.getItems() ){
+            String currentMsgAuthor = messageCell.getElement().getAuthor();
+            messageCell.getElement().setPreviousSameAuthor(currentMsgAuthor.equals(previousMsgAuthor));
+            if( currentMsgAuthor.equals(previousMsgAuthor) ){
+                ((VBoxDialogTextMessageCell) messageCell).recreateMessageCell();
+            }
+            previousMsgAuthor = currentMsgAuthor;
+            observableMessageList.add(messageCell);
+        }
+        messagesListView.setItems(observableMessageList);
         return observableMessageList;
-
-        /*
-        new way of initialization
-        final String searchingStr = searchMessageTextField.getText().trim();
-        ObservableList<VBoxMessageCell> observableMessageList = findMessagesByStr(searchingStr);
-        return observableMessageList;*/
     }
 
     @FXML
@@ -221,7 +234,12 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         messagesListView.setVisible(true);
         rightBottomAnchorPane.setVisible(true);
         selectChatLabel.setVisible(false);
-        chatNameLabel.setText(chatsListView.getSelectionModel().getSelectedItem().getChatTitle());
+        String chatTitleStr = chatsListView.getSelectionModel().getSelectedItem().getChatTitle();
+        if(chatTitleStr.length() > 30 ){
+            chatTitleStr = chatTitleStr.substring(0, 27)+"...";
+        }
+        chatNameLabel.setText( chatTitleStr );
+        searchMessageTextField.setText("");
     }
 
     public void hideLeftPane(){
@@ -233,6 +251,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
 
     @FXML
     protected void clickItem() {
+        chatHistoryBackup = FXCollections.observableArrayList();
         getUserStateRef().get().setActiveDialog(messagesListView);
         if( messagesListView.getItems().size() == 0 ){
             showStartMessagingArea();
@@ -241,9 +260,7 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         refreshColors(activeChat);
         activeChatId = activeChat.chatIdProperty().get();
         BackMsg msg = new BackMsg.SetActiveChat(activeChatId);
-        initializeDialogArea();
-        ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
-        messagesListView.setItems(observableMessageList);
+        refreshBasicElements();
         try {
             getUserStateRef().get().outQueue.put(msg);
         } catch (InterruptedException e) {
@@ -252,17 +269,17 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         showLeftPane();
     }
 
+    private void refreshBasicElements(){
+        initializeDialogArea();
+        sendMessageTextArea.setText("");
+        sendMessageImage.setImage(new Image(pathToGreyButton));
+    }
+
     private void refreshColors(VBoxChatCell activeChat){
         for(VBoxChatCell cell: chatsListView.getItems()){
             cell.resetPaneColor();
         }
         activeChat.updatePaneColor();
-    }
-
-    private void forceListRefreshOn() {
-        ObservableList<VBoxMessageCell> items = messagesListView.getItems();
-        messagesListView.getItems().clear();
-        messagesListView.setItems(items);
     }
 
     @FXML
@@ -278,10 +295,10 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         }.start();
     }
 
-
     private void findContact(){
         final String searchingStr = searchThroughChatsTextField.getText().trim();
         chatsListView.setItems(initTableBySubstr(searchingStr));
+        notFoundChatLabel.setVisible((chatsListView.getItems().size() == 0 ));
     }
 
     private ObservableList<VBoxChatCell> initTableBySubstr(String searchingStr){
@@ -298,25 +315,23 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                     initChatCell(observableList, chat, chatCellWidth);
                 }
         );
-        notFoundChatLabel.setVisible((observableList.size() == 0 ));
         return observableList;
     }
 
     @FXML
     public void findContentInDialog(){
         final String searchingStr = searchMessageTextField.getText().trim();
-     //   findMessagesByStr(searchingStr);
+        messagesListView.setItems( getMessagesByStr(searchingStr) );
     }
 
-    private ObservableList<VBoxMessageCell> findMessagesByStr(String searchingStr){
-        ObservableList<org.javaFX.model.nodes.VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
-        getUserStateRef().get().messagesListView.getItems()
-                .filtered(message->message.getContentText().contains(searchingStr))
+    private ObservableList<VBoxMessageCell> getMessagesByStr(String searchingStr){
+        ObservableList<VBoxMessageCell> observableMessageList = FXCollections.observableArrayList();
+        chatHistoryBackup.filtered(message->message.getContentText().toLowerCase().contains(searchingStr.toLowerCase()))
                 .forEach (
                 message ->
                         observableMessageList.add(message)
         );
-        forceListRefreshOn();
+        messagesListView.setItems(observableMessageList);
         return observableMessageList;
     }
 
@@ -331,6 +346,25 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
                 }
             }
         }.start();
+    }
+
+
+    @FXML
+    private void onKeyTypedSearchMessage(){
+        searchMessageTextField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                                String oldValue, String newValue) {
+                String searchingStr = searchMessageTextField.getText().trim();
+                if(searchingStr.isEmpty()){
+                    crossImg.setVisible(false);
+                }
+                else {
+                    crossImg.setVisible(true);
+                }
+            }
+        });
+
     }
 
     private void showStartMessagingArea(){
@@ -349,4 +383,22 @@ public class ChatsWindowHandler extends MainWindowBasicHandler {
         });
     }
 
+    @FXML
+    private void cleanTextField(){
+        searchMessageTextField.setText("");
+        messagesListView.setItems( getMessagesByStr("") );
+        crossImg.setVisible(false);
+    }
+
+
+    @FXML
+    public void onSendTextKeyTyped() {
+        String inputText = sendMessageTextArea.getText();
+        if(!inputText.isEmpty()){
+            sendMessageImage.setImage(new Image(pathToBlueButton));
+        }
+        else {
+            sendMessageImage.setImage(new Image(pathToGreyButton));
+        }
+    }
 }

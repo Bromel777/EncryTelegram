@@ -40,7 +40,7 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
     }
     
     @Override
-    protected void setIsYourMessage(JMessage jMessage) {
+    protected void setMessageCredentials(JMessage jMessage) {
         if(jMessage.getContent().toString().length() < 12){
             return;
         }
@@ -98,11 +98,14 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
         AnchorPane pane = new AnchorPane();
         String textContent = jMessage.getContent().toString().trim();
         int multiplier =
-                textContent.length()%40 == 0 ? textContent.length()/40: (textContent.length()/40) +1;
+                textContent.length() % 40 == 0 ? textContent.length() / 40: (textContent.length()/40) + 1;
         int numberOfNewLines = StringHandler.countCharactersInStr(textContent,'\n');
         multiplier += numberOfNewLines;
         cellWidth = getParentWidth() - getParentWidth() / 3;
-        cellHeight = 27 * (multiplier +1);
+        if(!jMessage.isPreviousSameAuthor()){
+            ++multiplier;
+        }
+        cellHeight = 27 * multiplier ;
         if (jMessage.isMine()) {
             pane.setLayoutX(getParentWidth() / 3);
         }
@@ -171,6 +174,14 @@ public abstract class VBoxMessageCell extends VBoxCell<JMessage> {
 
     public double getCellHeight() {
         return cellHeight;
+    }
+
+    public void setCellWidth(double cellWidth) {
+        this.cellWidth = cellWidth;
+    }
+
+    public void setCellHeight(double cellHeight) {
+        this.cellHeight = cellHeight;
     }
 
     public String getYouMessagesBackgroundColor() {

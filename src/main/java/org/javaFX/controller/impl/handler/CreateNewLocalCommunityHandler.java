@@ -16,7 +16,6 @@ import org.encryfoundation.tg.javaIntegration.BackMsg;
 import org.javaFX.EncryWindow;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.model.JSingleContact;
-import org.javaFX.model.nodes.VBoxChatCell;
 import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.InfoContainer;
 import org.javaFX.util.KeyboardHandler;
@@ -41,7 +40,7 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     private Label communityNameLabel;
 
     @FXML
-    private Separator blueSeparator;
+    private Separator separator;
 
     @FXML
     private Label notFoundInfoLabel;
@@ -62,21 +61,28 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     @Override
     public void updateEncryWindow(EncryWindow encryWindow) {
         for(VBoxContactCell cell : contactsListView.getItems()){
-            cell.setSeparatorLineSize(blueSeparator.getWidth()- 40);
+            cell.setSeparatorLineSize(separator.getWidth()- 40);
         }
         super.updateEncryWindow(encryWindow);
     }
 
     private ObservableList<VBoxContactCell> getObservableUserList(){
         final String searchingStr = searchContactTextField.getText().trim();
-        ObservableList<VBoxContactCell> observableList = initTableBySubstr(searchingStr);
+        ObservableList<VBoxContactCell> observableList = getFilteredList(initTableBySubstr(searchingStr), searchingStr);
+        observableList.sort(new Comparator<VBoxContactCell>() {
+            @Override
+            public int compare(VBoxContactCell o1, VBoxContactCell o2) {
+                return o1.getCurrentContact().getFullName()
+                        .compareTo(o2.getCurrentContact().getFullName());
+            }
+        });
         return observableList;
     }
 
     @Override
     protected void initChatsTable(){
-        ObservableList<VBoxContactCell> t = getObservableUserList();
-        contactsListView.setItems(t);
+        ObservableList<VBoxContactCell> observableUserList = getObservableUserList();
+        contactsListView.setItems(observableUserList);
         shutDownScheduledService();
     }
 
@@ -85,6 +91,7 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
         VBoxContactCell clickedCell = contactsListView.getSelectionModel().getSelectedItem();
         JSingleContact communityMember = clickedCell.getCurrentContact();
         refreshColors(clickedCell);
+        nobodyChosenErrorLabel.setVisible(false);
         if(communityMember.getUserId() > 0L ){
             boolean isChosen = communityMember.isChosen();
             communityMember.setChosen(!isChosen);
@@ -190,7 +197,6 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
         getEncryWindow().launchWindowByPathToFXML(EncryWindow.pathToChatsWindowFXML);
     }
 
-
     @FXML
     private void handleSearchContactKeyTyped(){
         searchContactTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
@@ -199,6 +205,7 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
     @FXML
     private void handleСomNameKeyTyped(){
         newCommunityNameTextField.addEventFilter(KeyEvent.KEY_TYPED, KeyboardHandler.maxLengthHandler(40));
+        communityNameLabel.setTextFill(Color.valueOf("#00b6ff"));
     }
 
     @FXML
@@ -212,7 +219,5 @@ public class CreateNewLocalCommunityHandler extends CommunitiesWindowHandler {
             }
         });
     }
-
-
 
 }

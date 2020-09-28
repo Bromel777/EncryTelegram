@@ -1,7 +1,6 @@
 package org.javaFX.controller.impl.handler;
 
 import javafx.animation.AnimationTimer;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 
@@ -20,6 +19,12 @@ import org.javaFX.util.KeyboardHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EnterPhoneNumberHandler extends DataHandler {
+
+    private final static String BELARUS_STR = "Belarus";
+    private final static String RUSSIAN_FEDERATION_STR = "Russian Federation";
+
+    private final static String BLR_COUNTRY_CODE_STR = "375";
+    private final static String RUS_COUNTRY_CODE_STR = "7";
 
     @FXML
     private TextField phoneNumberTextField;
@@ -43,7 +48,7 @@ public class EnterPhoneNumberHandler extends DataHandler {
     private MenuItem belarusMenuItem;
 
     @FXML
-    private Label error;
+    private Label errorLabel;
 
     public EnterPhoneNumberHandler() {}
 
@@ -60,13 +65,21 @@ public class EnterPhoneNumberHandler extends DataHandler {
     @FXML
     private void handleConfirmNumberAction(){
         String phoneNumberStr = phoneNumberTextField.getCharacters().toString();
-        if (phoneNumberStr.isEmpty()) error.setText("Empty phone field :( Please enter it!");
+        String country = null;
+        if (phoneNumberStr.isEmpty()) {
+            errorLabel.setVisible(true);
+            phoneNumberTextField.setStyle("-fx-border-color: Red;");
+        }
         else {
             if (selectCountryMenu.getText().equals(russianFederationMenuItem.getText())) {
                 phoneNumberStr = "7" + phoneNumberStr;
+                country = RUSSIAN_FEDERATION_STR;
             } else if (selectCountryMenu.getText().equals(belarusMenuItem.getText())) {
                 phoneNumberStr = "375" + phoneNumberStr;
+                country = BELARUS_STR;
             }
+            EncryWindow.setUserPhoneNumber(phoneNumberStr);
+            EncryWindow.setUserCountry(country);
             getUserStateRef().get().setPhoneNumber(phoneNumberStr);
             try {
                 getUserStateRef().get().outQueue.put(new BackMsg.SetPhone(phoneNumberStr));
@@ -82,7 +95,7 @@ public class EnterPhoneNumberHandler extends DataHandler {
                             EncryWindow.pathToChatsWindowFXML, EncryWindow.afterInitializationWidth, EncryWindow.afterInitializationHeight
                     );
                 } else if (nextStep.code() == FrontMsg.Codes$.MODULE$.error()) {
-                    error.setText("Oops error!");
+                    errorLabel.setText("Oops error!");
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -92,6 +105,8 @@ public class EnterPhoneNumberHandler extends DataHandler {
 
     @FXML
     private void handlePhoneNumberAreaPressed(){
+        errorLabel.setVisible(false);
+        phoneNumberTextField.setStyle("-fx-border-color: #00B6FF;");
         handleNumberAccepted(nextButtonImg);
     }
 
@@ -128,14 +143,39 @@ public class EnterPhoneNumberHandler extends DataHandler {
     }
 
     @FXML
-    private void setRussiaDefault(){
-        setCountryMenuItem(russianFederationMenuItem.getText(), "+7", "--- --- -- --");
+    public void setRussiaDefault(){
+        setCountryMenuItem(russianFederationMenuItem.getText(),
+                "+"+RUS_COUNTRY_CODE_STR, "--- --- -- --");
     }
 
     @FXML
-    private void setBelarusDefault(){
-        setCountryMenuItem(belarusMenuItem.getText(), "+375", "-- --- -- --");
+    public void setBelarusDefault(){
+        setCountryMenuItem(belarusMenuItem.getText(),
+                "+"+
+                BLR_COUNTRY_CODE_STR, "-- --- -- --");
     }
 
+
+    public void initFieldsIfNotEmpty(){
+        if(!EncryWindow.getUserCountry().isEmpty() && !EncryWindow.getUserPhoneNumber().isEmpty() ){
+            if(EncryWindow.getUserCountry().equals(RUSSIAN_FEDERATION_STR)){
+                setRussiaDefault();
+            }
+            else if(EncryWindow.getUserCountry().equals(BELARUS_STR)){
+                setBelarusDefault();
+            }
+            phoneNumberTextField.setText(trimPhoneNumber(EncryWindow.getUserPhoneNumber()));
+        }
+    }
+
+    private String trimPhoneNumber (String userPhoneNumber){
+       if(userPhoneNumber.startsWith(BLR_COUNTRY_CODE_STR)){
+            return userPhoneNumber.substring(3);
+        }
+        else if(userPhoneNumber.startsWith(RUS_COUNTRY_CODE_STR)){
+           return userPhoneNumber.substring(1);
+        }
+        return "";
+    }
 
 }

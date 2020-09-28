@@ -24,7 +24,7 @@
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
-                  <Label fx:id="error" layoutY="65.0" prefHeight="21.0" prefWidth="209.0" />
+                  <Label fx:id="errorLabel" layoutY="65.0" prefHeight="21.0" prefWidth="280.0" text="Empty vc code :( Please enter it!" textFill="RED" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   </children>
               </AnchorPane>
          </children>
@@ -36,10 +36,26 @@
                         <Image url="@../images/encryLogoBig.png" />
                     </image>
                 </ImageView>
+            <ImageView fx:id="arrowImg" fitHeight="16.0" fitWidth="18.0" onMouseClicked="#backToEnterPhoneNumberPage" pickOnBounds="true" preserveRatio="true" StackPane.alignment="TOP_LEFT">
+               <image>
+                  <Image url="@../images/arrow.png" />
+               </image>
+               <StackPane.margin>
+                  <Insets left="15.0" top="-25.0" />
+               </StackPane.margin>
+            </ImageView>
          </children>
       </StackPane>
       <StackPane prefHeight="150.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
          <children>
+            <Label fx:id="phoneNumberLabel" prefHeight="31.0" prefWidth="328.0" wrapText="true">
+               <font>
+                  <Font name="Times New Roman Bold" size="20.0" />
+               </font>
+               <StackPane.margin>
+                  <Insets bottom="90.0" />
+               </StackPane.margin>
+            </Label>
                 <Label prefHeight="66.0" prefWidth="328.0" text="Please enter the code you've just received via SMS" textFill="#707070" wrapText="true">
                     <font>
                         <Font name="Times New Roman" size="20.0" />
@@ -59,10 +75,5 @@
                 </ImageView>
          </children>
       </StackPane>
-      <ImageView fx:id="arrowImg" fitHeight="15.0" fitWidth="18.0" onMouseClicked="#backToEnterPhoneNumberPage" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="25.0">
-         <image>
-            <Image url="@../images/arrow.png" />
-         </image>
-      </ImageView>
     </children>
 </AnchorPane>

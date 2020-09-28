@@ -19,6 +19,7 @@ import org.javaFX.model.nodes.VBoxContactCell;
 import org.javaFX.util.KeyboardHandler;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
@@ -58,11 +59,17 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
 
     private ObservableList<VBoxCommunityCell> getObservableCommunityList(){
         final String searchingStr = searchCommunityTextField.getText().trim();
-        ObservableList<VBoxCommunityCell> observableList = initTableBySubstr(searchingStr);
+        ObservableList<VBoxCommunityCell> observableList = getFilteredList(initTableBySubstr(searchingStr), searchingStr);
         if(observableList.size() == 0 ){
             notFoundInfoLabel.setVisible(true);
         }
         return observableList;
+    }
+
+    private ObservableList<VBoxCommunityCell> getFilteredList(ObservableList<VBoxCommunityCell> rawList, final String searchString ){
+        rawList.sort( Comparator.comparing(contactCell -> ((VBoxCommunityCell)contactCell)
+                .getCurrentCommunity().getCommunityName().indexOf(searchString.toLowerCase())));
+        return rawList;
     }
 
     @Override
@@ -119,7 +126,6 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
             notFoundInfoLabel.setVisible(true);
         }
         else {
-            System.out.println("notFoundInfoLabel.setVisible(false);");
             notFoundInfoLabel.setVisible(false);
         }
         return observableList;
@@ -133,7 +139,13 @@ public class LocalCommunitiesWindowHandler extends CommunitiesWindowHandler {
         controller.setDialogStage(dialogStage);
         controller.setLocalCommunity(localCommunity);
         controller.setUserStateRef(getUserStateRef());
-        controller.setSecretChatNameText(localCommunity.getCommunityName());
+        final String secretChatName = privateChatNameTestField.getText();
+        if(!secretChatName.isEmpty()){
+            controller.setSecretChatNameText(secretChatName);
+        }
+        else{
+            controller.setSecretChatNameText(localCommunity.getCommunityName());
+        }
         dialogStage.show();
     }
 

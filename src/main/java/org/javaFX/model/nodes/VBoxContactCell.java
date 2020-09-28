@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.javaFX.model.JSingleContact;
 import org.javaFX.util.JavaFXTableBuilder;
 
@@ -40,14 +41,13 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         initSeparatorLine();
     }
 
-
     private void initContactNameLabel(JSingleContact communityMember){
         contactNameLabel = new Label();
         String preparedFullName = cutNameIfNecessary(communityMember.getFullName());
         contactNameLabel.setText("    " + preparedFullName);
         contactNameLabel.setLayoutX(0);
         contactNameLabel.setLayoutY(20);
-        contactNameLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
+        contactNameLabel.setFont(Font.font("Roboto", FontWeight.BOLD, FontPosture.REGULAR,18 ));
     }
 
     private String cutNameIfNecessary(String communityMemberName){
@@ -55,7 +55,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         StringBuilder sb = new StringBuilder();
         for( String partOFName: nameWords){
             if(partOFName.length() > 15){
-                partOFName = partOFName.substring(0,5)+".";
+                partOFName = partOFName.substring(0,12)+"...";
             }
             sb.append(partOFName);
             sb.append(" ");
@@ -68,7 +68,7 @@ public class VBoxContactCell extends VBoxCell<JSingleContact> {
         phoneNumberLabel.setText(getPreparedTelNumber(communityMember));
         phoneNumberLabel.setLayoutX(300);
         phoneNumberLabel.setLayoutY(20);
-        phoneNumberLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
+        phoneNumberLabel.setFont(Font.font("Roboto", FontWeight.BOLD, FontPosture.REGULAR,18 ));
     }
 
     private void initCheckBoxImg(){

@@ -36,6 +36,14 @@
                         <Image url="@../images/encryLogoBig.png" />
                     </image>
                 </ImageView>
+            <ImageView fx:id="arrowImg" fitHeight="16.0" fitWidth="18.0" onMouseClicked="#backToEnterPhoneNumberPage" pickOnBounds="true" preserveRatio="true" StackPane.alignment="TOP_LEFT">
+               <image>
+                  <Image url="@../images/arrow.png" />
+               </image>
+               <StackPane.margin>
+                  <Insets left="15.0" top="-25.0" />
+               </StackPane.margin>
+            </ImageView>
          </children>
       </StackPane>
       <StackPane prefHeight="150.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
@@ -67,10 +75,5 @@
                 </ImageView>
          </children>
       </StackPane>
-      <ImageView fx:id="arrowImg" fitHeight="15.0" fitWidth="18.0" onMouseClicked="#backToEnterPhoneNumberPage" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="25.0">
-         <image>
-            <Image url="@../images/arrow.png" />
-         </image>
-      </ImageView>
     </children>
 </AnchorPane>

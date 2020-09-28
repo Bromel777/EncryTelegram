@@ -6,6 +6,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.javaFX.model.JLocalCommunity;
 import org.javaFX.util.JavaFXTableBuilder;
 
@@ -39,7 +40,7 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
         communityIDLabel.setText("   " + sourceElement.getCommunityID());
         communityIDLabel.setLayoutX(0);
         communityIDLabel.setLayoutY(20);
-        communityIDLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
+        communityIDLabel.setFont(Font.font("Roboto", FontWeight.BOLD, FontPosture.REGULAR,18 ));
     }
 
     private void initCommunityNameLabel(JLocalCommunity sourceElement) {
@@ -47,14 +48,14 @@ public class VBoxCommunityCell extends VBoxCell<JLocalCommunity> {
         communityNameLabel.setText(sourceElement.getCommunityName());
         communityNameLabel.setLayoutX(240);
         communityNameLabel.setLayoutY(20);
-        communityNameLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
+        communityNameLabel.setFont(Font.font("Roboto", FontWeight.BOLD, FontPosture.REGULAR,18 ));
     }
 
     private void initNumberOfMembersLabel(JLocalCommunity sourceElement) {
         numberOfMembersLabel = new Label();
         numberOfMembersLabel.setText(sourceElement.getCommunitySize().get()+"");
         numberOfMembersLabel.setLayoutY(20);
-        numberOfMembersLabel.setFont(Font.font("Roboto", FontPosture.REGULAR,18 ));
+        numberOfMembersLabel.setFont(Font.font("Roboto", FontWeight.BOLD, FontPosture.REGULAR,18 ));
     }
 
     private void initSeparatorLine(){
